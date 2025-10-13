@@ -4,7 +4,6 @@ import { Section } from '@/components/common/section'
 import { Typography } from '@/components/common/typography'
 import { Skeleton } from '@/components/ui/skeleton'
 import useAsync from '@/hooks/useAsync'
-import parse from 'html-react-parser'
 import { notFound, useParams } from 'next/navigation'
 
 export default function DynamicPage() {
@@ -90,7 +89,7 @@ export default function DynamicPage() {
 
       <Section variant={'sm'}>
         <Container>
-          <div className='space-y-6'>{parse('Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam odit consequatur sunt odio non temporibus ex laboriosam tempora ducimus qui, ab nostrum recusandae, beatae voluptates libero voluptatum aspernatur suscipit cumque.')}</div>
+          <div className='space-y-6'>Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam odit consequatur sunt odio non temporibus ex laboriosam tempora ducimus qui, ab nostrum recusandae, beatae voluptates libero voluptatum aspernatur suscipit cumque.</div>
         </Container>
       </Section>
     </>

@@ -2,7 +2,7 @@
 import { Container } from '@/components/common/container'
 import { Section } from '@/components/common/section'
 import { Typography } from '@/components/common/typography'
-import { useInView, useMotionValue, useSpring } from 'framer-motion'
+import { useInView, useMotionValue, useSpring } from 'motion/react'
 import { useEffect, useRef } from 'react'
 
 export default function Stats({ data }: { data?: any }) {
