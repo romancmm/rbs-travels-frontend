@@ -1,9 +1,7 @@
-'use client'
+import AnimatedCounter from '@/components/common/AnimatedCounter'
 import { Container } from '@/components/common/container'
 import { Section } from '@/components/common/section'
 import { Typography } from '@/components/common/typography'
-import { useInView, useMotionValue, useSpring } from 'motion/react'
-import { useEffect, useRef } from 'react'
 
 export default function Stats({ data }: { data?: any }) {
   return (
@@ -12,7 +10,9 @@ export default function Stats({ data }: { data?: any }) {
         <div className='flex sm:flex-row flex-col justify-evenly items-center gap-6 lg:gap-10 py-4 border-y w-full'>
           {data?.map((item: any, index: number) => (
             <div key={index} className='flex items-center gap-4 p-3 w-full'>
-              <div className="bg-gray-100 size-20"></div>
+              <div className="flex justify-center items-center size-20">
+                <item.icon color="#0f6578" className="w-12 h-12 text-primary group-hover:text-white group-hover:rotate-45 transition-transform duration-700 ease-in-out delay-200" />
+              </div>
               <div className="">
                 <Typography className='' variant='h4' weight={'bold'}>
                   <AnimatedCounter value={item.value} />
@@ -25,44 +25,4 @@ export default function Stats({ data }: { data?: any }) {
       </Container>
     </Section >
   )
-}
-
-// Animated Counter Component
-const AnimatedCounter = ({ value }: { value: string }) => {
-  const ref = useRef<HTMLSpanElement>(null)
-  const isInView = useInView(ref, { once: true, margin: '-100px' })
-
-  const motionValue = useMotionValue(0)
-  const springValue = useSpring(motionValue, {
-    damping: 60,
-    stiffness: 100
-  })
-
-  // Extract number and suffix from value (e.g., "$23M+" -> 23 and "$", "M+")
-  const match = value.match(/^([$]?)(\d+(?:\.\d+)?)(.*?)$/)
-
-  useEffect(() => {
-    if (isInView && match) {
-      const targetNumber = parseFloat(match[2])
-      motionValue.set(targetNumber)
-    }
-  }, [isInView, motionValue, match])
-
-  useEffect(() => {
-    if (!match) return
-
-    const [, prefix, , suffix] = match
-    const unsubscribe = springValue.on('change', (latest) => {
-      if (ref.current) {
-        const formatted = Math.floor(latest)
-        ref.current.textContent = `${prefix}${formatted}${suffix}`
-      }
-    })
-
-    return unsubscribe
-  }, [springValue, match])
-
-  if (!match) return <span>{value}</span>
-
-  return <span ref={ref}>{value}</span>
 }

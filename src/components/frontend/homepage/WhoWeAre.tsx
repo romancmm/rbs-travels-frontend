@@ -12,13 +12,13 @@ export default function WhoWeAre({ data }: { data?: any }) {
         </div>
         <div className="gap-6 grid grid-cols-1 md:grid-cols-3">
           {data?.features?.map((feature: any, index: number) => (
-            <div key={index} className="group flex items-start gap-4 bg-white hover:bg-primary shadow-lg hover:shadow-xl px-4 py-5 rounded-lg transition-all duration-300 ease-in-out">
-              <div className="flex justify-center mb-4">
-                <feature.icon strokeWidth={1} className="w-16 h-16 text-primary group-hover:text-white group-hover:rotate-45 transition-transform duration-700 ease-in-out delay-200" />
+            <div key={index} className="group flex items-start gap-4 bg-white hover:bg-primary-foreground shadow-lg hover:shadow-xl px-4 py-5 rounded-lg transition-all duration-300 ease-in-out">
+              <div className="flex justify-center mb-4 !text-primary">
+                <feature.icon  color="#0f6578" className="w-16 h-16 group-hover:text-white! group-hover:rotate-12 transition-transform duration-700 ease-in-out delay-200" />
               </div>
               <div className="space-y-2">
-                <Typography weight={'bold'} variant={'subtitle1'} className="group-hover:text-white">{feature.title}</Typography>
-                <Typography className="text-gray-600 group-hover:text-white">{feature.desc}</Typography>
+                <Typography weight={'bold'} variant={'subtitle1'}>{feature.title}</Typography>
+                <Typography className="text-gray-600">{feature.desc}</Typography>
               </div>
             </div>
           ))}

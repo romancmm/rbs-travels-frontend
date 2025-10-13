@@ -1,3 +1,18 @@
+import {
+  Calender,
+  CalenderOutlined,
+  Expertise,
+  Flexibility,
+  GlobePlane,
+  Guide,
+  GuidOutlined,
+  HandStar,
+  Safety,
+  Support24,
+  ThumbStart,
+  ThunderPercent,
+  Traveler
+} from '@/components/icons/extra-icon'
 import { Plane, Earth, DiamondPercent, Binoculars, CalendarClock, Blocks } from 'lucide-react'
 
 export const homeData = {
@@ -20,31 +35,31 @@ export const homeData = {
     image: '/images/about.jpg',
     facilities: [
       {
-        icon: '/images/facilities/01.svg',
+        icon: Safety,
         title: 'Safety First Always',
         desc: 'Your safety is our top priority. We adhere to all travel regulations and provide 24/7 support during your journey.'
       },
       {
-        icon: '/images/facilities/02.svg',
+        icon: Guide,
         title: 'Trusted Travel Guide',
         desc: 'Our experienced agents offer expert advice and personalized recommendations for your perfect trip.'
       },
       {
-        icon: '/images/facilities/03.svg',
+        icon: Expertise,
         title: 'Expertise And Experience',
         desc: 'We leverage our extensive industry knowledge to provide you with the best travel solutions.'
       },
       {
-        icon: '/images/facilities/04.svg',
+        icon: Calender,
         title: 'Time and Stress Savings',
         desc: 'We handle all the details, so you can focus on enjoying your travel experience.'
       }
     ],
     stats: [
-      { value: '1.6k+', label: 'Happy Travelers' },
-      { value: '1.2k+', label: 'Tours Success' },
-      { value: '98%', label: 'Positives Review' },
-      { value: '25', label: 'Travel Guide' }
+      { value: '1.6k+', label: 'Happy Travelers', icon: Traveler },
+      { value: '500+', label: 'Tours Success', icon: HandStar },
+      { value: '98%', label: 'Positives Review', icon: ThumbStart },
+      { value: '25', label: 'Travel Guide', icon: GuidOutlined }
     ]
   },
   whoWeAre: {
@@ -52,32 +67,32 @@ export const homeData = {
     subtitle: 'Who We Are',
     features: [
       {
-        icon: Earth,
+        icon: GlobePlane,
         title: 'Worldwide Coverage',
         desc: 'Extensive network of global partners ensuring comprehensive travel solutions everywhere.'
       },
       {
-        icon: DiamondPercent,
+        icon: ThunderPercent,
         title: 'Competitive Pricing',
         desc: 'Best rates on flights and packages through exclusive deals and partnerships.'
       },
       {
-        icon: Plane,
+        icon: CalenderOutlined,
         title: 'Fast Booking',
         desc: 'User-friendly platform for quick and easy travel bookings.'
       },
       {
-        icon: Binoculars,
+        icon: GuidOutlined,
         title: 'Guided Tours',
         desc: 'Expert-led tours providing in-depth knowledge and unique experiences.'
       },
       {
-        icon: CalendarClock,
+        icon: Support24,
         title: 'Best Support 24/7',
         desc: 'Dedicated support team available around the clock to assist with all travel needs.'
       },
       {
-        icon: Blocks,
+        icon: Flexibility,
         title: 'Ultimate Flexibility',
         desc: 'Tailored travel solutions and personalized itineraries to suit your needs.'
       }
