@@ -2,6 +2,7 @@ import AboutUs from "@/components/frontend/homepage/AboutUs";
 import Stats from "@/components/frontend/homepage/Stats";
 import WhoWeAre from "@/components/frontend/homepage/WhoWeAre";
 import { homeData } from "@/data/homeData";
+import BannerCarousel from "@/components/frontend/homepage/BannerCarousel";
 
 
 export default async function HomePage() {
@@ -13,12 +14,12 @@ export default async function HomePage() {
   return (
     <>
 
-
+      <BannerCarousel banners={homeData?.banners} />
       <AboutUs data={homeData?.about} />
       <Stats data={homeData?.about?.stats} />
       <WhoWeAre data={homeData?.whoWeAre} />
 
-      {/* <HeroSection data={homeData?.hero} />
+      {/* 
       <TestimonialOne data={homeData?.gameChanger} />
       <Agencies data={homeData?.agency} />
       <WhyChoose data={homeData?.whyChoose} />

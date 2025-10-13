@@ -13,19 +13,46 @@ import {
   ThunderPercent,
   Traveler
 } from '@/components/icons/extra-icon'
-import { Plane, Earth, DiamondPercent, Binoculars, CalendarClock, Blocks } from 'lucide-react'
 
 export const homeData = {
-  hero: {
-    title: 'Discover the World with RBS TRAVELS',
-    description:
-      'Book affordable flights, exclusive tour packages, and hassle-free visa services. Your trusted partner for seamless travel experiences worldwide.',
-    action: [
-      { title: 'Book Now', url: '/book-now' },
-      { title: 'Explore Packages', url: '/tours' }
-    ],
-    bgUrl: '/images/bg/travel-hero.jpg'
-  },
+  banners: [
+    {
+      id: 1,
+      title: 'Discover the World with RBS Travels',
+      subtitle: 'Your Journey Begins Here',
+      description:
+        'Explore breathtaking destinations, curated tours, and unforgettable experiences — all designed for the modern traveler.',
+      button: 'Book Now',
+      image: '/images/banners/01.jpg'
+    },
+    {
+      id: 2,
+      title: 'Adventure Awaits',
+      subtitle: 'Make Every Mile a Memory',
+      description:
+        'From exotic beaches to mountain escapes, RBS Travels takes you wherever your heart desires.',
+      button: 'Explore Packages',
+      image: '/images/banners/02.webp'
+    },
+    {
+      id: 3,
+      title: 'Luxury Meets Comfort',
+      subtitle: 'Travel Smarter, Travel Better',
+      description:
+        'Experience seamless travel planning, premium accommodations, and personalized service at every step.',
+      button: 'Get Started',
+      image: '/images/banners/03.jpeg'
+    },
+    {
+      id: 4,
+      title: 'Luxury Meets Comfort',
+      subtitle: 'Travel Smarter, Travel Better',
+      description:
+        'Experience seamless travel planning, premium accommodations, and personalized service at every step.',
+      button: 'Get Started',
+      image: '/images/banners/04.jpg'
+    }
+  ],
 
   about: {
     title: 'We provide the best tour facilities.',
