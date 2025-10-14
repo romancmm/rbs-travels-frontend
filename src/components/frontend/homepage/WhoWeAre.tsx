@@ -3,6 +3,7 @@ import { EmptyState } from '@/components/common/EmptyState'
 import { Section } from '@/components/common/section'
 import { WhoWeAreLoadingSkeleton } from '@/components/common/Skeleton'
 import { Typography } from '@/components/common/typography'
+import { cn } from '@/lib/utils'
 import FeatureCard from './FeatureCard'
 
 interface Feature {
@@ -45,7 +46,7 @@ const WhoWeAre = ({ data, isLoading = false, className }: WhoWeAreProps) => {
             >
               <Typography
                 variant='subtitle1'
-                className='mb-3 font-semibold text-primary uppercase tracking-wide animate-in duration-500 fade-in'
+                className='mb-1 font-semibold text-primary uppercase tracking-wide animate-in duration-500 fade-in'
                 style={{ animationDelay: '100ms', animationFillMode: 'both' }}
               >
                 {data.subtitle}
@@ -75,6 +76,7 @@ const WhoWeAre = ({ data, isLoading = false, className }: WhoWeAreProps) => {
                   title={feature.title}
                   desc={feature.desc}
                   index={index}
+                  className={cn('max-md:items-center', { 'max-md:flex-row-reverse': index % 2 !== 0 })}
                 />
               ))}
             </div>

@@ -9,7 +9,7 @@ import { StatItemProps } from '@/types/stats'
 const StatItem = ({ value, label, icon: Icon, className, index = 0 }: StatItemProps) => {
   return (
     <div
-      className={cn('group flex items-center gap-2 p-4 w-full', className)}
+      className={cn('group flex items-center gap-2 p-2 lg:p-4 w-full', className)}
       role='region'
       aria-labelledby={`stat-${index}-label`}
     >
