@@ -1,9 +1,9 @@
-import AboutUs from "@/components/frontend/homepage/AboutUs";
-import Stats from "@/components/frontend/homepage/Stats";
-import WhoWeAre from "@/components/frontend/homepage/WhoWeAre";
-import { homeData } from "@/data/homeData";
-import BannerCarousel from "@/components/frontend/homepage/BannerCarousel";
-
+import AboutUs from '@/components/frontend/homepage/AboutUs'
+import BannerCarousel from '@/components/frontend/homepage/BannerCarousel'
+import FAQ from '@/components/frontend/homepage/FAQ'
+import Stats from '@/components/frontend/homepage/Stats'
+import WhoWeAre from '@/components/frontend/homepage/WhoWeAre'
+import { homeData } from '@/data/homeData'
 
 export default async function HomePage() {
   // const homeData = await getHomepageData()
@@ -13,11 +13,11 @@ export default async function HomePage() {
 
   return (
     <>
-
       <BannerCarousel banners={homeData?.banners} />
       <AboutUs data={homeData?.about} />
       <Stats data={homeData?.about?.stats} />
       <WhoWeAre data={homeData?.whoWeAre} />
+      <FAQ data={homeData?.faq} />
 
       {/* 
       <TestimonialOne data={homeData?.gameChanger} />

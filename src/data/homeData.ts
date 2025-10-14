@@ -124,5 +124,60 @@ export const homeData = {
         desc: 'Tailored travel solutions and personalized itineraries to suit your needs.'
       }
     ]
+  },
+
+  faq: {
+    title: 'Frequently Asked Questions',
+    subtitle: 'FAQ',
+    faqs: [
+      {
+        id: 1,
+        question: 'How do I book a trip with RBS Travels?',
+        answer:
+          'Booking with RBS Travels is simple! You can browse our packages online, call our customer service team, or visit one of our offices. Our travel experts will help you customize your perfect trip based on your preferences and budget.'
+      },
+      {
+        id: 2,
+        question: 'What payment methods do you accept?',
+        answer:
+          'We accept various payment methods including credit cards (Visa, MasterCard, American Express), debit cards, bank transfers, and digital payment platforms. We also offer flexible payment plans for larger bookings.'
+      },
+      {
+        id: 3,
+        question: 'Can I modify or cancel my booking?',
+        answer:
+          'Yes, you can modify or cancel your booking subject to our terms and conditions. Modification fees may apply depending on the timing and type of changes. We recommend reviewing our cancellation policy or contacting our support team for specific details.'
+      },
+      {
+        id: 4,
+        question: 'Do you provide travel insurance?',
+        answer:
+          'Absolutely! We strongly recommend travel insurance and offer comprehensive coverage options through our trusted partners. Our insurance plans cover trip cancellation, medical emergencies, lost luggage, and more.'
+      },
+      {
+        id: 5,
+        question: 'What kind of support do you provide during travel?',
+        answer:
+          'We provide 24/7 customer support throughout your journey. Our team is available to assist with any issues, changes, or emergencies that may arise. We also provide local contact information and emergency numbers for each destination.'
+      },
+      {
+        id: 6,
+        question: 'Are your tour guides certified and experienced?',
+        answer:
+          'Yes, all our tour guides are certified professionals with extensive local knowledge and experience. They undergo regular training and are passionate about sharing the culture, history, and hidden gems of each destination.'
+      },
+      {
+        id: 7,
+        question: 'Do you offer group discounts?',
+        answer:
+          'Yes, we offer attractive group discounts for bookings of 10 or more people. The discount percentage varies based on group size, destination, and season. Contact our group travel specialists for personalized quotes.'
+      },
+      {
+        id: 8,
+        question: 'What safety measures do you have in place?',
+        answer:
+          'Your safety is our top priority. We work only with licensed operators, conduct regular safety audits, provide comprehensive briefings, and maintain emergency protocols. All our packages include safety equipment and trained guides where applicable.'
+      }
+    ]
   }
 }

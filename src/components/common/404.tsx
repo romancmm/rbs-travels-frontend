@@ -26,7 +26,7 @@ export default function PageNotFound({ variant }: PageNotFoundProps) {
       />
 
       <motion.h2
-        className='font-semibold text-muted-foreground text-2xl md:text-3xl'
+        className='font-semibold text-2xl md:text-3xl'
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.3 }}
@@ -35,7 +35,7 @@ export default function PageNotFound({ variant }: PageNotFoundProps) {
       </motion.h2>
 
       <motion.p
-        className='mx-auto max-w-md text-muted-foreground'
+        className='mx-auto max-w-md'
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.5 }}

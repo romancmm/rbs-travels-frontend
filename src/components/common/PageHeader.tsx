@@ -26,11 +26,7 @@ export default function PageHeader({
             </Typography>
           )}
           {subTitle && (
-            <Typography
-              variant={'subtitle2'}
-              weight={'normal'}
-              className={cn('text-muted-foreground')}
-            >
+            <Typography variant={'subtitle2'} weight={'normal'} className={cn(' ')}>
               {subTitle}
             </Typography>
           )}

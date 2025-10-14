@@ -68,4 +68,40 @@ const WhoWeAreLoadingSkeleton = ({ count = 6 }: { count?: number }) => {
   )
 }
 
-export { Skeleton, StatsLoadingSkeleton, WhoWeAreLoadingSkeleton }
+/**
+ * FAQ loading skeleton
+ */
+const FAQLoadingSkeleton = ({ count = 8 }: { count?: number }) => {
+  return (
+    <div className='space-y-12'>
+      {/* Header skeleton */}
+      <div className='space-y-4 text-center'>
+        <Skeleton className='mx-auto w-16 h-5' />
+        <Skeleton className='mx-auto w-96 h-8 sm:h-10' />
+      </div>
+
+      {/* FAQ items skeleton */}
+      <div className='space-y-4 mx-auto max-w-4xl'>
+        {Array.from({ length: count }).map((_, index) => (
+          <div key={index} className='p-6 border border-border/20 rounded-2xl'>
+            <div className='flex justify-between items-center gap-4'>
+              <Skeleton className='w-3/4 h-6' />
+              <Skeleton className='rounded-full w-8 h-8' />
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* CTA skeleton */}
+      <div className='mx-auto max-w-4xl'>
+        <div className='space-y-4 bg-muted/30 p-8 rounded-2xl text-center'>
+          <Skeleton className='mx-auto w-48 h-6' />
+          <Skeleton className='mx-auto w-96 h-4' />
+          <Skeleton className='mx-auto rounded-full w-40 h-10' />
+        </div>
+      </div>
+    </div>
+  )
+}
+
+export { FAQLoadingSkeleton, Skeleton, StatsLoadingSkeleton, WhoWeAreLoadingSkeleton }

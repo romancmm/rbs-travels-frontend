@@ -9,7 +9,7 @@ const emptyStateVariants = cva(
   {
     variants: {
       variant: {
-        default: 'bg-transparent text-muted-foreground',
+        default: 'bg-transparent  ',
         error: 'bg-red-50 border border-red-200 text-red-600',
         minimal: 'bg-transparent text-gray-500 p-0'
       }
@@ -53,9 +53,7 @@ export function EmptyState({
       )}
       <div>
         <h3 className='font-semibold text-lg'>{title}</h3>
-        {description && (
-          <p className='mt-1 font-light text-muted-foreground text-sm'>{description}</p>
-        )}
+        {description && <p className='mt-1 font-light text-sm'>{description}</p>}
       </div>
       {action && <div>{action}</div>}
     </section>

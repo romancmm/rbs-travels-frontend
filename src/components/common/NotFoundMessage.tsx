@@ -85,9 +85,7 @@ export function NotFoundMessage({
           <Typography variant='h5'>{resolvedTitle}</Typography>
 
           {resolvedDesc && (
-            <Typography className='text-muted-foreground text-sm text-center leading-relaxed'>
-              {resolvedDesc}
-            </Typography>
+            <Typography className='text-sm text-center leading-relaxed'>{resolvedDesc}</Typography>
           )}
 
           <div className='flex flex-wrap items-center gap-2 mt-4'>

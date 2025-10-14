@@ -90,7 +90,7 @@ export default function UserSidebar() {
             <User className='w-6 h-6' />
           </div>
           <h3 className='font-semibold text-sm'>Welcome back!</h3>
-          <p className='text-muted-foreground text-xs'>User Dashboard</p>
+          <p className='text-xs'>User Dashboard</p>
         </div>
       </Card> */}
 
@@ -121,7 +121,7 @@ export default function UserSidebar() {
                 <div
                   className={`
                     transition-all duration-200 
-                    ${active ? 'text-foreground' : 'text-muted-foreground group-hover:text-muted'}
+                    ${active ? 'text-foreground' : '  group-hover:text-muted'}
                     ${isHovered ? 'transform rotate-12' : ''}
                   `}
                 >
@@ -132,7 +132,7 @@ export default function UserSidebar() {
                     {item.label}
                   </div>
                   {/* {isHovered && (
-                    <div className='slide-in-from-left-2 mt-0.5 h-0 group-hover:h-auto text-muted-foreground text-xs animate-in duration-200'>
+                    <div className='slide-in-from-left-2 mt-0.5 h-0 group-hover:h-auto text-xs animate-in duration-200'>
                       {item.description}
                     </div>
                   )} */}

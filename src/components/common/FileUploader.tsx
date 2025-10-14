@@ -149,16 +149,14 @@ const UploadButton = ({ size, isUploading, onFileSelect, multiple = false }: Upl
             disabled={isUploading}
           />
           <div
-            className={`flex flex-col items-center text-muted-foreground group-hover:text-primary transition-colors ${sizeClasses.spacing}`}
+            className={`flex flex-col items-center   group-hover:text-primary transition-colors ${sizeClasses.spacing}`}
           >
             {isUploading ? (
               <>
                 <Loader2 className={`${sizeClasses.icon} animate-spin`} />
                 <span className={sizeClasses.text}>Uploading...</span>
                 {size === 'extra-large' && (
-                  <span className='text-muted-foreground/60 text-sm'>
-                    Please wait while we process your files
-                  </span>
+                  <span className='text-sm /60'>Please wait while we process your files</span>
                 )}
               </>
             ) : (
@@ -170,14 +168,11 @@ const UploadButton = ({ size, isUploading, onFileSelect, multiple = false }: Upl
                     className={cn(sizeClasses.icon, { 'text-primary/80': size === 'extra-large' })}
                   />
                 </div>
-                <span
-                  className={`${sizeClasses.text} ${size === 'extra-large' ? 'text-muted-foreground/50' : ''
-                    }`}
-                >
+                <span className={`${sizeClasses.text} ${size === 'extra-large' ? ' /50' : ''}`}>
                   {size === 'extra-large' ? 'Click to upload or drag and drop' : 'Upload'}
                 </span>
                 {size === 'extra-large' && (
-                  <span className='text-muted-foreground text-xs'>
+                  <span className='text-xs'>
                     Images, PDF, Word, Excel, PowerPoint, CSV, TXT (max. 10MB)
                   </span>
                 )}
@@ -237,7 +232,8 @@ export default function FileUploader({
           // Reduce to available slots and show warning
           newFileList = newFileList.slice(0, availableSlots)
           toast.warning(
-            `Only ${availableSlots} more file${availableSlots === 1 ? '' : 's'
+            `Only ${availableSlots} more file${
+              availableSlots === 1 ? '' : 's'
             } allowed. Maximum limit is ${maxAllow}.`
           )
         }
@@ -282,10 +278,10 @@ export default function FileUploader({
               >
                 {/* Check if file is an image */}
                 {(file.url || file.preview) &&
-                  (file.originFileObj?.type?.startsWith('image/') ||
-                    file.url?.match(/\.(jpg|jpeg|png|gif|svg|webp)$/i) ||
-                    file.preview?.startsWith('data:image/') ||
-                    file.preview?.startsWith('blob:')) ? (
+                (file.originFileObj?.type?.startsWith('image/') ||
+                  file.url?.match(/\.(jpg|jpeg|png|gif|svg|webp)$/i) ||
+                  file.preview?.startsWith('data:image/') ||
+                  file.preview?.startsWith('blob:')) ? (
                   <CustomImage
                     src={file.url || file.preview}
                     alt={file.name}
@@ -309,16 +305,16 @@ export default function FileUploader({
                     file.url?.match(/\.(jpg|jpeg|png|gif|svg|webp)$/i) ||
                     file.preview?.startsWith('data:image/') ||
                     file.preview?.startsWith('blob:')) && (
-                      <Button
-                        type='button'
-                        size={size === 'extra-large' ? 'default' : 'sm'}
-                        variant='ghost'
-                        className='hover:bg-white/20 text-white hover:text-white'
-                        onClick={() => onPreview(file)}
-                      >
-                        <Eye className={size === 'extra-large' ? 'w-5 h-5' : sizeClasses.icon} />
-                      </Button>
-                    )}
+                    <Button
+                      type='button'
+                      size={size === 'extra-large' ? 'default' : 'sm'}
+                      variant='ghost'
+                      className='hover:bg-white/20 text-white hover:text-white'
+                      onClick={() => onPreview(file)}
+                    >
+                      <Eye className={size === 'extra-large' ? 'w-5 h-5' : sizeClasses.icon} />
+                    </Button>
+                  )}
 
                   {/* Remove Item */}
                   <Button

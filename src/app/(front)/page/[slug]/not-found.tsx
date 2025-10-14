@@ -21,7 +21,7 @@ export default function PageNotFound() {
             <Typography variant='h2' as='h2' weight='semibold' className='text-2xl md:text-3xl'>
               Page Not Found
             </Typography>
-            <Typography variant='body1' className='mx-auto max-w-lg text-muted-foreground'>
+            <Typography variant='body1' className='mx-auto max-w-lg'>
               The page you&apos;re looking for doesn&apos;t exist or has been moved.
             </Typography>
           </div>

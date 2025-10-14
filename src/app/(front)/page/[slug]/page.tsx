@@ -2,8 +2,6 @@
 import { Container } from '@/components/common/container'
 import { Section } from '@/components/common/section'
 import { Typography } from '@/components/common/typography'
-import { Skeleton } from '@/components/ui/skeleton'
-import useAsync from '@/hooks/useAsync'
 import { notFound, useParams } from 'next/navigation'
 
 export default function DynamicPage() {
@@ -73,14 +71,17 @@ export default function DynamicPage() {
 
   return (
     <>
-      <Section variant={'xs'} className="bg-cover bg-center __bg-[linear-gradient(to_right,rgba(0,0,0,0.6),rgba(0,0,0,0.2)),url('/images/bg/breadcrumb.jpg')]">
+      <Section
+        variant={'xs'}
+        className="bg-cover bg-center __bg-[linear-gradient(to_right,rgba(0,0,0,0.6),rgba(0,0,0,0.2)),url('/images/bg/breadcrumb.jpg')]"
+      >
         <Container>
           <div className='py-12'>
             <Typography variant='h4' as='h1' weight='semibold'>
               About
             </Typography>
             {/* 
-              {section.subtitle && (<Typography variant='h4' as='h2' className='text-muted-foreground text-xl md:text-2xl'>{section.subtitle}</Typography>)} 
+              {section.subtitle && (<Typography variant='h4' as='h2' className='text-xl md:text-2xl'>{section.subtitle}</Typography>)} 
               {section.description && (<Typography variant='body1' className='max-w-2xl text-lg'>{section.description}</Typography>)} 
             */}
           </div>
@@ -89,7 +90,11 @@ export default function DynamicPage() {
 
       <Section variant={'sm'}>
         <Container>
-          <div className='space-y-6'>Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam odit consequatur sunt odio non temporibus ex laboriosam tempora ducimus qui, ab nostrum recusandae, beatae voluptates libero voluptatum aspernatur suscipit cumque.</div>
+          <div className='space-y-6'>
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam odit consequatur sunt
+            odio non temporibus ex laboriosam tempora ducimus qui, ab nostrum recusandae, beatae
+            voluptates libero voluptatum aspernatur suscipit cumque.
+          </div>
         </Container>
       </Section>
     </>
