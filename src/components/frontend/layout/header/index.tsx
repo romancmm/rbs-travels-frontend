@@ -7,7 +7,7 @@ export default function Header() {
     <header
       className={cn(
         'top-0 z-50 sticky shadow-md',
-        sectionVariants({ variant: 'none', bg: 'light' })
+        sectionVariants({ variant: 'none', bg: 'foreground' })
       )}
     >
       <MainHeader />
