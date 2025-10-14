@@ -104,4 +104,72 @@ const FAQLoadingSkeleton = ({ count = 8 }: { count?: number }) => {
   )
 }
 
-export { FAQLoadingSkeleton, Skeleton, StatsLoadingSkeleton, WhoWeAreLoadingSkeleton }
+/**
+ * Blog loading skeleton
+ */
+const BlogLoadingSkeleton = ({ count = 6 }: { count?: number }) => {
+  return (
+    <div className='space-y-16'>
+      {/* Header skeleton */}
+      <div className='space-y-4 text-center'>
+        <Skeleton className='mx-auto w-20 h-5' />
+        <Skeleton className='mx-auto w-96 h-8 sm:h-10' />
+        <Skeleton className='mx-auto rounded-full w-20 h-1' />
+      </div>
+
+      {/* Blog grid skeleton */}
+      <div className='gap-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3'>
+        {Array.from({ length: count }).map((_, index) => (
+          <div key={index} className='border border-border/20 rounded-3xl overflow-hidden'>
+            {/* Image skeleton */}
+            <Skeleton className='w-full aspect-[16/10]' />
+
+            {/* Content skeleton */}
+            <div className='space-y-4 p-6'>
+              {/* Meta info skeleton */}
+              <div className='flex items-center gap-4'>
+                <Skeleton className='w-20 h-4' />
+                <Skeleton className='w-16 h-4' />
+              </div>
+
+              {/* Title skeleton */}
+              <div className='space-y-2'>
+                <Skeleton className='w-full h-6' />
+                <Skeleton className='w-3/4 h-6' />
+              </div>
+
+              {/* Excerpt skeleton */}
+              <div className='space-y-2'>
+                <Skeleton className='w-full h-4' />
+                <Skeleton className='w-5/6 h-4' />
+                <Skeleton className='w-4/5 h-4' />
+              </div>
+
+              {/* Author and button skeleton */}
+              <div className='flex justify-between items-center pt-2'>
+                <div className='flex items-center gap-2'>
+                  <Skeleton className='rounded-full w-8 h-8' />
+                  <Skeleton className='w-20 h-4' />
+                </div>
+                <Skeleton className='rounded-full w-12 h-12' />
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* View all button skeleton */}
+      <div className='text-center'>
+        <Skeleton className='mx-auto rounded-full w-48 h-12' />
+      </div>
+    </div>
+  )
+}
+
+export {
+  BlogLoadingSkeleton,
+  FAQLoadingSkeleton,
+  Skeleton,
+  StatsLoadingSkeleton,
+  WhoWeAreLoadingSkeleton
+}

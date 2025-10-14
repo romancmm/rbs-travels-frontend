@@ -179,5 +179,78 @@ export const homeData = {
           'Your safety is our top priority. We work only with licensed operators, conduct regular safety audits, provide comprehensive briefings, and maintain emergency protocols. All our packages include safety equipment and trained guides where applicable.'
       }
     ]
+  },
+
+  blog: {
+    title: 'Latest Travel Stories & Tips',
+    subtitle: 'Our Blog',
+    posts: [
+      {
+        id: 1,
+        title: 'Hidden Gems of Southeast Asia: Off the Beaten Path Adventures',
+        excerpt:
+          'Discover untouched destinations and authentic experiences in Southeast Asia that most travelers never get to see. From secret waterfalls to remote villages.',
+        image: '/images/banners/01.jpg',
+        date: 'Oct 12, 2025',
+        category: 'Adventure',
+        author: 'Sarah Johnson',
+        readTime: '5 min read'
+      },
+      {
+        id: 2,
+        title: 'Budget Travel Hacks: How to See the World for Less',
+        excerpt:
+          'Learn insider tips and tricks to stretch your travel budget further without compromising on experiences. Smart strategies for savvy travelers.',
+        image: '/images/banners/02.webp',
+        date: 'Oct 10, 2025',
+        category: 'Budget Tips',
+        author: 'Mike Chen',
+        readTime: '7 min read'
+      },
+      {
+        id: 3,
+        title: 'Luxury Travel Trends 2025: What to Expect',
+        excerpt:
+          'Explore the latest trends in luxury travel, from eco-conscious resorts to personalized experiences that define modern high-end tourism.',
+        image: '/images/banners/03.jpeg',
+        date: 'Oct 8, 2025',
+        category: 'Luxury',
+        author: 'Emma Wilson',
+        readTime: '6 min read'
+      },
+      {
+        id: 4,
+        title: 'Solo Female Travel: Safety Tips and Inspiring Destinations',
+        excerpt:
+          'Empowering solo female travelers with practical safety advice and recommendations for the most inspiring and safe destinations worldwide.',
+        image: '/images/banners/04.jpg',
+        date: 'Oct 5, 2025',
+        category: 'Solo Travel',
+        author: 'Lisa Martinez',
+        readTime: '8 min read'
+      },
+      {
+        id: 5,
+        title: 'Cultural Immersion: How to Travel Like a Local',
+        excerpt:
+          'Go beyond tourist attractions and discover authentic cultural experiences. Learn how to connect with locals and truly understand destinations.',
+        image: '/images/about.jpg',
+        date: 'Oct 3, 2025',
+        category: 'Culture',
+        author: 'David Kim',
+        readTime: '6 min read'
+      },
+      {
+        id: 6,
+        title: 'Sustainable Travel: Making a Positive Impact',
+        excerpt:
+          'Discover how to travel responsibly and make a positive impact on the destinations you visit. Tips for eco-friendly and ethical tourism.',
+        image: '/images/banners/01.jpg',
+        date: 'Oct 1, 2025',
+        category: 'Sustainability',
+        author: 'Green Traveler',
+        readTime: '5 min read'
+      }
+    ]
   }
 }

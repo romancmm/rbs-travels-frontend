@@ -1,5 +1,6 @@
 import AboutUs from '@/components/frontend/homepage/AboutUs'
 import BannerCarousel from '@/components/frontend/homepage/BannerCarousel'
+import Blog from '@/components/frontend/homepage/Blog'
 import FAQ from '@/components/frontend/homepage/FAQ'
 import Stats from '@/components/frontend/homepage/Stats'
 import WhoWeAre from '@/components/frontend/homepage/WhoWeAre'
@@ -17,6 +18,7 @@ export default async function HomePage() {
       <AboutUs data={homeData?.about} />
       <Stats data={homeData?.about?.stats} />
       <WhoWeAre data={homeData?.whoWeAre} />
+      <Blog data={homeData?.blog} />
       <FAQ data={homeData?.faq} />
 
       {/* 
