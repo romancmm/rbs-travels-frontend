@@ -1,5 +1,5 @@
-import { Typography } from '@/components/common/typography'
-import { cn } from '@/lib/utils'
+import { Typography } from '@/components/common/typography';
+import { cn } from '@/lib/utils';
 
 interface FeatureCardProps {
   icon: React.ComponentType<{ className?: string; color?: string }>
@@ -14,11 +14,11 @@ const FeatureCard = ({ icon: Icon, title, desc, index, className }: FeatureCardP
     <div
       key={index}
       className={cn(
-        'group flex items-start gap-4 bg-white hover:bg-primary-foreground shadow-lg hover:shadow-xl px-4 py-5 rounded-lg transition-all duration-300 ease-in-out',
+        'group flex items-start gap-4 bg-white hover:bg-muted-foreground shadow-lg hover:shadow-xl px-4 py-5 rounded-lg transition-all duration-300 ease-in-out',
         className
       )}
     >
-      <div className='flex justify-center mb-4 !text-primary'>
+      <div className='flex justify-center mt-2 !text-primary'>
         <Icon
           color='#0f6578'
           className='w-16 h-16 group-hover:text-white! group-hover:rotate-12 transition-transform duration-700 ease-in-out delay-200'

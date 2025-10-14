@@ -206,7 +206,7 @@ const BannerCarousel = ({ banners }: BannerCarouselProps) => {
                           className={cn(
                             'group relative bg-white/10 backdrop-blur-md border-2 border-white/40 text-white',
                             'hover:bg-white/20 hover:border-white/60 hover:text-white transition-all duration-500',
-                            'px-10 py-5 font-semibold text-lg sm:text-xl',
+                            'px-8 py-3 font-semibold text-lg sm:text-xl',
                             'hover:scale-105 hover:-translate-y-1 active:scale-95',
                             'rounded-full min-w-[180px] h-14 sm:h-16',
                             'shadow-lg hover:shadow-xl hover:shadow-white/10'
@@ -214,11 +214,6 @@ const BannerCarousel = ({ banners }: BannerCarouselProps) => {
                         >
                           <span className='z-10 relative flex justify-center items-center gap-3'>
                             Learn More
-                            <motion.div
-                              className='bg-white rounded-full w-2 h-2'
-                              animate={{ scale: [1, 1.2, 1] }}
-                              transition={{ duration: 2, repeat: Infinity }}
-                            />
                           </span>
                           {/* Glassmorphism background */}
                           <div className='absolute inset-0 bg-gradient-to-r from-white/5 to-white/10 opacity-0 group-hover:opacity-100 rounded-full transition-opacity duration-300' />
@@ -226,13 +221,12 @@ const BannerCarousel = ({ banners }: BannerCarouselProps) => {
                       </motion.div>
 
                       {/* Additional Action Elements */}
-                      <motion.div
+                      {/* <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 1.0, duration: 0.6 }}
                         className='flex sm:flex-row flex-col justify-center items-center gap-6 mt-8 text-white/80'
                       >
-                        {/* Scroll Indicator */}
                         <div className='flex items-center gap-2 text-sm'>
                           <motion.div
                             className='flex justify-center border-2 border-white/40 rounded-full w-6 h-10'
@@ -249,7 +243,6 @@ const BannerCarousel = ({ banners }: BannerCarouselProps) => {
                           <span className='hidden sm:inline'>Scroll to explore</span>
                         </div>
 
-                        {/* Social Proof Element */}
                         <div className='flex items-center gap-2 text-sm'>
                           <div className='flex -space-x-2'>
                             <div className='bg-gradient-to-r from-primary to-primary/70 border-2 border-white rounded-full w-8 h-8' />
@@ -258,7 +251,7 @@ const BannerCarousel = ({ banners }: BannerCarouselProps) => {
                           </div>
                           <span className='hidden sm:inline'>Join 10,000+ happy travelers</span>
                         </div>
-                      </motion.div>
+                      </motion.div> */}
                     </motion.div>
                   )}
                 </AnimatePresence>

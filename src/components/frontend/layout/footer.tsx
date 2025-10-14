@@ -50,7 +50,7 @@ export default function Footer() {
                   <div className='flex items-center space-x-3'>
                     <div className='flex justify-center items-center bg-primary rounded-xl w-10 h-10'>
                       <CustomImage
-                        src='/logo.jpeg'
+                        src='/logo.svg'
                         width={24}
                         height={24}
                         alt='RBS Travels'

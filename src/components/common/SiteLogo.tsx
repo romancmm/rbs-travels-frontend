@@ -11,11 +11,11 @@ export default function SiteLogo({ className }: { className?: string }) {
         className
       )}
     >
-      <div className='relative rounded-lg overflow-hidden'>
+      <div className='relative overflow-hidden'>
         <Image
-          src={'/logo.jpeg'}
-          width={120}
-          height={45}
+          src={'/logo.png'}
+          width={250}
+          height={75}
           alt={'RBS Travels Logo'}
           className='object-contain group-hover:scale-110 transition-transform duration-300'
           priority
