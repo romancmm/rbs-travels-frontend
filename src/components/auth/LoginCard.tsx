@@ -138,8 +138,7 @@ export default function LoginCard({ className = '', onSuccess, compact = false }
           <button
             type='button'
             onClick={() => setShowPassword(!showPassword)}
-            className={`absolute right-3 ${compact ? 'top-1/2' : 'top-1/2'
-              } text-muted-foreground transition-colors`}
+            className={`absolute right-3 ${compact ? 'top-1/2' : 'top-1/2'}   transition-colors`}
             disabled={isLoading}
           >
             {showPassword ? <EyeOffIcon className='w-5 h-5' /> : <EyeIcon className='w-5 h-5' />}
@@ -170,8 +169,9 @@ export default function LoginCard({ className = '', onSuccess, compact = false }
         {/* Login Button */}
         <Button
           type='submit'
-          className={`w-full text-background  ${compact ? 'h-10' : 'h-12'} font-semibold ${compact ? 'text-sm' : 'text-base'
-            }`}
+          className={`w-full text-background  ${compact ? 'h-10' : 'h-12'} font-semibold ${
+            compact ? 'text-sm' : 'text-base'
+          }`}
           size={compact ? 'default' : 'lg'}
           disabled={isLoading}
         >
@@ -183,9 +183,7 @@ export default function LoginCard({ className = '', onSuccess, compact = false }
       <div className='relative'>
         <Separator className='bg-muted-foreground/20' />
         <div className='absolute inset-0 flex justify-center'>
-          <span className='bg-foreground -mt-2 px-4 text-muted-foreground text-sm'>
-            or continue with
-          </span>
+          <span className='bg-foreground -mt-2 px-4 text-sm'>or continue with</span>
         </div>
       </div>
 
@@ -195,8 +193,9 @@ export default function LoginCard({ className = '', onSuccess, compact = false }
           type='button'
           variant='outline'
           onClick={() => handleSocialLogin('google')}
-          className={`hover:bg-muted/10 border-muted-foreground w-full ${compact ? 'h-10' : 'h-12'
-            }`}
+          className={`hover:bg-muted/10 border-muted-foreground w-full ${
+            compact ? 'h-10' : 'h-12'
+          }`}
           disabled={isLoading}
         >
           <svg className='mr-3 w-5 h-5' viewBox='0 0 24 24'>
@@ -224,8 +223,9 @@ export default function LoginCard({ className = '', onSuccess, compact = false }
           type='button'
           variant='outline'
           onClick={() => handleSocialLogin('facebook')}
-          className={`hover:bg-muted/10 border-muted-foreground w-full ${compact ? 'h-10' : 'h-12'
-            }`}
+          className={`hover:bg-muted/10 border-muted-foreground w-full ${
+            compact ? 'h-10' : 'h-12'
+          }`}
           disabled={isLoading}
         >
           <svg className='mr-3 w-5 h-5' fill='currentColor' viewBox='0 0 24 24'>
@@ -237,7 +237,7 @@ export default function LoginCard({ className = '', onSuccess, compact = false }
 
       {/* Sign Up Link */}
       <div className='text-center'>
-        <Typography variant='body2' className='text-muted-foreground'>
+        <Typography variant='body2' className=' '>
           Don&apos;t have an account?{' '}
           <CustomLink
             href='/sign-up?direct=true'

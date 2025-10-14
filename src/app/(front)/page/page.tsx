@@ -4,7 +4,6 @@ import { Typography } from '@/components/common/typography'
 import { Button } from '@/components/ui/button'
 
 export default function PagesIndex() {
-
   return (
     <Section variant='xl' className='min-h-screen'>
       <Container>
@@ -14,13 +13,11 @@ export default function PagesIndex() {
             <Typography variant='h1' as='h1' weight='bold' className='text-4xl md:text-5xl'>
               Help & Information
             </Typography>
-            <Typography variant='h3' as='h2' className='text-muted-foreground text-xl md:text-2xl'>
+            <Typography variant='h3' as='h2' className='text-xl md:text-2xl'>
               Browse all available pages to find the information you need.
             </Typography>
 
-            <div className='gap-4 lg:gap-6 grid grid-cols-2 lg:grid-cols-4'>
-              
-            </div>
+            <div className='gap-4 lg:gap-6 grid grid-cols-2 lg:grid-cols-4'></div>
           </div>
 
           {/* Help Section */}
@@ -28,7 +25,7 @@ export default function PagesIndex() {
             <Typography variant='h2' as='h3' weight='semibold' className='text-2xl'>
               Need More Help?
             </Typography>
-            <Typography variant='body1' className='mx-auto max-w-2xl text-muted-foreground'>
+            <Typography variant='body1' className='mx-auto max-w-2xl'>
               Can&apos;t find what you&apos;re looking for? Our support team is here to help you
               with any questions or concerns.
             </Typography>

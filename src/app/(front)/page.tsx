@@ -1,9 +1,12 @@
-import AboutUs from "@/components/frontend/homepage/AboutUs";
-import Stats from "@/components/frontend/homepage/Stats";
-import WhoWeAre from "@/components/frontend/homepage/WhoWeAre";
-import { homeData } from "@/data/homeData";
-import BannerCarousel from "@/components/frontend/homepage/BannerCarousel";
-
+import AboutUs from '@/components/frontend/homepage/AboutUs'
+import BannerCarousel from '@/components/frontend/homepage/BannerCarousel'
+import Blog from '@/components/frontend/homepage/Blog'
+import FAQ from '@/components/frontend/homepage/FAQ'
+import Stats from '@/components/frontend/homepage/Stats'
+import Testimonials from '@/components/frontend/homepage/Testimonials'
+import TopDestinations from '@/components/frontend/homepage/TopDestinations'
+import WhoWeAre from '@/components/frontend/homepage/WhoWeAre'
+import { homeData } from '@/data/homeData'
 
 export default async function HomePage() {
   // const homeData = await getHomepageData()
@@ -13,21 +16,14 @@ export default async function HomePage() {
 
   return (
     <>
-
       <BannerCarousel banners={homeData?.banners} />
       <AboutUs data={homeData?.about} />
       <Stats data={homeData?.about?.stats} />
       <WhoWeAre data={homeData?.whoWeAre} />
-
-      {/* 
-      <TestimonialOne data={homeData?.gameChanger} />
-      <Agencies data={homeData?.agency} />
-      <WhyChoose data={homeData?.whyChoose} />
-      <Offers data={homeData?.offers} />
-      <Categories data={homeData?.categories} categories={featuredCategories} />
-      <AvailablePlatforms data={homeData?.platform} />
-      <Testimonials data={homepageTestimonials} />
-      <Newsletter data={homeData?.subscribe} /> */}
+      <TopDestinations data={homeData?.destinations} />
+      <Blog data={homeData?.blog} />
+      <Testimonials data={homeData?.testimonials} />
+      <FAQ data={homeData?.faq} />
     </>
   )
 }

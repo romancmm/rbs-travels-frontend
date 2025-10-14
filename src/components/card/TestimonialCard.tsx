@@ -166,7 +166,7 @@ const AuthorRole = ({
 }) => (
   <Typography
     variant='body2'
-    className={variant === 'fancy' ? 'text-muted-foreground' : 'lg:font-semibold max-lg:text-xs!'}
+    className={variant === 'fancy' ? ' ' : 'lg:font-semibold max-lg:text-xs!'}
   >
     {variant === 'fancy' && designation
       ? `${designation} at ${company || 'Company'}`

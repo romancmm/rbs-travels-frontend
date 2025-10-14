@@ -105,9 +105,9 @@ export function Combobox({
 
           <div className='p-1 max-h-60 overflow-y-auto'>
             {loading ? (
-              <div className='px-2 py-3 text-muted-foreground text-sm text-center'>Loading...</div>
+              <div className='px-2 py-3 text-sm text-center'>Loading...</div>
             ) : options.length === 0 ? (
-              <div className='px-2 py-3 text-muted-foreground text-sm text-center'>{emptyText}</div>
+              <div className='px-2 py-3 text-sm text-center'>{emptyText}</div>
             ) : (
               options.map((option) => (
                 <div

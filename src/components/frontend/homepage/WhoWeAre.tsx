@@ -1,29 +1,88 @@
-import { Container } from "@/components/common/container";
-import { Section } from "@/components/common/section";
-import { Typography } from "@/components/common/typography";
+import { Container } from '@/components/common/container'
+import { EmptyState } from '@/components/common/EmptyState'
+import { Section } from '@/components/common/section'
+import { WhoWeAreLoadingSkeleton } from '@/components/common/Skeleton'
+import { Typography } from '@/components/common/typography'
+import FeatureCard from './FeatureCard'
 
-export default function WhoWeAre({ data }: { data?: any }) {
+interface Feature {
+  icon: React.ComponentType<{ className?: string; color?: string }>
+  title: string
+  desc: string
+}
+
+interface WhoWeAreData {
+  title: string
+  subtitle: string
+  features: Feature[]
+}
+
+interface WhoWeAreProps {
+  data?: WhoWeAreData
+  isLoading?: boolean
+  className?: string
+}
+
+const WhoWeAre = ({ data, isLoading = false, className }: WhoWeAreProps) => {
   return (
-    <Section variant='xxl'>
+    <Section variant='xxl' className={className}>
       <Container>
-        <div className="mb-10 text-center">
-          <Typography variant="body1">{data?.subtitle}</Typography>
-          <Typography variant="h3" weight={'bold'} transform={'capitalize'}>{data?.title}</Typography>
-        </div>
-        <div className="gap-6 grid grid-cols-1 md:grid-cols-3">
-          {data?.features?.map((feature: any, index: number) => (
-            <div key={index} className="group flex items-start gap-4 bg-white hover:bg-primary-foreground shadow-lg hover:shadow-xl px-4 py-5 rounded-lg transition-all duration-300 ease-in-out">
-              <div className="flex justify-center mb-4 !text-primary">
-                <feature.icon  color="#0f6578" className="w-16 h-16 group-hover:text-white! group-hover:rotate-12 transition-transform duration-700 ease-in-out delay-200" />
-              </div>
-              <div className="space-y-2">
-                <Typography weight={'bold'} variant={'subtitle1'}>{feature.title}</Typography>
-                <Typography className="text-gray-600">{feature.desc}</Typography>
-              </div>
+        {isLoading ? (
+          <WhoWeAreLoadingSkeleton count={data?.features?.length || 6} />
+        ) : !data ? (
+          <EmptyState
+            title='Features information unavailable'
+            description='Company features will appear here once loaded.'
+            className='py-12'
+          />
+        ) : (
+          <>
+            {/* Enhanced Header Section */}
+            <div
+              className='slide-in-from-top-4 mb-12 text-center animate-in duration-700 fade-in'
+              role='banner'
+              aria-labelledby='whoweare-title'
+            >
+              <Typography
+                variant='subtitle1'
+                className='mb-3 font-semibold text-primary uppercase tracking-wide animate-in duration-500 fade-in'
+                style={{ animationDelay: '100ms', animationFillMode: 'both' }}
+              >
+                {data.subtitle}
+              </Typography>
+              <Typography
+                id='whoweare-title'
+                variant='h2'
+                as='h2'
+                weight='bold'
+                className='slide-in-from-top-6 text-foreground leading-tight animate-in duration-600 fade-in'
+                style={{ animationDelay: '200ms', animationFillMode: 'both' }}
+              >
+                {data.title}
+              </Typography>
             </div>
-          ))}
-        </div>
+
+            {/* Enhanced Features Grid */}
+            <div
+              className='gap-6 lg:gap-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3'
+              role='region'
+              aria-label='Company features and capabilities'
+            >
+              {data.features?.map((feature, index) => (
+                <FeatureCard
+                  key={`feature-${index}-${feature.title}`}
+                  icon={feature.icon}
+                  title={feature.title}
+                  desc={feature.desc}
+                  index={index}
+                />
+              ))}
+            </div>
+          </>
+        )}
       </Container>
     </Section>
   )
 }
+
+export default WhoWeAre

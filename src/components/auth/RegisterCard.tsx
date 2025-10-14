@@ -211,9 +211,7 @@ export default function RegisterCard({
           <button
             type='button'
             onClick={() => setShowPassword(!showPassword)}
-            className={`absolute right-3 ${
-              compact ? 'top-1/2' : 'top-1/2'
-            } text-muted-foreground transition-colors`}
+            className={`absolute right-3 ${compact ? 'top-1/2' : 'top-1/2'}   transition-colors`}
             disabled={isLoading}
           >
             {showPassword ? <EyeOffIcon className='w-5 h-5' /> : <EyeIcon className='w-5 h-5' />}
@@ -242,9 +240,7 @@ export default function RegisterCard({
           <button
             type='button'
             onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-            className={`absolute right-3 ${
-              compact ? 'top-1/2' : 'top-1/2'
-            } text-muted-foreground transition-colors`}
+            className={`absolute right-3 ${compact ? 'top-1/2' : 'top-1/2'}   transition-colors`}
             disabled={isLoading}
           >
             {showConfirmPassword ? (
@@ -272,9 +268,7 @@ export default function RegisterCard({
       <div className='relative'>
         <Separator className='bg-muted-foreground/20' />
         <div className='absolute inset-0 flex justify-center'>
-          <span className='bg-foreground -mt-2 px-4 text-muted-foreground text-sm'>
-            or sign up with
-          </span>
+          <span className='bg-foreground -mt-2 px-4 text-sm'>or sign up with</span>
         </div>
       </div>
 
@@ -328,7 +322,7 @@ export default function RegisterCard({
 
       {/* Sign In Link */}
       <div className='text-center'>
-        <Typography variant='body2' className='text-muted-foreground'>
+        <Typography variant='body2' className=' '>
           Already have an account?{' '}
           <CustomLink
             href='/login?direct=true'

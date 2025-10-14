@@ -300,7 +300,7 @@ export function CustomSelect2({
           <div className='flex justify-between items-center w-full'>
             <SelectValue placeholder={placeholder}>
               {!hasValue ? (
-                <span className='text-muted-foreground'>{placeholder}</span>
+                <span className=' '>{placeholder}</span>
               ) : (
                 <span>{getDisplayValue()}</span>
               )}
@@ -349,7 +349,7 @@ export function CustomSelect2({
                 <Skeleton className='w-1/2 h-8' />
               </div>
             ) : filteredOptions?.length === 0 ? (
-              <div className='p-4 text-muted-foreground text-sm text-center'>No options found</div>
+              <div className='p-4 text-sm text-center'>No options found</div>
             ) : (
               filteredOptions?.map((option, index) => {
                 const isSelected =

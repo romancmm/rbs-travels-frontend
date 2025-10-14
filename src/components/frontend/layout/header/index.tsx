@@ -1,16 +1,22 @@
-import { sectionVariants } from '@/components/common/section'
 import { cn } from '@/lib/utils'
 import MainHeader from './MainHeader'
+import TopBar from './TopBar'
 
 export default function Header() {
   return (
-    <header
-      className={cn(
-        'top-0 z-50 sticky shadow-md',
-        sectionVariants({ variant: 'none', bg: 'light' })
-      )}
-    >
-      <MainHeader />
-    </header>
+    <div className='top-0 z-50 sticky'>
+      {/* Top announcement bar */}
+      <TopBar />
+
+      {/* Main header */}
+      <header
+        className={cn(
+          'bg-slate-900/95 backdrop-blur-md border-white/10 border-b',
+          'shadow-lg shadow-black/5'
+        )}
+      >
+        <MainHeader />
+      </header>
+    </div>
   )
 }

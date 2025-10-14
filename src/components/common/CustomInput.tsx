@@ -216,7 +216,7 @@ const CustomInput = forwardRef<HTMLInputElement | HTMLTextAreaElement, TProps>(
           // Input with prefix/suffix wrapper
           <div
             className={cn(
-              'flex items-center bg-background file:bg-transparent disabled:opacity-50 border border-input file:border-0 focus-within:ring-2 focus-within:ring-ring ring-offset-background focus-within:ring-offset-2 file:font-medium placeholder:text-muted-foreground file:text-sm disabled:cursor-not-allowed',
+              'flex items-center bg-background file:bg-transparent disabled:opacity-50 border border-input file:border-0 focus-within:ring-2 focus-within:ring-ring ring-offset-background focus-within:ring-offset-2 file:font-medium file:text-sm disabled:cursor-not-allowed placeholder:',
               error && 'border-red-500 focus-within:ring-red-500',
               sizeClasses[size].includes('h-8') && 'h-8',
               sizeClasses[size].includes('h-10') && 'h-10',
@@ -228,7 +228,7 @@ const CustomInput = forwardRef<HTMLInputElement | HTMLTextAreaElement, TProps>(
             {prefix && (
               <div
                 className={cn(
-                  'flex items-center mr-2 text-muted-foreground',
+                  'flex items-center mr-2',
                   size === 'small' && 'text-sm',
                   size === 'large' && 'text-base'
                 )}
@@ -267,7 +267,7 @@ const CustomInput = forwardRef<HTMLInputElement | HTMLTextAreaElement, TProps>(
             {suffix && (
               <div
                 className={cn(
-                  'flex items-center ml-2 text-muted-foreground',
+                  'flex items-center ml-2',
                   size === 'small' && 'text-sm',
                   size === 'large' && 'text-base'
                 )}

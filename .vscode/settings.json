@@ -1,0 +1,33 @@
+{
+  "cSpell.words": [
+    "Appstore",
+    "axiosinstance",
+    "buynow",
+    "dribbble",
+    "ecommerce",
+    "embla",
+    "extralight",
+    "glassmorphism",
+    "hoverable",
+    "jost",
+    "navigations",
+    "nuqs",
+    "Sider",
+    "sonner",
+    "Topup",
+    "turbopack",
+    "unban",
+    "upazilla",
+    "upazillas",
+    "vercel"
+  ],
+  "prettier.configPath": ".prettierrc.yml",
+  "prettier.requireConfig": true,
+  "editor.formatOnSave": true,
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "editor.codeActionsOnSave": {
+    "source.removeUnusedImports": "always",
+    "source.organizeImports": "always",
+    "source.sortImports": "always"
+  }
+}

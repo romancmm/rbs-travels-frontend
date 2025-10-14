@@ -312,7 +312,7 @@ export function CustomSelect({
               <Skeleton className='w-full h-4' />
             </div>
           ) : options.length === 0 ? (
-            <div className='p-4 text-muted-foreground text-sm text-center'>No options found</div>
+            <div className='p-4 text-sm text-center'>No options found</div>
           ) : (
             options.map((option) => (
               <SelectItem key={option.value} value={option.value} disabled={option.disabled}>
@@ -389,7 +389,7 @@ function MultiSelectComponent({
             onClick={() => !disabled && setIsOpen(true)}
           >
             <div className='flex justify-between items-center w-full'>
-              <span className='text-muted-foreground text-sm'>
+              <span className='text-sm'>
                 {selectedOptions.length > 0 ? `${selectedOptions.length} selected` : placeholder}
               </span>
             </div>
@@ -414,7 +414,7 @@ function MultiSelectComponent({
                 <Skeleton className='w-full h-4' />
               </div>
             ) : options.length === 0 ? (
-              <div className='p-4 text-muted-foreground text-sm text-center'>No options found</div>
+              <div className='p-4 text-sm text-center'>No options found</div>
             ) : (
               <div className='max-h-48 overflow-auto'>
                 {options.map((option) => (
@@ -597,7 +597,7 @@ function TreeSelectComponent({
                 <Skeleton className='w-full h-4' />
               </div>
             ) : options.length === 0 ? (
-              <div className='p-4 text-muted-foreground text-sm text-center'>No options found</div>
+              <div className='p-4 text-sm text-center'>No options found</div>
             ) : (
               options.map((option) => renderTreeNode(option))
             )}
