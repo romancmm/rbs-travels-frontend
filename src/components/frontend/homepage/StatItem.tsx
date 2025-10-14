@@ -9,16 +9,7 @@ import { StatItemProps } from '@/types/stats'
 const StatItem = ({ value, label, icon: Icon, className, index = 0 }: StatItemProps) => {
   return (
     <div
-      className={cn(
-        'group flex items-center gap-4 p-4 w-full',
-        'hover:bg-accent/5 rounded-lg transition-colors duration-300',
-        'animate-in fade-in slide-in-from-bottom-4',
-        className
-      )}
-      style={{
-        animationDelay: `${index * 100}ms`,
-        animationFillMode: 'both'
-      }}
+      className={cn('group flex items-center gap-2 p-4 w-full', className)}
       role='region'
       aria-labelledby={`stat-${index}-label`}
     >
@@ -27,8 +18,7 @@ const StatItem = ({ value, label, icon: Icon, className, index = 0 }: StatItemPr
         <Icon
           color='#0f6578'
           className={cn(
-            'w-10 sm:w-12 h-10 sm:h-12 text-primary transition-all duration-700 ease-in-out',
-            'group-hover:text-primary/80 group-hover:scale-110'
+            'w-10 sm:w-12 h-10 sm:h-12 text-primary transition-all duration-700 ease-in-out'
           )}
           aria-hidden='true'
         />
@@ -39,11 +29,7 @@ const StatItem = ({ value, label, icon: Icon, className, index = 0 }: StatItemPr
         <Typography variant='h4' weight='bold' className='mb-1 text-foreground' aria-live='polite'>
           <AnimatedCounter value={value} />
         </Typography>
-        <Typography
-          id={`stat-${index}-label`}
-          variant='body2'
-          className='text-muted-foreground leading-tight'
-        >
+        <Typography id={`stat-${index}-label`} variant='body2' className='leading-tight'>
           {label}
         </Typography>
       </div>

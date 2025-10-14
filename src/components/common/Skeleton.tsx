@@ -33,4 +33,39 @@ const StatsLoadingSkeleton = ({ count = 4 }: { count?: number }) => {
   )
 }
 
-export { Skeleton, StatsLoadingSkeleton }
+/**
+ * WhoWeAre loading skeleton
+ */
+const WhoWeAreLoadingSkeleton = ({ count = 6 }: { count?: number }) => {
+  return (
+    <div className='space-y-12'>
+      {/* Header skeleton */}
+      <div className='space-y-4 text-center'>
+        <Skeleton className='mx-auto w-32 h-5' />
+        <Skeleton className='mx-auto w-80 h-8 sm:h-10' />
+      </div>
+
+      {/* Features grid skeleton */}
+      <div className='gap-6 lg:gap-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3'>
+        {Array.from({ length: count }).map((_, index) => (
+          <div key={index} className='p-6 border border-border/20 rounded-2xl'>
+            <div className='flex flex-col items-center space-y-4 text-center'>
+              {/* Icon skeleton */}
+              <Skeleton className='rounded-full w-20 h-20' />
+              {/* Title skeleton */}
+              <Skeleton className='w-32 h-6' />
+              {/* Description skeleton */}
+              <div className='space-y-2'>
+                <Skeleton className='w-full h-4' />
+                <Skeleton className='w-5/6 h-4' />
+                <Skeleton className='w-4/5 h-4' />
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+export { Skeleton, StatsLoadingSkeleton, WhoWeAreLoadingSkeleton }

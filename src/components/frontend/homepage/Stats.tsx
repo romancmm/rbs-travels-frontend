@@ -1,10 +1,10 @@
 import { Container } from '@/components/common/container'
+import { EmptyState } from '@/components/common/EmptyState'
 import { Section } from '@/components/common/section'
 import { StatsLoadingSkeleton } from '@/components/common/Skeleton'
-import { EmptyState } from '@/components/common/EmptyState'
-import StatItem from './StatItem'
-import { StatsProps } from '@/types/stats'
 import { cn } from '@/lib/utils'
+import { StatsProps } from '@/types/stats'
+import StatItem from './StatItem'
 
 /**
  * Stats section component displaying key performance metrics
@@ -26,7 +26,7 @@ const Stats = ({ data, isLoading = false, className }: StatsProps) => {
           <div
             className={cn(
               'gap-4 lg:gap-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4',
-              'py-6 lg:py-8 border-y border-border/50 w-full',
+              'py-2 lg:py-4 border rounded-2xl border-border/50 w-full',
               'bg-gradient-to-r from-background via-accent/5 to-background'
             )}
             role='region'
@@ -39,7 +39,6 @@ const Stats = ({ data, isLoading = false, className }: StatsProps) => {
                 label={item.label}
                 icon={item.icon}
                 index={index}
-                className='border border-border/20 hover:border-border/40 rounded-lg'
               />
             ))}
           </div>
