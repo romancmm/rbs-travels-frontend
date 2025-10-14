@@ -254,6 +254,93 @@ export const homeData = {
     ]
   },
 
+  destinations: {
+    title: 'Top Destinations',
+    subtitle: 'Explore Amazing Places',
+    destinations: [
+      {
+        id: 1,
+        name: 'Machu Picchu of Peru',
+        image: '/images/banners/01.jpg',
+        tours: 16,
+        description: 'Ancient Incan citadel set high in the Andes Mountains',
+        price: 'From $2,499',
+        duration: '7 Days',
+        type: 'Historical'
+      },
+      {
+        id: 2,
+        name: 'Great Temple Jordan',
+        image: '/images/banners/02.webp',
+        tours: 10,
+        description: 'Marvel at the rose-red city carved into rock',
+        price: 'From $1,899',
+        duration: '5 Days',
+        type: 'Archaeological'
+      },
+      {
+        id: 3,
+        name: 'Athens Greece',
+        image: '/images/banners/03.jpeg',
+        tours: 15,
+        description: 'Birthplace of democracy and ancient civilization',
+        price: 'From $1,299',
+        duration: '6 Days',
+        type: 'Cultural'
+      },
+      {
+        id: 4,
+        name: 'Switzerland',
+        image: '/images/banners/04.jpg',
+        tours: 27,
+        description: 'Alpine adventures in the heart of Europe',
+        price: 'From $3,199',
+        duration: '8 Days',
+        type: 'Adventure'
+      },
+      {
+        id: 5,
+        name: 'Maldives Paradise',
+        image: '/images/about.jpg',
+        tours: 22,
+        description: 'Tropical paradise with crystal clear waters',
+        price: 'From $4,999',
+        duration: '5 Days',
+        type: 'Beach Resort'
+      },
+      {
+        id: 6,
+        name: 'Tokyo Japan',
+        image: '/images/banners/01.jpg',
+        tours: 31,
+        description: 'Modern metropolis meets ancient traditions',
+        price: 'From $2,799',
+        duration: '7 Days',
+        type: 'Urban Experience'
+      },
+      {
+        id: 7,
+        name: 'Dubai UAE',
+        image: '/images/banners/02.webp',
+        tours: 18,
+        description: 'Luxury and innovation in the desert',
+        price: 'From $2,299',
+        duration: '4 Days',
+        type: 'Luxury'
+      },
+      {
+        id: 8,
+        name: 'Bali Indonesia',
+        image: '/images/banners/03.jpeg',
+        tours: 25,
+        description: 'Island of gods with stunning temples and beaches',
+        price: 'From $1,599',
+        duration: '6 Days',
+        type: 'Tropical'
+      }
+    ]
+  },
+
   testimonials: {
     title: 'What Our Travelers Say',
     subtitle: 'Testimonials',
