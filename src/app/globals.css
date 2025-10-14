@@ -143,6 +143,31 @@
     animation: pulseGlow 2s ease-in-out infinite;
   }
 
+  /* Floating animation for carousel elements */
+  .animate-float {
+    animation: float 6s ease-in-out infinite;
+  }
+
+  /* Parallax background effect */
+  .animate-parallax {
+    animation: parallax 20s linear infinite;
+  }
+
+  /* Shimmer effect for text */
+  .animate-shimmer {
+    animation: shimmer 2s ease-in-out infinite;
+  }
+
+  /* Button pulse effect */
+  .animate-button-pulse {
+    animation: buttonPulse 2s ease-in-out infinite;
+  }
+
+  /* Glow effect for buttons */
+  .animate-button-glow {
+    animation: buttonGlow 1.5s ease-in-out infinite alternate;
+  }
+
   @keyframes fadeIn {
     from {
       opacity: 0;
@@ -185,7 +210,54 @@
     }
   }
 
-  /* Reduced motion preferences */
+  @keyframes float {
+    0%,
+    100% {
+      transform: translateY(0px);
+    }
+    50% {
+      transform: translateY(-10px);
+    }
+  }
+
+  @keyframes parallax {
+    0% {
+      transform: translateX(-100%);
+    }
+    100% {
+      transform: translateX(100%);
+    }
+  }
+
+  @keyframes shimmer {
+    0% {
+      background-position: -200% center;
+    }
+    100% {
+      background-position: 200% center;
+    }
+  }
+
+  @keyframes buttonPulse {
+    0%,
+    100% {
+      transform: scale(1);
+      box-shadow: 0 0 0 0 rgba(15, 101, 120, 0.4);
+    }
+    50% {
+      transform: scale(1.02);
+      box-shadow: 0 0 0 10px rgba(15, 101, 120, 0);
+    }
+  }
+
+  @keyframes buttonGlow {
+    from {
+      box-shadow: 0 0 20px rgba(15, 101, 120, 0.5);
+    }
+    to {
+      box-shadow: 0 0 30px rgba(15, 101, 120, 0.8);
+    }
+  } /* Reduced motion preferences */
   @media (prefers-reduced-motion: reduce) {
     .animate-fade-in,
     .animate-slide-up,
