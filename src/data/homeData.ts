@@ -252,5 +252,102 @@ export const homeData = {
         readTime: '5 min read'
       }
     ]
+  },
+
+  testimonials: {
+    title: 'What Our Travelers Say',
+    subtitle: 'Testimonials',
+    testimonials: [
+      {
+        id: 1,
+        name: 'Sarah Johnson',
+        location: 'New York, USA',
+        rating: 5,
+        review:
+          'RBS Travels made our honeymoon absolutely perfect! From the seamless booking process to the incredible destinations, everything exceeded our expectations. The attention to detail was remarkable.',
+        tripType: 'Honeymoon',
+        date: 'Sep 2025'
+      },
+      {
+        id: 2,
+        name: 'Michael Chen',
+        location: 'Toronto, Canada',
+        rating: 5,
+        review:
+          'Amazing service and incredible value for money. The team went above and beyond to accommodate our special requests and dietary needs. Will definitely book with them again!',
+        tripType: 'Family Trip',
+        date: 'Aug 2025'
+      },
+      {
+        id: 3,
+        name: 'Emma Wilson',
+        location: 'London, UK',
+        rating: 5,
+        review:
+          'As a solo female traveler, I felt completely safe and supported throughout my journey. The guides were knowledgeable and the accommodations were top-notch. Highly recommended!',
+        tripType: 'Solo Adventure',
+        date: 'Jul 2025'
+      },
+      {
+        id: 4,
+        name: 'David Martinez',
+        location: 'Madrid, Spain',
+        rating: 4,
+        review:
+          'Excellent organization and beautiful destinations. The cultural experiences were authentic and memorable. The only minor issue was a slight delay in transportation, but it was handled professionally.',
+        tripType: 'Cultural Tour',
+        date: 'Jun 2025'
+      },
+      {
+        id: 5,
+        name: 'Lisa Kim',
+        location: 'Seoul, South Korea',
+        rating: 5,
+        review:
+          'RBS Travels turned our dream vacation into reality! The luxury accommodations and personalized service made us feel like royalty. Every detail was perfectly planned.',
+        tripType: 'Luxury Getaway',
+        date: 'May 2025'
+      },
+      {
+        id: 6,
+        name: 'James Anderson',
+        location: 'Sydney, Australia',
+        rating: 5,
+        review:
+          'The adventure tours were thrilling and well-organized. Safety was clearly a priority, and the guides were experienced professionals. An unforgettable experience for our group!',
+        tripType: 'Adventure Group',
+        date: 'Apr 2025'
+      },
+      {
+        id: 7,
+        name: 'Maria Rodriguez',
+        location: 'Mexico City, Mexico',
+        rating: 4,
+        review:
+          'Great value and excellent customer service. The itinerary was well-balanced with both relaxation and exploration. The local cuisine experiences were particularly outstanding.',
+        tripType: 'Cultural & Culinary',
+        date: 'Mar 2025'
+      },
+      {
+        id: 8,
+        name: 'Thomas Brown',
+        location: 'Berlin, Germany',
+        rating: 5,
+        review:
+          'Professional, reliable, and truly caring service. They helped us navigate through unexpected weather changes and made sure our vacation remained perfect. Outstanding support!',
+        tripType: 'Winter Escape',
+        date: 'Feb 2025'
+      },
+      {
+        id: 9,
+        name: 'Jennifer Taylor',
+        location: 'Dubai, UAE',
+        rating: 5,
+        review:
+          'The luxury desert safari and city tours were beyond amazing. Every moment was Instagram-worthy! The team anticipated our needs and delivered an extraordinary experience.',
+        tripType: 'Luxury Desert',
+        date: 'Jan 2025'
+      }
+    ]
   }
 }
