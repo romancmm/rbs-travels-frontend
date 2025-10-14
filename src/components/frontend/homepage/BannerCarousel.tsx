@@ -170,7 +170,7 @@ const BannerCarousel = ({ banners }: BannerCarouselProps) => {
                           size='lg'
                           className={cn(
                             'group relative bg-primary hover:bg-primary/90 overflow-hidden',
-                            'px-10 py-6 text-white font-semibold text-lg transition-all duration-500',
+                            'px-10 py-5 text-white font-medium text-base transition-all duration-500',
                             'border-2 border-primary hover:border-primary/70',
                             'shadow-2xl hover:shadow-3xl hover:shadow-primary/30',
                             'hover:scale-105 hover:-translate-y-1 active:scale-95 rounded-full'
@@ -192,7 +192,7 @@ const BannerCarousel = ({ banners }: BannerCarouselProps) => {
                           className={cn(
                             'group relative bg-white/10 backdrop-blur-md border border-white/40 text-white',
                             'hover:bg-white/20 hover:border-white/60 hover:text-white transition-all duration-500',
-                            'px-8 py-6 font-semibold text-lg sm:text-xl',
+                            'px-8 py-5 font-medium text-base',
                             'hover:scale-105 hover:-translate-y-1 active:scale-95',
                             'rounded-full shadow-lg hover:shadow-xl hover:shadow-white/10'
                           )}

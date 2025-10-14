@@ -82,7 +82,7 @@ const AboutUs = ({ data }: { data?: AboutData }) => {
                       'animate-in fade-in slide-in-from-bottom-4',
                       isAccent
                         ? 'bg-primary/8 hover:bg-primary/12 border border-primary/10'
-                        : 'bg-muted/50 hover:bg-muted/70 border border-border/40'
+                        : 'bg-muted hover:bg-muted/70 border border-border/40'
                     )}
                   >
                     <div className='relative flex md:flex-row flex-col items-center gap-3 lg:gap-4'>

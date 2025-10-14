@@ -2,8 +2,7 @@
 
 import { Container } from '@/components/common/container'
 import CustomImage from '@/components/common/CustomImage'
-import CustomLink from '@/components/common/CustomLink'
-import { sectionVariants } from '@/components/common/section'
+import { Section } from '@/components/common/section'
 import { Typography } from '@/components/common/typography'
 import { Button } from '@/components/ui/button'
 import {
@@ -18,7 +17,6 @@ import { cn } from '@/lib/utils'
 import Autoplay from 'embla-carousel-autoplay'
 import ClassNames from 'embla-carousel-class-names'
 import {
-  ArrowRight,
   Building2, Filter, MapPin,
   Mountain,
   Palmtree,
@@ -227,10 +225,9 @@ export default function TopDestinations({ data }: TopDestinationsProps) {
   if (!data?.destinations?.length) return null
 
   return (
-    <section
+    <Section variant={'xl'}
       className={cn(
-        sectionVariants({ variant: 'xl' }),
-        'bg-gradient-to-br from-blue-50/50 via-white to-purple-50/30 relative overflow-hidden'
+        'relative bg-gradient-to-br from-blue-50/50 via-white to-purple-50/30 overflow-hidden'
       )}
     >
       {/* Enhanced Background Pattern */}
@@ -262,7 +259,7 @@ export default function TopDestinations({ data }: TopDestinationsProps) {
         </div>
 
         {/* Enhanced Filter Tabs */}
-        <div className='flex flex-wrap justify-center items-center gap-3 mb-10'>
+        {/* <div className='flex flex-wrap justify-center items-center gap-3 mb-10'>
           {filters.map((filter) => {
             const IconComponent = filter.icon
             const isActive = activeFilter === filter.id
@@ -301,7 +298,7 @@ export default function TopDestinations({ data }: TopDestinationsProps) {
               </button>
             )
           })}
-        </div>
+        </div> */}
 
         {/* Enhanced Carousel Implementation */}
         <div className='relative mb-8'>
@@ -332,7 +329,7 @@ export default function TopDestinations({ data }: TopDestinationsProps) {
               </div>
 
               <div className='flex items-center gap-4'>
-                <div className='flex items-center gap-2'>
+                <div className='flex items-center gap-3'>
                   <CarouselPrevious
                     className={cn(
                       'static hover:bg-primary border-gray-200 hover:border-primary hover:text-white transition-all translate-x-0 translate-y-0 duration-300',
@@ -346,13 +343,13 @@ export default function TopDestinations({ data }: TopDestinationsProps) {
                     )}
                   />
                 </div>
-                <CustomLink
+                {/* <CustomLink
                   href='/destinations'
                   className='group flex items-center gap-2 bg-primary/5 hover:bg-primary/10 px-4 py-2 rounded-lg font-semibold text-primary hover:text-primary/80 transition-colors'
                 >
                   <span>View All</span>
                   <ArrowRight className='w-4 h-4 transition-transform group-hover:translate-x-1' />
-                </CustomLink>
+                </CustomLink> */}
               </div>
             </div>
 
@@ -409,6 +406,6 @@ export default function TopDestinations({ data }: TopDestinationsProps) {
           </div>
         </div>
       </Container>
-    </section>
+    </Section>
   )
 }

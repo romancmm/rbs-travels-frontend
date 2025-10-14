@@ -55,7 +55,7 @@ export default function TopBar() {
           {/* Right side - Close button */}
           <button
             onClick={() => setIsVisible(false)}
-            className='flex justify-center items-center hover:bg-white/20 rounded-full w-6 h-6 transition-colors'
+            className='top-1.5 right-2 absolute flex justify-center items-center hover:bg-white/20 rounded-full w-6 h-6 transition-colors'
             aria-label='Close announcement'
           >
             <X className='w-3 h-3' />

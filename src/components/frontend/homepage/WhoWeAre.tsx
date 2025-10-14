@@ -26,7 +26,7 @@ interface WhoWeAreProps {
 
 const WhoWeAre = ({ data, isLoading = false, className }: WhoWeAreProps) => {
   return (
-    <Section variant='xxl' className={className}>
+    <Section variant='xl' className={className}>
       <Container>
         {isLoading ? (
           <WhoWeAreLoadingSkeleton count={data?.features?.length || 6} />
