@@ -1,28 +1,54 @@
-import AnimatedCounter from '@/components/common/AnimatedCounter'
 import { Container } from '@/components/common/container'
 import { Section } from '@/components/common/section'
-import { Typography } from '@/components/common/typography'
+import { StatsLoadingSkeleton } from '@/components/common/Skeleton'
+import { EmptyState } from '@/components/common/EmptyState'
+import StatItem from './StatItem'
+import { StatsProps } from '@/types/stats'
+import { cn } from '@/lib/utils'
 
-export default function Stats({ data }: { data?: any }) {
+/**
+ * Stats section component displaying key performance metrics
+ * Features responsive grid, loading states, and accessibility
+ */
+const Stats = ({ data, isLoading = false, className }: StatsProps) => {
   return (
-    <Section variant='none'>
+    <Section variant='none' className={className}>
       <Container>
-        <div className='flex sm:flex-row flex-col justify-evenly items-center gap-6 lg:gap-10 py-4 border-y w-full'>
-          {data?.map((item: any, index: number) => (
-            <div key={index} className='flex items-center gap-4 p-3 w-full'>
-              <div className="flex justify-center items-center size-20">
-                <item.icon color="#0f6578" className="w-12 h-12 text-primary group-hover:text-white group-hover:rotate-45 transition-transform duration-700 ease-in-out delay-200" />
-              </div>
-              <div className="">
-                <Typography className='' variant='h4' weight={'bold'}>
-                  <AnimatedCounter value={item.value} />
-                </Typography>
-                <Typography className='text-gray-500 dark:text-gray-400 text-sm'>{item.label}</Typography>
-              </div>
-            </div>
-          ))}
-        </div>
+        {isLoading ? (
+          <StatsLoadingSkeleton count={data?.length || 4} />
+        ) : !data || data.length === 0 ? (
+          <EmptyState
+            title='No statistics available'
+            description='Statistics will appear here once data is loaded.'
+            className='py-12'
+          />
+        ) : (
+          <div
+            className={cn(
+              'gap-4 lg:gap-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4',
+              'py-6 lg:py-8 border-y border-border/50 w-full',
+              'bg-gradient-to-r from-background via-accent/5 to-background'
+            )}
+            role='region'
+            aria-label='Company statistics'
+          >
+            {data.map((item, index) => (
+              <StatItem
+                key={`stat-${index}-${item.label}`}
+                value={item.value}
+                label={item.label}
+                icon={item.icon}
+                index={index}
+                className='border border-border/20 hover:border-border/40 rounded-lg'
+              />
+            ))}
+          </div>
+        )}
       </Container>
-    </Section >
+    </Section>
   )
 }
+
+Stats.displayName = 'Stats'
+
+export default Stats

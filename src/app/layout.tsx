@@ -17,57 +17,56 @@ const manrope = Manrope({
 
 export const metadata: Metadata = {
   title: {
-    default: "RBS TRAVELS",
-    template: "%s | RBS TRAVELS",
+    default: 'UHQ Accounts',
+    template: '%s | RBS TRAVELS'
   },
   description:
-    "RBS TRAVELS — Your trusted travel agency for air tickets, holiday packages, and visa assistance worldwide.",
+    'RBS TRAVELS — Your trusted travel agency for air tickets, holiday packages, and visa assistance worldwide.',
   keywords: [
-    "RBS Travels",
-    "Travel Agency",
-    "Air Ticket",
-    "Holiday Packages",
-    "Visa Assistance",
-    "Tour Operator",
-    "Flight Booking",
-    "Bangladesh Travel Agency",
+    'RBS Travels',
+    'Travel Agency',
+    'Air Ticket',
+    'Holiday Packages',
+    'Visa Assistance',
+    'Tour Operator',
+    'Flight Booking',
+    'Bangladesh Travel Agency'
   ],
-  authors: [{ name: "RBS TRAVELS", url: "https://rbstravels.com" }],
-  creator: "RBS TRAVELS",
-  publisher: "RBS TRAVELS",
-  metadataBase: new URL("https://rbstravels.com"),
+  authors: [{ name: 'RBS TRAVELS', url: 'https://rbstravels.com' }],
+  creator: 'RBS TRAVELS',
+  publisher: 'RBS TRAVELS',
+  metadataBase: new URL('https://rbstravels.com'),
   openGraph: {
-    title: "RBS TRAVELS",
+    title: 'RBS TRAVELS',
     description:
-      "Book your flights, tours, and visa services with RBS TRAVELS — your reliable travel partner.",
-    url: "https://rbstravels.com",
-    siteName: "RBS TRAVELS",
+      'Book your flights, tours, and visa services with RBS TRAVELS — your reliable travel partner.',
+    url: 'https://rbstravels.com',
+    siteName: 'RBS TRAVELS',
     images: [
       {
-        url: "/og-image.png",
+        url: '/og-image.png',
         width: 1200,
         height: 630,
-        alt: "RBS TRAVELS — Travel Agency",
-      },
+        alt: 'RBS TRAVELS — Travel Agency'
+      }
     ],
-    locale: "en_US",
-    type: "website",
+    locale: 'en_US',
+    type: 'website'
   },
   twitter: {
-    card: "summary_large_image",
-    title: "RBS TRAVELS",
+    card: 'summary_large_image',
+    title: 'RBS TRAVELS',
     description:
-      "Your trusted travel agency for air tickets, tour packages, and visa services worldwide.",
-    creator: "@rbstravels",
-    images: ["/og-image.png"],
+      'Your trusted travel agency for air tickets, tour packages, and visa services worldwide.',
+    creator: '@rbstravels',
+    images: ['/og-image.png']
   },
   icons: {
-    icon: "/favicon.ico",
-    apple: "/apple-touch-icon.png",
+    icon: '/favicon.ico',
+    apple: '/apple-touch-icon.png'
   },
-  manifest: "/site.webmanifest",
-};
-
+  manifest: '/site.webmanifest'
+}
 
 export default async function RootLayout({
   children
