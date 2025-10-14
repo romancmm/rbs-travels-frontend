@@ -2,73 +2,148 @@ import { Container } from '@/components/common/container'
 import CustomImage from '@/components/common/CustomImage'
 import { Section } from '@/components/common/section'
 import { Typography } from '@/components/common/typography'
-import { fa } from 'zod/v4/locales'
+import { cn } from '@/lib/utils'
 
-export default function AboutUs({ data }: { data?: any }) {
+interface Facility {
+  icon: React.ComponentType<{ className?: string; color?: string }> | string
+  title: string
+  desc?: string
+}
+
+interface AboutData {
+  title: string
+  subtitle: string
+  description: string
+  image: string
+  facilities: Facility[]
+}
+
+const AboutUs = ({ data }: { data?: AboutData }) => {
+  if (!data) return null
+
   return (
     <Section variant='xl'>
       <Container>
-        <div className='flex sm:flex-row flex-col items-center gap-6 lg:gap-10'>
-          <div className='space-y-4 w-full lg:w-1/2'>
-            <Typography variant='subtitle1' className='text-primary'>
-              {data?.subtitle}
-            </Typography>
-            <Typography variant='h2' as='h4' weight='bold' >
-              {data?.title}
-            </Typography>
-            <Typography variant='body1'>
-              {data?.description}
+        <div className='flex sm:flex-row flex-col items-center gap-8 lg:gap-12'>
+          {/* Content Section */}
+          <div className='space-y-6 slide-in-from-left-6 w-full lg:w-1/2 animate-in duration-700 fade-in'>
+            {/* Subtitle with enhanced styling */}
+            <Typography
+              variant='subtitle1'
+              className={cn(
+                'font-semibold text-primary uppercase tracking-wider',
+                'animate-in fade-in slide-in-from-left-4 duration-500'
+              )}
+              style={{ animationDelay: '100ms', animationFillMode: 'both' }}
+            >
+              {data.subtitle}
             </Typography>
 
-            <div className="gap-4 grid grid-cols-2">
-              {data?.facilities?.map((facility: any, index: number) => {
+            {/* Title with better typography */}
+            <Typography
+              variant='h2'
+              as='h2'
+              weight='bold'
+              className={cn(
+                'text-foreground leading-tight',
+                'animate-in fade-in slide-in-from-left-6 duration-600'
+              )}
+              style={{ animationDelay: '200ms', animationFillMode: 'both' }}
+            >
+              {data.title}
+            </Typography>
+
+            {/* Description with better readability */}
+            <Typography
+              variant='body1'
+              className={cn(
+                'leading-relaxed',
+                'animate-in fade-in slide-in-from-left-4 duration-500'
+              )}
+              style={{ animationDelay: '300ms', animationFillMode: 'both' }}
+            >
+              {data.description}
+            </Typography>
+
+            {/* Enhanced Facilities Grid */}
+            <div className='gap-4 lg:gap-5 grid grid-cols-1 sm:grid-cols-2 pt-2'>
+              {data.facilities?.map((facility, index) => {
                 const row = Math.floor(index / 2)
                 const col = index % 2
-                // Alternate diagonally (like checkerboard)
                 const isAccent = (row + col) % 2 === 0
-                const bgClass = isAccent
-                  ? 'bg-primary/10'
-                  : 'bg-muted-foreground/40'
+                const Icon = facility.icon
 
                 return (
                   <div
-                    key={index}
-                    className={`flex flex-col gap-2 hover:shadow-lg p-4 rounded-lg transition-all ${bgClass}`}
+                    key={`facility-${index}-${facility.title}`}
+                    className={cn(
+                      'group relative p-5 rounded-xl overflow-hidden transition-all duration-500 ease-out',
+                      'hover:shadow-xl hover:shadow-primary/10 hover:-translate-y-1',
+                      'animate-in fade-in slide-in-from-bottom-4',
+                      isAccent
+                        ? 'bg-primary/8 hover:bg-primary/12 border border-primary/20'
+                        : 'bg-muted/50 hover:bg-muted/70 border border-border/40'
+                    )}
                   >
-                    <div className="flex items-center gap-4">
-                      <div className="flex justify-center items-center bg-white p-1.5 rounded-full w-16 h-16 aspect-square">
-                        {typeof facility.icon === 'string' ? <CustomImage
-                          src={facility.icon}
-                          height={28}
-                          width={28}
-                          alt={facility.title}
-                        /> :
-                          <facility.icon className="w-8 h-8" color="#0f6578" />}
+                    <div className='relative flex items-center gap-4'>
+                      {/* Enhanced icon container */}
+                      <div className='flex justify-center items-center bg-white rounded-full w-14 h-14'>
+                        {typeof Icon === 'string' ? (
+                          <CustomImage src={Icon} height={28} width={28} alt={facility.title} />
+                        ) : (
+                          <Icon className='w-7 h-7' color='#0f6578' />
+                        )}
                       </div>
-                      <Typography variant="body1" as="h4" weight="bold">
-                        {facility.title}
-                      </Typography>
+
+                      {/* Enhanced typography */}
+                      <div className='flex-1'>
+                        <Typography variant='h6' weight='semibold'>
+                          {facility.title}
+                        </Typography>
+                      </div>
                     </div>
                   </div>
                 )
               })}
             </div>
-
           </div>
 
-          {/* Features list */}
-          <div className='relative w-full lg:w-1/2'>
-            <CustomImage
-              src={data?.image}
-              height={425}
-              width={530}
-              alt={'About RBS Travels'}
-              className='rounded-lg'
-            />
+          {/* Enhanced Image Section */}
+          <div
+            className='slide-in-from-right-6 relative w-full lg:w-1/2 animate-in duration-700 fade-in'
+            style={{ animationDelay: '400ms', animationFillMode: 'both' }}
+          >
+            <div className='group relative'>
+              {/* Main image with enhanced effects */}
+              <CustomImage
+                src={data.image}
+                height={425}
+                width={530}
+                alt='About RBS Travels - Company overview'
+                className={cn('rounded-2xl')}
+              />
+            </div>
 
-            <div className="-right-4 -bottom-4 absolute flex items-center gap-4 bg-primary shadow-lg p-3 rounded-lg divide-x max-w-56 text-white">
-              <div className="pr-3 font-bold text-5xl">05</div>
-              <div className="font-bold text-lg">Years of experience</div>
+            {/* Enhanced Experience Badge */}
+            <div
+              className={cn(
+                '-right-6 -bottom-6 absolute flex items-center gap-4 bg-primary shadow-2xl p-5 rounded-xl',
+                'text-white transform transition-all duration-500 hover:scale-105',
+                'animate-in fade-in slide-in-from-bottom-4 duration-600',
+                'max-w-64 backdrop-blur-sm border border-primary-foreground/10'
+              )}
+              style={{ animationDelay: '800ms', animationFillMode: 'both' }}
+            >
+              <div className='pr-4 border-white/20 border-r'>
+                <Typography variant='h3' weight='bold' className='text-white leading-none'>
+                  05
+                </Typography>
+              </div>
+              <div>
+                <Typography variant='h6' weight='semibold' className='text-white/90 leading-tight'>
+                  Years of experience
+                </Typography>
+              </div>
             </div>
           </div>
         </div>
@@ -76,3 +151,5 @@ export default function AboutUs({ data }: { data?: any }) {
     </Section>
   )
 }
+
+export default AboutUs
