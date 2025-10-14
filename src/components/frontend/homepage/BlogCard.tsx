@@ -99,18 +99,6 @@ const BlogCard = ({ post, index, className }: BlogCardProps) => {
         <Typography variant='body2' className='line-clamp-3 leading-relaxed'>
           {post.excerpt}
         </Typography>
-
-        {/* Author & Read More */}
-        <div className='flex justify-between items-center pt-2'>
-          <div className='flex items-center gap-2'>
-            <div className='flex justify-center items-center bg-gradient-to-r from-primary/20 to-accent/20 rounded-full w-8 h-8'>
-              <span className='font-semibold text-primary text-xs'>
-                {post.author.charAt(0).toUpperCase()}
-              </span>
-            </div>
-            <span className='text-sm'>{post.author}</span>
-          </div>
-        </div>
       </div>
 
       {/* Decorative Elements */}

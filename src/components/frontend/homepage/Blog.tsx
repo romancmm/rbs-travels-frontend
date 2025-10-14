@@ -110,7 +110,7 @@ const Blog = ({ data, isLoading = false, className }: BlogProps) => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.8, duration: 0.6 }}
           className={cn(
-            'group relative px-8 py-4 rounded-full overflow-hidden',
+            'group relative px-8 py-2.5 rounded-full overflow-hidden',
             'bg-gradient-to-r from-primary/10 to-accent/10',
             'border-2 border-primary/30 transition-all duration-500',
             'hover:border-primary/60 hover:shadow-xl hover:shadow-primary/25 hover:from-primary/90 hover:to-primary',
@@ -128,7 +128,7 @@ const Blog = ({ data, isLoading = false, className }: BlogProps) => {
           {/* Button Content */}
           <div className='z-10 relative flex items-center gap-3'>
             <span className='group-hover:text-white transition-colors duration-300'>
-              View All Articles
+              View All
             </span>
 
             {/* Dynamic Arrow with Multiple Effects */}

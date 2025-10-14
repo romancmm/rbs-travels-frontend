@@ -19,17 +19,10 @@ import Autoplay from 'embla-carousel-autoplay'
 import ClassNames from 'embla-carousel-class-names'
 import {
   ArrowRight,
-  Building2,
-  Calendar,
-  Camera,
-  Filter,
-  Heart,
-  MapPin,
+  Building2, Filter, MapPin,
   Mountain,
   Palmtree,
-  Star,
-  Users,
-  Waves
+  Star, Waves
 } from 'lucide-react'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 
@@ -77,7 +70,7 @@ const DestinationCard = ({ destination, index }: { destination: Destination; ind
 
   return (
     <div
-      className='group slide-in-from-bottom-4 relative bg-white shadow-lg hover:shadow-2xl rounded-3xl overflow-hidden transition-all hover:-translate-y-3 animate-in duration-700'
+      className='group slide-in-from-bottom-4 relative bg-white shadow-lg hover:shadow-2xl rounded-3xl overflow-hidden transition-all hover:-translate-y-2 animate-in duration-700'
       style={{ animationDelay: `${index * 100}ms` }}
     >
       {/* Image Container */}
@@ -87,20 +80,20 @@ const DestinationCard = ({ destination, index }: { destination: Destination; ind
           alt={destination.name}
           width={400}
           height={300}
-          className='w-full h-full object-cover group-hover:scale-110 transition-transform duration-700'
+          className='w-full h-full object-cover group-hover:scale-105 transition-transform duration-700'
         />
 
         {/* Dynamic overlay gradient */}
         <div className='absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent' />
 
         {/* Floating elements */}
-        <div className='top-4 left-4 absolute flex items-center gap-2'>
+        {/* <div className='top-4 left-4 absolute flex items-center gap-2'>
           <div className='bg-primary shadow-xl backdrop-blur-sm px-4 py-2 rounded-full font-bold text-white text-sm'>
             {destination.price}
           </div>
-        </div>
+        </div> */}
 
-        <div className='top-4 right-4 absolute flex items-center gap-2'>
+        {/* <div className='top-4 right-4 absolute flex items-center gap-2'>
           <div className='flex items-center gap-1 bg-white/95 shadow-lg backdrop-blur-sm px-3 py-2 rounded-full font-medium text-gray-800 text-xs'>
             <IconComponent className='w-3 h-3' />
             {destination.type}
@@ -116,10 +109,10 @@ const DestinationCard = ({ destination, index }: { destination: Destination; ind
           >
             <Heart className={cn('w-4 h-4', isLiked && 'fill-current')} />
           </button>
-        </div>
+        </div> */}
 
         {/* Rating and photos overlay */}
-        <div className='bottom-4 left-4 absolute flex items-center gap-3'>
+        {/* <div className='bottom-4 left-4 absolute flex items-center gap-3'>
           <div className='flex items-center gap-1 bg-white/95 shadow-lg backdrop-blur-sm px-3 py-2 rounded-lg'>
             <Star className='fill-yellow-400 w-4 h-4 text-yellow-400' />
             <span className='font-semibold text-gray-800 text-sm'>4.9</span>
@@ -129,11 +122,11 @@ const DestinationCard = ({ destination, index }: { destination: Destination; ind
             <Camera className='w-4 h-4 text-gray-600' />
             <span className='font-medium text-gray-800 text-xs'>2.3k photos</span>
           </div>
-        </div>
+        </div> */}
       </div>
 
       {/* Content */}
-      <div className='space-y-4 p-6'>
+      <div className='space-y-4 p-5'>
         {/* Title and Description */}
         <div className='space-y-2'>
           <Typography
@@ -149,7 +142,7 @@ const DestinationCard = ({ destination, index }: { destination: Destination; ind
         </div>
 
         {/* Metadata with enhanced styling */}
-        <div className='flex justify-between items-center pt-2 border-gray-100 border-t'>
+        {/* <div className='flex justify-between items-center pt-2 border-gray-100 border-t'>
           <div className='flex items-center gap-1 text-gray-500'>
             <Calendar className='w-4 h-4' />
             <span className='font-medium text-sm'>{destination.duration}</span>
@@ -158,16 +151,16 @@ const DestinationCard = ({ destination, index }: { destination: Destination; ind
             <Users className='w-4 h-4' />
             <span className='font-medium text-sm'>{destination.tours} tours</span>
           </div>
-        </div>
+        </div> */}
 
         {/* Enhanced Action Button */}
-        <CustomLink
+        {/* <CustomLink
           href={`/destination/${destination.id}`}
           className='group/btn inline-flex justify-center items-center gap-2 bg-gradient-to-r from-primary hover:from-primary/90 to-primary/90 hover:to-primary shadow-lg hover:shadow-xl px-4 py-3 rounded-xl w-full font-semibold text-white hover:scale-105 transition-all duration-300'
         >
           <span>Explore Destination</span>
           <ArrowRight className='w-4 h-4 transition-transform group-hover/btn:translate-x-1' />
-        </CustomLink>
+        </CustomLink> */}
       </div>
     </div>
   )
@@ -323,9 +316,9 @@ export default function TopDestinations({ data }: TopDestinationsProps) {
               containScroll: 'trimSnaps',
               slidesToScroll: 'auto'
             }}
-            // plugins={[autoplayPlugin, classNamesPlugin]}
+          // plugins={[autoplayPlugin, classNamesPlugin]}
           >
-            <div className='flex justify-between items-center mb-6'>
+            <div className='flex justify-between items-center'>
               <div className='flex items-center gap-4'>
                 <div className='hidden md:flex items-center gap-2 text-gray-500 text-sm'>
                   <Filter className='w-4 h-4' />
@@ -363,7 +356,7 @@ export default function TopDestinations({ data }: TopDestinationsProps) {
               </div>
             </div>
 
-            <CarouselContent className='-ml-6'>
+            <CarouselContent className='-ml-6 pt-6 pb-10'>
               {filteredDestinations.map((destination, index) => (
                 <CarouselItem
                   key={destination.id}
@@ -377,7 +370,7 @@ export default function TopDestinations({ data }: TopDestinationsProps) {
         </div>
 
         {/* Progress Indicators */}
-        <div className='flex justify-center items-center gap-2 mb-8'>
+        <div className='flex justify-center items-center gap-2 -mt-6 mb-8'>
           {Array.from({ length: count }).map((_, index) => (
             <button
               key={index}

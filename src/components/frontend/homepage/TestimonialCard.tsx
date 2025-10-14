@@ -56,9 +56,6 @@ const TestimonialCard = ({ testimonial, index, className }: TestimonialCardProps
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: index * 0.1, duration: 0.5, ease: 'easeOut' }}
       onHoverStart={() => setIsHovered(true)}
       onHoverEnd={() => setIsHovered(false)}
       className={cn(
@@ -71,24 +68,13 @@ const TestimonialCard = ({ testimonial, index, className }: TestimonialCardProps
       )}
     >
       {/* Background Pattern */}
-      <div className='absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300'>
+      {/* <div className='absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300'>
         <div className='top-0 right-0 absolute bg-gradient-to-br from-primary/8 to-transparent blur-3xl rounded-full w-32 h-32' />
         <div className='bottom-0 left-0 absolute bg-gradient-to-tr from-accent/8 to-transparent blur-2xl rounded-full w-24 h-24' />
-      </div>
+      </div> */}
 
       {/* Quote Icon */}
-      <div className='z-10 relative'>
-        <div
-          className={cn(
-            'flex justify-center items-center rounded-2xl w-12 h-12',
-            'bg-gradient-to-br from-primary/20 to-accent/20',
-            'border border-primary/30 transition-all duration-300',
-            isHovered ? 'shadow-md shadow-primary/15' : ''
-          )}
-        >
-          <Quote className='w-6 h-6 text-primary' />
-        </div>
-      </div>
+      <Quote className='w-6 h-6 text-primary' />
 
       {/* Review Text */}
       <div className='z-10 relative space-y-4'>
@@ -106,8 +92,7 @@ const TestimonialCard = ({ testimonial, index, className }: TestimonialCardProps
         <div
           className={cn(
             'flex justify-center items-center rounded-full w-14 h-14 transition-all duration-300',
-            'bg-gradient-to-br from-primary/20 to-accent/20',
-            'border-2 border-primary/30 overflow-hidden',
+            'border border-primary/30 overflow-hidden',
             isHovered ? 'scale-105 border-primary/50 shadow-md shadow-primary/15' : ''
           )}
         >
@@ -126,25 +111,12 @@ const TestimonialCard = ({ testimonial, index, className }: TestimonialCardProps
 
         {/* User Details */}
         <div className='flex-1 min-w-0'>
-          <Typography variant='h6' weight='semibold' className='text-foreground truncate'>
+          <Typography variant='h6' weight='semibold' className='truncate'>
             {testimonial.name}
           </Typography>
-          <Typography variant='body2' className='text-muted-foreground truncate'>
+          <Typography variant='body2' className='truncate'>
             {testimonial.location}
           </Typography>
-        </div>
-
-        {/* Trip Badge */}
-        <div
-          className={cn(
-            'px-3 py-1.5 rounded-full font-medium text-xs',
-            'bg-gradient-to-r from-primary/10 to-accent/10',
-            'border border-primary/20 text-primary',
-            'transition-all duration-300',
-            isHovered ? 'border-primary/40 bg-gradient-to-r from-primary/15 to-accent/15' : ''
-          )}
-        >
-          {testimonial.tripType}
         </div>
       </div>
     </motion.div>
