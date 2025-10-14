@@ -77,7 +77,7 @@ const AboutUs = ({ data }: { data?: AboutData }) => {
                   <div
                     key={`facility-${index}-${facility.title}`}
                     className={cn(
-                      'group relative p-4 rounded-lg overflow-hidden transition-all duration-500 ease-out',
+                      'group relative p-3 lg:p-4 rounded-lg overflow-hidden transition-all duration-500 ease-out',
                       'hover:shadow-xl hover:shadow-primary/10 hover:-translate-y-1',
                       'animate-in fade-in slide-in-from-bottom-4',
                       isAccent
@@ -85,22 +85,20 @@ const AboutUs = ({ data }: { data?: AboutData }) => {
                         : 'bg-muted/50 hover:bg-muted/70 border border-border/40'
                     )}
                   >
-                    <div className='relative flex md:flex-row flex-col items-center gap-4'>
+                    <div className='relative flex md:flex-row flex-col items-center gap-3 lg:gap-4'>
                       {/* Enhanced icon container */}
-                      <div className='flex justify-center items-center bg-white rounded-full w-14 h-14'>
+                      <div className='flex justify-center items-center bg-white rounded-full w-12 lg:w-14 h-12 lg:h-14'>
                         {typeof Icon === 'string' ? (
                           <CustomImage src={Icon} height={28} width={28} alt={facility.title} />
                         ) : (
-                          <Icon className='w-7 h-7' color='#0f6578' />
+                          <Icon className='w-6 lg:w-7 h-6 lg:h-7' color='#0f6578' />
                         )}
                       </div>
 
                       {/* Enhanced typography */}
-
-                      <Typography variant='body1' weight='semibold' className='flex-1 lg:max-w-[60%] max-md:text-center leading-tight'>
+                      <Typography variant='body1' weight='semibold' className='flex-1 max-w-[90%] lg:max-w-[60%] max-md:text-center leading-tight'>
                         {facility.title}
                       </Typography>
-
                     </div>
                   </div>
                 )
