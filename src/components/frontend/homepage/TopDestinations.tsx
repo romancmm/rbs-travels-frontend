@@ -2,8 +2,7 @@
 
 import { Container } from '@/components/common/container'
 import CustomImage from '@/components/common/CustomImage'
-import CustomLink from '@/components/common/CustomLink'
-import { sectionVariants } from '@/components/common/section'
+import { Section } from '@/components/common/section'
 import { Typography } from '@/components/common/typography'
 import { Button } from '@/components/ui/button'
 import {
@@ -18,18 +17,10 @@ import { cn } from '@/lib/utils'
 import Autoplay from 'embla-carousel-autoplay'
 import ClassNames from 'embla-carousel-class-names'
 import {
-  ArrowRight,
-  Building2,
-  Calendar,
-  Camera,
-  Filter,
-  Heart,
-  MapPin,
+  Building2, Filter, MapPin,
   Mountain,
   Palmtree,
-  Star,
-  Users,
-  Waves
+  Star, Waves
 } from 'lucide-react'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 
@@ -77,7 +68,7 @@ const DestinationCard = ({ destination, index }: { destination: Destination; ind
 
   return (
     <div
-      className='group slide-in-from-bottom-4 relative bg-white shadow-lg hover:shadow-2xl rounded-3xl overflow-hidden transition-all hover:-translate-y-3 animate-in duration-700'
+      className='group slide-in-from-bottom-4 relative bg-white shadow-lg hover:shadow-2xl rounded-3xl overflow-hidden transition-all hover:-translate-y-2 animate-in duration-700'
       style={{ animationDelay: `${index * 100}ms` }}
     >
       {/* Image Container */}
@@ -87,20 +78,20 @@ const DestinationCard = ({ destination, index }: { destination: Destination; ind
           alt={destination.name}
           width={400}
           height={300}
-          className='w-full h-full object-cover group-hover:scale-110 transition-transform duration-700'
+          className='w-full h-full object-cover group-hover:scale-105 transition-transform duration-700'
         />
 
         {/* Dynamic overlay gradient */}
         <div className='absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent' />
 
         {/* Floating elements */}
-        <div className='top-4 left-4 absolute flex items-center gap-2'>
+        {/* <div className='top-4 left-4 absolute flex items-center gap-2'>
           <div className='bg-primary shadow-xl backdrop-blur-sm px-4 py-2 rounded-full font-bold text-white text-sm'>
             {destination.price}
           </div>
-        </div>
+        </div> */}
 
-        <div className='top-4 right-4 absolute flex items-center gap-2'>
+        {/* <div className='top-4 right-4 absolute flex items-center gap-2'>
           <div className='flex items-center gap-1 bg-white/95 shadow-lg backdrop-blur-sm px-3 py-2 rounded-full font-medium text-gray-800 text-xs'>
             <IconComponent className='w-3 h-3' />
             {destination.type}
@@ -116,10 +107,10 @@ const DestinationCard = ({ destination, index }: { destination: Destination; ind
           >
             <Heart className={cn('w-4 h-4', isLiked && 'fill-current')} />
           </button>
-        </div>
+        </div> */}
 
         {/* Rating and photos overlay */}
-        <div className='bottom-4 left-4 absolute flex items-center gap-3'>
+        {/* <div className='bottom-4 left-4 absolute flex items-center gap-3'>
           <div className='flex items-center gap-1 bg-white/95 shadow-lg backdrop-blur-sm px-3 py-2 rounded-lg'>
             <Star className='fill-yellow-400 w-4 h-4 text-yellow-400' />
             <span className='font-semibold text-gray-800 text-sm'>4.9</span>
@@ -129,11 +120,11 @@ const DestinationCard = ({ destination, index }: { destination: Destination; ind
             <Camera className='w-4 h-4 text-gray-600' />
             <span className='font-medium text-gray-800 text-xs'>2.3k photos</span>
           </div>
-        </div>
+        </div> */}
       </div>
 
       {/* Content */}
-      <div className='space-y-4 p-6'>
+      <div className='space-y-4 p-5'>
         {/* Title and Description */}
         <div className='space-y-2'>
           <Typography
@@ -149,7 +140,7 @@ const DestinationCard = ({ destination, index }: { destination: Destination; ind
         </div>
 
         {/* Metadata with enhanced styling */}
-        <div className='flex justify-between items-center pt-2 border-gray-100 border-t'>
+        {/* <div className='flex justify-between items-center pt-2 border-gray-100 border-t'>
           <div className='flex items-center gap-1 text-gray-500'>
             <Calendar className='w-4 h-4' />
             <span className='font-medium text-sm'>{destination.duration}</span>
@@ -158,16 +149,16 @@ const DestinationCard = ({ destination, index }: { destination: Destination; ind
             <Users className='w-4 h-4' />
             <span className='font-medium text-sm'>{destination.tours} tours</span>
           </div>
-        </div>
+        </div> */}
 
         {/* Enhanced Action Button */}
-        <CustomLink
+        {/* <CustomLink
           href={`/destination/${destination.id}`}
           className='group/btn inline-flex justify-center items-center gap-2 bg-gradient-to-r from-primary hover:from-primary/90 to-primary/90 hover:to-primary shadow-lg hover:shadow-xl px-4 py-3 rounded-xl w-full font-semibold text-white hover:scale-105 transition-all duration-300'
         >
           <span>Explore Destination</span>
           <ArrowRight className='w-4 h-4 transition-transform group-hover/btn:translate-x-1' />
-        </CustomLink>
+        </CustomLink> */}
       </div>
     </div>
   )
@@ -234,10 +225,9 @@ export default function TopDestinations({ data }: TopDestinationsProps) {
   if (!data?.destinations?.length) return null
 
   return (
-    <section
+    <Section variant={'xl'}
       className={cn(
-        sectionVariants({ variant: 'xl' }),
-        'bg-gradient-to-br from-blue-50/50 via-white to-purple-50/30 relative overflow-hidden'
+        'relative bg-gradient-to-br from-blue-50/50 via-white to-purple-50/30 overflow-hidden'
       )}
     >
       {/* Enhanced Background Pattern */}
@@ -269,7 +259,7 @@ export default function TopDestinations({ data }: TopDestinationsProps) {
         </div>
 
         {/* Enhanced Filter Tabs */}
-        <div className='flex flex-wrap justify-center items-center gap-3 mb-10'>
+        {/* <div className='flex flex-wrap justify-center items-center gap-3 mb-10'>
           {filters.map((filter) => {
             const IconComponent = filter.icon
             const isActive = activeFilter === filter.id
@@ -308,7 +298,7 @@ export default function TopDestinations({ data }: TopDestinationsProps) {
               </button>
             )
           })}
-        </div>
+        </div> */}
 
         {/* Enhanced Carousel Implementation */}
         <div className='relative mb-8'>
@@ -323,9 +313,9 @@ export default function TopDestinations({ data }: TopDestinationsProps) {
               containScroll: 'trimSnaps',
               slidesToScroll: 'auto'
             }}
-            // plugins={[autoplayPlugin, classNamesPlugin]}
+          // plugins={[autoplayPlugin, classNamesPlugin]}
           >
-            <div className='flex justify-between items-center mb-6'>
+            <div className='flex justify-between items-center'>
               <div className='flex items-center gap-4'>
                 <div className='hidden md:flex items-center gap-2 text-gray-500 text-sm'>
                   <Filter className='w-4 h-4' />
@@ -339,7 +329,7 @@ export default function TopDestinations({ data }: TopDestinationsProps) {
               </div>
 
               <div className='flex items-center gap-4'>
-                <div className='flex items-center gap-2'>
+                <div className='flex items-center gap-3'>
                   <CarouselPrevious
                     className={cn(
                       'static hover:bg-primary border-gray-200 hover:border-primary hover:text-white transition-all translate-x-0 translate-y-0 duration-300',
@@ -353,17 +343,17 @@ export default function TopDestinations({ data }: TopDestinationsProps) {
                     )}
                   />
                 </div>
-                <CustomLink
+                {/* <CustomLink
                   href='/destinations'
                   className='group flex items-center gap-2 bg-primary/5 hover:bg-primary/10 px-4 py-2 rounded-lg font-semibold text-primary hover:text-primary/80 transition-colors'
                 >
                   <span>View All</span>
                   <ArrowRight className='w-4 h-4 transition-transform group-hover:translate-x-1' />
-                </CustomLink>
+                </CustomLink> */}
               </div>
             </div>
 
-            <CarouselContent className='-ml-6'>
+            <CarouselContent className='-ml-6 pt-6 pb-10'>
               {filteredDestinations.map((destination, index) => (
                 <CarouselItem
                   key={destination.id}
@@ -377,7 +367,7 @@ export default function TopDestinations({ data }: TopDestinationsProps) {
         </div>
 
         {/* Progress Indicators */}
-        <div className='flex justify-center items-center gap-2 mb-8'>
+        <div className='flex justify-center items-center gap-2 -mt-6 mb-8'>
           {Array.from({ length: count }).map((_, index) => (
             <button
               key={index}
@@ -416,6 +406,6 @@ export default function TopDestinations({ data }: TopDestinationsProps) {
           </div>
         </div>
       </Container>
-    </section>
+    </Section>
   )
 }

@@ -43,19 +43,19 @@ export default function TopBar() {
           </div>
 
           {/* Center - Announcement */}
-          <div className='flex flex-1 justify-center'>
-            <Typography variant='body2' className='font-medium text-center'>
+          <div className='flex flex-1 justify-end'>
+            <Typography variant='body2' className='font-medium text-end'>
               ✈️ Special Offer: Get 20% off on international flights!
-              <CustomLink href='/page/offers' className='ml-2 underline hover:no-underline'>
+              {/* <CustomLink href='/page/offers' className='ml-2 underline hover:no-underline'>
                 Book Now
-              </CustomLink>
+              </CustomLink> */}
             </Typography>
           </div>
 
           {/* Right side - Close button */}
           <button
             onClick={() => setIsVisible(false)}
-            className='flex justify-center items-center hover:bg-white/20 rounded-full w-6 h-6 transition-colors'
+            className='top-1.5 right-2 absolute flex justify-center items-center hover:bg-white/20 rounded-full w-6 h-6 transition-colors'
             aria-label='Close announcement'
           >
             <X className='w-3 h-3' />

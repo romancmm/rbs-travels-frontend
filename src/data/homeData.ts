@@ -22,7 +22,7 @@ export const homeData = {
       subtitle: 'Your Journey Begins Here',
       description:
         'Explore breathtaking destinations, curated tours, and unforgettable experiences — all designed for the modern traveler.',
-      button: 'Book Now',
+      button: 'Contact Us',
       image: '/images/banners/01.jpg'
     },
     {
@@ -31,7 +31,7 @@ export const homeData = {
       subtitle: 'Make Every Mile a Memory',
       description:
         'From exotic beaches to mountain escapes, RBS Travels takes you wherever your heart desires.',
-      button: 'Explore Packages',
+      button: 'Contact Us',
       image: '/images/banners/02.webp'
     },
     {
@@ -40,7 +40,7 @@ export const homeData = {
       subtitle: 'Travel Smarter, Travel Better',
       description:
         'Experience seamless travel planning, premium accommodations, and personalized service at every step.',
-      button: 'Get Started',
+      button: 'Contact Us',
       image: '/images/banners/03.jpeg'
     },
     {
@@ -49,7 +49,7 @@ export const homeData = {
       subtitle: 'Travel Smarter, Travel Better',
       description:
         'Experience seamless travel planning, premium accommodations, and personalized service at every step.',
-      button: 'Get Started',
+      button: 'Contact Us',
       image: '/images/banners/04.jpg'
     }
   ],

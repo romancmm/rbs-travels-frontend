@@ -4,14 +4,14 @@ import {
   FileText,
   Gift,
   Globe,
+  Hotel,
   LayoutDashboard,
   LucideIcon,
   Mail,
+  Plane,
   Settings,
   ShieldAlert,
   TrendingUp,
-  Plane,
-  Hotel,
   Users2
 } from 'lucide-react'
 
@@ -30,7 +30,7 @@ export const siteConfig = {
     default: '/logo.svg',
     dark: '/logo.svg'
   },
-  phone: '+8801700000000',
+  phone: '+88017 123 456 78',
   email: 'info@rbstravels.com',
   address: 'House #00, Road #00, Dhanmondi, Dhaka, Bangladesh',
   socialLinks: [

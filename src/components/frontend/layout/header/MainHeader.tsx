@@ -16,9 +16,7 @@ export default function MainHeader() {
     <div className={containerVariants()}>
       <div className='flex flex-row justify-between items-center gap-x-4 min-h-[80px] text-white'>
         {/* Logo Section */}
-        <div className='flex items-center'>
-          <SiteLogo />
-        </div>
+        <SiteLogo />
 
         {/* Main Navigation */}
         {siteConfig.mainNav?.length > 0 && (
@@ -43,9 +41,8 @@ export default function MainHeader() {
                   </Typography>
                   {item.children && (
                     <ChevronDown
-                      className={`w-4 h-4 transition-transform duration-300 ${
-                        hoveredItem === index ? 'rotate-180' : ''
-                      }`}
+                      className={`w-4 h-4 transition-transform duration-300 ${hoveredItem === index ? 'rotate-180' : ''
+                        }`}
                     />
                   )}
                 </CustomLink>
@@ -75,21 +72,17 @@ export default function MainHeader() {
         <div className='hidden lg:flex items-center gap-4'>
           {/* Phone Number */}
           <div className='flex items-center gap-2 text-white/90 hover:text-white transition-colors'>
-            <div className='flex justify-center items-center bg-primary/20 rounded-lg w-8 h-8'>
-              <Phone className='w-4 h-4' />
+            <div className='flex justify-center items-center bg-primary/20 rounded-lg w-10 h-10'>
+              <Phone className='w-5 h-5' />
             </div>
             <div className='text-sm'>
               <Typography variant='caption' className='text-white/70'>
                 Call us
               </Typography>
-              <CustomLink
-                href={`tel:${siteConfig.phone}`}
-                className='block font-semibold hover:text-primary transition-colors'
-              >
-                <Typography variant='body2' weight='semibold'>
-                  {siteConfig.phone}
-                </Typography>
-              </CustomLink>
+
+              <Typography href={`tel:${siteConfig.phone?.replace(' ', '')}`} variant='body2' weight='semibold'>
+                {siteConfig.phone?.replace('+88', '')}
+              </Typography>
             </div>
           </div>
 

@@ -5,10 +5,8 @@ import CustomImage from '@/components/common/CustomImage'
 import CustomLink from '@/components/common/CustomLink'
 import GotoTop from '@/components/common/GotoTop'
 import { Typography } from '@/components/common/typography'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
 import { siteConfig } from '@/data/siteConfig'
-import { ArrowRight, Mail, MapPin, Phone, Send } from 'lucide-react'
+import { ArrowRight, Mail, MapPin, Phone } from 'lucide-react'
 import { useState } from 'react'
 
 export default function Footer() {
@@ -50,7 +48,7 @@ export default function Footer() {
                   <div className='flex items-center space-x-3'>
                     <div className='flex justify-center items-center bg-primary rounded-xl w-10 h-10'>
                       <CustomImage
-                        src='/logo.jpeg'
+                        src='/logo.svg'
                         width={24}
                         height={24}
                         alt='RBS Travels'
@@ -158,7 +156,7 @@ export default function Footer() {
             </div>
 
             {/* Newsletter Subscription */}
-            <div className='mb-8 pt-8 border-slate-700 border-t'>
+            {/* <div className='mb-8 pt-8 border-slate-700 border-t'>
               <div className='mx-auto lg:mx-0 max-w-md'>
                 <div className='space-y-4 lg:text-left text-center'>
                   <Typography variant='h6' weight='semibold' className='text-white'>
@@ -189,7 +187,7 @@ export default function Footer() {
                   </form>
                 </div>
               </div>
-            </div>
+            </div> */}
           </Container>
         </div>
 

@@ -31,7 +31,7 @@ const AboutUs = ({ data }: { data?: AboutData }) => {
             <Typography
               variant='subtitle1'
               className={cn(
-                'font-semibold text-primary uppercase tracking-wider',
+                'mb-0 font-semibold text-primary uppercase tracking-wider',
                 'animate-in fade-in slide-in-from-left-4 duration-500'
               )}
               style={{ animationDelay: '100ms', animationFillMode: 'both' }}
@@ -66,7 +66,7 @@ const AboutUs = ({ data }: { data?: AboutData }) => {
             </Typography>
 
             {/* Enhanced Facilities Grid */}
-            <div className='gap-4 lg:gap-5 grid grid-cols-1 sm:grid-cols-2 pt-2'>
+            <div className='gap-4 lg:gap-5 grid grid-cols-2 pt-2'>
               {data.facilities?.map((facility, index) => {
                 const row = Math.floor(index / 2)
                 const col = index % 2
@@ -77,30 +77,28 @@ const AboutUs = ({ data }: { data?: AboutData }) => {
                   <div
                     key={`facility-${index}-${facility.title}`}
                     className={cn(
-                      'group relative p-5 rounded-xl overflow-hidden transition-all duration-500 ease-out',
+                      'group relative p-3 lg:p-4 rounded-lg overflow-hidden transition-all duration-500 ease-out',
                       'hover:shadow-xl hover:shadow-primary/10 hover:-translate-y-1',
                       'animate-in fade-in slide-in-from-bottom-4',
                       isAccent
-                        ? 'bg-primary/8 hover:bg-primary/12 border border-primary/20'
-                        : 'bg-muted/50 hover:bg-muted/70 border border-border/40'
+                        ? 'bg-primary/8 hover:bg-primary/12 border border-primary/10'
+                        : 'bg-muted hover:bg-muted/70 border border-border/40'
                     )}
                   >
-                    <div className='relative flex items-center gap-4'>
+                    <div className='relative flex md:flex-row flex-col items-center gap-3 lg:gap-4'>
                       {/* Enhanced icon container */}
-                      <div className='flex justify-center items-center bg-white rounded-full w-14 h-14'>
+                      <div className='flex justify-center items-center bg-white rounded-full w-12 lg:w-14 h-12 lg:h-14'>
                         {typeof Icon === 'string' ? (
                           <CustomImage src={Icon} height={28} width={28} alt={facility.title} />
                         ) : (
-                          <Icon className='w-7 h-7' color='#0f6578' />
+                          <Icon className='w-6 lg:w-7 h-6 lg:h-7' color='#0f6578' />
                         )}
                       </div>
 
                       {/* Enhanced typography */}
-                      <div className='flex-1'>
-                        <Typography variant='h6' weight='semibold'>
-                          {facility.title}
-                        </Typography>
-                      </div>
+                      <Typography variant='body1' weight='semibold' className='flex-1 max-w-[90%] lg:max-w-[60%] max-md:text-center leading-tight'>
+                        {facility.title}
+                      </Typography>
                     </div>
                   </div>
                 )
@@ -127,7 +125,7 @@ const AboutUs = ({ data }: { data?: AboutData }) => {
             {/* Enhanced Experience Badge */}
             <div
               className={cn(
-                '-right-6 -bottom-6 absolute flex items-center gap-4 bg-primary shadow-2xl p-5 rounded-xl',
+                'hidden -right-6 -bottom-6 absolute md:flex items-center gap-4 bg-primary shadow-2xl p-5 rounded-xl',
                 'text-white transform transition-all duration-500 hover:scale-105',
                 'animate-in fade-in slide-in-from-bottom-4 duration-600',
                 'max-w-64 backdrop-blur-sm border border-primary-foreground/10'

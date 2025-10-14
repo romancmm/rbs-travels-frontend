@@ -6,7 +6,7 @@ import { Section } from '@/components/common/section'
 import { TestimonialsLoadingSkeleton } from '@/components/common/Skeleton'
 import { Typography } from '@/components/common/typography'
 import { cn } from '@/lib/utils'
-import { ChevronLeft, ChevronRight, Heart } from 'lucide-react'
+import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { AnimatePresence, motion, PanInfo } from 'motion/react'
 import { useCallback, useEffect, useState } from 'react'
 import TestimonialCard from './TestimonialCard'
@@ -161,7 +161,6 @@ const Header = ({ data }: { data: TestimonialsData }) => (
       className='space-y-4'
     >
       <div className='flex justify-center items-center gap-2 mb-3'>
-        <Heart className='fill-red-500 w-5 h-5 text-red-500' />
         <Typography
           variant='subtitle1'
           className='font-semibold text-primary uppercase tracking-wide'
@@ -178,13 +177,6 @@ const Header = ({ data }: { data: TestimonialsData }) => (
       >
         {data.title}
       </Typography>
-
-      <motion.div
-        initial={{ width: 0 }}
-        animate={{ width: '100px' }}
-        transition={{ delay: 0.5, duration: 0.8 }}
-        className='bg-gradient-to-r from-red-400 via-primary to-accent mx-auto rounded-full h-1'
-      />
     </motion.div>
   </div>
 )

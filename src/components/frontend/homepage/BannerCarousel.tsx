@@ -11,7 +11,7 @@ import {
   CarouselPrevious
 } from '@/components/ui/carousel'
 import { cn } from '@/lib/utils'
-import { ChevronLeft, ChevronRight, Play } from 'lucide-react'
+import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { AnimatePresence, motion } from 'motion/react'
 import { useEffect, useState } from 'react'
 
@@ -88,9 +88,9 @@ const BannerCarousel = ({ banners }: BannerCarouselProps) => {
             <CarouselItem key={banner.id}>
               <div
                 className={cn(
-                  'relative flex justify-center items-center w-screen min-h-screen',
+                  'relative flex justify-center items-center w-screen',
                   'bg-cover bg-no-repeat bg-center',
-                  'h-[90vh] sm:h-[85vh] md:h-[calc(100vh-4rem)] lg:h-screen',
+                  'h-[90vh] sm:h-[85vh] md:h-[calc(100vh-6rem)] 2xl:h-screen',
                   'transition-all duration-1000 ease-out',
                   '-mx-4 sm:-mx-6 md:-mx-8'
                 )}
@@ -100,7 +100,6 @@ const BannerCarousel = ({ banners }: BannerCarouselProps) => {
                   backgroundPosition: 'center center',
                   backgroundAttachment: isMobile ? 'scroll' : 'fixed',
                   transform: current === index ? 'scale(1)' : 'scale(1.02)',
-                  width: '100vw',
                   marginLeft: 'calc(-50vw + 50%)',
                   marginRight: 'calc(-50vw + 50%)'
                 }}
@@ -132,32 +131,21 @@ const BannerCarousel = ({ banners }: BannerCarouselProps) => {
                         initial={{ opacity: 0, x: -30 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ delay: 0.2, duration: 0.6 }}
-                        className='mb-4'
+                        className='mb-3'
                       >
-                        <span className='inline-flex items-center gap-2 bg-primary/20 backdrop-blur-sm px-4 py-2 border border-white/20 rounded-full'>
-                          <div className='bg-primary rounded-full w-2 h-2 animate-pulse' />
-                          <span className='font-semibold text-sm md:text-base uppercase tracking-wider'>
-                            {banner.subtitle}
-                          </span>
+                        <span className='inline-flex items-center gap-2 bg-primary/20 backdrop-blur-sm px-4 py-1.5 border border-white/20 rounded-full font-semibold text-xs md:text-sm uppercase tracking-wider'>
+                          {banner.subtitle}
                         </span>
                       </motion.div>
 
                       {/* Title with staggered letter animation */}
                       <motion.h1
-                        className='mb-6 font-bold text-4xl md:text-7xl lg:text-8xl leading-tight'
+                        className='mb-4 font-bold text-4xl md:text-7xl 2xl:text-8xl'
                         initial={{ opacity: 0, y: 30 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.3, duration: 0.8 }}
                       >
-                        <motion.span
-                          className='block bg-clip-text bg-gradient-to-r from-white via-white to-primary-foreground text-transparent'
-                          initial={{ backgroundPosition: '200% center' }}
-                          animate={{ backgroundPosition: '0% center' }}
-                          transition={{ delay: 0.5, duration: 1.2 }}
-                          style={{ backgroundSize: '200% 100%' }}
-                        >
-                          {banner.title}
-                        </motion.span>
+                        {banner.title}
                       </motion.h1>
 
                       {/* Description with typewriter effect */}
@@ -182,15 +170,13 @@ const BannerCarousel = ({ banners }: BannerCarouselProps) => {
                           size='lg'
                           className={cn(
                             'group relative bg-primary hover:bg-primary/90 overflow-hidden',
-                            'px-10 py-5 text-white font-bold text-lg sm:text-xl transition-all duration-500',
+                            'px-10 py-5 text-white font-medium text-base transition-all duration-500',
                             'border-2 border-primary hover:border-primary/70',
                             'shadow-2xl hover:shadow-3xl hover:shadow-primary/30',
-                            'hover:scale-110 hover:-translate-y-2 active:scale-95',
-                            'rounded-full min-w-[200px] h-14 sm:h-16'
+                            'hover:scale-105 hover:-translate-y-1 active:scale-95 rounded-full'
                           )}
                         >
                           <span className='z-10 relative flex justify-center items-center gap-3'>
-                            <Play className='w-5 h-5 group-hover:scale-125 transition-all group-hover:translate-x-1 duration-300' />
                             {banner.button}
                           </span>
                           {/* Animated gradient overlay */}
@@ -204,35 +190,26 @@ const BannerCarousel = ({ banners }: BannerCarouselProps) => {
                           variant='outline'
                           size='lg'
                           className={cn(
-                            'group relative bg-white/10 backdrop-blur-md border-2 border-white/40 text-white',
+                            'group relative bg-white/10 backdrop-blur-md border border-white/40 text-white',
                             'hover:bg-white/20 hover:border-white/60 hover:text-white transition-all duration-500',
-                            'px-10 py-5 font-semibold text-lg sm:text-xl',
+                            'px-8 py-5 font-medium text-base',
                             'hover:scale-105 hover:-translate-y-1 active:scale-95',
-                            'rounded-full min-w-[180px] h-14 sm:h-16',
-                            'shadow-lg hover:shadow-xl hover:shadow-white/10'
+                            'rounded-full shadow-lg hover:shadow-xl hover:shadow-white/10'
                           )}
                         >
-                          <span className='z-10 relative flex justify-center items-center gap-3'>
-                            Learn More
-                            <motion.div
-                              className='bg-white rounded-full w-2 h-2'
-                              animate={{ scale: [1, 1.2, 1] }}
-                              transition={{ duration: 2, repeat: Infinity }}
-                            />
-                          </span>
+                          Learn More
                           {/* Glassmorphism background */}
                           <div className='absolute inset-0 bg-gradient-to-r from-white/5 to-white/10 opacity-0 group-hover:opacity-100 rounded-full transition-opacity duration-300' />
                         </Button>
                       </motion.div>
 
                       {/* Additional Action Elements */}
-                      <motion.div
+                      {/* <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 1.0, duration: 0.6 }}
                         className='flex sm:flex-row flex-col justify-center items-center gap-6 mt-8 text-white/80'
                       >
-                        {/* Scroll Indicator */}
                         <div className='flex items-center gap-2 text-sm'>
                           <motion.div
                             className='flex justify-center border-2 border-white/40 rounded-full w-6 h-10'
@@ -249,7 +226,6 @@ const BannerCarousel = ({ banners }: BannerCarouselProps) => {
                           <span className='hidden sm:inline'>Scroll to explore</span>
                         </div>
 
-                        {/* Social Proof Element */}
                         <div className='flex items-center gap-2 text-sm'>
                           <div className='flex -space-x-2'>
                             <div className='bg-gradient-to-r from-primary to-primary/70 border-2 border-white rounded-full w-8 h-8' />
@@ -258,7 +234,7 @@ const BannerCarousel = ({ banners }: BannerCarouselProps) => {
                           </div>
                           <span className='hidden sm:inline'>Join 10,000+ happy travelers</span>
                         </div>
-                      </motion.div>
+                      </motion.div> */}
                     </motion.div>
                   )}
                 </AnimatePresence>
@@ -295,9 +271,9 @@ const BannerCarousel = ({ banners }: BannerCarouselProps) => {
               key={index}
               onClick={() => api?.scrollTo(index)}
               className={cn(
-                'rounded-full w-3 h-3 transition-all duration-300',
+                'rounded-full w-2 h-2 transition-all duration-300',
                 current === index
-                  ? 'bg-white scale-125 shadow-lg'
+                  ? 'bg-white scale-125 shadow-lg w-4'
                   : 'bg-white/40 hover:bg-white/70 hover:scale-110'
               )}
               aria-label={`Go to slide ${index + 1}`}
