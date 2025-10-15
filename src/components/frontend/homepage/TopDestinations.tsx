@@ -389,17 +389,17 @@ export default function TopDestinations({ data }: TopDestinationsProps) {
             Let our travel experts help you plan the perfect getaway to any of these amazing
             destinations.
           </Typography>
-          <div className='flex sm:flex-row flex-col justify-center items-center gap-4 pt-4'>
+          <div className='flex justify-center items-center gap-4 pt-4'>
             <Button
               size='lg'
-              className='bg-gradient-to-r from-primary hover:from-primary/90 to-primary/90 hover:to-primary shadow-xl hover:shadow-2xl px-8 py-4 rounded-xl font-semibold text-white hover:scale-105 transition-all duration-300'
+              className='bg-gradient-to-r from-primary hover:from-primary/90 to-primary/90 hover:to-primary shadow-xl hover:shadow-2xl px-4 lg:px-8 py-4 rounded-xl font-semibold text-white hover:scale-105 transition-all duration-300'
             >
               Plan My Journey
             </Button>
             <Button
               variant='outline'
               size='lg'
-              className='px-8 py-4 border-gray-300 hover:border-primary rounded-xl text-gray-700 hover:text-primary transition-all duration-300'
+              className='px-4 lg:px-8 py-4 border-gray-300 hover:border-primary rounded-xl text-gray-700 hover:text-primary transition-all duration-300'
             >
               Talk to Expert
             </Button>

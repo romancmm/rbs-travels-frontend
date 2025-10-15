@@ -124,7 +124,7 @@ const BannerCarousel = ({ banners }: BannerCarouselProps) => {
                         duration: 0.8,
                         ease: [0.6, -0.05, 0.01, 0.99]
                       }}
-                      className='z-10 relative mx-auto px-6 max-w-4xl text-white text-center'
+                      className='z-10 relative mx-auto px-2 lg:px-6 max-w-4xl text-white text-center'
                     >
                       {/* Subtitle with enhanced animation */}
                       <motion.div
@@ -163,14 +163,14 @@ const BannerCarousel = ({ banners }: BannerCarouselProps) => {
                         initial={{ opacity: 0, y: 30, scale: 0.8 }}
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         transition={{ delay: 0.8, duration: 0.5 }}
-                        className='flex sm:flex-row flex-col justify-center items-center gap-4 sm:gap-6'
+                        className='flex justify-center items-center gap-3 sm:gap-6'
                       >
                         {/* Primary CTA Button */}
                         <Button
                           size='lg'
                           className={cn(
                             'group relative bg-primary hover:bg-primary/90 overflow-hidden',
-                            'px-10 py-5 text-white font-medium text-base transition-all duration-500',
+                            'px-8 lg:px-10 py-2.5 lg:py-5 text-white font-medium text-sm lg:text-base transition-all duration-500',
                             'border-2 border-primary hover:border-primary/70',
                             'shadow-2xl hover:shadow-3xl hover:shadow-primary/30',
                             'hover:scale-105 hover:-translate-y-1 active:scale-95 rounded-full'
@@ -192,7 +192,7 @@ const BannerCarousel = ({ banners }: BannerCarouselProps) => {
                           className={cn(
                             'group relative bg-white/10 backdrop-blur-md border border-white/40 text-white',
                             'hover:bg-white/20 hover:border-white/60 hover:text-white transition-all duration-500',
-                            'px-8 py-5 font-medium text-base',
+                            'px-8 lg:px-10 py-2.5 lg:py-5 font-medium text-sm lg:text-base',
                             'hover:scale-105 hover:-translate-y-1 active:scale-95',
                             'rounded-full shadow-lg hover:shadow-xl hover:shadow-white/10'
                           )}
