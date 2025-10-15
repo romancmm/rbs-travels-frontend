@@ -5,10 +5,18 @@ import { EmptyState } from '@/components/common/EmptyState'
 import { Section } from '@/components/common/section'
 import { TestimonialsLoadingSkeleton } from '@/components/common/Skeleton'
 import { Typography } from '@/components/common/typography'
+import {
+  Carousel,
+  CarouselApi,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from '@/components/ui/carousel'
 import { cn } from '@/lib/utils'
-import { ChevronLeft, ChevronRight } from 'lucide-react'
-import { AnimatePresence, motion, PanInfo } from 'motion/react'
-import { useCallback, useEffect, useState } from 'react'
+import Autoplay from 'embla-carousel-autoplay'
+import { motion } from 'motion/react'
+import { useEffect, useState } from 'react'
 import TestimonialCard from './TestimonialCard'
 
 interface Testimonial {
@@ -34,76 +42,17 @@ interface TestimonialsProps {
   className?: string
 }
 
-const ITEMS_PER_PAGE = 3
-const DRAG_THRESHOLD = 50
-
 const Testimonials = ({ data, isLoading = false, className }: TestimonialsProps) => {
-  const [currentIndex, setCurrentIndex] = useState(0)
-  const [direction, setDirection] = useState(0)
-
-  // Safe data access
-  const testimonials = data?.testimonials || []
-  const maxIndex = Math.max(0, testimonials.length - ITEMS_PER_PAGE)
-  const visibleTestimonials = testimonials.slice(currentIndex, currentIndex + ITEMS_PER_PAGE)
-  const hasMultiplePages = testimonials.length > ITEMS_PER_PAGE
-
-  // Navigation functions
-  const goToNext = useCallback(() => {
-    setDirection(1)
-    setCurrentIndex((prev) => (prev >= maxIndex ? 0 : prev + 1))
-  }, [maxIndex])
-
-  const goToPrev = useCallback(() => {
-    setDirection(-1)
-    setCurrentIndex((prev) => (prev <= 0 ? maxIndex : prev - 1))
-  }, [maxIndex])
-
-  const goToIndex = useCallback(
-    (index: number) => {
-      setDirection(index > currentIndex ? 1 : -1)
-      setCurrentIndex(index)
-    },
-    [currentIndex]
-  )
-
-  // Drag handlers
-  const handleDragEnd = useCallback(
-    (_: any, info: PanInfo) => {
-      const { offset, velocity } = info
-      const swipeThreshold = DRAG_THRESHOLD
-      const swipeConfidenceThreshold = 10000
-      const swipePower = Math.abs(offset.x) * velocity.x
-
-      if (swipePower < -swipeConfidenceThreshold || offset.x < -swipeThreshold) {
-        goToNext()
-      } else if (swipePower > swipeConfidenceThreshold || offset.x > swipeThreshold) {
-        goToPrev()
-      }
-    },
-    [goToNext, goToPrev]
-  )
-
-  // Keyboard navigation
-  useEffect(() => {
-    const handleKeyPress = (event: KeyboardEvent) => {
-      if (event.key === 'ArrowLeft') goToPrev()
-      else if (event.key === 'ArrowRight') goToNext()
-    }
-
-    window.addEventListener('keydown', handleKeyPress)
-    return () => window.removeEventListener('keydown', handleKeyPress)
-  }, [goToNext, goToPrev])
-
-  // Early returns for loading and empty states
   if (isLoading) return <TestimonialsLoadingSkeleton />
+
   if (!data?.testimonials?.length) {
     return (
-      <Section variant='xl' className={className}>
+      <Section variant="xl" className={className}>
         <Container>
           <EmptyState
-            title='No Testimonials Available'
-            description='Customer reviews will appear here once available.'
-            imageSrc='/no-data.png'
+            title="No Testimonials Available"
+            description="Customer reviews will appear here once available."
+            imageSrc="/no-data.png"
           />
         </Container>
       </Section>
@@ -111,69 +60,36 @@ const Testimonials = ({ data, isLoading = false, className }: TestimonialsProps)
   }
 
   return (
-    <Section variant='xl' className={cn('bg-gradient-to-b from-accent/5 to-background', className)}>
+    <Section variant="xl" className={cn('bg-gradient-to-b from-accent/5 to-background', className)}>
       <Container>
-        {/* Header */}
         <Header data={data} />
-
-        {/* Carousel */}
-        <div className='relative'>
-          {/* Navigation Buttons */}
-          {hasMultiplePages && (
-            <NavigationButtons
-              onPrev={goToPrev}
-              onNext={goToNext}
-              canGoPrev={currentIndex > 0}
-              canGoNext={currentIndex < maxIndex}
-            />
-          )}
-
-          {/* Testimonials Grid with Drag Support */}
-          <CarouselContainer
-            currentIndex={currentIndex}
-            direction={direction}
-            onDragEnd={handleDragEnd}
-            testimonials={visibleTestimonials}
-            isDraggable={hasMultiplePages}
-          />
-
-          {/* Pagination */}
-          {hasMultiplePages && (
-            <PaginationDots
-              currentIndex={currentIndex}
-              totalPages={maxIndex + 1}
-              onPageChange={goToIndex}
-            />
-          )}
-        </div>
+        <CarouselContainer testimonials={data.testimonials} />
       </Container>
     </Section>
   )
 }
 
-// Header Component
+// Header
 const Header = ({ data }: { data: TestimonialsData }) => (
-  <div className='mb-16 text-center'>
+  <div className="mb-10 text-center">
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6 }}
-      className='space-y-4'
+      className="space-y-4"
     >
-      <div className='flex justify-center items-center gap-2 mb-3'>
-        <Typography
-          variant='subtitle1'
-          className='font-semibold text-primary uppercase tracking-wide'
-        >
-          {data.subtitle}
-        </Typography>
-      </div>
+      <Typography
+        variant="subtitle1"
+        className="font-semibold text-primary uppercase tracking-wide"
+      >
+        {data.subtitle}
+      </Typography>
 
       <Typography
-        variant='h2'
-        as='h2'
-        weight='bold'
-        className='mx-auto max-w-3xl text-foreground leading-tight'
+        variant="h2"
+        as="h2"
+        weight="bold"
+        className="mx-auto max-w-3xl text-foreground leading-tight"
       >
         {data.title}
       </Typography>
@@ -181,171 +97,77 @@ const Header = ({ data }: { data: TestimonialsData }) => (
   </div>
 )
 
-// Navigation Buttons Component
-const NavigationButtons = ({
-  onPrev,
-  onNext,
-  canGoPrev,
-  canGoNext
-}: {
-  onPrev: () => void
-  onNext: () => void
-  canGoPrev: boolean
-  canGoNext: boolean
-}) => (
-  <>
-    <NavigationButton
-      direction='prev'
-      onClick={onPrev}
-      disabled={!canGoPrev}
-      icon={<ChevronLeft className='w-5 h-5' />}
-    />
-    <NavigationButton
-      direction='next'
-      onClick={onNext}
-      disabled={!canGoNext}
-      icon={<ChevronRight className='w-5 h-5' />}
-    />
-  </>
-)
+// Carousel Container with arrows + dots + lifted middle card
+const CarouselContainer = ({ testimonials }: { testimonials: Testimonial[] }) => {
+  const [api, setApi] = useState<CarouselApi>()
+  const [current, setCurrent] = useState(0)
+  const [count, setCount] = useState(0)
 
-// Individual Navigation Button
-const NavigationButton = ({
-  direction,
-  onClick,
-  disabled,
-  icon
-}: {
-  direction: 'prev' | 'next'
-  onClick: () => void
-  disabled: boolean
-  icon: React.ReactNode
-}) => (
-  <motion.button
-    whileHover={{ scale: disabled ? 1 : 1.02 }}
-    whileTap={{ scale: disabled ? 1 : 0.98 }}
-    onClick={onClick}
-    disabled={disabled}
-    className={cn(
-      'top-1/2 z-10 absolute -translate-y-1/2',
-      direction === 'prev' ? '-left-6' : '-right-6',
-      'w-12 h-12 rounded-full bg-card/90 backdrop-blur-sm',
-      'border border-border/50 shadow-lg',
-      'flex items-center justify-center',
-      'transition-all duration-300',
-      disabled
-        ? 'opacity-30 cursor-not-allowed'
-        : 'text-muted-foreground hover:text-primary hover:border-primary/40 hover:shadow-xl hover:shadow-primary/20'
-    )}
-  >
-    {icon}
-  </motion.button>
-)
-
-// Carousel Container with Drag Support
-const CarouselContainer = ({
-  currentIndex,
-  direction,
-  onDragEnd,
-  testimonials,
-  isDraggable
-}: {
-  currentIndex: number
-  direction: number
-  onDragEnd: (event: any, info: PanInfo) => void
-  testimonials: Testimonial[]
-  isDraggable: boolean
-}) => {
-  const [isDragging, setIsDragging] = useState(false)
+  useEffect(() => {
+    if (!api) return
+    setCount(api.scrollSnapList().length)
+    setCurrent(api.selectedScrollSnap())
+    api.on('select', () => setCurrent(api.selectedScrollSnap()))
+  }, [api])
 
   return (
-    <div className='relative rounded-2xl overflow-hidden'>
-      <AnimatePresence mode='wait' custom={direction}>
-        <motion.div
-          key={currentIndex}
-          custom={direction}
-          drag={isDraggable ? 'x' : false}
-          dragConstraints={{ left: 0, right: 0 }}
-          dragElastic={0.2}
-          dragMomentum={false}
-          onDragStart={() => setIsDragging(true)}
-          onDragEnd={(event, info) => {
-            setIsDragging(false)
-            onDragEnd(event, info)
-          }}
-          initial={{
-            x: direction > 0 ? '100%' : direction < 0 ? '-100%' : 0,
-            opacity: 0,
-            scale: 0.98
-          }}
-          animate={{
-            x: 0,
-            opacity: 1,
-            scale: 1
-          }}
-          exit={{
-            x: direction > 0 ? '-100%' : direction < 0 ? '100%' : 0,
-            opacity: 0,
-            scale: 0.98
-          }}
-          transition={{
-            type: 'tween',
-            ease: [0.25, 0.46, 0.45, 0.94],
-            duration: isDragging ? 0 : 0.5,
-            opacity: { duration: isDragging ? 0 : 0.3 },
-            scale: { duration: isDragging ? 0 : 0.3 }
-          }}
-          className={cn(
-            'gap-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3',
-            isDraggable && 'cursor-grab active:cursor-grabbing select-none',
-            isDragging && 'scale-[0.99]'
-          )}
-        >
-          {testimonials.map((testimonial, index) => (
-            <TestimonialCard key={testimonial.id} testimonial={testimonial} index={index} />
-          ))}
-        </motion.div>
-      </AnimatePresence>
+    <div className="relative">
+      <Carousel
+        setApi={setApi}
+        className="w-full"
+        plugins={[
+          Autoplay({
+            delay: 5000
+          }),
+        ]}
+        opts={{
+          align: "center",
+          loop: true,
+          dragFree: false,
+          containScroll: 'trimSnaps',
+        }}
+      >
+        <CarouselContent className="-ml-4 sm:-ml-6 pt-6 pb-6">
+          {testimonials.map((testimonial, index) => {
+            return (
+              <CarouselItem
+                key={testimonial.id}
+                className={cn(
+                  'pl-4 sm:pl-6 transition-all duration-500',
+                  'basis-full sm:basis-1/2 lg:basis-1/3 xl:basis-1/3',
+                  { '-mt-4': index === current }
+                )}
+              >
+                <TestimonialCard testimonial={testimonial} index={index} />
+              </CarouselItem>
+            )
+          })}
+        </CarouselContent>
 
-      {/* Drag Indicator */}
-      {isDraggable && (
-        <div className='bottom-4 left-1/2 absolute flex gap-1 opacity-30 -translate-x-1/2 transform'>
-          <div className='bg-primary rounded-full w-1 h-1'></div>
-          <div className='bg-primary rounded-full w-1 h-1'></div>
-          <div className='bg-primary rounded-full w-1 h-1'></div>
+        {/* Arrows */}
+        <CarouselPrevious className="top-1/2 left-0 z-10 absolute bg-background/80 hover:bg-background shadow-md text-foreground -translate-y-1/2" />
+        <CarouselNext className="top-1/2 right-0 z-10 absolute bg-background/80 hover:bg-background shadow-md text-foreground -translate-y-1/2" />
+      </Carousel>
+
+      {/* Dots */}
+      {count > 1 && (
+        <div className="flex justify-center gap-2 mt-6">
+          {Array.from({ length: count }).map((_, index) => (
+            <button
+              key={index}
+              onClick={() => api?.scrollTo(index)}
+              className={cn(
+                'rounded-full w-2 h-2 transition-all duration-300',
+                index === current
+                  ? 'bg-primary w-4'
+                  : 'bg-muted hover:bg-primary/50'
+              )}
+            />
+          ))}
         </div>
       )}
     </div>
   )
 }
-
-// Pagination Dots Component
-const PaginationDots = ({
-  currentIndex,
-  totalPages,
-  onPageChange
-}: {
-  currentIndex: number
-  totalPages: number
-  onPageChange: (index: number) => void
-}) => (
-  <div className='flex justify-center gap-2 mt-12'>
-    {Array.from({ length: totalPages }).map((_, index) => (
-      <motion.button
-        key={index}
-        whileHover={{ scale: 1.1 }}
-        whileTap={{ scale: 0.95 }}
-        onClick={() => onPageChange(index)}
-        className={cn(
-          'rounded-full w-3 h-3 transition-all duration-300',
-          currentIndex === index
-            ? 'bg-primary shadow-lg shadow-primary/50'
-            : 'bg-muted-foreground/30 hover:bg-primary/50'
-        )}
-        aria-label={`Go to page ${index + 1}`}
-      />
-    ))}
-  </div>
-)
 
 export default Testimonials

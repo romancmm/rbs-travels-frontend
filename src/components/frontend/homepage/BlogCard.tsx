@@ -37,7 +37,7 @@ const BlogCard = ({ post, index, className }: BlogCardProps) => {
       className={cn(
         'group relative bg-card/80 backdrop-blur-sm rounded-3xl overflow-hidden',
         'border border-border/30 transition-all duration-500',
-        'hover:border-primary/40 hover:shadow-2xl hover:shadow-primary/15',
+        'hover:border-border hover:shadow-xl hover:shadow-primary/15',
         'hover:bg-gradient-to-br hover:from-card/90 hover:to-primary/5',
         className
       )}
@@ -88,8 +88,8 @@ const BlogCard = ({ post, index, className }: BlogCardProps) => {
 
         {/* Title */}
         <Typography
-          variant='h5'
-          weight='bold'
+          variant='h6'
+          weight='semibold'
           className={cn('line-clamp-2 transition-colors duration-300', 'group-hover:text-primary')}
         >
           {post.title}

@@ -35,7 +35,7 @@ export default function MainHeader() {
                   <Typography
                     variant='body1'
                     weight='medium'
-                    className='text-white group-hover:text-primary transition-colors duration-300'
+                    className='text-white group-hover:text-white transition-colors duration-300'
                   >
                     {item.title}
                   </Typography>

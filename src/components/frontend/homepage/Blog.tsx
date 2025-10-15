@@ -5,8 +5,7 @@ import { EmptyState } from '@/components/common/EmptyState'
 import { Section } from '@/components/common/section'
 import { BlogLoadingSkeleton } from '@/components/common/Skeleton'
 import { Typography } from '@/components/common/typography'
-import { cn } from '@/lib/utils'
-import { ArrowRight, TrendingUp } from 'lucide-react'
+import { TrendingUp } from 'lucide-react'
 import { motion } from 'motion/react'
 import BlogCard from './BlogCard'
 
@@ -105,7 +104,7 @@ const Blog = ({ data, isLoading = false, className }: BlogProps) => {
 
         {/* View All Button with Dynamic Arrow */}
 
-        <motion.button
+        {/* <motion.button
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.8, duration: 0.6 }}
@@ -117,7 +116,7 @@ const Blog = ({ data, isLoading = false, className }: BlogProps) => {
             'text-primary font-semibold'
           )}
         >
-          {/* Background Animation */}
+          // {/* Background Animation * /}
           <motion.div
             initial={{ x: '-100%' }}
             whileHover={{ x: '0%' }}
@@ -125,68 +124,68 @@ const Blog = ({ data, isLoading = false, className }: BlogProps) => {
             className='absolute inset-0 bg-gradient-to-r from-primary to-primary/80'
           />
 
-          {/* Button Content */}
-          <div className='z-10 relative flex items-center gap-3'>
-            <span className='group-hover:text-white transition-colors duration-300'>
-              View All
-            </span>
+          {/* Button Content * /}
+        <div className='z-10 relative flex items-center gap-3'>
+          <span className='group-hover:text-white transition-colors duration-300'>
+            View All
+          </span>
 
-            {/* Dynamic Arrow with Multiple Effects */}
-            <div className='relative'>
-              {/* Main Arrow */}
-              <motion.div
-                animate={{ x: [0, 3, 0] }}
-                transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
-                className='group-hover:text-white transition-colors duration-300'
-              >
-                <ArrowRight className='w-5 h-5' />
-              </motion.div>
+          {/* Dynamic Arrow with Multiple Effects * /}
+          <div className='relative'>
+            {/* Main Arrow * /}
+            <motion.div
+              animate={{ x: [0, 3, 0] }}
+              transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
+              className='group-hover:text-white transition-colors duration-300'
+            >
+              <ArrowRight className='w-5 h-5' />
+            </motion.div>
 
-              {/* Trail Arrows */}
-              <motion.div
-                initial={{ opacity: 0, x: -10 }}
-                whileHover={{
-                  opacity: [0, 1, 0],
-                  x: [-10, 0, 10]
-                }}
-                transition={{
-                  duration: 0.6,
-                  times: [0, 0.5, 1],
-                  delay: 0.1
-                }}
-                className='absolute inset-0 text-white/60'
-              >
-                <ArrowRight className='w-5 h-5' />
-              </motion.div>
+            {/* Trail Arrows * /}
+            <motion.div
+              initial={{ opacity: 0, x: -10 }}
+              whileHover={{
+                opacity: [0, 1, 0],
+                x: [-10, 0, 10]
+              }}
+              transition={{
+                duration: 0.6,
+                times: [0, 0.5, 1],
+                delay: 0.1
+              }}
+              className='absolute inset-0 text-white/60'
+            >
+              <ArrowRight className='w-5 h-5' />
+            </motion.div>
 
-              <motion.div
-                initial={{ opacity: 0, x: -15 }}
-                whileHover={{
-                  opacity: [0, 0.8, 0],
-                  x: [-15, -5, 5]
-                }}
-                transition={{
-                  duration: 0.6,
-                  times: [0, 0.5, 1],
-                  delay: 0.2
-                }}
-                className='absolute inset-0 text-white/40'
-              >
-                <ArrowRight className='w-4 h-4' />
-              </motion.div>
-            </div>
+            <motion.div
+              initial={{ opacity: 0, x: -15 }}
+              whileHover={{
+                opacity: [0, 0.8, 0],
+                x: [-15, -5, 5]
+              }}
+              transition={{
+                duration: 0.6,
+                times: [0, 0.5, 1],
+                delay: 0.2
+              }}
+              className='absolute inset-0 text-white/40'
+            >
+              <ArrowRight className='w-4 h-4' />
+            </motion.div>
           </div>
+        </div>
 
-          {/* Decorative Glow Effect */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
-            whileHover={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.3 }}
-            className='-z-10 absolute -inset-1 bg-gradient-to-r from-primary/20 to-accent/20 blur-lg rounded-full'
-          />
-        </motion.button>
+        {/* Decorative Glow Effect /}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.8 }}
+          whileHover={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.3 }}
+          className='-z-10 absolute -inset-1 bg-gradient-to-r from-primary/20 to-accent/20 blur-lg rounded-full'
+        />
+      </motion.button> */}
       </Container>
-    </Section>
+    </Section >
   )
 }
 

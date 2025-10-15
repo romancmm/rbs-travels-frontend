@@ -17,6 +17,15 @@ import {
 export const homeData = {
   banners: [
     {
+      id: 4,
+      title: 'Luxury Meets Comfort',
+      subtitle: 'Travel Smarter, Travel Better',
+      description:
+        'Experience seamless travel planning, premium accommodations, and personalized service at every step.',
+      button: 'Contact Us',
+      image: '/images/banners/04.jpeg'
+    },
+    {
       id: 1,
       title: 'Discover the World with RBS Travels',
       subtitle: 'Your Journey Begins Here',
@@ -41,16 +50,7 @@ export const homeData = {
       description:
         'Experience seamless travel planning, premium accommodations, and personalized service at every step.',
       button: 'Contact Us',
-      image: '/images/banners/03.jpeg'
-    },
-    {
-      id: 4,
-      title: 'Luxury Meets Comfort',
-      subtitle: 'Travel Smarter, Travel Better',
-      description:
-        'Experience seamless travel planning, premium accommodations, and personalized service at every step.',
-      button: 'Contact Us',
-      image: '/images/banners/04.jpg'
+      image: '/images/banners/03.webp'
     }
   ],
 
@@ -254,89 +254,97 @@ export const homeData = {
     ]
   },
 
-  destinations: {
-    title: 'Top Destinations',
-    subtitle: 'Explore Amazing Places',
+  overseasAndTravels: {
+    title: 'Overseas & Travels',
+    subtitle: 'Top Countries for Manpower & Work Opportunities',
     destinations: [
       {
         id: 1,
-        name: 'Machu Picchu of Peru',
-        image: '/images/banners/01.jpg',
-        tours: 16,
-        description: 'Ancient Incan citadel set high in the Andes Mountains',
-        price: 'From $2,499',
-        duration: '7 Days',
-        type: 'Historical'
+        name: 'Saudi Arabia',
+        image: '/images/overseas/saudi.jpg',
+        workers: 'Over 2 Million',
+        description:
+          'The largest destination for skilled and semi-skilled workers in the Middle East, offering opportunities in construction, oil, and hospitality sectors.',
+        topSectors: ['Construction', 'Oil & Gas', 'Hospitality'],
+        averageSalary: 'From $600/month',
+        visaType: 'Employment Visa'
       },
       {
         id: 2,
-        name: 'Great Temple Jordan',
-        image: '/images/banners/02.webp',
-        tours: 10,
-        description: 'Marvel at the rose-red city carved into rock',
-        price: 'From $1,899',
-        duration: '5 Days',
-        type: 'Archaeological'
+        name: 'United Arab Emirates (UAE)',
+        image: '/images/overseas/uae.jpg',
+        workers: '1.5 Million+',
+        description:
+          'A modern hub for global industries with strong demand in logistics, retail, and hotel management.',
+        topSectors: ['Retail', 'Logistics', 'Hotel & Tourism'],
+        averageSalary: 'From $700/month',
+        visaType: 'Work Permit Visa'
       },
       {
         id: 3,
-        name: 'Athens Greece',
-        image: '/images/banners/03.jpeg',
-        tours: 15,
-        description: 'Birthplace of democracy and ancient civilization',
-        price: 'From $1,299',
-        duration: '6 Days',
-        type: 'Cultural'
+        name: 'Malaysia',
+        image: '/images/overseas/malaysia.jpg',
+        workers: '800K+',
+        description:
+          'Popular destination for factory, plantation, and manufacturing jobs with stable living conditions.',
+        topSectors: ['Manufacturing', 'Electronics', 'Agriculture'],
+        averageSalary: 'From $500/month',
+        visaType: 'Foreign Worker Permit'
       },
       {
         id: 4,
-        name: 'Switzerland',
-        image: '/images/banners/04.jpg',
-        tours: 27,
-        description: 'Alpine adventures in the heart of Europe',
-        price: 'From $3,199',
-        duration: '8 Days',
-        type: 'Adventure'
+        name: 'Qatar',
+        image: '/images/overseas/qatar.jpg',
+        workers: '700K+',
+        description:
+          'Fast-developing Gulf nation with high demand for construction, transport, and technical manpower.',
+        topSectors: ['Construction', 'Transport', 'Facility Management'],
+        averageSalary: 'From $650/month',
+        visaType: 'Employment Visa'
       },
       {
         id: 5,
-        name: 'Maldives Paradise',
-        image: '/images/about.jpg',
-        tours: 22,
-        description: 'Tropical paradise with crystal clear waters',
-        price: 'From $4,999',
-        duration: '5 Days',
-        type: 'Beach Resort'
+        name: 'Oman',
+        image: '/images/overseas/oman.jpg',
+        workers: '500K+',
+        description:
+          'Stable work environment for skilled technicians, welders, and oil industry professionals.',
+        topSectors: ['Oil & Gas', 'Maintenance', 'Industrial'],
+        averageSalary: 'From $650/month',
+        visaType: 'Work Contract Visa'
       },
       {
         id: 6,
-        name: 'Tokyo Japan',
-        image: '/images/banners/01.jpg',
-        tours: 31,
-        description: 'Modern metropolis meets ancient traditions',
-        price: 'From $2,799',
-        duration: '7 Days',
-        type: 'Urban Experience'
+        name: 'Singapore',
+        image: '/images/overseas/singapore.jpg',
+        workers: '300K+',
+        description:
+          'A developed economy hiring global workers for IT, healthcare, and shipyard jobs.',
+        topSectors: ['IT', 'Healthcare', 'Marine Services'],
+        averageSalary: 'From $900/month',
+        visaType: 'Employment Pass'
       },
       {
         id: 7,
-        name: 'Dubai UAE',
-        image: '/images/banners/02.webp',
-        tours: 18,
-        description: 'Luxury and innovation in the desert',
-        price: 'From $2,299',
-        duration: '4 Days',
-        type: 'Luxury'
+        name: 'Romania',
+        image: '/images/overseas/romania.jpg',
+        workers: '150K+',
+        description:
+          'Growing European destination for construction and caregiving jobs, with legal EU work permits.',
+        topSectors: ['Construction', 'Caregiving', 'Hospitality'],
+        averageSalary: 'From $800/month',
+        visaType: 'EU Work Visa'
       },
       {
         id: 8,
-        name: 'Bali Indonesia',
-        image: '/images/banners/03.jpeg',
-        tours: 25,
-        description: 'Island of gods with stunning temples and beaches',
-        price: 'From $1,599',
-        duration: '6 Days',
-        type: 'Tropical'
+        name: 'Japan',
+        image: '/images/overseas/japan.jpg',
+        workers: '200K+',
+        description:
+          'Highly disciplined and structured job environment for technical interns and skilled laborers.',
+        topSectors: ['Technology', 'Factory', 'Elder Care'],
+        averageSalary: 'From $1,200/month',
+        visaType: 'Technical Intern Visa'
       }
     ]
   },
