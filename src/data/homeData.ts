@@ -50,7 +50,7 @@ export const homeData = {
       description:
         'Experience seamless travel planning, premium accommodations, and personalized service at every step.',
       button: 'Contact Us',
-      image: '/images/banners/03.webp'
+      image: '/images/banners/03.jpeg'
     }
   ],
 
@@ -89,6 +89,7 @@ export const homeData = {
       { value: '25', label: 'Travel Guide', icon: GuidOutlined }
     ]
   },
+
   whoWeAre: {
     title: 'Why RBS travels is best',
     subtitle: 'Who We Are',
