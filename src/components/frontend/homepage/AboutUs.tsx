@@ -77,7 +77,7 @@ const AboutUs = ({ data }: { data?: AboutData }) => {
                   <div
                     key={`facility-${index}-${facility.title}`}
                     className={cn(
-                      'group relative p-3 lg:p-4 rounded-lg overflow-hidden transition-all duration-500 ease-out',
+                      'group relative p-4 rounded-lg overflow-hidden transition-all duration-500 ease-out',
                       'hover:shadow-xl hover:shadow-primary/10 hover:-translate-y-1',
                       'animate-in fade-in slide-in-from-bottom-4',
                       isAccent

@@ -3,10 +3,9 @@
 import { Container } from '@/components/common/container'
 import { Section } from '@/components/common/section'
 import { Typography } from '@/components/common/typography'
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion'
 import { cn } from '@/lib/utils'
-import { ChevronDown, ChevronUp } from 'lucide-react'
-import { AnimatePresence, motion } from 'motion/react'
-import { useState } from 'react'
+import { motion } from 'motion/react'
 
 interface FAQ {
   id: number
@@ -25,99 +24,8 @@ interface FAQProps {
   className?: string
 }
 
-const FAQItem = ({
-  faq,
-  index,
-  isOpen,
-  onToggle
-}: {
-  faq: FAQ
-  index: number
-  isOpen: boolean
-  onToggle: () => void
-}) => {
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: index * 0.1, duration: 0.5 }}
-      className={cn(
-        'group border border-border/50 rounded-2xl overflow-hidden transition-all duration-300',
-        'hover:border-primary/30 hover:shadow-lg hover:shadow-primary/10',
-        isOpen ? 'bg-primary/5 border-primary/40' : 'bg-card hover:bg-accent/5'
-      )}
-    >
-      <button
-        onClick={onToggle}
-        className='hover:bg-accent/5 p-6 w-full text-left transition-all duration-300'
-        aria-expanded={isOpen}
-        aria-controls={`faq-answer-${faq.id}`}
-      >
-        <div className='flex justify-between items-center gap-4'>
-          <Typography
-            variant='h6'
-            weight='semibold'
-            className={cn(
-              'text-foreground transition-colors duration-300',
-              isOpen ? 'text-primary' : 'group-hover:text-primary/80'
-            )}
-          >
-            {faq.question}
-          </Typography>
-
-          <div
-            className={cn(
-              'flex justify-center items-center rounded-full w-8 h-8 transition-all duration-300',
-              'bg-muted group-hover:bg-primary/10',
-              isOpen ? 'bg-primary/20 rotate-180' : 'group-hover:scale-110'
-            )}
-          >
-            {isOpen ? (
-              <ChevronUp className='w-4 h-4 text-primary' />
-            ) : (
-              <ChevronDown className='w-4 h-4 group-hover:text-primary' />
-            )}
-          </div>
-        </div>
-      </button>
-
-      <AnimatePresence>
-        {isOpen && (
-          <motion.div
-            id={`faq-answer-${faq.id}`}
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: 'auto', opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.3, ease: 'easeInOut' }}
-            className='overflow-hidden'
-          >
-            <div className='px-6 pb-6'>
-              <div className='bg-gradient-to-r from-transparent to-transparent mb-4 via-border h-px' />
-              <Typography variant='body1' className='leading-relaxed'>
-                {faq.answer}
-              </Typography>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </motion.div>
-  )
-}
 
 const FAQ = ({ data, className }: FAQProps) => {
-  const [openItems, setOpenItems] = useState<Set<number>>(new Set())
-
-  const toggleItem = (id: number) => {
-    setOpenItems((prev) => {
-      const newSet = new Set(prev)
-      if (newSet.has(id)) {
-        newSet.delete(id)
-      } else {
-        newSet.add(id)
-      }
-      return newSet
-    })
-  }
 
   if (!data) return null
 
@@ -150,17 +58,22 @@ const FAQ = ({ data, className }: FAQProps) => {
 
         {/* FAQ Grid */}
         <div className='mx-auto max-w-4xl'>
-          <div className='space-y-4'>
-            {data.faqs?.map((faq, index) => (
-              <FAQItem
-                key={faq.id}
-                faq={faq}
-                index={index}
-                isOpen={openItems.has(faq.id)}
-                onToggle={() => toggleItem(faq.id)}
-              />
+          <Accordion type='single' collapsible>
+            {data?.faqs?.map((faq, index) => (
+              <AccordionItem
+                key={index}
+                value={`item-${index}`}
+                className='mb-4 border! border-muted-foreground rounded-xl w-full'
+              >
+                <AccordionTrigger className='flex justify-between items-center p-2 lg:p-4 rounded-none font-medium lg:text-xl text-left transition-colors cursor-pointer'>
+                  {faq.question}
+                </AccordionTrigger>
+                <AccordionContent className='p-4 lg:p-6 border-t border-t-muted-foreground text-sm lg:text-lg'>
+                  {faq.answer}
+                </AccordionContent>
+              </AccordionItem>
             ))}
-          </div>
+          </Accordion>
 
           {/* Call to Action */}
           <motion.div

@@ -20,7 +20,7 @@ export default async function HomePage() {
       <AboutUs data={homeData?.about} />
       <Stats data={homeData?.about?.stats} />
       <WhoWeAre data={homeData?.whoWeAre} />
-      <TopDestinations data={homeData?.destinations} />
+      <TopDestinations data={homeData?.overseasAndTravels} />
       <Blog data={homeData?.blog} />
       <Testimonials data={homeData?.testimonials} />
       <FAQ data={homeData?.faq} />

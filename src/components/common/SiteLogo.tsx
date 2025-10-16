@@ -6,10 +6,6 @@ export default function SiteLogo({ className }: { className?: string }) {
   return (
     <CustomLink
       href={'/'}
-      className={cn(
-        'group flex items-center hover:scale-105 transition-transform duration-300',
-        className
-      )}
     >
       <div className='relative overflow-hidden'>
         <Image
@@ -17,7 +13,9 @@ export default function SiteLogo({ className }: { className?: string }) {
           width={250}
           height={75}
           alt={'RBS Travels Logo'}
-          className='object-contain group-hover:scale-110 transition-transform duration-300'
+          className={cn('object-contain',
+            className
+          )}
           priority
         />
       </div>

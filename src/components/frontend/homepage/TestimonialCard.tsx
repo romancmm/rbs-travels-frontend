@@ -41,7 +41,7 @@ const StarRating = ({ rating }: { rating: number }) => {
   )
 }
 
-const TestimonialCard = ({ testimonial, index, className }: TestimonialCardProps) => {
+const TestimonialCard = ({ testimonial, className }: TestimonialCardProps) => {
   const [isHovered, setIsHovered] = useState(false)
 
   // Generate avatar initials
@@ -61,7 +61,7 @@ const TestimonialCard = ({ testimonial, index, className }: TestimonialCardProps
       className={cn(
         'group relative rounded-3xl overflow-hidden transition-all duration-300',
         'bg-gradient-to-br from-card/90 to-card/70 backdrop-blur-sm',
-        'border border-border/30 hover:border-primary/40',
+        'border-2 border-border/80 border-dashed',
         'hover:shadow-xl hover:shadow-primary/8',
         'p-8 space-y-6',
         className
@@ -74,7 +74,7 @@ const TestimonialCard = ({ testimonial, index, className }: TestimonialCardProps
       </div> */}
 
       {/* Quote Icon */}
-      <Quote className='w-6 h-6 text-primary' />
+      <Quote className='text-border w-6 h-6' />
 
       {/* Review Text */}
       <div className='z-10 relative space-y-4'>
@@ -92,7 +92,7 @@ const TestimonialCard = ({ testimonial, index, className }: TestimonialCardProps
         <div
           className={cn(
             'flex justify-center items-center rounded-full w-14 h-14 transition-all duration-300',
-            'border border-primary/30 overflow-hidden',
+            'border border-border border-dashed overflow-hidden',
             isHovered ? 'scale-105 border-primary/50 shadow-md shadow-primary/15' : ''
           )}
         >

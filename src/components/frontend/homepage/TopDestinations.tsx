@@ -16,63 +16,36 @@ import {
 import { cn } from '@/lib/utils'
 import Autoplay from 'embla-carousel-autoplay'
 import ClassNames from 'embla-carousel-class-names'
-import {
-  Building2, Filter, MapPin,
-  Mountain,
-  Palmtree,
-  Star, Waves
-} from 'lucide-react'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { Filter, MapPin } from 'lucide-react'
+import { useCallback, useEffect, useState } from 'react'
 
-interface Destination {
+export interface OverseasDestination {
   id: number
   name: string
   image: string
-  tours: number
+  workers: string
   description: string
-  price: string
-  duration: string
-  type: string
+  topSectors: string[]
+  averageSalary: string
+  visaType: string
 }
 
 interface TopDestinationsProps {
   data: {
     title: string
     subtitle: string
-    destinations: Destination[]
+    destinations: OverseasDestination[]
   }
 }
 
-const categoryIcons = {
-  Historical: Mountain,
-  Archaeological: Building2,
-  Cultural: Building2,
-  Adventure: Mountain,
-  'Beach Resort': Waves,
-  'Urban Experience': Building2,
-  Luxury: Building2,
-  Tropical: Palmtree
-}
-
-const filters = [
-  { id: 'all', label: 'All Destinations', icon: MapPin },
-  { id: 'Adventure', label: 'Adventure', icon: Mountain },
-  { id: 'Beach Resort', label: 'Beach & Resort', icon: Waves },
-  { id: 'Cultural', label: 'Cultural', icon: Building2 },
-  { id: 'Luxury', label: 'Luxury', icon: Star }
-]
-
-const DestinationCard = ({ destination, index }: { destination: Destination; index: number }) => {
-  const [isLiked, setIsLiked] = useState(false)
-  const IconComponent = categoryIcons[destination.type as keyof typeof categoryIcons] || MapPin
-
+const DestinationCard = ({ destination, index }: { destination: OverseasDestination; index: number }) => {
   return (
     <div
       className='group slide-in-from-bottom-4 relative bg-white shadow-lg hover:shadow-2xl rounded-3xl overflow-hidden transition-all hover:-translate-y-2 animate-in duration-700'
       style={{ animationDelay: `${index * 100}ms` }}
     >
       {/* Image Container */}
-      <div className='relative h-72 overflow-hidden'>
+      <div className='relative aspect-square overflow-hidden'>
         <CustomImage
           src={destination.image}
           alt={destination.name}
@@ -83,44 +56,6 @@ const DestinationCard = ({ destination, index }: { destination: Destination; ind
 
         {/* Dynamic overlay gradient */}
         <div className='absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent' />
-
-        {/* Floating elements */}
-        {/* <div className='top-4 left-4 absolute flex items-center gap-2'>
-          <div className='bg-primary shadow-xl backdrop-blur-sm px-4 py-2 rounded-full font-bold text-white text-sm'>
-            {destination.price}
-          </div>
-        </div> */}
-
-        {/* <div className='top-4 right-4 absolute flex items-center gap-2'>
-          <div className='flex items-center gap-1 bg-white/95 shadow-lg backdrop-blur-sm px-3 py-2 rounded-full font-medium text-gray-800 text-xs'>
-            <IconComponent className='w-3 h-3' />
-            {destination.type}
-          </div>
-          <button
-            onClick={() => setIsLiked(!isLiked)}
-            className={cn(
-              'flex justify-center items-center shadow-lg backdrop-blur-sm rounded-full w-9 h-9 transition-all duration-300',
-              isLiked
-                ? 'bg-red-500 text-white'
-                : 'bg-white/95 text-gray-600 hover:bg-red-50 hover:text-red-500'
-            )}
-          >
-            <Heart className={cn('w-4 h-4', isLiked && 'fill-current')} />
-          </button>
-        </div> */}
-
-        {/* Rating and photos overlay */}
-        {/* <div className='bottom-4 left-4 absolute flex items-center gap-3'>
-          <div className='flex items-center gap-1 bg-white/95 shadow-lg backdrop-blur-sm px-3 py-2 rounded-lg'>
-            <Star className='fill-yellow-400 w-4 h-4 text-yellow-400' />
-            <span className='font-semibold text-gray-800 text-sm'>4.9</span>
-            <span className='text-gray-600 text-xs'>(128)</span>
-          </div>
-          <div className='flex items-center gap-1 bg-white/95 shadow-lg backdrop-blur-sm px-3 py-2 rounded-lg'>
-            <Camera className='w-4 h-4 text-gray-600' />
-            <span className='font-medium text-gray-800 text-xs'>2.3k photos</span>
-          </div>
-        </div> */}
       </div>
 
       {/* Content */}
@@ -128,13 +63,13 @@ const DestinationCard = ({ destination, index }: { destination: Destination; ind
         {/* Title and Description */}
         <div className='space-y-2'>
           <Typography
-            variant='h6'
-            weight='bold'
+            variant='subtitle1'
+            weight='semibold'
             className='text-gray-800 group-hover:text-primary line-clamp-1 transition-colors'
           >
             {destination.name}
           </Typography>
-          <Typography variant='body2' className='text-gray-600 line-clamp-2 leading-relaxed'>
+          <Typography variant='body2' className='text-gray-600 line-clamp-3 leading-relaxed'>
             {destination.description}
           </Typography>
         </div>
@@ -172,10 +107,6 @@ export default function TopDestinations({ data }: TopDestinationsProps) {
   const [canScrollPrev, setCanScrollPrev] = useState(false)
   const [canScrollNext, setCanScrollNext] = useState(false)
 
-  const filteredDestinations = useMemo(() => {
-    if (activeFilter === 'all') return data.destinations
-    return data.destinations.filter((dest) => dest.type === activeFilter)
-  }, [data.destinations, activeFilter])
 
   // Enhanced auto-rotation plugin with better UX
   const autoplayPlugin = Autoplay({
@@ -319,7 +250,7 @@ export default function TopDestinations({ data }: TopDestinationsProps) {
               <div className='flex items-center gap-4'>
                 <div className='hidden md:flex items-center gap-2 text-gray-500 text-sm'>
                   <Filter className='w-4 h-4' />
-                  <span>{filteredDestinations.length} destinations</span>
+                  <span>{data?.destinations?.length} destinations</span>
                 </div>
                 <div className='flex items-center gap-2 text-gray-500 text-sm'>
                   <span>
@@ -354,7 +285,7 @@ export default function TopDestinations({ data }: TopDestinationsProps) {
             </div>
 
             <CarouselContent className='-ml-6 pt-6 pb-10'>
-              {filteredDestinations.map((destination, index) => (
+              {data?.destinations.map((destination, index) => (
                 <CarouselItem
                   key={destination.id}
                   className='pl-6 transition-all duration-500 basis-1/1 sm:basis-1/2 lg:basis-1/3 xl:basis-1/4'
@@ -389,17 +320,17 @@ export default function TopDestinations({ data }: TopDestinationsProps) {
             Let our travel experts help you plan the perfect getaway to any of these amazing
             destinations.
           </Typography>
-          <div className='flex sm:flex-row flex-col justify-center items-center gap-4 pt-4'>
+          <div className='flex justify-center items-center gap-4 pt-4'>
             <Button
               size='lg'
-              className='bg-gradient-to-r from-primary hover:from-primary/90 to-primary/90 hover:to-primary shadow-xl hover:shadow-2xl px-8 py-4 rounded-xl font-semibold text-white hover:scale-105 transition-all duration-300'
+              className='bg-gradient-to-r from-primary hover:from-primary/90 to-primary/90 hover:to-primary shadow-xl hover:shadow-2xl px-4 lg:px-8 py-4 rounded-xl font-semibold text-white hover:scale-105 transition-all duration-300'
             >
               Plan My Journey
             </Button>
             <Button
               variant='outline'
               size='lg'
-              className='px-8 py-4 border-gray-300 hover:border-primary rounded-xl text-gray-700 hover:text-primary transition-all duration-300'
+              className='px-4 lg:px-8 py-4 border-gray-300 hover:border-primary rounded-xl text-gray-700 hover:text-primary transition-all duration-300'
             >
               Talk to Expert
             </Button>
