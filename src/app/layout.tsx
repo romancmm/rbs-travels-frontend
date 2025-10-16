@@ -1,9 +1,7 @@
-import { getSiteConfig } from '@/action/data'
-import { SiteProvider } from '@/components/providers/store-provider'
 // import { buildSiteMetadata } from '@/lib/seo/metaBuilders'
+import { Metadata } from 'next'
 import { Manrope } from 'next/font/google'
 import './globals.css'
-import { Metadata } from 'next'
 
 const manrope = Manrope({
   subsets: ['latin'],
@@ -17,7 +15,7 @@ const manrope = Manrope({
 
 export const metadata: Metadata = {
   title: {
-    default: 'UHQ Accounts',
+    default: 'RBS Travels',
     template: '%s | RBS TRAVELS'
   },
   description:
