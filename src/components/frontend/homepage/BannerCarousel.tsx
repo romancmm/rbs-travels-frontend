@@ -90,7 +90,7 @@ const BannerCarousel = ({ banners }: BannerCarouselProps) => {
                 className={cn(
                   'relative flex justify-center items-center w-screen',
                   'bg-cover bg-no-repeat bg-center',
-                  'h-[90vh] sm:h-[85vh] md:h-[calc(100vh-6rem)] 2xl:h-screen',
+                  'h-[calc(100vh-7rem)]',
                   'transition-all duration-1000 ease-out',
                   '-mx-4 sm:-mx-6 md:-mx-8'
                 )}
@@ -246,7 +246,7 @@ const BannerCarousel = ({ banners }: BannerCarouselProps) => {
         {/* Enhanced navigation buttons */}
         <CarouselPrevious
           className={cn(
-            'hidden lg:block md:left-10 bg-white/10 backdrop-blur-sm w-12 h-12',
+            'max-md:hidden left-0 md:left-10 bg-white/10 backdrop-blur-sm w-12 h-12',
             'border-white/20 text-white hover:bg-white/20 hover:border-white/40',
             'transition-all duration-300 hover:scale-110'
           )}
@@ -256,7 +256,7 @@ const BannerCarousel = ({ banners }: BannerCarouselProps) => {
 
         <CarouselNext
           className={cn(
-            'hidden lg:block md:right-10 bg-white/10 backdrop-blur-sm w-12 h-12',
+            'max-md:hidden right-6 md:right-10 bg-white/10 backdrop-blur-sm w-12 h-12',
             'border-white/20 text-white hover:bg-white/20 hover:border-white/40',
             'transition-all duration-300 hover:scale-110'
           )}
