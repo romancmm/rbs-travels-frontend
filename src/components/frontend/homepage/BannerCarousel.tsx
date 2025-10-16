@@ -246,7 +246,7 @@ const BannerCarousel = ({ banners }: BannerCarouselProps) => {
         {/* Enhanced navigation buttons */}
         <CarouselPrevious
           className={cn(
-            'left-6 md:left-10 bg-white/10 backdrop-blur-sm w-12 h-12',
+            'hidden lg:block md:left-10 bg-white/10 backdrop-blur-sm w-12 h-12',
             'border-white/20 text-white hover:bg-white/20 hover:border-white/40',
             'transition-all duration-300 hover:scale-110'
           )}
@@ -256,7 +256,7 @@ const BannerCarousel = ({ banners }: BannerCarouselProps) => {
 
         <CarouselNext
           className={cn(
-            'right-6 md:right-10 bg-white/10 backdrop-blur-sm w-12 h-12',
+            'hidden lg:block md:right-10 bg-white/10 backdrop-blur-sm w-12 h-12',
             'border-white/20 text-white hover:bg-white/20 hover:border-white/40',
             'transition-all duration-300 hover:scale-110'
           )}

@@ -145,8 +145,8 @@ const CarouselContainer = ({ testimonials }: { testimonials: Testimonial[] }) =>
         </CarouselContent>
 
         {/* Arrows */}
-        <CarouselPrevious className="top-1/2 left-0 z-10 absolute bg-background/80 hover:bg-background shadow-md text-foreground -translate-y-1/2" />
-        <CarouselNext className="top-1/2 right-0 z-10 absolute bg-background/80 hover:bg-background shadow-md text-foreground -translate-y-1/2" />
+        <CarouselPrevious className="top-1/2 -left-4 z-10 absolute bg-background/80 hover:bg-background shadow-md text-foreground -translate-y-1/2" />
+        <CarouselNext className="top-1/2 -right-4 z-10 absolute bg-background/80 hover:bg-background shadow-md text-foreground -translate-y-1/2" />
       </Carousel>
 
       {/* Dots */}

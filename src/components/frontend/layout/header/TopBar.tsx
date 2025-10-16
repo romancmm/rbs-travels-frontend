@@ -43,8 +43,8 @@ export default function TopBar() {
           </div>
 
           {/* Center - Announcement */}
-          <div className='flex flex-1 justify-end'>
-            <Typography variant='body2' className='font-medium text-end'>
+          <div className='flex flex-1'>
+            <Typography variant='body2' className='font-medium lg:text-end'>
               ✈️ Special Offer: Get 20% off on international flights!
               {/* <CustomLink href='/page/offers' className='ml-2 underline hover:no-underline'>
                 Book Now
