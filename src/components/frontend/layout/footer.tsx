@@ -131,40 +131,46 @@ export default function Footer() {
                     </Typography>
 
                     {/* Address */}
-                    <div className="flex items-start gap-3 text-slate-300 hover:text-white transition-colors">
-                      {/* <div className="flex justify-center items-center bg-primary/20 rounded-lg w-8 h-8 shrink-0">
-                        <MapPin className="w-4 h-4" />
-                      </div> */}
-                      <Typography variant="body2" className="leading-relaxed">
-                        {office.address}
-                      </Typography>
-                    </div>
+                    {office.address &&
+                      <div className="flex items-start gap-3 text-slate-300 hover:text-white transition-colors">
+                        {/* <div className="flex justify-center items-center bg-primary/20 rounded-lg w-8 h-8 shrink-0">
+                          <MapPin className="w-4 h-4" />
+                        </div> */}
+                        <Typography variant="body2" className="leading-relaxed">
+                          {office.address}
+                        </Typography>
+                      </div>
+                    }
 
                     {/* Phone */}
-                    <div className="flex items-center gap-3 text-slate-300 hover:text-white transition-colors">
-                      <div className="flex justify-center items-center bg-primary/20 rounded-lg w-8 h-8 shrink-0">
-                        <Phone className="w-4 h-4" />
+                    {office.phone &&
+                      <div className="flex items-center gap-3 text-slate-300 hover:text-white transition-colors">
+                        <div className="flex justify-center items-center bg-primary/20 rounded-lg w-8 h-8 shrink-0">
+                          <Phone className="w-4 h-4" />
+                        </div>
+                        <CustomLink
+                          href={`tel:${office.phone.replace(/\s+/g, '')}`}
+                          className="hover:text-primary transition-colors"
+                        >
+                          <Typography variant="body2">{office.phone}</Typography>
+                        </CustomLink>
                       </div>
-                      <CustomLink
-                        href={`tel:${office.phone.replace(/\s+/g, '')}`}
-                        className="hover:text-primary transition-colors"
-                      >
-                        <Typography variant="body2">{office.phone}</Typography>
-                      </CustomLink>
-                    </div>
+                     }
 
                     {/* Email */}
-                    <div className="flex items-center gap-3 text-slate-300 hover:text-white transition-colors">
-                      <div className="flex justify-center items-center bg-primary/20 rounded-lg w-8 h-8 shrink-0">
-                        <Mail className="w-4 h-4" />
+                    {office.email &&
+                      <div className="flex items-center gap-3 text-slate-300 hover:text-white transition-colors">
+                        <div className="flex justify-center items-center bg-primary/20 rounded-lg w-8 h-8 shrink-0">
+                          <Mail className="w-4 h-4" />
+                        </div>
+                        <CustomLink
+                          href={`mailto:${office.email}`}
+                          className="hover:text-primary transition-colors"
+                        >
+                          <Typography variant="body2">{office.email}</Typography>
+                        </CustomLink>
                       </div>
-                      <CustomLink
-                        href={`mailto:${office.email}`}
-                        className="hover:text-primary transition-colors"
-                      >
-                        <Typography variant="body2">{office.email}</Typography>
-                      </CustomLink>
-                    </div>
+                    }
                   </div>
                 ))}
               </div>
