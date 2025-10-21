@@ -2,6 +2,7 @@
 import { Container } from '@/components/common/container'
 import { Section } from '@/components/common/section'
 import { Typography } from '@/components/common/typography'
+import UnderConstruction from '@/components/frontend/UnderConstruction'
 import { notFound, useParams } from 'next/navigation'
 
 export default function DynamicPage() {
@@ -69,6 +70,7 @@ export default function DynamicPage() {
   //   notFound()
   // }
 
+  return <UnderConstruction />
   return (
     <>
       <Section

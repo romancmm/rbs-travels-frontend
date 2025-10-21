@@ -31,9 +31,10 @@ export const siteConfig = {
     dark: '/logo.svg'
   },
   hotline: '+88 01723295779',
-  // phone: '+88 01723295779',
-  // email: 'info@rbstravels.com',
-  // address: 'House #00, Road #00, Dhanmondi, Dhaka, Bangladesh',
+  phone: '+88 01723295779',
+  email: 'info@rbstravels.com',
+  address:
+    'Room No: 1203, 11th Floor, Shah Ali Plaza, 1/A, Senpara Parbata, Mirpur 10, Dhaka 1216, Bangladesh',
   contact: {
     offices: [
       {

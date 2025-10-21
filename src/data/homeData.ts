@@ -184,7 +184,7 @@ export const homeData = {
 
   blog: {
     title: 'Latest Travel Stories & Tips',
-    subtitle: 'Our Blog',
+    subtitle: 'News & Event',
     posts: [
       {
         id: 1,
@@ -257,7 +257,7 @@ export const homeData = {
 
   overseasAndTravels: {
     title: 'Overseas & Travels',
-    subtitle: 'Top Countries for Manpower & Work Opportunities',
+    subtitle: 'Top Countries',
     destinations: [
       {
         id: 1,
