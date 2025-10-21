@@ -2,7 +2,6 @@
 
 import CustomLink from '@/components/common/CustomLink'
 import { Typography } from '@/components/common/typography'
-import { Button } from '@/components/ui/button'
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet'
 import { siteConfig } from '@/data/siteConfig'
 import { ChevronRight, Mail, MapPin, Menu, PhoneCall, X } from 'lucide-react'
@@ -58,9 +57,8 @@ export default function MobileNav({ items }: { items: any[] }) {
                           {item.title}
                         </Typography>
                         <ChevronRight
-                          className={`w-4 h-4 transition-transform duration-200 ${
-                            expandedItem === index ? 'rotate-90' : ''
-                          }`}
+                          className={`w-4 h-4 transition-transform duration-200 ${expandedItem === index ? 'rotate-90' : ''
+                            }`}
                         />
                       </button>
 
@@ -130,24 +128,26 @@ export default function MobileNav({ items }: { items: any[] }) {
                   </CustomLink>
                 </div>
 
-                <div className='flex items-start gap-3'>
+                <div className='flex flex-auto items-start gap-3'>
                   <div className='flex justify-center items-center bg-primary/20 mt-0.5 rounded-lg w-8 h-8'>
                     <MapPin className='w-4 h-4 text-primary' />
                   </div>
-                  <Typography variant='body2' className='text-slate-300 leading-relaxed'>
-                    {siteConfig?.address}
-                  </Typography>
+                  <div className="flex-1">
+                    <Typography variant='body2' className='text-slate-300 leading-relaxed'>
+                      {siteConfig?.address}
+                    </Typography>
+                  </div>
                 </div>
               </div>
             </div>
 
             {/* CTA Button */}
-            <Button
+            {/* <Button
               onClick={() => setIsOpen(false)}
               className='bg-primary hover:bg-primary/90 shadow-lg py-3 rounded-lg w-full font-semibold text-white transition-all duration-300'
             >
               Book Your Trip Now
-            </Button>
+            </Button> */}
           </div>
         </div>
       </SheetContent>

@@ -80,8 +80,8 @@ export default function MainHeader() {
                 Call us
               </Typography>
 
-              <Typography href={`tel:${siteConfig.phone?.replace(' ', '')}`} variant='body2' weight='semibold'>
-                {siteConfig.phone?.replace('+88', '')}
+              <Typography href={`tel:${siteConfig.hotline?.replace(' ', '')}`} variant='body2' weight='semibold'>
+                {siteConfig.hotline?.replace('+88', '')}
               </Typography>
             </div>
           </div>
