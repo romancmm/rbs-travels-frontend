@@ -30,9 +30,27 @@ export const siteConfig = {
     default: '/logo.svg',
     dark: '/logo.svg'
   },
-  phone: '+88017 123 456 78',
-  email: 'info@rbstravels.com',
-  address: 'House #00, Road #00, Dhanmondi, Dhaka, Bangladesh',
+  hotline: '+88 01723295779',
+  // phone: '+88 01723295779',
+  // email: 'info@rbstravels.com',
+  // address: 'House #00, Road #00, Dhanmondi, Dhaka, Bangladesh',
+  contact: {
+    offices: [
+      {
+        country: 'Bangladesh',
+        address:
+          'Room No: 1203, 11th Floor, Shah Ali Plaza, 1/A, Senpara Parbata, Mirpur 10, Dhaka 1216, Bangladesh',
+        phone: '+88 01723295779',
+        email: 'nabilinttravels2024@gmail.com'
+      },
+      {
+        country: 'Malaysia',
+        address: '4A-2, Jalan Bukit Cantik, 43000 Kajang Selangor, Malaysia',
+        phone: '+60 1119515779',
+        email: 'nabilit2025@gmail.com'
+      }
+    ]
+  },
   socialLinks: [
     {
       name: 'facebook',
@@ -44,11 +62,11 @@ export const siteConfig = {
       url: 'https://x.com/rbstravels',
       icon: '/images/social-icon/x.svg'
     },
-    {
-      name: 'instagram',
-      url: 'https://instagram.com/rbstravels',
-      icon: '/images/social-icon/instagram.svg'
-    },
+    // {
+    //   name: 'instagram',
+    //   url: 'https://instagram.com/rbstravels',
+    //   icon: '/images/social-icon/instagram.svg'
+    // },
     {
       name: 'linkedin',
       url: 'https://linkedin.com/company/rbstravels',
@@ -58,12 +76,12 @@ export const siteConfig = {
       name: 'youtube',
       url: 'https://youtube.com/@rbstravels',
       icon: '/images/social-icon/youtube.svg'
-    },
-    {
-      name: 'google',
-      url: 'https://maps.google.com/?q=RBS+TRAVELS',
-      icon: '/images/social-icon/google.svg'
     }
+    // {
+    //   name: 'google',
+    //   url: 'https://maps.google.com/?q=RBS+TRAVELS',
+    //   icon: '/images/social-icon/google.svg'
+    // }
   ],
   mainNav: [
     { title: 'Home', href: '/' },
