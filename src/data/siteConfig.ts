@@ -30,25 +30,25 @@ export const siteConfig = {
     default: '/logo.svg',
     dark: '/logo.svg'
   },
-  hotline: '+88 01723295779',
-  phone: '+88 01723295779',
-  email: 'info@rbstravels.com',
+  hotline: '+88 01335144891',
+  phone: '+88 01335144891',
+  email: 'rbstravels2025@gmail.com',
   address:
-    'Room No: 1203, 11th Floor, Shah Ali Plaza, 1/A, Senpara Parbata, Mirpur 10, Dhaka 1216, Bangladesh',
+    'Room No:1203, 11th Floor, Shah Ali Plaza, Mirpur-10, Dhaka-1216',
   contact: {
     offices: [
       {
-        country: 'Bangladesh',
+        country: 'Head Office',
         address:
-          'Room No: 1203, 11th Floor, Shah Ali Plaza, 1/A, Senpara Parbata, Mirpur 10, Dhaka 1216, Bangladesh',
-        phone: '+88 01723295779',
-        email: 'nabilinttravels2024@gmail.com'
+          'Room No:1203, 11th Floor, Shah Ali Plaza, Mirpur-10, Dhaka-1216',
+        phone: '+88 01335144891',
+        email: 'rbstravels2025@gmail.com'
       },
       {
-        country: 'Malaysia',
-        address: '4A-2, Jalan Bukit Cantik, 43000 Kajang Selangor, Malaysia',
-        phone: '+60 1119515779',
-        email: 'nabilit2025@gmail.com'
+        country: 'Barishal Office',
+        address: 'Stall:30, 1st Floor, Zila Parishad Market, Nobogram Road, Barishal-8200',
+        phone: '',
+        email: ''
       }
     ]
   },
