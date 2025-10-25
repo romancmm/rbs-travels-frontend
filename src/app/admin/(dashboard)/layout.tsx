@@ -1,10 +1,18 @@
-'use client'
-
-import { AppSidebar } from '@/components/admin/layout/app-sidebar'
-import BreadCrumbs from '@/components/admin/layout/BreadCrumbs'
-import { SiteHeader } from '@/components/admin/layout/site-header'
-import { PermissionProvider } from '@/components/providers/PermissionProvider'
-import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar'
+import { AppSidebar } from "@/components/app-sidebar"
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb"
+import { Separator } from "@/components/ui/separator"
+import {
+  SidebarInset,
+  SidebarProvider,
+  SidebarTrigger,
+} from "@/components/ui/sidebar"
 
 type TProps = {
   children: React.ReactNode
@@ -12,24 +20,33 @@ type TProps = {
 
 export default function DashboardLayout({ children }: TProps) {
   return (
-    <PermissionProvider>
-      <SiteHeader />
-      <div className='relative flex-1'>
-        <SidebarProvider
-          className='[&_[data-slot=sidebar-container]]:!top-[64px]'
-          style={
-            {
-              '--sidebar-width': 'calc(var(--spacing) * 72)'
-            } as React.CSSProperties
-          }
-        >
-          <AppSidebar variant='sidebar' />
-          <SidebarInset className='relative overflow-x-hidden'>
-            <BreadCrumbs />
-            <div className='bg-gray-200 p-4 lg:p-6'>{children}</div>
-          </SidebarInset>
-        </SidebarProvider>
-      </div>
-    </PermissionProvider>
+    <SidebarProvider>
+      <AppSidebar />
+      <SidebarInset>
+        <header className="flex items-center gap-2 h-16 group-has-data-[collapsible=icon]/sidebar-wrapper:h-12 transition-[width,height] ease-linear shrink-0">
+          <div className="flex items-center gap-2 px-4">
+            <SidebarTrigger className="-ml-1" />
+            <Separator
+              orientation="vertical"
+              className="mr-2 data-[orientation=vertical]:h-4"
+            />
+            <Breadcrumb>
+              <BreadcrumbList>
+                <BreadcrumbItem className="hidden md:block">
+                  <BreadcrumbLink href="#">
+                    Building Your Application
+                  </BreadcrumbLink>
+                </BreadcrumbItem>
+                <BreadcrumbSeparator className="hidden md:block" />
+                <BreadcrumbItem>
+                  <BreadcrumbPage>Data Fetching</BreadcrumbPage>
+                </BreadcrumbItem>
+              </BreadcrumbList>
+            </Breadcrumb>
+          </div>
+        </header>
+        <main>{children}</main>
+      </SidebarInset>
+    </SidebarProvider>
   )
 }
