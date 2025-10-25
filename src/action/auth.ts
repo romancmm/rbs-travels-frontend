@@ -2,17 +2,22 @@
 
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
-import { toast } from 'sonner'
 const baseURL = process.env.NEXT_PUBLIC_APP_ROOT_API
 
 // =============================
 // *** Admin Authentications ***
 // =============================
-export const authenticateAdmin = async (email: string, password: string) => {
+type AdminAuthSuccess = { accessToken: string; user: any }
+type AdminAuthError = { error: string }
+
+export const authenticateAdmin = async (
+  email: string,
+  password: string
+): Promise<AdminAuthSuccess | AdminAuthError> => {
   const cookieStore = await cookies()
 
   try {
-    const response = await fetch(baseURL + '/admin/auth/login', {
+    const response = await fetch(baseURL + '/auth/admin/login', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -21,42 +26,44 @@ export const authenticateAdmin = async (email: string, password: string) => {
     })
 
     if (!response.ok) {
-      const error = await response.json()
-      throw new Error(error.message || 'Authentication failed')
+      // Return a structured error instead of throwing to avoid Next.js error overlay
+      const errJson = await response.json().catch(() => null)
+      const message = errJson?.message || 'Invalid credentials'
+      return { error: message }
     }
 
     const data = await response.json()
 
-    cookieStore.set('adminToken', data?.data?.token, {
+    const token = data?.data?.accessToken
+    const user = data?.data?.user
+
+    // Store token in cookie
+    cookieStore.set('adminToken', token, {
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
       maxAge: 60 * 60 * 24 * 7 // 7 days
     })
 
-    const userRole = data?.data?.admin?.role // returns 'ADMIN' or 'MODERATOR'
-
-    console.log('userRole :>> ', userRole)
-
     // Store user role in cookie
-    cookieStore.set('userRole', userRole, {
+    cookieStore.set('userRole', user?.role, {
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
       maxAge: 60 * 60 * 24 * 7 // 7 days
     })
 
     // Extract and transform permissions data structure
-    const rawPermissions = data?.data?.admin?.customRole?.permissions || []
 
     // Transform from array format to single object format
     // From: [{ resource: "products", actions: [...] }]
     // To: { products: [...], users: [...] }
-    const transformedPermissions = rawPermissions.reduce((acc: any, permission: any) => {
-      acc[permission.resource] = permission.actions
+    const transformedPermissions = user?.permissions?.reduce((acc: any, permission: any) => {
+      acc[permission?.resource] = permission?.actions
       return acc
     }, {})
 
     // If user is ADMIN, they have full permissions regardless of customRole
-    const finalPermissions = userRole === 'ADMIN' ? { __superAdmin: true } : transformedPermissions
+    const finalPermissions =
+      user?.role === 'ADMIN' ? { __superAdmin: true } : transformedPermissions
 
     // const permissions = await encrypt(JSON.stringify(finalPermissions), secret)
     cookieStore.set('permissions', JSON.stringify(finalPermissions), {
@@ -65,9 +72,11 @@ export const authenticateAdmin = async (email: string, password: string) => {
       maxAge: 60 * 60 * 24 * 7 // 7 days
     })
 
-    return data?.data
-  } catch {
-    toast.error('Invalid credentials')
+    return data?.data as AdminAuthSuccess
+  } catch (error) {
+    // Network or unexpected error; return a structured error instead of throwing
+    const message = error instanceof Error ? error.message : 'Authentication failed'
+    return { error: message }
   }
 }
 

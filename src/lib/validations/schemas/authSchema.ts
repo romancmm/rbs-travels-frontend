@@ -2,7 +2,7 @@ import { z } from 'zod'
 
 export const loginSchema = z.object({
   email: z.string().email('Invalid email address'),
-  password: z.string().min(8, 'Password must be at least 8 characters long')
+  password: z.string().min(4, 'Password must be at least 4 characters long')
 })
 
 export const registerSchema = z
@@ -12,8 +12,8 @@ export const registerSchema = z
     email: z.string().email('Invalid email address'),
     phone: z.string().min(1, 'Phone number is required').optional(),
     telegramUsername: z.string().optional(),
-    password: z.string().min(8, 'Password must be at least 8 characters').optional(),
-    confirm: z.string().min(8, 'Confirm Password must be at least 8 characters').optional()
+    password: z.string().min(4, 'Password must be at least 4 characters').optional(),
+    confirm: z.string().min(4, 'Confirm Password must be at least 4 characters').optional()
   })
   .refine(
     (data) =>
