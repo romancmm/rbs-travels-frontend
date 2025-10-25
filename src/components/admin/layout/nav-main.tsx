@@ -29,38 +29,38 @@ export function NavMain({ items }: { items: NavItem[] }) {
   const filteredItems = loading
     ? []
     : items
-        .filter((item) => {
-          // Check if user has permission for parent item
-          const hasParentAccess = item.permission
-            ? hasPermission(item.permission.resource, item.permission.action)
-            : true // If no specific permission required, allow access
+      .filter((item) => {
+        // Check if user has permission for parent item
+        const hasParentAccess = item.permission
+          ? hasPermission(item.permission.resource, item.permission.action)
+          : true // If no specific permission required, allow access
 
-          if (!hasParentAccess && item?.children?.length === 0) {
-            return false
-          }
+        if (!hasParentAccess && item?.children?.length === 0) {
+          return false
+        }
 
-          // Filter children based on permissions
-          if (Array.isArray(item.children) && item.children.length > 0) {
-            const filteredChildren = item.children.filter((child) => {
-              return child.permission
-                ? hasPermission(child.permission.resource, child.permission.action)
-                : true
-            })
-
-            // Only show parent if it has accessible children or if parent itself is accessible
-            return filteredChildren.length > 0 || hasParentAccess
-          }
-
-          return hasParentAccess
-        })
-        .map((item) => ({
-          ...item,
-          children: item?.children?.filter((child) => {
+        // Filter children based on permissions
+        if (Array.isArray(item.children) && item.children.length > 0) {
+          const filteredChildren = item.children.filter((child) => {
             return child.permission
               ? hasPermission(child.permission.resource, child.permission.action)
               : true
           })
-        }))
+
+          // Only show parent if it has accessible children or if parent itself is accessible
+          return filteredChildren.length > 0 || hasParentAccess
+        }
+
+        return hasParentAccess
+      })
+      .map((item) => ({
+        ...item,
+        children: item?.children?.filter((child) => {
+          return child.permission
+            ? hasPermission(child.permission.resource, child.permission.action)
+            : true
+        })
+      }))
 
   // Calculate which accordion items should be open based on active children
   const defaultOpenValues = (() => {
@@ -97,7 +97,7 @@ export function NavMain({ items }: { items: NavItem[] }) {
   }
 
   return (
-    <div className='space-y-1'>
+    <div className='space-y-1 p-2'>
       <Accordion type='multiple' className='w-full' defaultValue={defaultOpenValues}>
         {filteredItems.map((item, index) => {
           const hasChildren = item.children && item.children.length > 0
@@ -108,20 +108,20 @@ export function NavMain({ items }: { items: NavItem[] }) {
             return (
               <AccordionItem key={item.title} value={`item-${index}`} className='border-none'>
                 <div
-                  className={`rounded-lg p-1 transition-colors ${
-                    parentHasActiveChild
+                  className={`rounded-lg p-1 transition-colors 
+                    ${parentHasActiveChild
                       ? 'bg-[rgba(39,218,224,0.1)]'
                       : 'hover:bg-[rgba(39,218,224,0.1)]'
-                  }`}
+                    }`
+                  }
                 >
                   <AccordionTrigger className='flex items-center p-0 w-full hover:no-underline [&[data-state=open]>div>svg:last-child]:rotate-180'>
                     <div className='flex justify-between items-center gap-3 px-2 py-1.5 w-full'>
                       <div className='flex items-center gap-3'>
                         {item.icon && <item.icon className='size-[18px] text-muted' />}
                         <span
-                          className={`text-sm ${
-                            parentHasActiveChild ? 'text-primary/70 font-medium' : 'text-muted'
-                          }`}
+                          className={`text-sm ${parentHasActiveChild ? 'text-primary/70 font-medium' : 'text-muted'
+                            }`}
                         >
                           {item.title}
                         </span>
@@ -141,11 +141,10 @@ export function NavMain({ items }: { items: NavItem[] }) {
                           }}
                           key={subItem.title}
                           href={subItem.href}
-                          className={`px-2 py-1.5 pl-9 text-sm font-normal tracking-[0.5%] rounded-lg transition-colors flex items-center gap-2 ${
-                            isActive
-                              ? 'text-primary font-semibold'
-                              : 'text-white hover:bg-[rgba(39,218,224,0.1)]'
-                          }`}
+                          className={`px-2 py-1.5 pl-9 text-sm font-normal tracking-[0.5%] rounded-lg transition-colors flex items-center gap-2 ${isActive
+                            ? 'text-primary font-semibold'
+                            : 'text-white hover:bg-[rgba(39,218,224,0.1)]'
+                            }`}
                         >
                           <CircleDashed className='size-2' strokeWidth={3} /> {subItem.title}
                         </Link>
@@ -160,24 +159,21 @@ export function NavMain({ items }: { items: NavItem[] }) {
           return (
             <div
               key={item.title}
-              className={`rounded-lg transition-colors ${
-                pathname === item.href
-                  ? 'bg-[rgba(39,218,224,0.1)]'
-                  : 'hover:bg-[rgba(39,218,224,0.1)]'
-              }`}
+              className={`rounded-lg transition-colors ${pathname === item.href
+                ? 'bg-[rgba(39,218,224,0.1)]'
+                : 'hover:bg-[rgba(39,218,224,0.1)]'
+                }`}
             >
               <Link
                 href={item.href}
                 onClick={() => setOpen(false)}
-                className={`flex items-center gap-3 p-2.5 w-full ${
-                  pathname === item.href ? 'text-primary font-medium' : ''
-                }`}
+                className={`flex items-center gap-3 p-2.5 w-full ${pathname === item.href ? 'text-primary font-medium' : ''
+                  }`}
               >
                 {item.icon && <item.icon className='size-[18px] text-muted' />}
                 <span
-                  className={`text-sm font-normal tracking-[0.5%] ${
-                    pathname === item.href ? 'text-primary font-medium' : 'text-white'
-                  }`}
+                  className={`text-sm font-normal tracking-[0.5%] ${pathname === item.href ? 'text-primary font-medium' : 'text-white'
+                    }`}
                 >
                   {item.title}
                 </span>
