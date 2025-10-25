@@ -86,9 +86,8 @@ export const withPermissions = <P extends object>(
     return <Component {...props} />
   }
 
-  PermissionProtectedComponent.displayName = `withPermissions(${
-    Component.displayName || Component.name
-  })`
+  PermissionProtectedComponent.displayName = `withPermissions(${Component.displayName || Component.name
+    })`
 
   return PermissionProtectedComponent
 }

@@ -29,7 +29,7 @@ export default function BreadCrumbs() {
   })
 
   return (
-    <div className='top-0 z-10 sticky flex items-center gap-3 px-2 lg:px-5 h-[70px]'>
+    <div className='top-0 z-10 sticky flex items-center gap-3 bg-background/80 supports-[backdrop-filter]:bg-background/60 backdrop-blur px-2 lg:px-5 h-16'>
       {isMobile || state === 'collapsed' ? (
         <SidebarTrigger className='hover:bg-white/10 text-white' />
       ) : (

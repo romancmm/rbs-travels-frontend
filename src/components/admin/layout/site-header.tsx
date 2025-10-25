@@ -61,9 +61,8 @@ export function SiteHeader() {
         {item.href ? (
           <CustomLink href={item.href} className='block'>
             <DropdownMenuItem
-              className={`cursor-pointer text-base w-full text-muted ${
-                item.danger ? 'text-red-600 focus:text-red-600' : ''
-              } ${item.className || ''}`}
+              className={`cursor-pointer text-base w-full text-muted ${item.danger ? 'text-red-600 focus:text-red-600' : ''
+                } ${item.className || ''}`}
               disabled={item.disabled}
               onSelect={(e) => e.preventDefault()} // Prevent dropdown from closing on navigation
             >
@@ -192,9 +191,8 @@ export function SiteHeader() {
                     <AvatarImage src={'/'} alt={adminInfo?.firstName} />
                     <AvatarFallback className='bg-gradient-to-br from-gray-300 to-gray-500 text-white'>
                       {adminInfo
-                        ? `${adminInfo.firstName?.charAt(0) ?? ''}${
-                            adminInfo.lastName?.charAt(0) ?? ''
-                          }`
+                        ? `${adminInfo.firstName?.charAt(0) ?? ''}${adminInfo.lastName?.charAt(0) ?? ''
+                        }`
                         : 'AD'}
                     </AvatarFallback>
                   </Avatar>

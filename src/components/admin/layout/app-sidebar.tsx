@@ -12,17 +12,17 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
     <Sidebar
       collapsible='offcanvas'
-      className='border-[rgba(243,243,243,0.5)] border-r h-[calc(100vh-54px)]'
+      className='border-r h-[calc(100vh-64px)]'
       {...props}
     >
       <div className={cn('h-full', isMobile ? 'bg-background' : 'bg-primary/8')}>
-        <div className='flex items-center border-[rgba(243,243,243,0.5)] border-b h-[80px]'>
+        <div className='flex items-center border-b'>
           <div className='flex justify-between items-center gap-2.5 p-2.5 w-full'>
             <span className='font-medium text-white text-lg'>Menu</span>
             <SidebarTrigger className='hover:bg-white/10 text-white' />
           </div>
         </div>
-        <SidebarContent className='p-3 pb-16 h-[calc(100vh-118px)] overflow-y-scroll custom-scrollbar'>
+        <SidebarContent className='p-3 pb-16 h-[calc(100vh-144px)] overflow-y-auto custom-scrollbar'>
           <NavMain items={navItems} />
         </SidebarContent>
       </div>
