@@ -39,8 +39,7 @@ const AdminLoginForm = () => {
 
       const token = res?.accessToken
       if (token) {
-        // router.refresh()
-        router.push('/admin/dashboard')
+        router.refresh()
         // setAdminInfo({
         //   ...res?.admin
         // })
