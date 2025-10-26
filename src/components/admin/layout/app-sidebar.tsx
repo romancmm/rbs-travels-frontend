@@ -16,6 +16,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       Cookies.set('sidebar_state', String(isOpen), { expires: 365, path: '/' })
     } catch { }
   }, [state])
+
   return (
     <Sidebar
       collapsible='offcanvas'

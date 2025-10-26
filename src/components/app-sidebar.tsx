@@ -1,17 +1,18 @@
 "use client"
 
+import Cookies from "js-cookie"
 import {
   AudioWaveform,
   BookOpen,
   Bot,
   Command,
-  Frame,
   GalleryVerticalEnd,
   Map,
   PieChart,
   Settings2,
   SquareTerminal,
 } from "lucide-react"
+import { usePathname } from "next/navigation"
 import * as React from "react"
 
 import { NavMain } from "@/components/nav-main"
@@ -26,137 +27,85 @@ import {
   SidebarRail,
 } from "@/components/ui/sidebar"
 
-// This is sample data.
-const data = {
-  user: {
-    name: "Roman",
-    email: "m@example.com",
-    avatar: "/avatars/shadcn.jpg",
-  },
-  teams: [
+// Admin-centric data builder (user from cookie)
+const buildAdminData = (pathname: string) => {
+  // Read user from cookie named 'user'
+  let cookieUser: any = null
+  try {
+    const raw = Cookies.get('user')
+    if (raw) cookieUser = JSON.parse(raw)
+  } catch { }
+
+  const user = {
+    name: cookieUser?.firstName && cookieUser?.lastName
+      ? `${cookieUser.firstName} ${cookieUser.lastName}`
+      : cookieUser?.name || 'Admin',
+    email: cookieUser?.email || 'admin@example.com',
+    avatar: cookieUser?.avatar || '/avatars/shadcn.jpg',
+  }
+
+  const navMain = [
     {
-      name: "Acme Inc",
-      logo: GalleryVerticalEnd,
-      plan: "Enterprise",
-    },
-    {
-      name: "Acme Corp.",
-      logo: AudioWaveform,
-      plan: "Startup",
-    },
-    {
-      name: "Evil Corp.",
-      logo: Command,
-      plan: "Free",
-    },
-  ],
-  navMain: [
-    {
-      title: "Playground",
-      url: "#",
+      title: 'Dashboard',
+      url: '/admin/dashboard',
       icon: SquareTerminal,
-      isActive: true,
-      items: [
-        {
-          title: "History",
-          url: "#",
-        },
-        {
-          title: "Starred",
-          url: "#",
-        },
-        {
-          title: "Settings",
-          url: "#",
-        },
-      ],
+      isActive: pathname.startsWith('/admin/dashboard'),
+      items: [],
     },
     {
-      title: "Models",
-      url: "#",
+      title: 'Users',
+      url: '/admin/users',
       icon: Bot,
       items: [
-        {
-          title: "Genesis",
-          url: "#",
-        },
-        {
-          title: "Explorer",
-          url: "#",
-        },
-        {
-          title: "Quantum",
-          url: "#",
-        },
+        { title: 'All Users', url: '/admin/users' },
+        { title: 'Invite', url: '/admin/users/invite' },
       ],
     },
     {
-      title: "Documentation",
-      url: "#",
-      icon: BookOpen,
-      items: [
-        {
-          title: "Introduction",
-          url: "#",
-        },
-        {
-          title: "Get Started",
-          url: "#",
-        },
-        {
-          title: "Tutorials",
-          url: "#",
-        },
-        {
-          title: "Changelog",
-          url: "#",
-        },
-      ],
-    },
-    {
-      title: "Settings",
-      url: "#",
+      title: 'Roles & Permissions',
+      url: '/admin/roles',
       icon: Settings2,
       items: [
-        {
-          title: "General",
-          url: "#",
-        },
-        {
-          title: "Team",
-          url: "#",
-        },
-        {
-          title: "Billing",
-          url: "#",
-        },
-        {
-          title: "Limits",
-          url: "#",
-        },
+        { title: 'Roles', url: '/admin/roles' },
+        { title: 'Permissions', url: '/admin/permissions' },
       ],
     },
-  ],
-  projects: [
     {
-      name: "Design Engineering",
-      url: "#",
-      icon: Frame,
+      title: 'Content',
+      url: '/admin/content',
+      icon: BookOpen,
+      items: [
+        { title: 'Pages', url: '/admin/content/pages' },
+        { title: 'Media', url: '/admin/content/media' },
+      ],
     },
     {
-      name: "Sales & Marketing",
-      url: "#",
+      title: 'Reports',
+      url: '/admin/reports',
       icon: PieChart,
+      items: [
+        { title: 'Analytics', url: '/admin/reports/analytics' },
+      ],
     },
-    {
-      name: "Travel",
-      url: "#",
-      icon: Map,
-    },
-  ],
+  ]
+
+  const projects = [
+    { name: 'Settings', url: '/admin/settings', icon: Settings2 },
+    { name: 'Audit Log', url: '/admin/audit-log', icon: Command },
+    { name: 'System Status', url: '/admin/status', icon: Map },
+  ]
+
+  const teams = [
+    { name: 'RBS Travels', logo: GalleryVerticalEnd, plan: 'Admin' },
+    { name: 'Operations', logo: AudioWaveform, plan: 'Internal' },
+  ]
+
+  return { user, navMain, projects, teams }
 }
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const pathname = usePathname()
+  const data = React.useMemo(() => buildAdminData(pathname), [pathname])
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
