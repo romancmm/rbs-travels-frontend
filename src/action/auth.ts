@@ -35,7 +35,8 @@ export const authenticateAdmin = async (
     const data = await response.json()
 
     const token = data?.data?.accessToken
-    const user = data?.data?.user
+    const { role, roleId, permissions, ...restInfo } = data?.data?.user
+    console.log('object :>> ', restInfo)
 
     // Store token in cookie
     cookieStore.set('adminToken', token, {
@@ -44,8 +45,15 @@ export const authenticateAdmin = async (
       maxAge: 60 * 60 * 24 * 7 // 7 days
     })
 
+    // Store user info in cookie
+    cookieStore.set('userInfo', JSON.stringify({ name: restInfo?.name, email: restInfo?.email }), {
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      maxAge: 60 * 60 * 24 * 7 // 7 days
+    })
+
     // Store user role in cookie
-    cookieStore.set('userRole', user?.role, {
+    cookieStore.set('userRole', role || roleId, {
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
       maxAge: 60 * 60 * 24 * 7 // 7 days
@@ -56,14 +64,13 @@ export const authenticateAdmin = async (
     // Transform from array format to single object format
     // From: [{ resource: "products", actions: [...] }]
     // To: { products: [...], users: [...] }
-    const transformedPermissions = user?.permissions?.reduce((acc: any, permission: any) => {
+    const transformedPermissions = permissions?.reduce((acc: any, permission: any) => {
       acc[permission?.resource] = permission?.actions
       return acc
     }, {})
 
     // If user is ADMIN, they have full permissions regardless of customRole
-    const finalPermissions =
-      user?.role === 'ADMIN' ? { __superAdmin: true } : transformedPermissions
+    const finalPermissions = role === 'ADMIN' ? { __superAdmin: true } : transformedPermissions
 
     // const permissions = await encrypt(JSON.stringify(finalPermissions), secret)
     cookieStore.set('permissions', JSON.stringify(finalPermissions), {

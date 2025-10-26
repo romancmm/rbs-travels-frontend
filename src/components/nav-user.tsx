@@ -29,6 +29,7 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar"
+import Cookies from "js-cookie"
 
 export function NavUser({
   user,
@@ -40,6 +41,13 @@ export function NavUser({
   }
 }) {
   const { isMobile } = useSidebar()
+  const handleLogout = () => {
+    Cookies.remove("adminToken", { path: "/" })
+    Cookies.remove("userInfo", { path: "/" })
+    Cookies.remove("userRole", { path: "/" })
+    Cookies.remove("permissions", { path: "/" })
+    window.location.href = "/admin/login"
+  }
 
   return (
     <SidebarMenu>
@@ -50,13 +58,13 @@ export function NavUser({
               size="lg"
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
-              <Avatar className="h-8 w-8 rounded-lg">
+              <Avatar className="rounded-lg w-8 h-8">
                 <AvatarImage src={user.avatar} alt={user.name} />
                 <AvatarFallback className="rounded-lg">CN</AvatarFallback>
               </Avatar>
-              <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-medium">{user.name}</span>
-                <span className="truncate text-xs">{user.email}</span>
+              <div className="flex-1 grid text-sm text-left leading-tight">
+                <span className="font-medium truncate">{user.name}</span>
+                <span className="text-xs truncate">{user.email}</span>
               </div>
               <ChevronsUpDown className="ml-auto size-4" />
             </SidebarMenuButton>
@@ -68,14 +76,14 @@ export function NavUser({
             sideOffset={4}
           >
             <DropdownMenuLabel className="p-0 font-normal">
-              <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
-                <Avatar className="h-8 w-8 rounded-lg">
+              <div className="flex items-center gap-2 px-1 py-1.5 text-sm text-left">
+                <Avatar className="rounded-lg w-8 h-8">
                   <AvatarImage src={user.avatar} alt={user.name} />
                   <AvatarFallback className="rounded-lg">CN</AvatarFallback>
                 </Avatar>
-                <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-medium">{user.name}</span>
-                  <span className="truncate text-xs">{user.email}</span>
+                <div className="flex-1 grid text-sm text-left leading-tight">
+                  <span className="font-medium truncate">{user.name}</span>
+                  <span className="text-xs truncate">{user.email}</span>
                 </div>
               </div>
             </DropdownMenuLabel>
@@ -102,7 +110,7 @@ export function NavUser({
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
+            <DropdownMenuItem onClick={handleLogout}>
               <LogOut />
               Log out
             </DropdownMenuItem>

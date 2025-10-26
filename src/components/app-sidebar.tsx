@@ -32,7 +32,7 @@ const buildAdminData = (pathname: string) => {
   // Read user from cookie named 'user'
   let cookieUser: any = null
   try {
-    const raw = Cookies.get('user')
+    const raw = Cookies.get('userInfo')
     if (raw) cookieUser = JSON.parse(raw)
   } catch { }
 
