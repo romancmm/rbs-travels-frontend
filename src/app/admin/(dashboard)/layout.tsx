@@ -10,17 +10,20 @@ import {
 import { Separator } from "@/components/ui/separator"
 import {
   SidebarInset,
-  SidebarProvider,
-  SidebarTrigger,
+  SidebarProvider, SidebarTrigger
 } from "@/components/ui/sidebar"
+import { cookies } from "next/headers"
 
 type TProps = {
   children: React.ReactNode
 }
 
-export default function DashboardLayout({ children }: TProps) {
+export default async function DashboardLayout({ children }: TProps) {
+  const cookieStore = await cookies()
+  const defaultOpen = cookieStore.get("sidebar_state")?.value === "true"
+
   return (
-    <SidebarProvider>
+    <SidebarProvider defaultOpen={defaultOpen}>
       <AppSidebar />
       <SidebarInset>
         <header className="flex items-center gap-2 h-16 group-has-data-[collapsible=icon]/sidebar-wrapper:h-12 transition-[width,height] ease-linear shrink-0">
