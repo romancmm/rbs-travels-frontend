@@ -1,13 +1,12 @@
 "use client"
 
 import {
-  BadgeCheck,
   Bell,
-  ChevronsUpDown,
-  CreditCard,
-  LogOut,
-  Sparkles,
+  ChevronsUpDown, Edit,
+  Key,
+  LogOut, User
 } from "lucide-react"
+import React from "react"
 
 import {
   Avatar,
@@ -55,6 +54,40 @@ export function NavUser({
     router.push('/admin/login')
   }
 
+  type MenuItemConfig = {
+    key: string
+    label: string
+    icon: React.ComponentType<{ className?: string }>
+    href?: string
+    onClick?: () => void
+  }
+
+  type MenuGroupConfig = {
+    key: string
+    items: MenuItemConfig[]
+  }
+
+  const menuGroups: MenuGroupConfig[] = React.useMemo(
+    () => [
+      {
+        key: 'promo',
+        items: [
+          { key: 'profile', label: 'View Profile', icon: User, href: '/admin/profile' },
+        ]
+      },
+      {
+        key: 'account',
+        items: [
+
+          { key: 'update', label: 'Update Profile', icon: Edit, href: '/admin/update-profile' },
+          { key: 'password', label: 'Change Password', icon: Key, href: '/admin/change-password' },
+          { key: 'notifications', label: 'Notifications', icon: Bell, href: '/admin/notifications' }
+        ]
+      }
+    ],
+    []
+  )
+
   return (
     <SidebarMenu>
       <SidebarMenuItem>
@@ -66,7 +99,7 @@ export function NavUser({
             >
               <Avatar className="rounded-lg w-8 h-8">
                 <AvatarImage src={user.avatar} alt={user.name} />
-                <AvatarFallback className="rounded-lg">CN</AvatarFallback>
+                <AvatarFallback className="rounded-lg">A</AvatarFallback>
               </Avatar>
               <div className="flex-1 grid text-sm text-left leading-tight">
                 <span className="font-medium truncate">{user.name}</span>
@@ -93,29 +126,30 @@ export function NavUser({
                 </div>
               </div>
             </DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuGroup>
-              <DropdownMenuItem>
-                <Sparkles />
-                Upgrade to Pro
-              </DropdownMenuItem>
-            </DropdownMenuGroup>
-            <DropdownMenuSeparator />
-            <DropdownMenuGroup>
-              <DropdownMenuItem>
-                <BadgeCheck />
-                Account
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <CreditCard />
-                Billing
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <Bell />
-                Notifications
-              </DropdownMenuItem>
-            </DropdownMenuGroup>
-            <DropdownMenuSeparator />
+            {/* Menu Groups */}
+            {menuGroups.map((group, gi) => (
+              <React.Fragment key={group.key}>
+                {gi === 0 && <DropdownMenuSeparator />}
+                <DropdownMenuGroup>
+                  {group.items.map((item: any) => {
+                    const Icon = item.icon
+                    const handleClick = item.onClick
+                      ? item.onClick
+                      : item.href
+                        ? () => router.push(item.href!)
+                        : undefined
+                    return (
+                      <DropdownMenuItem key={item.key} onClick={handleClick}>
+                        <Icon />
+                        {item.label}
+                      </DropdownMenuItem>
+                    )
+                  })}
+                </DropdownMenuGroup>
+                <DropdownMenuSeparator />
+              </React.Fragment>
+            ))}
+
             <DropdownMenuItem onClick={handleLogout}>
               <LogOut />
               Log out

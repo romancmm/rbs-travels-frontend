@@ -4,13 +4,11 @@ import Cookies from "js-cookie"
 import {
   AudioWaveform,
   BookOpen,
-  Bot,
-  Command,
-  GalleryVerticalEnd,
+  Bot, GalleryVerticalEnd,
   Map,
   PieChart,
   Settings2,
-  SquareTerminal,
+  SquareTerminal
 } from "lucide-react"
 import { usePathname } from "next/navigation"
 import * as React from "react"
@@ -76,7 +74,7 @@ const buildAdminData = (pathname: string) => {
       icon: BookOpen,
       items: [
         { title: 'Pages', url: '/admin/content/pages' },
-        { title: 'Media', url: '/admin/content/media' },
+        { title: 'Media Manager', url: '/admin/content/media' },
       ],
     },
     {
@@ -91,7 +89,7 @@ const buildAdminData = (pathname: string) => {
 
   const projects = [
     { name: 'Settings', url: '/admin/settings', icon: Settings2 },
-    { name: 'Audit Log', url: '/admin/audit-log', icon: Command },
+    // { name: 'Audit Log', url: '/admin/audit-log', icon: Command },
     { name: 'System Status', url: '/admin/status', icon: Map },
   ]
 
