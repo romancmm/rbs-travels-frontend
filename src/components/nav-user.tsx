@@ -30,6 +30,7 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar"
 import Cookies from "js-cookie"
+import { useRouter } from "next/navigation"
 
 export function NavUser({
   user,
@@ -41,12 +42,17 @@ export function NavUser({
   }
 }) {
   const { isMobile } = useSidebar()
-  const handleLogout = () => {
-    Cookies.remove("adminToken", { path: "/" })
-    Cookies.remove("userInfo", { path: "/" })
-    Cookies.remove("userRole", { path: "/" })
-    Cookies.remove("permissions", { path: "/" })
-    window.location.href = "/admin/login"
+  const router = useRouter()
+
+  const handleLogout = async () => {
+    try {
+      await fetch('/api/admin/logout', { method: 'POST', cache: 'no-store' })
+    } catch { }
+    // Clean any leftover client cookies (non-httpOnly)
+    try {
+      Cookies.remove('user', { path: '/' })
+    } catch { }
+    router.push('/admin/login')
   }
 
   return (

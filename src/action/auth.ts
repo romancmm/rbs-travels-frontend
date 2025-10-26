@@ -36,26 +36,34 @@ export const authenticateAdmin = async (
 
     const token = data?.data?.accessToken
     const { role, roleId, permissions, ...restInfo } = data?.data?.user
-    console.log('object :>> ', restInfo)
 
     // Store token in cookie
     cookieStore.set('adminToken', token, {
+      httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
+      path: '/',
       maxAge: 60 * 60 * 24 * 7 // 7 days
     })
 
-    // Store user info in cookie
-    cookieStore.set('userInfo', JSON.stringify({ name: restInfo?.name, email: restInfo?.email }), {
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
-      maxAge: 60 * 60 * 24 * 7 // 7 days
-    })
+    // Store user info in cookie (readable by client UI)
+    cookieStore.set(
+      'user',
+      JSON.stringify({ name: restInfo?.name, email: restInfo?.email, avatar: restInfo?.avatar }),
+      {
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax',
+        path: '/',
+        maxAge: 60 * 60 * 24 * 7 // 7 days
+      }
+    )
 
-    // Store user role in cookie
+    // Store user role in cookie (server-use)
     cookieStore.set('userRole', role || roleId, {
+      httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
+      path: '/',
       maxAge: 60 * 60 * 24 * 7 // 7 days
     })
 
@@ -74,8 +82,10 @@ export const authenticateAdmin = async (
 
     // const permissions = await encrypt(JSON.stringify(finalPermissions), secret)
     cookieStore.set('permissions', JSON.stringify(finalPermissions), {
+      httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
+      path: '/',
       maxAge: 60 * 60 * 24 * 7 // 7 days
     })
 
