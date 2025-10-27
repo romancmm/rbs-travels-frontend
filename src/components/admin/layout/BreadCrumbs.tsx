@@ -1,10 +1,9 @@
 'use client'
 
-import { Typography } from '@/components/common/typography'
-import { SidebarTrigger, useSidebar } from '@/components/ui/sidebar'
-import { ChevronRight } from 'lucide-react'
-import Link from 'next/link'
+import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbSeparator } from '@/components/ui/breadcrumb'
+import { useSidebar } from '@/components/ui/sidebar'
 import { usePathname } from 'next/navigation'
+import React from 'react'
 
 export default function BreadCrumbs() {
   const pathname = usePathname()
@@ -29,32 +28,28 @@ export default function BreadCrumbs() {
   })
 
   return (
-    <div className='top-0 z-10 sticky flex items-center gap-3 bg-background/80 supports-[backdrop-filter]:bg-background/60 backdrop-blur px-2 lg:px-5 h-16'>
-      {isMobile || state === 'collapsed' ? (
-        <SidebarTrigger className='hover:bg-white/10 text-white' />
-      ) : (
-        <div className='md:hidden size-9' />
-      )}
-
-      <div className='flex flex-col lg:gap-1 py-1.5'>
-        <Typography variant={'h6'} weight={'medium'}>
-          {breadcrumbItems[breadcrumbItems.length - 1]?.label || 'Dashboard'}
-        </Typography>
-        <nav className='flex items-center space-x-1 text-sm'>
+    <div className='flex flex-col items-start gap-0'>
+      {/* <Typography variant={'body2'} weight={'medium'}>
+        {breadcrumbItems[breadcrumbItems.length - 1]?.label || 'Dashboard'}
+      </Typography> */}
+      <Breadcrumb>
+        <BreadcrumbList>
           {breadcrumbItems.map((item, index) => (
-            <div key={index} className='flex items-center space-x-1'>
-              {index === 0 ? (
-                <Link href={item.href} className='text-muted hover:text-white transition-colors'>
+            <React.Fragment key={index}>
+              <BreadcrumbItem className="hidden md:block">
+                <BreadcrumbLink href={item.href}>
                   {item.label}
-                </Link>
-              ) : (
-                <span className='text-muted'>{item.label}</span>
-              )}
-              {index < breadcrumbItems.length - 1 && <ChevronRight className='size-5 text-muted' />}
-            </div>
+                </BreadcrumbLink>
+              </BreadcrumbItem>
+              {breadcrumbItems?.length - 1 !== index && <BreadcrumbSeparator className="hidden md:block" />}
+            </React.Fragment>
           ))}
-        </nav>
-      </div>
+
+          {/* <BreadcrumbItem>
+            <BreadcrumbPage>Data Fetching</BreadcrumbPage>
+          </BreadcrumbItem> */}
+        </BreadcrumbList>
+      </Breadcrumb>
     </div>
   )
 }
