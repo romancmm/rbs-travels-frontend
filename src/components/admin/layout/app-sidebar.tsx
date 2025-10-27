@@ -4,7 +4,7 @@ import * as React from 'react'
 
 import { NavMain } from '@/components/admin/layout/nav-main'
 import { Sidebar, SidebarContent, useSidebar } from '@/components/ui/sidebar'
-import { navItems } from '@/data/siteConfig'
+import { navItems } from '@/config/adminNavItems'
 import Cookies from 'js-cookie'
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {

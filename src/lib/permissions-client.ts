@@ -89,7 +89,7 @@ export const generateRoutePermissions = (
     }
   }
 
-  navItems.forEach((item) => processItem(item))
+  navItems?.forEach((item) => processItem(item))
   return routeMap
 }
 

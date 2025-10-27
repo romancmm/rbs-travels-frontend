@@ -74,21 +74,6 @@ export const createUserProfileMenuConfig = (
   }
 ]
 
-// Notification actions configuration
-export const notificationActionsConfig = {
-  markAllRead: {
-    key: 'mark-all-read',
-    label: 'Mark all read',
-    action: 'markAllAsRead'
-  },
-  viewAll: {
-    key: 'view-all',
-    label: 'View all notifications',
-    action: 'viewAllNotifications',
-    href: '/admin/notifications'
-  }
-} as const
-
 // Header configuration
 export const headerConfig = {
   logo: {

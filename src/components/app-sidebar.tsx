@@ -1,21 +1,14 @@
 "use client"
 
 import Cookies from "js-cookie"
-import {
-  AudioWaveform,
-  BookOpen,
-  Bot, GalleryVerticalEnd,
-  Map,
-  PieChart,
-  Settings2,
-  SquareTerminal
-} from "lucide-react"
+import { AudioWaveform, GalleryVerticalEnd, Map, Settings2 } from "lucide-react"
 import { usePathname } from "next/navigation"
 import * as React from "react"
 
 import { NavMain } from "@/components/nav-main"
 import { NavProjects } from "@/components/nav-projects"
 import { NavUser } from "@/components/nav-user"
+import { usePermissions } from "@/components/providers/PermissionProvider"
 import { TeamSwitcher } from "@/components/team-switcher"
 import {
   Sidebar,
@@ -24,13 +17,50 @@ import {
   SidebarHeader,
   SidebarRail,
 } from "@/components/ui/sidebar"
+import { navItems as adminNavItems } from "@/config/adminNavItems"
+
+// Map admin config to NavMain items
+const mapNavItems = (
+  items: typeof adminNavItems,
+  pathname: string,
+  hasPermission?: (resource: string, action?: string) => boolean,
+  loading?: boolean
+) => {
+  return items
+    .filter((it) => {
+      if (!it.permission) return true
+      if (loading) return true // don't block UI while loading
+      return hasPermission ? hasPermission(it.permission.resource, it.permission.action) : true
+    })
+    .map((it) => {
+      const children = it.children
+        .filter((child) => {
+          if (!child.permission) return true
+          if (loading) return true
+          return hasPermission ? hasPermission(child.permission.resource, child.permission.action) : true
+        })
+        .map((child) => ({ title: child.title, url: child.href }))
+
+      const isActive =
+        (!!it.href && pathname.startsWith(it.href)) ||
+        children.some((c) => pathname.startsWith(c.url))
+
+      return {
+        title: it.title,
+        url: it.href || '',
+        icon: it.icon,
+        isActive,
+        items: children
+      }
+    })
+}
 
 // Admin-centric data builder (user from cookie)
-const buildAdminData = (pathname: string) => {
+const buildAdminData = () => {
   // Read user from cookie named 'user'
   let cookieUser: any = null
   try {
-    const raw = Cookies.get('userInfo')
+    const raw = Cookies.get('user')
     if (raw) cookieUser = JSON.parse(raw)
   } catch { }
 
@@ -41,51 +71,6 @@ const buildAdminData = (pathname: string) => {
     email: cookieUser?.email || 'admin@example.com',
     avatar: cookieUser?.avatar || '/avatars/shadcn.jpg',
   }
-
-  const navMain = [
-    {
-      title: 'Dashboard',
-      url: '/admin/dashboard',
-      icon: SquareTerminal,
-      isActive: pathname.startsWith('/admin/dashboard'),
-      items: [],
-    },
-    {
-      title: 'Users',
-      url: '/admin/users',
-      icon: Bot,
-      items: [
-        { title: 'All Users', url: '/admin/users' },
-        { title: 'Invite', url: '/admin/users/invite' },
-      ],
-    },
-    {
-      title: 'Roles & Permissions',
-      url: '/admin/roles',
-      icon: Settings2,
-      items: [
-        { title: 'Roles', url: '/admin/roles' },
-        { title: 'Permissions', url: '/admin/permissions' },
-      ],
-    },
-    {
-      title: 'Content',
-      url: '/admin/content',
-      icon: BookOpen,
-      items: [
-        { title: 'Pages', url: '/admin/content/pages' },
-        { title: 'Media Manager', url: '/admin/content/media' },
-      ],
-    },
-    {
-      title: 'Reports',
-      url: '/admin/reports',
-      icon: PieChart,
-      items: [
-        { title: 'Analytics', url: '/admin/reports/analytics' },
-      ],
-    },
-  ]
 
   const projects = [
     { name: 'Settings', url: '/admin/settings', icon: Settings2 },
@@ -98,19 +83,24 @@ const buildAdminData = (pathname: string) => {
     { name: 'Operations', logo: AudioWaveform, plan: 'Internal' },
   ]
 
-  return { user, navMain, projects, teams }
+  return { user, projects, teams }
 }
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const pathname = usePathname()
-  const data = React.useMemo(() => buildAdminData(pathname), [pathname])
+  const { hasPermission, loading } = usePermissions()
+  const data = React.useMemo(() => buildAdminData(), [])
+  const navMain = React.useMemo(
+    () => mapNavItems(adminNavItems, pathname, hasPermission, loading),
+    [pathname, hasPermission, loading]
+  )
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
         <TeamSwitcher teams={data.teams} />
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={data.navMain} />
+        <NavMain items={navMain ?? []} />
         <NavProjects projects={data.projects} />
       </SidebarContent>
       <SidebarFooter>
