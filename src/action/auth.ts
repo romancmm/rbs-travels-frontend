@@ -1,5 +1,6 @@
 'use server'
 
+import { clearAdminSession, normalizeAdminAuthPayload, persistAdminSession } from '@/lib/admin-auth'
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 const baseURL = process.env.NEXT_PUBLIC_APP_ROOT_API
@@ -14,8 +15,6 @@ export const authenticateAdmin = async (
   email: string,
   password: string
 ): Promise<AdminAuthSuccess | AdminAuthError> => {
-  const cookieStore = await cookies()
-
   try {
     const response = await fetch(baseURL + '/auth/admin/login', {
       method: 'POST',
@@ -32,64 +31,12 @@ export const authenticateAdmin = async (
       return { error: message }
     }
 
-    const data = await response.json()
+    const payload = await response.json()
 
-    const token = data?.data?.accessToken
-    const { role, roleId, permissions, ...restInfo } = data?.data?.user
+    const session = normalizeAdminAuthPayload(payload)
+    await persistAdminSession(session)
 
-    // Store token in cookie
-    cookieStore.set('adminToken', token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
-      path: '/',
-      maxAge: 60 * 60 * 24 * 7 // 7 days
-    })
-
-    // Store user info in cookie (readable by client UI)
-    cookieStore.set(
-      'user',
-      JSON.stringify({ name: restInfo?.name, email: restInfo?.email, avatar: restInfo?.avatar }),
-      {
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'lax',
-        path: '/',
-        maxAge: 60 * 60 * 24 * 7 // 7 days
-      }
-    )
-
-    // Store user role in cookie (server-use)
-    cookieStore.set('userRole', role || roleId, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
-      path: '/',
-      maxAge: 60 * 60 * 24 * 7 // 7 days
-    })
-
-    // Extract and transform permissions data structure
-
-    // Transform from array format to single object format
-    // From: [{ resource: "products", actions: [...] }]
-    // To: { products: [...], users: [...] }
-    const transformedPermissions = permissions?.reduce((acc: any, permission: any) => {
-      acc[permission?.resource] = permission?.actions
-      return acc
-    }, {})
-
-    // If user is ADMIN, they have full permissions regardless of customRole
-    const finalPermissions = role === 'ADMIN' ? { __superAdmin: true } : transformedPermissions
-
-    // const permissions = await encrypt(JSON.stringify(finalPermissions), secret)
-    cookieStore.set('permissions', JSON.stringify(finalPermissions), {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
-      path: '/',
-      maxAge: 60 * 60 * 24 * 7 // 7 days
-    })
-
-    return data?.data as AdminAuthSuccess
+    return { accessToken: session.token, user: session.user }
   } catch (error) {
     // Network or unexpected error; return a structured error instead of throwing
     const message = error instanceof Error ? error.message : 'Authentication failed'
@@ -98,8 +45,6 @@ export const authenticateAdmin = async (
 }
 
 export const adminLogout = async () => {
-  const cookieStore = await cookies()
-
   try {
     // Call logout API endpoint
     await fetch(baseURL + '/admin/auth/logout', {
@@ -112,10 +57,8 @@ export const adminLogout = async () => {
     console.error('Logout API call failed:', error)
     // Continue with local cleanup even if API call fails
   } finally {
-    // Always remove the token cookie regardless of API response
-    cookieStore.delete('adminToken')
-    cookieStore.delete('permissions')
-    cookieStore.delete('userRole')
+    // Always clear the session regardless of API response
+    await clearAdminSession()
     // Redirect to login page after logout
     redirect('/admin/login')
   }

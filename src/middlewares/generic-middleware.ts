@@ -8,8 +8,8 @@ import {
 import { decryptCallback, encryptCallback } from './callback'
 import { routeConfigs } from './config'
 
-// Import navItems from siteConfig
-import { navItems } from '../data/siteConfig'
+// Import admin nav items for permission mapping
+import { navItems } from '../config/adminNavItems'
 
 const secret = process.env.AUTH_SECRET! || '12345678901234567890123456789012' // Must be 32 characters
 

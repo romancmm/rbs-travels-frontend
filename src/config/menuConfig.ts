@@ -88,6 +88,12 @@ export const headerConfig = {
   }
 } as const
 
+// Notification actions config used by SiteHeader
+export const notificationActionsConfig = {
+  markAllRead: { label: 'Mark all as read' },
+  viewAll: { label: 'View all' }
+} as const
+
 // Menu item types for better organization
 export type MenuItemType = 'primary' | 'secondary' | 'danger'
 
