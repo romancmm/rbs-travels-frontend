@@ -76,7 +76,8 @@ export const normalizeAdminAuthPayload = (payload: any): NormalizedAdminAuth => 
   const token = accessToken || legacyToken || refreshToken || ''
 
   const isAdmin = Boolean(user?.isAdmin)
-  const isSuperAdmin = Boolean(user?.isSuperAdmin) || isAdmin
+  // Only treat users with explicit isSuperAdmin=true as super admins (no admin bypass)
+  const isSuperAdmin = Boolean(user?.isSuperAdmin)
 
   const transformed = mapPermissionStrings(user?.permissions)
   const permissions = isSuperAdmin ? ({ __superAdmin: true } as const) : transformed

@@ -8,7 +8,11 @@ export interface Permission {
 
 // Type guard to check if user has super admin privileges
 export const isSuperAdmin = (permissions: any): boolean => {
-  return permissions && typeof permissions === 'object' && permissions.__superAdmin === true
+  if (!permissions) return false
+  if (Array.isArray(permissions)) {
+    return permissions.some((p) => p && typeof p === 'object' && (p as any).__superAdmin === true)
+  }
+  return typeof permissions === 'object' && (permissions as any).__superAdmin === true
 }
 
 // NavItem type (compatible with siteConfig)
