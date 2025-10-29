@@ -18,7 +18,7 @@ function BlogList() {
       blogs: Blog[]
       pagination: PaginationMeta
     }
-  }>(() => 'admin/blogs' + (page ? `?page=${page}` : '') + (limit ? `&limit=${limit}` : ''))
+  }>(() => '/admin/blog/posts' + (page ? `?page=${page}` : '') + (limit ? `&limit=${limit}` : ''))
 
   return (
     <div className='w-full max-w-full overflow-x-hidden'>
@@ -28,6 +28,8 @@ function BlogList() {
         subTitle='Manage blog posts and articles'
         extra={<AddButton resource='blogs' href='/admin/blogs/create' />}
       />
+      Lorem ipsum dolor sit amet consectetur adipisicing elit. Dignissimos quas nostrum natus culpa maxime soluta perferendis quaerat officia libero dolor inventore nam quam quos aliquid, omnis magnam, fugit illum totam!
+      {JSON.stringify(data)}
 
       {/* Table */}
       <CustomTable
