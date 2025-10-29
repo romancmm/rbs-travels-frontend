@@ -53,7 +53,7 @@ export function CustomTable<T>({
                   <th
                     key={idx}
                     className={`
-                      px-2.5 py-2.5 text-left text-sm font-normal text-white whitespace-nowrap font-manrope
+                      px-2.5 py-2.5 text-left text-sm font-normal whitespace-nowrap font-manrope
                       border-y-2
                       ${column.className || ''}
                     `}
@@ -70,9 +70,8 @@ export function CustomTable<T>({
                     {columns.map((column, idx) => (
                       <td
                         key={idx}
-                        className={`px-2.5 py-2.5 text-sm text-white whitespace-nowrap font-manrope border-b border-white/10 ${
-                          column.className || ''
-                        }`}
+                        className={`px-2.5 py-2.5 text-sm whitespace-nowrap font-manrope border-b border-white/10 ${column.className || ''
+                          }`}
                       >
                         <div className='min-w-0'>{renderCell(column, item, rowIndex)}</div>
                       </td>
@@ -83,7 +82,7 @@ export function CustomTable<T>({
                 <tr>
                   <td
                     colSpan={columns.length}
-                    className='px-4 py-8 text-white/60 text-sm'
+                    className='px-4 py-8 text-sm'
                     style={{
                       fontFamily: 'Manrope',
                       fontSize: '14px'

@@ -28,7 +28,6 @@ function BlogList() {
         subTitle='Manage blog posts and articles'
         extra={<AddButton resource='blogs' href='/admin/blogs/create' />}
       />
-      Lorem ipsum dolor sit amet consectetur adipisicing elit. Dignissimos quas nostrum natus culpa maxime soluta perferendis quaerat officia libero dolor inventore nam quam quos aliquid, omnis magnam, fugit illum totam!
       {JSON.stringify(data)}
 
       {/* Table */}
