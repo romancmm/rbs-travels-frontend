@@ -1,25 +1,9 @@
 'use client'
 
 import type { AxiosRequestConfig, AxiosResponse } from 'axios'
-import Cookies from 'js-cookie'
 import axiosInstance from '../api/axiosInstance'
 
 const responseBody = <T>(response: AxiosResponse<T>) => response.data
-
-// Inject token into all requests
-axiosInstance.interceptors.request.use(
-  (config) => {
-    const isAdmin = config.url?.startsWith('/admin')
-    const cookieName = isAdmin ? 'adminToken' : 'token'
-    const token = Cookies.get(cookieName)
-
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`
-    }
-    return config
-  },
-  (error) => Promise.reject(error)
-)
 
 // Type-safe generic client
 const requests = {

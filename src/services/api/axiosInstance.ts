@@ -2,8 +2,6 @@ import axios from 'axios'
 import Cookies from 'js-cookie'
 import { handleApiError } from './errorHandler'
 
-const adminToken = Cookies.get('adminToken') as string
-
 const baseURL = process.env.NEXT_PUBLIC_APP_ROOT_API
 
 const axiosInstance = axios.create({
@@ -16,6 +14,11 @@ const axiosInstance = axios.create({
 // Request Interceptor
 axiosInstance.interceptors.request.use(
   (config) => {
+    const url = (config.url || '').toString()
+    const isAdmin = url.startsWith('/admin') || url.startsWith('admin')
+    const cookieName = isAdmin ? 'adminToken' : 'token'
+    const token = Cookies.get(cookieName)
+
     // Ensure the token is valid before proceeding
     // const isValid = validateToken() // Await the async validateToken function
     // if (!isValid) {
@@ -23,8 +26,8 @@ axiosInstance.interceptors.request.use(
     // }
 
     // const token = getToken() // Await the async getToken function
-    if (adminToken) {
-      config.headers.Authorization = `Bearer ${adminToken}`
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`
     }
 
     return config

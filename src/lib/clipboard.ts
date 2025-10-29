@@ -1,3 +1,5 @@
+import { showError } from './errMsg'
+
 export const copyToClipboard = async (text: string): Promise<boolean> => {
   try {
     if (navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
@@ -18,7 +20,7 @@ export const copyToClipboard = async (text: string): Promise<boolean> => {
     document.body.removeChild(textarea)
     return success
   } catch (err) {
-    console.error('Copy to clipboard failed:', err)
+    showError(err instanceof Error ? err.message : 'Failed to copy to clipboard.')
     return false
   }
 }

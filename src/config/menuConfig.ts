@@ -1,4 +1,5 @@
 import { adminLogout } from '@/action/auth'
+import { showError } from '@/lib/errMsg'
 import { LogOut, Mail, Settings, Shield, User, type LucideIcon } from 'lucide-react'
 import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime'
 
@@ -65,8 +66,8 @@ export const createUserProfileMenuConfig = (
         await adminLogout()
         // Use Next.js router for navigation (no page reload)
         router.push('/admin/login')
-      } catch (error) {
-        console.error('Logout failed:', error)
+      } catch {
+        showError('Logout failed. Please try again.')
         // Redirect anyway for security using Next.js router
         router.push('/admin/login')
       }
