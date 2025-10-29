@@ -93,7 +93,7 @@ export const persistAdminSession = async (session: NormalizedAdminAuth) => {
   // Store token in cookie if available
   if (token) {
     cookieStore.set('adminToken', token, {
-      httpOnly: true,
+      httpOnly: false,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
       path: '/',
@@ -129,7 +129,7 @@ export const persistAdminSession = async (session: NormalizedAdminAuth) => {
 
   // Store permissions (httpOnly)
   cookieStore.set('permissions', JSON.stringify(permissions), {
-    httpOnly: true,
+    httpOnly: false,
     secure: process.env.NODE_ENV === 'production',
     sameSite: 'lax',
     path: '/',

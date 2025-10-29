@@ -3,8 +3,8 @@ import { z } from 'zod'
 // Admin role enum
 export enum AdminRole {
   ADMIN = 'ADMIN',
-  //   SUPER_ADMIN = 'SUPER_ADMIN',
   MODERATOR = 'MODERATOR'
+  //   SUPER_ADMIN = 'SUPER_ADMIN',
 }
 
 // Unified admin schema (password optional for updates)
