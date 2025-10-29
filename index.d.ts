@@ -422,7 +422,6 @@ declare global {
     slug: string
     excerpt: string
     content: string
-    source?: string | null
     thumbnail?: string | null
     gallery: string[]
     tags: string[]

@@ -85,7 +85,8 @@ export function CustomTable<T>({
                     className='px-4 py-8 text-sm'
                     style={{
                       fontFamily: 'Manrope',
-                      fontSize: '14px'
+                      fontSize: '14px',
+                      textAlign: 'center'
                     }}
                   >
                     {emptyMessage}

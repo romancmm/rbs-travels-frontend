@@ -34,9 +34,7 @@ const BlogDetail = ({ data }: BlogDetailViewProps) => {
                 <Badge variant={data?.isPublished ? 'default' : 'secondary'}>
                   {data?.isPublished ? 'Published' : 'Draft'}
                 </Badge>
-                <Badge variant='outline' className='text-muted capitalize'>
-                  {data?.source}
-                </Badge>
+
               </div>
               <h1 className='font-bold text-3xl leading-tight'>{data?.title}</h1>
               <p className='mt-2 text-muted-foreground'>{data?.excerpt}</p>
@@ -150,14 +148,6 @@ const BlogDetail = ({ data }: BlogDetailViewProps) => {
                 </div>
               </div>
 
-              <div>
-                <span className='font-medium text-sm'>Source:</span>
-                <div className='mt-1'>
-                  <Badge variant='outline' className='text-muted capitalize'>
-                    {data?.source}
-                  </Badge>
-                </div>
-              </div>
 
               <div>
                 <span className='font-medium text-sm'>Category:</span>

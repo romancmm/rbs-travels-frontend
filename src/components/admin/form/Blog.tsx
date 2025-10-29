@@ -37,7 +37,6 @@ export default function BlogForm({ initialData }: TProps) {
       categoryId: initialData?.categoryId || 1,
       content: initialData?.content || '',
       excerpt: initialData?.excerpt || '',
-      source: initialData?.source || '',
       thumbnail: initialData?.thumbnail || '',
       gallery: initialData?.gallery || [],
       tags: initialData?.tags || [],
@@ -112,7 +111,7 @@ export default function BlogForm({ initialData }: TProps) {
   const onSubmit: SubmitHandler<CreateBlogType> = async (data) => {
     try {
       await requests[initialData?.id ? 'put' : 'post'](
-        `/admin/blogs` + (initialData?.id ? `/${initialData?.id}` : ``),
+        `/admin/blog/posts` + (initialData?.id ? `/${initialData?.id}` : ``),
         {
           ...data,
           ...(initialData?.id ? { id: initialData.id } : {})
@@ -126,7 +125,7 @@ export default function BlogForm({ initialData }: TProps) {
   }
 
   return (
-    <div>
+    <div className='bg-white p-5 rounded-xl'>
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className='items-start gap-8 lg:gap-6 grid grid-cols-1 lg:grid-cols-2'>
           <div className='gap-5 grid'>
@@ -178,27 +177,6 @@ export default function BlogForm({ initialData }: TProps) {
                     }))
                   }
                   onChange={(val) => field.onChange(Number(val))}
-                />
-              )}
-            />
-
-            <Controller
-              name='source'
-              control={control}
-              render={({ field }) => (
-                <CustomInput
-                  label='Source'
-                  type='text'
-                  placeholder='Select Source'
-                  value={field.value}
-                  onChange={field.onChange}
-                  error={errors.source?.message}
-                  // options={[
-                  //   { value: 'Internal', label: 'Internal' },
-                  //   { value: 'External', label: 'External' },
-                  //   { value: 'Guest Post', label: 'Guest Post' },
-                  //   { value: 'Syndicated', label: 'Syndicated' }
-                  // ]}
                 />
               )}
             />

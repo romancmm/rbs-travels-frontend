@@ -48,7 +48,6 @@ export const CreateBlogSchema = z.object({
     .string()
     .min(1, 'Excerpt is required')
     .max(500, 'Excerpt must be less than 500 characters'),
-  source: z.url('Source must be a valid URL'),
   thumbnail: z.string().optional(),
   gallery: z.array(z.string()),
   tags: z.array(z.string()),

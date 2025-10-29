@@ -28,7 +28,6 @@ function BlogList() {
         subTitle='Manage blog posts and articles'
         extra={<AddButton resource='blogs' href='/admin/blogs/create' />}
       />
-      {JSON.stringify(data)}
 
       {/* Table */}
       <CustomTable

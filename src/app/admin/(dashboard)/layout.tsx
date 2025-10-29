@@ -31,7 +31,7 @@ export default async function DashboardLayout({ children }: TProps) {
               <BreadCrumbs />
             </div>
           </header>
-          <main>{children}</main>
+          <main className="bg-gray-100 p-5 h-full">{children}</main>
         </SidebarInset>
       </SidebarProvider>
     </PermissionProvider>

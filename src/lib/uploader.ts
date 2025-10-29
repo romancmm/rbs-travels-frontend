@@ -193,16 +193,12 @@ export const uploadImages = async (
 ): Promise<string[]> => {
   const token = Cookies.get('token')
 
-  const response = await requests.post(
-    options.isCustomer ? '/upload/image' : '/admin/gallery/upload',
-    formData,
-    {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-        ...(options.isCustomer ? { Authorization: `Bearer ${token}` } : {})
-      }
+  const response = await requests.post(options.isCustomer ? '/upload' : '/admin/upload', formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+      ...(options.isCustomer ? { Authorization: `Bearer ${token}` } : {})
     }
-  )
+  })
   const urls = response?.data
   if (!urls || (Array.isArray(urls) && urls.length === 0)) {
     throw new Error('No file URL returned')
