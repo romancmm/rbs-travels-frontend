@@ -35,10 +35,10 @@ function BlogList() {
             values={filters}
             onChange={setFilters}
             onReset={queryString ? resetFilters : undefined}
-            addButton={{ href: '/admin/blogs/add' }}
+            addButton={{ href: '/admin/blogs/add', resource: 'blog' }}
           />
         }
-        // extra={<AddButton resource='blogs' href='/admin/blogs/create' />}
+        // Alternative: <AddButton resource='blog' href='/admin/blogs/create' />
       />
 
       {/* Table */}
@@ -47,7 +47,7 @@ function BlogList() {
         data={data?.data?.items ?? []}
         getRowId={(row: any) => row.id}
         emptyMessage={loading ? 'Loading blog posts...' : 'No blog posts found.'}
-        className={loading ? 'opacity-50 pointer-events-none bg-white p-4' : ''}
+        className={loading ? 'opacity-50 pointer-events-none' : ''}
       />
 
       {/* Pagination */}

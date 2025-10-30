@@ -1,8 +1,8 @@
 'use client'
 
 import CustomInput from '@/components/common/CustomInput'
-import CustomLink from '@/components/common/CustomLink'
 import { CustomSelect } from '@/components/common/CustomSelect'
+import { AddButton } from '@/components/common/PermissionGate'
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
 import {
@@ -20,7 +20,7 @@ import { useIsMobile } from '@/hooks/use-mobile'
 import { debounce } from '@/lib/debounce'
 import { cn } from '@/lib/utils'
 import { format } from 'date-fns'
-import { CalendarIcon, Filter, Plus, RotateCcw, Search } from 'lucide-react'
+import { CalendarIcon, Filter, RotateCcw, Search } from 'lucide-react'
 import { motion } from 'motion/react'
 import { Suspense, useCallback, useEffect, useMemo, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
@@ -44,7 +44,7 @@ type FilterFormProps = {
   onChange: (val: Record<string, any>) => void
   onReset?: () => void
   extra?: React.ReactNode
-  addButton?: { title?: string; onClick?: () => void; href?: string }
+  addButton?: { title?: string; onClick?: () => void; href?: string; resource: string }
   defaultValues?: FilterOption[]
 }
 
@@ -118,9 +118,9 @@ export function FilterForm({
                     placeholder={field.placeholder}
                     value={formField.value || ''}
                     onChange={(e) => formField.onChange(e.target.value)}
-                    className='pr-8'
+                    // className='pr-8'
+                    suffix={<Search className='size-4 text-gray-400' />}
                   />
-                  <Search className='top-1/2 right-3 absolute w-4 h-4 text-muted-foreground -translate-y-1/2' />
                 </div>
               )}
             />
@@ -142,6 +142,7 @@ export function FilterForm({
                   onChange={formField.onChange}
                   options={field.options}
                   defaultValue={defaultValues}
+                  className='bg-white'
                 />
               )}
             />
@@ -230,23 +231,13 @@ export function FilterForm({
 
   /** ✅ Render Add Button */
   const addButtonUI = addButton && (
-    <Button
-      size={isMobile ? 'default' : 'lg'}
+    <AddButton
+      resource={addButton.resource}
+      title={addButton.title}
+      href={addButton.href}
       onClick={addButton.onClick}
-      asChild={!!addButton.href}
-    >
-      {addButton.href ? (
-        <CustomLink href={addButton.href}>
-          <Plus className='w-4 h-4' />
-          <span className='sr-only lg:not-sr-only'>{addButton.title ?? 'Add New'}</span>
-        </CustomLink>
-      ) : (
-        <>
-          <Plus className='w-4 h-4' />
-          <span className='sr-only lg:not-sr-only'>{addButton.title ?? 'Add New'}</span>
-        </>
-      )}
-    </Button>
+      size={isMobile ? 'default' : 'lg'}
+    />
   )
 
   /** ✅ Final Render */
@@ -255,7 +246,7 @@ export function FilterForm({
       <div className='flex items-center gap-3 w-full'>
         <Drawer open={openDrawer} onOpenChange={setOpenDrawer}>
           <DrawerTrigger asChild>
-            <Button variant='outline' size='lg' className='flex-1'>
+            <Button variant='outline' size='lg'>
               <Filter className='w-4 h-4' />
               <span className='sr-only lg:not-sr-only'>Filter</span>
             </Button>
@@ -265,7 +256,7 @@ export function FilterForm({
               <DrawerTitle>Filters</DrawerTitle>
               <DrawerDescription>Apply filters to refine your search results.</DrawerDescription>
             </DrawerHeader>
-            <div className='px-4 pb-4'>
+            <div className='px-4 pb-10'>
               <div className='space-y-4'>
                 {fields
                   .filter((field) => isMultiStore !== field.isMultiStore)

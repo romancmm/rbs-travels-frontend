@@ -18,6 +18,7 @@ interface PermissionGateProps {
   icon?: React.ComponentType<{ size?: number; className?: string }>
   className?: string
   disabled?: boolean
+  size?: 'default' | 'sm' | 'lg' | 'icon' | 'icon-sm' | 'icon-lg'
 }
 
 export const PermissionGate: React.FC<PermissionGateProps> = ({
@@ -30,7 +31,8 @@ export const PermissionGate: React.FC<PermissionGateProps> = ({
   title,
   icon: Icon,
   className,
-  disabled = false
+  disabled = false,
+  size = 'default'
 }) => {
   const { hasPermission, loading } = usePermissions()
 
@@ -49,16 +51,18 @@ export const PermissionGate: React.FC<PermissionGateProps> = ({
 
   // If no children but other props are provided, render as interactive element
   if (href || onClick || title || Icon) {
+    const buttonClasses = cn('inline-flex items-center gap-2', className, buttonVariants({ size }))
+
     const content = (
-      <div className={`flex items-center gap-2 ${className || ''}`}>
+      <>
         {Icon && <Icon size={16} />}
         {title && <span>{title}</span>}
-      </div>
+      </>
     )
 
     if (href && !disabled) {
       return (
-        <CustomLink href={href} className={className}>
+        <CustomLink href={href} className={buttonClasses}>
           {content}
         </CustomLink>
       )
@@ -66,14 +70,14 @@ export const PermissionGate: React.FC<PermissionGateProps> = ({
 
     if (onClick && !disabled) {
       return (
-        <button onClick={onClick} className={className} disabled={disabled}>
+        <button onClick={onClick} className={buttonClasses} disabled={disabled}>
           {content}
         </button>
       )
     }
 
     // Render as static element if disabled or no interaction
-    return <div className={className}>{content}</div>
+    return <div className={buttonClasses}>{content}</div>
   }
 
   // Return null if no children or interactive props
@@ -81,21 +85,29 @@ export const PermissionGate: React.FC<PermissionGateProps> = ({
 }
 
 // Convenience components for common actions
-export const CanCreate: React.FC<Omit<PermissionGateProps, 'action'>> = (props) => (
+export const CanCreate: React.FC<Omit<PermissionGateProps, 'action'>> = ({
+  size = 'default',
+  ...props
+}) => (
   <PermissionGate
     {...props}
     action='create'
-    className={cn('font-semibold hover:text-background', buttonVariants(), props.className)}
+    className={cn('font-semibold hover:text-background', buttonVariants({ size }), props.className)}
+    size={size}
   />
 )
 
-export const AddButton: React.FC<Omit<PermissionGateProps, 'action'>> = (props) => (
+export const AddButton: React.FC<Omit<PermissionGateProps, 'action'>> = ({
+  size = 'default',
+  ...props
+}) => (
   <PermissionGate
     {...props}
     action='create'
     icon={props.icon || Plus}
     title={props.title || 'Add New'}
-    className={cn('font-semibold hover:text-background', buttonVariants(), props.className)}
+    className={cn('font-semibold hover:text-background', buttonVariants({ size }), props.className)}
+    size={size}
   />
 )
 

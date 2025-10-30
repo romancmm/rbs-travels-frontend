@@ -2,7 +2,6 @@
 
 import BlogForm from '@/components/admin/form/Blog'
 import PageHeader from '@/components/common/PageHeader'
-import { Suspense } from 'react'
 
 function BlogCreateContent() {
   return (
@@ -17,9 +16,5 @@ function BlogCreateContent() {
 }
 
 export default function BlogCreatePage() {
-  return (
-    <Suspense fallback={<div>Loading...</div>}>
-      <BlogCreateContent />
-    </Suspense>
-  )
+  return <BlogCreateContent />
 }
