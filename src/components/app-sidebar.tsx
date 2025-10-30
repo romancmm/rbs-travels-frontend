@@ -1,23 +1,23 @@
-"use client"
+'use client'
 
-import Cookies from "js-cookie"
-import { AudioWaveform, GalleryVerticalEnd, Map, Settings2 } from "lucide-react"
-import { usePathname } from "next/navigation"
-import * as React from "react"
+import Cookies from 'js-cookie'
+import { AudioWaveform, GalleryVerticalEnd, Map, Settings2 } from 'lucide-react'
+import { usePathname } from 'next/navigation'
+import * as React from 'react'
 
-import { NavMain } from "@/components/nav-main"
-import { NavProjects } from "@/components/nav-projects"
-import { NavUser } from "@/components/nav-user"
-import { usePermissions } from "@/components/providers/PermissionProvider"
-import { TeamSwitcher } from "@/components/team-switcher"
+import { NavMain } from '@/components/nav-main'
+import { NavProjects } from '@/components/nav-projects'
+import { NavUser } from '@/components/nav-user'
+import { usePermissions } from '@/components/providers/PermissionProvider'
+import { TeamSwitcher } from '@/components/team-switcher'
 import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
   SidebarHeader,
-  SidebarRail,
-} from "@/components/ui/sidebar"
-import { navItems as adminNavItems } from "@/config/adminNavItems"
+  SidebarRail
+} from '@/components/ui/sidebar'
+import { navItems as adminNavItems } from '@/config/adminNavItems'
 
 // Map admin config to NavMain items
 const mapNavItems = (
@@ -33,13 +33,16 @@ const mapNavItems = (
       return hasPermission ? hasPermission(it.permission.resource, it.permission.action) : true
     })
     .map((it) => {
-      const children = it.children
-        .filter((child) => {
-          if (!child.permission) return true
-          if (loading) return true
-          return hasPermission ? hasPermission(child.permission.resource, child.permission.action) : true
-        })
-        .map((child) => ({ title: child.title, url: child.href }))
+      const children =
+        it?.children
+          ?.filter((child) => {
+            if (!child.permission) return true
+            if (loading) return true
+            return hasPermission
+              ? hasPermission(child.permission.resource, child.permission.action)
+              : true
+          })
+          .map((child) => ({ title: child.title, url: child.href })) || []
 
       const isActive =
         (!!it.href && pathname.startsWith(it.href)) ||
@@ -50,7 +53,8 @@ const mapNavItems = (
         url: it.href || '',
         icon: it.icon,
         isActive,
-        items: children
+        // Only include items property if there are actually children
+        ...(children.length > 0 && { items: children })
       }
     })
 }
@@ -62,25 +66,26 @@ const buildAdminData = () => {
   try {
     const raw = Cookies.get('user')
     if (raw) cookieUser = JSON.parse(raw)
-  } catch { }
+  } catch {}
 
   const user = {
-    name: cookieUser?.firstName && cookieUser?.lastName
-      ? `${cookieUser.firstName} ${cookieUser.lastName}`
-      : cookieUser?.name || 'Admin',
+    name:
+      cookieUser?.firstName && cookieUser?.lastName
+        ? `${cookieUser.firstName} ${cookieUser.lastName}`
+        : cookieUser?.name || 'Admin',
     email: cookieUser?.email || 'admin@example.com',
-    avatar: cookieUser?.avatar || '/avatars/shadcn.jpg',
+    avatar: cookieUser?.avatar || '/avatars/shadcn.jpg'
   }
 
   const projects = [
     { name: 'Settings', url: '/admin/settings', icon: Settings2 },
     // { name: 'Audit Log', url: '/admin/audit-log', icon: Command },
-    { name: 'System Status', url: '/admin/status', icon: Map },
+    { name: 'System Status', url: '/admin/status', icon: Map }
   ]
 
   const teams = [
     { name: 'RBS Travels', logo: GalleryVerticalEnd, plan: 'Admin' },
-    { name: 'Operations', logo: AudioWaveform, plan: 'Internal' },
+    { name: 'Operations', logo: AudioWaveform, plan: 'Internal' }
   ]
 
   return { user, projects, teams }
@@ -95,7 +100,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     [pathname, hasPermission, loading]
   )
   return (
-    <Sidebar collapsible="icon" {...props}>
+    <Sidebar collapsible='icon' {...props}>
       <SidebarHeader>
         <TeamSwitcher teams={data.teams} />
       </SidebarHeader>

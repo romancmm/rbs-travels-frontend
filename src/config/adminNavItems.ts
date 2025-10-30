@@ -1,5 +1,6 @@
 import {
   FileText,
+  FolderOpen,
   LayoutDashboard,
   LucideIcon,
   Settings,
@@ -12,7 +13,7 @@ type NavItem = {
   title: string
   href: string
   icon: LucideIcon
-  children: Omit<NavItem, 'icon' | 'children'>[]
+  children?: Omit<NavItem, 'icon' | 'children'>[]
   permission?: { resource: string; action?: string }
 }
 
@@ -20,8 +21,7 @@ export const navItems: NavItem[] = [
   {
     title: 'Dashboard',
     href: '/admin/dashboard',
-    icon: LayoutDashboard,
-    children: []
+    icon: LayoutDashboard
   },
   {
     title: 'Customers',
@@ -173,6 +173,11 @@ export const navItems: NavItem[] = [
         permission: { resource: 'blogs', action: 'index' }
       }
     ]
+  },
+  {
+    title: 'File Manager',
+    href: '/admin/file-manager',
+    icon: FolderOpen
   },
   {
     title: 'SEO Settings',
