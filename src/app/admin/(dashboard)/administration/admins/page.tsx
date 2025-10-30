@@ -11,6 +11,7 @@ import { AddButton } from '@/components/common/PermissionGate'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import useAsync from '@/hooks/useAsync'
 import { useFilter } from '@/hooks/useFilter'
+import { AdminUser } from '@/lib/validations/schemas/admin'
 
 function AdminList() {
   const { page, limit } = useFilter(10)
@@ -18,7 +19,7 @@ function AdminList() {
 
   const { data, loading, mutate } = useAsync<{
     data: {
-      items: TAdmin[]
+      items: AdminUser[]
       pagination: any
     }
   }>(() => {
@@ -60,7 +61,7 @@ function AdminList() {
       <CustomTable
         columns={adminColumns(mutate)}
         data={data?.data?.items ?? []}
-        getRowId={(row: TAdmin) => row.id}
+        getRowId={(row: AdminUser) => row.id}
         emptyMessage={loading ? 'Loading users...' : 'No user found.'}
         className={loading ? 'opacity-50 pointer-events-none' : ''}
       />

@@ -181,11 +181,22 @@ export const adminColumns = (mutate?: () => void): TableColumn<AdminUser>[] => {
       )
     },
     {
-      key: 'roleId',
-      header: 'Role ID',
-      render: (roleId?: string) => (
-        <span className='text-muted-foreground text-sm'>{roleId || '-'}</span>
-      )
+      key: 'roles',
+      header: 'Roles',
+      render: (_, admin: AdminUser) => {
+        if (!admin.roles || admin.roles.length === 0) {
+          return <span className='text-muted-foreground text-sm'>-</span>
+        }
+        return (
+          <div className='flex flex-wrap gap-1'>
+            {admin.roles.map((role) => (
+              <Badge key={role.id} variant='outline' className='text-xs'>
+                {role.name}
+              </Badge>
+            ))}
+          </div>
+        )
+      }
     },
     {
       key: 'actions',

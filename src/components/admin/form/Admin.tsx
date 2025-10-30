@@ -33,7 +33,7 @@ const AdminForm = ({ initialData, onClose, onSuccess }: AdminFormProps) => {
       password: '', // Always require password input for new users
       isActive: initialData?.isActive ?? true,
       isAdmin: initialData?.isAdmin ?? true,
-      roleId: initialData?.roleId || ''
+      roleIds: initialData?.roles?.map((role) => role.id) || [] // Map roles to roleIds array
     }
   })
 
@@ -109,28 +109,45 @@ const AdminForm = ({ initialData, onClose, onSuccess }: AdminFormProps) => {
         )}
 
         <Controller
-          name='roleId'
+          name='roleIds'
           control={control}
           render={({ field }) => (
-            <CustomInput
-              label='Role ID'
-              placeholder='Enter role ID (optional)'
-              error={errors.roleId?.message}
-              {...field}
-            />
+            <div className='space-y-2'>
+              <CustomInput
+                label='Role IDs (comma-separated)'
+                placeholder='Enter role IDs separated by commas'
+                error={errors.roleIds?.message}
+                value={Array.isArray(field.value) ? field.value.join(', ') : ''}
+                onChange={(e) => {
+                  const value = e.target.value
+                  const roleIds = value
+                    .split(',')
+                    .map((id) => id.trim())
+                    .filter(Boolean)
+                  field.onChange(roleIds)
+                }}
+              />
+              {initialData?.roles && initialData.roles.length > 0 && (
+                <div className='text-muted-foreground text-sm'>
+                  Current roles: {initialData.roles.map((r) => r.name).join(', ')}
+                </div>
+              )}
+            </div>
           )}
         />
       </div>
 
       {/* Status Checkboxes */}
       <div className='flex gap-6'>
+        <Label className='mb-2'>Thumbnail</Label>
+
         <Controller
           name='isActive'
           control={control}
           render={({ field }) => (
             <CustomInput
               type='switch'
-              label='Status (Active)'
+              label={`Status (${field.value ? 'Active' : 'Inactive'})`}
               error={errors.password?.message}
               {...field}
             />
@@ -150,6 +167,7 @@ const AdminForm = ({ initialData, onClose, onSuccess }: AdminFormProps) => {
                 onChangeAction={field.onChange}
                 multiple={false}
                 maxAllow={1}
+                size='small'
               />
             )}
           />

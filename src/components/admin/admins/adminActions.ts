@@ -22,6 +22,8 @@ export const getAdminActions = (
   mutate?: () => void,
   onAction?: AdminActionHandler
 ): ActionItem<AdminUser>[] => {
+  const hasRoles = data?.roles && data.roles.length > 0
+
   const actions: ActionItem<AdminUser>[] = [
     {
       type: 'action',
@@ -34,11 +36,11 @@ export const getAdminActions = (
       },
       permission: { resource: 'admins', actions: 'update' }
     },
-    ...(data?.roleId === null || data?.roleId === undefined
+    ...(!hasRoles
       ? [
           {
             type: 'action' as const,
-            label: 'Assign Role',
+            label: 'Assign Roles',
             icon: UserPlus,
             onClick: async (data: AdminUser) => {
               if (onAction) {
@@ -50,11 +52,11 @@ export const getAdminActions = (
           }
         ]
       : []),
-    ...(data?.roleId !== null && data?.roleId !== undefined
+    ...(hasRoles
       ? [
           {
             type: 'action' as const,
-            label: 'Remove Role',
+            label: 'Manage Roles',
             icon: UserMinus,
             onClick: async (data: AdminUser) => {
               if (onAction) {
