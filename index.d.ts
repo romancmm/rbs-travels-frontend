@@ -146,6 +146,44 @@ declare global {
   // ================================
   // GLOBAL AUTH & USER TYPES
   // ================================
+  // Final union type for Filter
+
+  type Params<Key extends string> = Promise<{ [K in Key]: string }>
+  type SearchParams = Promise<{ [key: string]: string | string[] | undefined }>
+
+  type PageProps = {
+    params: Params
+    searchParams: SearchParams
+  }
+
+  // Common props for all filters
+  type BaseField = {
+    name: string
+    label: string
+    placeholder?: string
+    isMultiStore?: boolean
+  }
+
+  // Input field
+  type InputField = BaseField & {
+    type: 'input'
+  }
+
+  // Select field with API
+  type SelectApiField = BaseField & {
+    type: 'select-api'
+    url: string
+    multiple?: boolean
+    options?: (data: any) => { label: string; value: string }[]
+  }
+
+  // Date field
+  type DateField = BaseField & {
+    type: 'date'
+  }
+
+  // Final union type for Filter
+  type FilterField = InputField | SelectApiField | DateField | CheckboxField
 
   interface TAdmin {
     id: number
@@ -517,7 +555,7 @@ declare global {
   interface BaseQuery {
     page?: number
     limit?: number
-    search?: string
+    q?: string
     sortBy?: string
     sortOrder?: 'asc' | 'desc'
   }
@@ -1169,13 +1207,13 @@ export type UpdateInput<T> = Partial<Omit<T, 'id' | 'createdAt' | 'updatedAt'>>
 // QUERY & FILTER TYPES
 // ================================
 
-export interface BaseQuery {
-  page?: number
-  limit?: number
-  search?: string
-  sortBy?: string
-  sortOrder?: 'asc' | 'desc'
-}
+// export interface BaseQuery {
+//   page?: number
+//   limit?: number
+//   q?: string
+//   sortBy?: string
+//   sortOrder?: 'asc' | 'desc'
+// }
 
 export interface UserFilters extends BaseQuery {
   role?: UserRole

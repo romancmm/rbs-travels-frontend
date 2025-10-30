@@ -86,7 +86,7 @@ export function CustomSelect({
 
     // Build endpoint with search query if available
     const endpoint = searchQuery
-      ? `${url}${url.includes('?') ? '&' : '?'}search=${searchQuery.trim()}`
+      ? `${url}${url.includes('?') ? '&' : '?'}q=${searchQuery.trim()}`
       : url
     return endpoint
   })
