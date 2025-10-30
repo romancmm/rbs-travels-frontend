@@ -42,7 +42,7 @@ export const BlogSeoSchema = z.object({
 export const CreateBlogSchema = z.object({
   title: z.string().min(1, 'Title is required').max(200, 'Title must be less than 200 characters'),
   slug: z.string().min(1, 'Slug is required').max(200, 'Slug must be less than 200 characters'),
-  categoryId: z.number().min(1, 'Category is required'),
+  categoryId: z.string().min(1, 'Category is required').optional(),
   content: z.string().min(1, 'Content is required'),
   excerpt: z
     .string()

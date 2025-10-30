@@ -15,7 +15,7 @@ function BlogList() {
 
   const { data, loading, mutate } = useAsync<{
     data: {
-      blogs: Blog[]
+      items: Blog[]
       pagination: PaginationMeta
     }
   }>(() => '/admin/blog/posts' + (page ? `?page=${page}` : '') + (limit ? `&limit=${limit}` : ''))
@@ -32,7 +32,7 @@ function BlogList() {
       {/* Table */}
       <CustomTable
         columns={blogColumns(mutate)}
-        data={data?.data?.blogs ?? []}
+        data={data?.data?.items ?? []}
         getRowId={(row: any) => row.id}
         emptyMessage={loading ? 'Loading blog posts...' : 'No blog posts found.'}
         className={loading ? 'opacity-50 pointer-events-none' : ''}

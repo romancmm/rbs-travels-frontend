@@ -199,7 +199,9 @@ export const uploadImages = async (
       ...(options.isCustomer ? { Authorization: `Bearer ${token}` } : {})
     }
   })
-  const urls = response?.data
+  const urls = response?.urls
+
+  console.log('Uploaded URLs:', response)
   if (!urls || (Array.isArray(urls) && urls.length === 0)) {
     throw new Error('No file URL returned')
   }

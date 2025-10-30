@@ -2,6 +2,7 @@ import { toast } from 'sonner'
 import { capitalize, formatKey } from './utils'
 
 export const showError = (err: any) => {
+  console.log('err :>> ', err)
   const normalizeMessage = (msg: any) => ({
     title: msg?.path ? capitalize(formatKey(msg.path)) : 'Error',
     description: msg?.message || String(msg) || 'Something went wrong!'
