@@ -38,7 +38,6 @@ function BlogList() {
             addButton={{ href: '/admin/blogs/add', resource: 'blog' }}
           />
         }
-        // Alternative: <AddButton resource='blog' href='/admin/blogs/create' />
       />
 
       {/* Table */}

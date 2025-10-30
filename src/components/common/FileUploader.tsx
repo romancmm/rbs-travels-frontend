@@ -136,7 +136,7 @@ const UploadButton = ({ size, isUploading, onFileSelect, multiple = false }: Upl
       transition={{ duration: 0.2 }}
     >
       <div
-        className={`group bg-background/35  p-6 rounded-md text-center flex items-center justify-center transition-colors cursor-pointer hover:border-primary/20 hover:bg-primary/5 ${sizeClasses.thumbnail}`}
+        className={`group bg-gray-50  p-6 rounded-md text-center flex items-center justify-center transition-colors cursor-pointer hover:border-primary/20 hover:bg-primary/5 ${sizeClasses.thumbnail}`}
       >
         <label className='flex flex-col justify-center items-center w-full h-full cursor-pointer'>
           <input
@@ -262,7 +262,7 @@ export default function FileUploader({
       {/* File Grid */}
       <AnimatePresence>
         <div
-          className={`bg-background/5 flex flex-wrap items-center justify-center gap-3 border-2 border-dashed border-border/35 rounded-lg transition-colors cursor-pointer hover:border-primary/50 hover:bg-primary/5 ${sizeClasses.uploadArea}`}
+          className={`bg-background flex flex-wrap items-center justify-center gap-3 border-2 border-dashed border-border rounded-lg transition-colors cursor-pointer hover:border-primary/50 hover:bg-primary/5 ${sizeClasses.uploadArea}`}
         >
           {/* File List */}
           {fileLists.map((file, index) => (
