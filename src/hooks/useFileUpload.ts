@@ -44,24 +44,26 @@ export const useImageUploader = ({
     setUploadState((prev) => ({ ...prev, isUploading: true }))
 
     try {
-      await processFileUpload(updatedList, { ...options, deletes: deletedUrls }, (urls: any) => {
-        // Extract URL strings from the response objects
-        const urlStrings = Array.isArray(urls)
-          ? urls.map((item: any) => (typeof item === 'string' ? item : item.url))
-          : [typeof urls === 'string' ? urls : urls.url]
+      await processFileUpload(
+        updatedList,
+        { ...options, deletes: deletedUrls },
+        (urls: string[]) => {
+          // URLs are already properly extracted from the API response in uploadImages function
+          const urlStrings = Array.isArray(urls) ? urls : [urls]
 
-        // Update file list with new URLs
-        setFileLists((prev) => {
-          const updatedFileList = updateFileListWithUrls(prev, urlStrings, multiple)
+          // Update file list with new URLs
+          setFileLists((prev) => {
+            const updatedFileList = updateFileListWithUrls(prev, urlStrings, multiple)
 
-          // Extract all URLs from the updated file list for onChange callback
-          const allUrls = updatedFileList.filter((f) => f.url).map((f) => f.url!)
-          // Call onChange with all URLs (existing + new)
-          onChange?.(multiple ? allUrls : allUrls[0])
+            // Extract all URLs from the updated file list for onChange callback
+            const allUrls = updatedFileList.filter((f) => f.url).map((f) => f.url!)
+            // Call onChange with all URLs (existing + new)
+            onChange?.(multiple ? allUrls : allUrls[0])
 
-          return updatedFileList
-        })
-      })
+            return updatedFileList
+          })
+        }
+      )
     } catch (error) {
       showError(error)
     } finally {

@@ -155,7 +155,11 @@ export const createUploadFormData = (
   })
 
   existing.filter(Boolean).forEach((url) => formData.append('existing', url))
-  deletes.filter(Boolean).forEach((url) => formData.append('deletes', url))
+
+  // Append each delete URL individually to create an array on the server side
+  // TODO:::
+  // deletes.filter(Boolean).forEach((url) => formData.append('deletes', url))
+  // formData.append('deletes', deletes)
 
   return formData
 }

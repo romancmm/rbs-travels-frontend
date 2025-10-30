@@ -249,6 +249,7 @@ export default function BlogForm({ initialData }: TProps) {
                   <FileUploader
                     value={field.value || ''}
                     onChangeAction={field.onChange}
+                    multiple={false}
                     maxAllow={1}
                     size='extra-large'
                   />

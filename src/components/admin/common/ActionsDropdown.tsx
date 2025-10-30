@@ -39,8 +39,8 @@ interface ActionsDropdownProps<T = any> {
 export function ActionsDropdown<T = any>({
   data,
   actions,
-  triggerClassName = 'hover:bg-white/10 p-0 w-8 h-8 text-white/60 hover:text-white',
-  contentClassName = 'bg-background border-white/20 w-44 text-white',
+  triggerClassName = 'hover:bg-white/10 p-0 w-8 h-8',
+  contentClassName = 'bg-background border-gray-100 w-44 __text-white',
   align = 'end',
   side = 'bottom'
 }: ActionsDropdownProps<T>) {
