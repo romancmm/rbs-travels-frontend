@@ -33,7 +33,7 @@ const ActionsCell = ({ data, mutate }: { data: any; mutate?: () => void }) => {
       inputConfig: undefined,
       onClick: async (data: any) => {
         try {
-          await requests.delete(`/admin/blogs/categories/${data?.id}`)
+          await requests.delete(`/admin/blog/categories/${data?.id}`)
           toast.success('Category deleted successfully')
           mutate?.()
         } catch (error) {
@@ -67,7 +67,7 @@ const ActionsCell = ({ data, mutate }: { data: any; mutate?: () => void }) => {
       icon: Pencil,
       onClick: () => {
         if (mutate) {
-          ; (mutate as any).editCategory?.(data)
+          ;(mutate as any).editCategory?.(data)
         }
       }
     },

@@ -67,11 +67,11 @@ export function BlogCategoryForm({ initialData, onSuccess, onCancel }: BlogCateg
 
       if (initialData?.id) {
         // Update existing category
-        await requests.put(`/admin/blogs/categories/${initialData.id}`, payload)
+        await requests.put(`/admin/blog/categories/${initialData.id}`, payload)
         toast.success('Category updated successfully')
       } else {
         // Create new category
-        await requests.post('/admin/blogs/categories', payload)
+        await requests.post('/admin/blog/categories', payload)
         toast.success('Category created successfully')
       }
 

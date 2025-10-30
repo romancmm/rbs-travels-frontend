@@ -34,12 +34,11 @@ function BlogCategoryList() {
 
   const { data, loading, mutate } = useAsync<{
     data: {
-      categories: BlogCategory[]
+      items: BlogCategory[]
       pagination: PaginationMeta
     }
   }>(
-    () =>
-      'admin/blogs/categories' + (page ? `?page=${page}` : '') + (limit ? `&limit=${limit}` : '')
+    () => 'admin/blog/categories' + (page ? `?page=${page}` : '') + (limit ? `&limit=${limit}` : '')
   )
 
   // Enhanced mutate function that includes edit functionality
@@ -83,7 +82,7 @@ function BlogCategoryList() {
       {/* Table */}
       <CustomTable
         columns={blogCategoryColumns(enhancedMutate)}
-        data={data?.data?.categories ?? []}
+        data={data?.data?.items ?? []}
         getRowId={(row: any) => row.id}
         emptyMessage={loading ? 'Loading blog categories...' : 'No blog category found.'}
         className={loading ? 'opacity-50 pointer-events-none' : ''}

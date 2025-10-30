@@ -35,7 +35,7 @@ function BlogList() {
         data={data?.data?.items ?? []}
         getRowId={(row: any) => row.id}
         emptyMessage={loading ? 'Loading blog posts...' : 'No blog posts found.'}
-        className={loading ? 'opacity-50 pointer-events-none' : ''}
+        className={loading ? 'opacity-50 pointer-events-none bg-white p-4' : ''}
       />
 
       {/* Pagination */}
