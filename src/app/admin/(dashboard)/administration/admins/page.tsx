@@ -2,6 +2,8 @@
 
 import { Suspense, useState } from 'react'
 
+import { adminColumns } from '@/components/admin/admins/admin-columns'
+import { CustomTable } from '@/components/admin/common/data-table'
 import AdminForm from '@/components/admin/form/Admin'
 import PageHeader from '@/components/common/PageHeader'
 import { Pagination } from '@/components/common/Pagination'
@@ -16,11 +18,12 @@ function AdminList() {
 
   const { data, loading, mutate } = useAsync<{
     data: {
-      admins: TAdmin[]
+      items: TAdmin[]
       pagination: any
     }
   }>(() => {
-    const url = '/admin/admins' + (page ? `?page=${page}` : '') + (limit ? `&limit=${limit}` : '')
+    const url =
+      '/admin/user/admins' + (page ? `?page=${page}` : '') + (limit ? `&limit=${limit}` : '')
     return url
   })
 
@@ -54,13 +57,13 @@ function AdminList() {
       />
 
       {/* Table */}
-      {/* <CustomTable
+      <CustomTable
         columns={adminColumns(mutate)}
-        data={data?.data?.admins ?? []}
+        data={data?.data?.items ?? []}
         getRowId={(row: TAdmin) => row.id}
         emptyMessage={loading ? 'Loading users...' : 'No user found.'}
         className={loading ? 'opacity-50 pointer-events-none' : ''}
-      /> */}
+      />
 
       {/* Pagination */}
       <Pagination paginationData={data?.data?.pagination} pageSizeOptions={[5, 10, 20, 50]} />

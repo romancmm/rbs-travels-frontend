@@ -860,17 +860,13 @@ export interface BaseEntity {
 
 export interface TAdmin {
   id: number
+  name: string
   email: string
-  username: string
-  firstName: string
-  lastName: string
-  phone: string
-  telegramUsername: string
-  role: 'ADMIN'
   isActive: boolean
-  isBanned: boolean
-  banReason: string
-  isVerified: boolean
+  isAdmin: boolean
+  roleId?: string
+  createdAt: string
+  updatedAt: string
 }
 
 export interface User extends BaseEntity {

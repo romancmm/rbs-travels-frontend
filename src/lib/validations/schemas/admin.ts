@@ -9,27 +9,26 @@ export enum AdminRole {
 
 // Unified admin schema (password optional for updates)
 export const CreateAdminSchema = z.object({
+  name: z.string().min(1, 'Name is required'),
   email: z.string().email('Please enter a valid email address'),
   password: z.string().min(8, 'Password must be at least 8 characters').optional(),
-  firstName: z.string().min(1, 'First name is required'),
-  lastName: z.string().min(1, 'Last name is required'),
-  role: z.nativeEnum(AdminRole),
-  phone: z.string().optional(),
-  telegramUsername: z.string().optional()
+  isActive: z.boolean().default(true),
+  isAdmin: z.boolean().default(true),
+  roleId: z.string().optional()
 })
 
-// TypeScript types
+// TypeScript types - use Zod inference
 export type CreateAdminType = z.infer<typeof CreateAdminSchema>
 export type UpdateAdminType = CreateAdminType // Use same type for both
 
 // Admin user response type (matches API response)
 export interface AdminUser {
   id: number
+  name: string
   email: string
-  firstName: string
-  lastName: string
-  role: AdminRole
   isActive: boolean
+  isAdmin: boolean
+  roleId?: string
   createdAt: string
   updatedAt: string
 }

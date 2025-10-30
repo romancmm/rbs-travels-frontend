@@ -1,0 +1,587 @@
+/**
+ * RBS Travels Frontend - Global Type Definitions
+ *
+ * This file contains all the type definitions for the RBS Travels application.
+ * It serves as the central type registry for the entire frontend application.
+ */
+
+// ================================
+// GLOBAL DECLARATIONS
+// ================================
+
+declare global {
+  // ================================
+  // GLOBAL ENUMS
+  // ================================
+
+  enum UserRole {
+    ADMIN = 'ADMIN',
+    CUSTOMER = 'CUSTOMER',
+    GUEST = 'GUEST',
+    MODERATOR = 'MODERATOR'
+  }
+
+  enum UserRank {
+    NEW = 'NEW',
+    NORMAL = 'NORMAL',
+    FREQUENT = 'FREQUENT',
+    ELITE = 'ELITE',
+    VIP = 'VIP',
+    MASTER = 'MASTER'
+  }
+
+  enum NotificationType {
+    ORDER = 'ORDER',
+    PAYMENT = 'PAYMENT',
+    RESTOCK = 'RESTOCK',
+    SYSTEM = 'SYSTEM',
+    PROMOTION = 'PROMOTION'
+  }
+
+  // ================================
+  // GLOBAL BASE TYPES
+  // ================================
+
+  interface BaseEntity {
+    id: number
+    createdAt: Date
+    updatedAt: Date
+    meta?: Record<string, any> | null
+  }
+
+  interface SettingsData<T = any> {
+    success: boolean
+
+    data: { key: string; value: T }
+  }
+
+  // ================================
+  // GLOBAL AUTH & USER TYPES
+  // ================================
+  // Final union type for Filter
+
+  type Params<Key extends string> = Promise<{ [K in Key]: string }>
+  type SearchParams = Promise<{ [key: string]: string | string[] | undefined }>
+
+  type PageProps = {
+    params: Params
+    searchParams: SearchParams
+  }
+
+  // Common props for all filters
+  type BaseField = {
+    name: string
+    label: string
+    placeholder?: string
+    isMultiStore?: boolean
+  }
+
+  // Input field
+  type InputField = BaseField & {
+    type: 'input'
+  }
+
+  // Select field with API
+  type SelectApiField = BaseField & {
+    type: 'select-api'
+    url: string
+    multiple?: boolean
+    options?: (data: any) => { label: string; value: string }[]
+  }
+
+  // Date field
+  type DateField = BaseField & {
+    type: 'date'
+  }
+
+  // Final union type for Filter
+  type FilterField = InputField | SelectApiField | DateField | CheckboxField
+
+  interface User extends BaseEntity {
+    email: string
+    username?: string | null
+    passwordHash?: string | null
+    firstName?: string | null
+    lastName?: string | null
+    phone?: string | null
+    role: UserRole
+    isActive: boolean
+    roleId?: number | null
+    lastLoginAt?: Date | null
+    loginSessions?: LoginSession[]
+  }
+
+  interface Role extends BaseEntity {
+    name: string
+    description?: string | null
+    isActive: boolean
+    // Relations
+    permissions?: RolePermission[]
+    moderators?: User[]
+  }
+
+  interface RolePermission {
+    id: number
+    roleId: number
+    resource: string
+    actions: string[]
+  }
+
+  interface LoginSession extends BaseEntity {
+    id: string
+    userId: number
+    token: string
+    userAgent?: string | null
+    ipAddress?: string | null
+    isActive: boolean
+    expiresAt: Date
+    // Relations
+    user?: User
+  }
+
+  // ================================
+  // GLOBAL PRODUCT & CATALOG TYPES
+  // ================================
+
+  interface Category extends BaseEntity {
+    name: string
+    slug: string
+    description?: string | null
+    icon?: string | null
+    isActive: boolean
+    sortOrder: number
+    parentId?: number | null
+    // Relations
+    parent?: Category | null
+    children?: Category[]
+    products?: Product[]
+  }
+
+  interface Product extends BaseEntity {
+    sku: string
+    name: string
+    description?: string | null
+    type: ProductType
+    platform?: PlatformType | null
+    telegramUrl?: string | null
+    price: number
+    originalPrice?: number | null
+    costPrice?: number | null
+    stockCount: number
+    soldCount: number
+    minQuantity: number
+    maxQuantity: number
+    isActive: boolean
+    isPrivate: boolean
+    privateUrl?: string | null
+    isFeatured: boolean
+    images: string[]
+    thumbnail?: string | null
+    categoryId: number
+    seo?: Record<string, any> | null
+    tags?: string[]
+    // Relations
+    category?: Category
+    accounts?: Account[]
+    orderItems?: OrderItem[]
+    notifications?: Notification[]
+  }
+
+  // ================================
+  // GLOBAL CONTENT TYPES
+  // ================================
+
+  interface BlogCategory extends BaseEntity {
+    name: string
+    slug: string
+    // Relations
+    blogs?: Blog[]
+  }
+
+  interface Blog extends BaseEntity {
+    title: string
+    slug: string
+    excerpt: string
+    content: string
+    thumbnail?: string | null
+    gallery: string[]
+    tags: string[]
+    views: number
+    isPublished: boolean
+    publishedAt?: Date | null
+    categoryId: number
+    seo?: Record<string, any> | null
+    // Relations
+    category?: BlogCategory
+    author?: User
+  }
+
+  interface Notification extends BaseEntity {
+    userId?: number | null
+    type: NotificationType
+    title: string
+    message: string
+    data?: Record<string, any> | null
+    isRead: boolean
+    readAt?: Date | null
+    productId?: number | null
+    orderId?: number | null
+    // Relations
+    user?: User | null
+    product?: Product | null
+  }
+
+  interface Settings {
+    id: number
+    key: string
+    value?: Record<string, any> | null
+  }
+
+  // ================================
+  // GLOBAL UTILITY TYPES
+  // ================================
+
+  type CreateInput<T> = Omit<T, 'id' | 'createdAt' | 'updatedAt'>
+  type UpdateInput<T> = Partial<Omit<T, 'id' | 'createdAt' | 'updatedAt'>>
+
+  // ================================
+  // GLOBAL QUERY & FILTER TYPES
+  // ================================
+
+  interface BaseQuery {
+    page?: number
+    limit?: number
+    q?: string
+    sortBy?: string
+    sortOrder?: 'asc' | 'desc'
+  }
+
+  interface UserFilters extends BaseQuery {
+    role?: UserRole
+    rank?: UserRank
+    isActive?: boolean
+    isBanned?: boolean
+    isGuest?: boolean
+  }
+
+  interface ProductFilters extends BaseQuery {
+    categoryId?: number
+    platform?: PlatformType
+    type?: ProductType
+    isActive?: boolean
+    isFeatured?: boolean
+    minPrice?: number
+    maxPrice?: number
+    inStock?: boolean
+  }
+
+  interface OrderFilters extends BaseQuery {
+    userId?: number
+    status?: OrderStatus
+    deliveryStatus?: DeliveryStatus
+    dateFrom?: Date
+    dateTo?: Date
+  }
+
+  interface BlogFilters extends BaseQuery {
+    categoryId?: number
+    isPublished?: boolean
+    tags?: string[]
+  }
+
+  // ================================
+  // GLOBAL API RESPONSE TYPES
+  // ================================
+
+  interface PaginationMeta {
+    page: number
+    limit: number
+    total: number
+    pages: number
+    hasNext: boolean
+    hasPrev: boolean
+  }
+
+  interface ApiResponse<T = any> {
+    success: boolean
+    data?: T
+    message: string
+    errors?: string[]
+  }
+
+  interface PaginatedResponse<T = any> extends ApiResponse<T[]> {
+    pagination: PaginationMeta
+  }
+  // ================================
+  // ENUMS
+  // ================================
+
+  export enum UserRole {
+    ADMIN = 'ADMIN',
+    CUSTOMER = 'CUSTOMER',
+    GUEST = 'GUEST',
+    MODERATOR = 'MODERATOR'
+  }
+
+  // ================================
+  // BASE ENTITY TYPES
+  // ================================
+
+  export interface BaseEntity {
+    id: number
+    createdAt: Date
+    updatedAt: Date
+    meta?: Record<string, any> | null
+  }
+
+  // ================================
+  // AUTH & USER TYPES
+  // ================================
+
+  export interface TAdmin {
+    id: number
+    email: string
+    username: string
+    firstName: string
+    lastName: string
+    phone: string
+    role: 'ADMIN'
+    isActive: boolean
+  }
+
+  export interface User extends BaseEntity {
+    email: string
+    username?: string | null
+    passwordHash?: string | null
+    firstName?: string | null
+    lastName?: string | null
+    phone?: string | null
+    role: UserRole
+    isActive: boolean
+    roleId?: number | null
+  }
+
+  export interface Role extends BaseEntity {
+    name: string
+    description?: string | null
+    isActive: boolean
+    // Relations
+    permissions?: RolePermission[]
+    moderators?: User[]
+  }
+
+  export interface RolePermission {
+    id: number
+    roleId: number
+    resource: string
+    actions: string[]
+  }
+
+  // ================================
+  // PRODUCT & CATALOG TYPES
+  // ================================
+
+  export interface Category extends BaseEntity {
+    name: string
+    slug: string
+    description?: string | null
+    icon?: string | null
+    isActive: boolean
+    sortOrder: number
+    parentId?: number | null
+    // Relations
+    parent?: Category | null
+    children?: Category[]
+    products?: Product[]
+  }
+
+  export interface Product extends BaseEntity {
+    sku: string
+    name: string
+    description?: string | null
+    type: ProductType
+    platform?: PlatformType | null
+    telegramUrl?: string | null
+    price: number
+    originalPrice?: number | null
+    costPrice?: number | null
+    stockCount: number
+    soldCount: number
+    minQuantity: number
+    maxQuantity: number
+    isActive: boolean
+    isPrivate: boolean
+    privateUrl?: string | null
+    isFeatured: boolean
+    images: string[]
+    thumbnail?: string | null
+    categoryId: number
+    seo?: Record<string, any> | null
+    // Relations
+    category?: Category
+    accounts?: Account[]
+    orderItems?: OrderItem[]
+    notifications?: Notification[]
+  }
+
+  // ================================
+  // CONTENT TYPES
+  // ================================
+
+  export interface BlogCategory extends BaseEntity {
+    name: string
+    slug: string
+    // Relations
+    blogs?: Blog[]
+  }
+
+  export interface Blog extends BaseEntity {
+    title: string
+    slug: string
+    content: string
+    source?: string | null
+    thumbnail?: string | null
+    gallery: string[]
+    tags: string[]
+    views: number
+    isPublished: boolean
+    publishedAt?: Date | null
+    categoryId: number
+    seo?: Record<string, any> | null
+    // Relations
+    category?: BlogCategory
+  }
+
+  export interface Notification extends BaseEntity {
+    userId?: number | null
+    type: NotificationType
+    title: string
+    message: string
+    data?: Record<string, any> | null
+    isRead: boolean
+    readAt?: Date | null
+    productId?: number | null
+    orderId?: number | null
+    // Relations
+    user?: User | null
+    product?: Product | null
+  }
+
+  // ================================
+  // SYSTEM TYPES
+  // ================================
+
+  export interface Settings {
+    id: number
+    key: string
+    value?: Record<string, any> | null
+  }
+
+  // ================================
+  // UTILITY TYPES
+  // ================================
+
+  export type CreateInput<T> = Omit<T, 'id' | 'createdAt' | 'updatedAt'>
+  export type UpdateInput<T> = Partial<Omit<T, 'id' | 'createdAt' | 'updatedAt'>>
+
+  // ================================
+  // QUERY & FILTER TYPES
+  // ================================
+
+  export interface ProductFilters extends BaseQuery {
+    categoryId?: number
+    platform?: PlatformType
+    type?: ProductType
+    isActive?: boolean
+    isFeatured?: boolean
+    minPrice?: number
+    maxPrice?: number
+    inStock?: boolean
+  }
+
+  export interface OrderFilters extends BaseQuery {
+    userId?: number
+    status?: OrderStatus
+    deliveryStatus?: DeliveryStatus
+    dateFrom?: Date
+    dateTo?: Date
+  }
+
+  export interface BlogFilters extends BaseQuery {
+    categoryId?: number
+    isPublished?: boolean
+    tags?: string[]
+  }
+
+  // ================================
+  // API RESPONSE TYPES
+  // ================================
+
+  export interface PaginationMeta {
+    page: number
+    limit: number
+    total: number
+    pages: number
+    hasNext: boolean
+    hasPrev: boolean
+  }
+
+  export interface ApiResponse<T = any> {
+    success: boolean
+    data?: T
+    message: string
+    errors?: string[]
+  }
+
+  export interface PaginatedResponse<T = any> extends ApiResponse<T[]> {
+    pagination: PaginationMeta
+  }
+
+  // ================================
+  // FILE UPLOAD TYPES
+  // ================================
+
+  export enum FileType {
+    IMAGE = 'IMAGE',
+    VIDEO = 'VIDEO',
+    FILE = 'FILE'
+  }
+
+  export interface UploadedFile {
+    id: number
+    fileId: string
+    url: string
+    type: FileType
+  }
+
+  export interface FileUploadResponse extends ApiResponse<UploadedFile[]> {
+    success: boolean
+    data: UploadedFile[]
+    message: string
+  }
+
+  // ================================
+  // EXPORT ALL TYPES FOR CONVENIENCE
+  // ================================
+
+  export type {
+    ApiResponse,
+    BaseEntity,
+    BaseQuery,
+    Blog,
+    BlogCategory,
+    BlogFilters,
+    Category,
+    Notification,
+    PaginatedResponse,
+    PaginationMeta,
+    Product,
+    ProductFilters,
+    Role,
+    RolePermission,
+    Settings,
+    TAdmin,
+    User,
+    UserFilters
+  }
+}

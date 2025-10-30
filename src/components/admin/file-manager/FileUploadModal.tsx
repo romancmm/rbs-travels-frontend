@@ -48,6 +48,12 @@ export function FileUploadModal({
         </DialogHeader>
 
         <div className='flex flex-col flex-1 gap-4 overflow-hidden'>
+          <div className='mb-2 text-muted-foreground text-sm'>
+            Uploading to:{' '}
+            <code className='bg-muted px-1 py-0.5 rounded text-xs'>
+              {currentPath === '/' ? 'Root' : currentPath}
+            </code>
+          </div>
           <FileUploader
             value={uploadedFiles}
             onChangeAction={handleUploadComplete}

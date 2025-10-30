@@ -1,17 +1,10 @@
 'use client'
 
 import CustomInput from '@/components/common/CustomInput'
-import { CustomSelect } from '@/components/common/CustomSelect'
 import { Button } from '@/components/ui/button'
 import { showError } from '@/lib/errMsg'
-import {
-  AdminRole,
-  AdminUser,
-  CreateAdminSchema,
-  CreateAdminType
-} from '@/lib/validations/schemas/admin'
+import { AdminUser, CreateAdminType } from '@/lib/validations/schemas/admin'
 import requests from '@/services/network/http'
-import { zodResolver } from '@hookform/resolvers/zod'
 import { useState } from 'react'
 import { Controller, SubmitHandler, useForm } from 'react-hook-form'
 import { toast } from 'sonner'
@@ -30,23 +23,23 @@ const AdminForm = ({ initialData, onClose, onSuccess }: AdminFormProps) => {
     handleSubmit,
     formState: { errors }
   } = useForm<CreateAdminType>({
-    resolver: zodResolver(CreateAdminSchema),
     mode: 'onSubmit',
     defaultValues: {
+      name: initialData?.name || '',
       email: initialData?.email || '',
-      // password: '', // Always require password input
-      firstName: initialData?.firstName || '',
-      lastName: initialData?.lastName || '',
-      role: initialData?.role || AdminRole.ADMIN
+      password: '', // Always require password input for new users
+      isActive: initialData?.isActive ?? true,
+      isAdmin: initialData?.isAdmin ?? true,
+      roleId: initialData?.roleId || ''
     }
   })
 
-  const onSubmit: SubmitHandler<CreateAdminType> = async (data) => {
+  const onSubmit: SubmitHandler<CreateAdminType> = async (data: CreateAdminType) => {
     setLoading(true)
     try {
       // Ensure API call is made with proper endpoint
       const endpoint = initialData?.id ? `put` : `post`
-      const url = `/admin` + (initialData?.id ? `/admins/${initialData?.id}` : '/create')
+      const url = `/admin/user/admins` + (initialData?.id ? `/${initialData?.id}` : '')
 
       await requests[endpoint](url, {
         ...data,
@@ -68,87 +61,78 @@ const AdminForm = ({ initialData, onClose, onSuccess }: AdminFormProps) => {
   return (
     <form onSubmit={handleSubmit(onSubmit)} className='space-y-6'>
       {/* Basic Information */}
-      <div className='flex flex-wrap [&>*]:flex-1 gap-4 [&>*]:min-w-[45%]'>
+      <div className='flex flex-wrap *:flex-1 gap-4 *:min-w-[45%]'>
         <Controller
-          name='firstName'
+          name='name'
           control={control}
           render={({ field }) => (
             <CustomInput
-              label='First Name'
-              placeholder='Enter first name'
-              error={errors.firstName?.message}
+              label='Name'
+              placeholder='Enter full name'
+              error={errors.name?.message}
               {...field}
             />
           )}
         />
 
         <Controller
-          name='lastName'
+          name='email'
           control={control}
           render={({ field }) => (
             <CustomInput
-              label='Last Name'
-              placeholder='Enter last name'
-              error={errors.lastName?.message}
+              label='Email'
+              placeholder='Enter email address'
+              type='email'
+              error={errors.email?.message}
               {...field}
             />
           )}
         />
 
         {!initialData?.id && (
-          <>
-            <Controller
-              name='email'
-              control={control}
-              render={({ field }) => (
-                <CustomInput
-                  label='Email'
-                  placeholder='Enter email address'
-                  type='email'
-                  error={errors.email?.message}
-                  {...field}
-                />
-              )}
-            />
-
-            <Controller
-              name='password'
-              control={control}
-              render={({ field }) => (
-                <CustomInput
-                  label='Password'
-                  placeholder='Enter password'
-                  type='password'
-                  error={errors.password?.message}
-                  {...field}
-                  disabled={!!initialData?.id} // Disable if editing
-                />
-              )}
-            />
-
-            {/* Role Selection */}
-            <Controller
-              name='role'
-              control={control}
-              render={({ field }) => (
-                <div className='space-y-2'>
-                  <CustomSelect
-                    label='Role'
-                    placeholder='Select role'
-                    staticOptions={Object.values(AdminRole).map((role) => ({
-                      title: role.charAt(0).toUpperCase() + role.slice(1).toLowerCase(),
-                      value: role,
-                      label: role.charAt(0).toUpperCase() + role.slice(1).toLowerCase()
-                    }))}
-                    value={field.value}
-                    onChange={(val) => field.onChange(val)}
-                  />
-                  {errors.role && <p className='text-destructive text-sm'>{errors.role.message}</p>}
-                </div>
-              )}
-            />
-          </>
+          <Controller
+            name='password'
+            control={control}
+            render={({ field }) => (
+              <CustomInput
+                label='Password'
+                placeholder='Enter password'
+                type='password'
+                error={errors.password?.message}
+                {...field}
+              />
+            )}
+          />
         )}
+
+        <Controller
+          name='roleId'
+          control={control}
+          render={({ field }) => (
+            <CustomInput
+              label='Role ID'
+              placeholder='Enter role ID (optional)'
+              error={errors.roleId?.message}
+              {...field}
+            />
+          )}
+        />
+      </div>
+
+      {/* Status Checkboxes */}
+      <div className='flex gap-6'>
+        <Controller
+          name='isActive'
+          control={control}
+          render={({ field }) => (
+            <CustomInput
+              type='switch'
+              label='Status (Active)'
+              error={errors.password?.message}
+              {...field}
+            />
+          )}
+        />
       </div>
 
       {/* Form Actions */}
@@ -159,8 +143,8 @@ const AdminForm = ({ initialData, onClose, onSuccess }: AdminFormProps) => {
               ? 'Updating...'
               : 'Creating...'
             : initialData?.id
-              ? 'Update Admin'
-              : 'Create Admin'}
+            ? 'Update Admin'
+            : 'Create Admin'}
         </Button>
         <Button
           type='button'
