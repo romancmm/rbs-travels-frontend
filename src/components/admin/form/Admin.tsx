@@ -1,6 +1,7 @@
 'use client'
 
 import CustomInput from '@/components/common/CustomInput'
+import { CustomSelect } from '@/components/common/CustomSelect'
 import FileUploader from '@/components/common/FileUploader'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
@@ -30,7 +31,7 @@ const AdminForm = ({ initialData, onClose, onSuccess }: AdminFormProps) => {
       avatar: initialData?.avatar || '',
       name: initialData?.name || '',
       email: initialData?.email || '',
-      password: '', // Always require password input for new users
+      password: initialData?.id ? undefined : '', // Only set password for new users
       isActive: initialData?.isActive ?? true,
       isAdmin: initialData?.isAdmin ?? true,
       roleIds: initialData?.roles?.map((role) => role.id) || [] // Map roles to roleIds array
@@ -60,6 +61,8 @@ const AdminForm = ({ initialData, onClose, onSuccess }: AdminFormProps) => {
       setLoading(false)
     }
   }
+
+  console.log('errors :>> ', errors);
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className='space-y-6'>
@@ -113,34 +116,33 @@ const AdminForm = ({ initialData, onClose, onSuccess }: AdminFormProps) => {
           control={control}
           render={({ field }) => (
             <div className='space-y-2'>
-              <CustomInput
-                label='Role IDs (comma-separated)'
-                placeholder='Enter role IDs separated by commas'
-                error={errors.roleIds?.message}
-                value={Array.isArray(field.value) ? field.value.join(', ') : ''}
-                onChange={(e) => {
-                  const value = e.target.value
-                  const roleIds = value
-                    .split(',')
-                    .map((id) => id.trim())
-                    .filter(Boolean)
-                  field.onChange(roleIds)
-                }}
+              <CustomSelect
+                multiple
+                label='Roles'
+                placeholder='Select Roles'
+                value={field.value}
+                url='/admin/role'
+                options={(data) =>
+                  data?.data?.items?.map((item: any) => ({
+                    value: item.id,
+                    label: item.name
+                  }))
+                }
+                onChange={field.onChange}
               />
-              {initialData?.roles && initialData.roles.length > 0 && (
+              {/* {initialData?.roles && initialData.roles.length > 0 && (
                 <div className='text-muted-foreground text-sm'>
                   Current roles: {initialData.roles.map((r) => r.name).join(', ')}
                 </div>
-              )}
+              )} */}
             </div>
           )}
         />
       </div>
 
       {/* Status Checkboxes */}
-      <div className='flex gap-6'>
-        <Label className='mb-2'>Thumbnail</Label>
-
+      <div className='flex flex-col gap-2'>
+        <Label className='text-sm'>Thumbnail</Label>
         <Controller
           name='isActive'
           control={control}

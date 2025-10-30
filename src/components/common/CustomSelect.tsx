@@ -118,19 +118,19 @@ export function CustomSelect({
           ? mapOptions
           : mapOptions(data)
         : data?.data?.map?.((item: any) =>
-            returnFullData
-              ? {
-                  ...item,
-                  label: item.name,
-                  title: item.name,
-                  value: item.id
-                }
-              : {
-                  label: item.name,
-                  title: item.name,
-                  value: item.id
-                }
-          )
+          returnFullData
+            ? {
+              ...item,
+              label: item.name,
+              title: item.name,
+              value: item.id
+            }
+            : {
+              label: item.name,
+              title: item.name,
+              value: item.id
+            }
+        )
       setOptions(rawOptions || [])
       setShouldFetch(false) // Reset fetch trigger after successful data load
     }
@@ -170,10 +170,10 @@ export function CustomSelect({
   const filteredOptions =
     searchMode === 'client' && searchValue
       ? options.filter(
-          (opt) =>
-            opt.title?.toLowerCase().includes(searchValue.toLowerCase()) ||
-            opt.label?.toLowerCase().includes(searchValue.toLowerCase())
-        )
+        (opt) =>
+          opt.title?.toLowerCase().includes(searchValue.toLowerCase()) ||
+          opt.label?.toLowerCase().includes(searchValue.toLowerCase())
+      )
       : options
 
   const handleValueChange = (selectedValue: string) => {
@@ -434,7 +434,7 @@ function MultiSelectComponent({
                     <input
                       type='checkbox'
                       checked={value.includes(option.value)}
-                      onChange={() => {}}
+                      onChange={() => { }}
                       disabled={option.disabled}
                       className='rounded'
                     />
@@ -449,14 +449,14 @@ function MultiSelectComponent({
 
       {/* Selected options badges - displayed outside Select */}
       {selectedOptions.length > 0 && (
-        <div className='flex flex-wrap gap-1 bg-foreground mt-3 p-2 border border-dashed rounded-md'>
+        <div className='flex flex-wrap gap-1 mt-2'>
           {selectedOptions.map((option) => (
             <Badge key={option.value} variant='default' className='text-xs'>
               {option.label || option.title}
               <button
                 type='button'
                 onClick={(e) => handleRemove(option.value, e)}
-                className='hover:bg-muted ml-1 p-0.5 rounded-full'
+                className='hover:bg-muted ml-0.5 p-0.5 rounded-full'
                 disabled={disabled}
               >
                 <X className='w-3 h-3' />
@@ -552,7 +552,7 @@ function TreeSelectComponent({
             <input
               type='checkbox'
               checked={isSelected}
-              onChange={() => {}}
+              onChange={() => { }}
               disabled={option.disabled}
               className='rounded'
             />

@@ -27,7 +27,7 @@ export const capitalize = (str: string): string => str.charAt(0).toUpperCase() +
 
 // Utility function to format camelCase or PascalCase keys
 export const formatKey = (key: string) => {
-  return key.replace(/([a-z])([A-Z])/g, '$1 $2').replace(/([A-Z])([A-Z][a-z])/g, '$1 $2')
+  return key?.replace(/([a-z])([A-Z])/g, '$1 $2').replace(/([A-Z])([A-Z][a-z])/g, '$1 $2')
 }
 
 // Utility function to format values
