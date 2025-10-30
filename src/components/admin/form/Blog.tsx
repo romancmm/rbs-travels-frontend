@@ -48,7 +48,7 @@ export default function BlogForm({ initialData }: TProps) {
       }
     }
   })
-  console.log('errors :>> ', errors);
+
   const watchTitle = watch('title')
   const watchTags = watch('tags')
   const watchSeoKeywords = watch('seo.keywords')
@@ -109,16 +109,14 @@ export default function BlogForm({ initialData }: TProps) {
   }
 
   const onSubmit: SubmitHandler<CreateBlogType> = async (data) => {
-    console.log('data :>> ', data);
     try {
-      const res = await requests[initialData?.id ? 'put' : 'post'](
+      await requests[initialData?.id ? 'put' : 'post'](
         `/admin/blog/posts` + (initialData?.id ? `/${initialData?.id}` : ``),
         {
           ...data,
           ...(initialData?.id ? { id: initialData.id } : {})
         }
       )
-      console.log('res :>> ', res)
       toast.success('Blog post created successfully')
       router.push('/admin/blogs')
     } catch (error) {
@@ -171,9 +169,9 @@ export default function BlogForm({ initialData }: TProps) {
                   label='Category'
                   placeholder='Select Category'
                   value={field.value?.toString() || ''}
-                  url='/admin/blogs/categories'
+                  url='/admin/blog/categories'
                   options={(data) =>
-                    data?.data?.categories?.map((cat: any) => ({
+                    data?.data?.items?.map((cat: any) => ({
                       value: cat.id.toString(),
                       label: cat.name
                     }))

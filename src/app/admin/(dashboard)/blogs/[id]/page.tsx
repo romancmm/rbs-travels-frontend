@@ -11,7 +11,7 @@ import { useParams } from 'next/navigation'
 
 export default function BlogDetailsPage() {
   const params = useParams()
-  const { data } = useAsync<{ data: Blog }>(`/admin/blogs/${params.id}`)
+  const { data } = useAsync<{ data: Blog }>(`/admin/blog/posts/${params.id}`)
 
   if (!data?.data) {
     return <div>Loading...</div>
