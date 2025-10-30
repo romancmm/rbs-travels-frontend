@@ -263,9 +263,9 @@ export function FileManagerComponent({
   }
 
   return (
-    <div className={cn('flex flex-col bg-background h-full', className)}>
+    <div className={cn('flex flex-col bg-background rounded-xl h-full', className)}>
       {/* Toolbar */}
-      <div className='flex flex-col gap-4 bg-muted/30 p-4 border-b'>
+      <div className='flex lg:flex-row flex-col justify-between gap-4 p-4 border-b'>
         {/* Breadcrumb */}
         <div className='flex items-center gap-1 text-sm'>
           <Home className='w-4 h-4' />
@@ -302,23 +302,7 @@ export function FileManagerComponent({
           </div>
 
           <div className='flex items-center gap-2'>
-            {/* View Toggle */}
-            <div className='flex items-center p-1 border rounded-lg'>
-              <Button
-                variant={viewMode === 'grid' ? 'default' : 'ghost'}
-                size='sm'
-                onClick={() => setViewMode('grid')}
-              >
-                <Grid3X3 className='w-4 h-4' />
-              </Button>
-              <Button
-                variant={viewMode === 'list' ? 'default' : 'ghost'}
-                size='sm'
-                onClick={() => setViewMode('list')}
-              >
-                <List className='w-4 h-4' />
-              </Button>
-            </div>
+
 
             {/* Action Buttons */}
             <Button variant='outline' size='sm' onClick={() => setShowCreateFolderModal(true)}>
@@ -330,6 +314,24 @@ export function FileManagerComponent({
               <Upload className='w-4 h-4' />
               {!isMobile && 'Upload'}
             </Button>
+
+            {/* View Toggle */}
+            <div className='flex items-center p-0 border border-primary rounded-lg'>
+              <Button
+                variant={viewMode === 'grid' ? 'default' : 'ghost'}
+                size='sm'
+                onClick={() => setViewMode('grid')}
+              >
+                <Grid3X3 className={cn('w-3 h-3', { 'text-gray-500': viewMode !== 'grid' })} />
+              </Button>
+              <Button
+                variant={viewMode === 'list' ? 'default' : 'ghost'}
+                size='sm'
+                onClick={() => setViewMode('list')}
+              >
+                <List className={cn('w-3 h-3', { 'text-gray-500': viewMode === 'grid' })} />
+              </Button>
+            </div>
           </div>
         </div>
       </div>
