@@ -5,8 +5,7 @@ import {
   LucideIcon,
   Settings,
   ShieldAlert,
-  TrendingUp,
-  Users2
+  TrendingUp
 } from 'lucide-react'
 
 type NavItem = {
@@ -23,29 +22,29 @@ export const navItems: NavItem[] = [
     href: '/admin/dashboard',
     icon: LayoutDashboard
   },
-  {
-    title: 'Customers',
-    href: '',
-    icon: Users2,
-    permission: { resource: 'customers', action: 'index' },
-    children: [
-      {
-        title: 'Customer List',
-        href: '/admin/customers/list',
-        permission: { resource: 'customers', action: 'index' }
-      },
-      {
-        title: 'Bookings',
-        href: '/admin/customers/bookings',
-        permission: { resource: 'customers', action: 'index' }
-      },
-      {
-        title: 'Feedbacks',
-        href: '/admin/customers/feedbacks',
-        permission: { resource: 'customers', action: 'index' }
-      }
-    ]
-  },
+  // {
+  //   title: 'Customers',
+  //   href: '',
+  //   icon: Users2,
+  //   permission: { resource: 'customers', action: 'index' },
+  //   children: [
+  //     {
+  //       title: 'Customer List',
+  //       href: '/admin/customers/list',
+  //       permission: { resource: 'customers', action: 'index' }
+  //     },
+  //     {
+  //       title: 'Bookings',
+  //       href: '/admin/customers/bookings',
+  //       permission: { resource: 'customers', action: 'index' }
+  //     },
+  //     {
+  //       title: 'Feedbacks',
+  //       href: '/admin/customers/feedbacks',
+  //       permission: { resource: 'customers', action: 'index' }
+  //     }
+  //   ]
+  // },
   // {
   //   title: 'Flight Management',
   //   href: '',

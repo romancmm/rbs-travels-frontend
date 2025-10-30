@@ -4,6 +4,7 @@ import { Trash2 } from 'lucide-react'
 import { useState } from 'react'
 
 import { ActionsDropdown } from '@/components/admin/common/ActionsDropdown'
+import CustomImage from '@/components/common/CustomImage'
 import { Badge } from '@/components/ui/badge'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { useConfirmationModal } from '@/hooks/useConfirmationModal'
@@ -14,17 +15,6 @@ import { toast } from 'sonner'
 import AdminForm from '../form/Admin'
 import { AdminActionType, getAdminActions } from './adminActions'
 
-// Define TAdmin interface locally to match the global type
-interface TAdmin {
-  id: number
-  name: string
-  email: string
-  isActive: boolean
-  isAdmin: boolean
-  roleId?: string
-  createdAt: string
-  updatedAt: string
-}
 
 // Custom table column type
 export interface TableColumn<T = any> {
@@ -35,7 +25,7 @@ export interface TableColumn<T = any> {
   className?: string
 }
 
-const ActionsCell = ({ data, mutate }: { data: TAdmin; mutate?: () => void }) => {
+const ActionsCell = ({ data, mutate }: { data: AdminUser; mutate?: () => void }) => {
   const [currentDialog, setCurrentDialog] = useState<{
     type: AdminActionType | null
     isOpen: boolean
@@ -51,7 +41,7 @@ const ActionsCell = ({ data, mutate }: { data: TAdmin; mutate?: () => void }) =>
       icon: Trash2,
       showInput: false,
       inputConfig: undefined,
-      onClick: async (data: TAdmin) => {
+      onClick: async (data: AdminUser) => {
         try {
           await requests.delete(`/admin/admins/${data?.id}`)
           toast.success('Admin deleted successfully')
@@ -157,15 +147,20 @@ const ActionsCell = ({ data, mutate }: { data: TAdmin; mutate?: () => void }) =>
 }
 
 // Admin columns function that accepts mutate callback
-export const adminColumns = (mutate?: () => void): TableColumn<TAdmin>[] => {
+export const adminColumns = (mutate?: () => void): TableColumn<AdminUser>[] => {
   return [
     {
       key: 'name',
       header: 'Name',
       render: (_, admin) => (
-        <div className='flex flex-col'>
-          <span className='font-medium'>{admin.name}</span>
-          <span className='text-muted-foreground text-sm'>{admin.email}</span>
+        <div className="flex flex-row items-center gap-2">
+          <div className="relative border rounded-sm w-12 h-12 aspect-square overflow-hidden">
+            <CustomImage src={admin?.avatar} alt={admin.name} fill />
+          </div>
+          <div className='flex flex-col'>
+            <span className='font-medium'>{admin.name}</span>
+            <span className='text-muted-foreground text-sm'>{admin.email}</span>
+          </div>
         </div>
       )
     },
@@ -202,4 +197,4 @@ export const adminColumns = (mutate?: () => void): TableColumn<TAdmin>[] => {
 }
 
 // Export the default columns for backward compatibility
-export const defaultAdminColumns = adminColumns()
+export const defaulAdminUserColumns = adminColumns()

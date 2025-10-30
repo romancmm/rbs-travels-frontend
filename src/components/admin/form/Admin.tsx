@@ -1,7 +1,9 @@
 'use client'
 
 import CustomInput from '@/components/common/CustomInput'
+import FileUploader from '@/components/common/FileUploader'
 import { Button } from '@/components/ui/button'
+import { Label } from '@/components/ui/label'
 import { showError } from '@/lib/errMsg'
 import { AdminUser, CreateAdminType } from '@/lib/validations/schemas/admin'
 import requests from '@/services/network/http'
@@ -25,6 +27,7 @@ const AdminForm = ({ initialData, onClose, onSuccess }: AdminFormProps) => {
   } = useForm<CreateAdminType>({
     mode: 'onSubmit',
     defaultValues: {
+      avatar: initialData?.avatar || '',
       name: initialData?.name || '',
       email: initialData?.email || '',
       password: '', // Always require password input for new users
@@ -135,6 +138,27 @@ const AdminForm = ({ initialData, onClose, onSuccess }: AdminFormProps) => {
         />
       </div>
 
+      <div className="">
+        <div>
+          <Label className='mb-2'>Thumbnail</Label>
+          <Controller
+            control={control}
+            name='avatar'
+            render={({ field }) => (
+              <FileUploader
+                value={field.value || ''}
+                onChangeAction={field.onChange}
+                multiple={false}
+                maxAllow={1}
+              />
+            )}
+          />
+          {errors.avatar && (
+            <span className='font-medium text-red-500 text-xs'>{errors.avatar.message}</span>
+          )}
+        </div>
+      </div>
+
       {/* Form Actions */}
       <div className='flex gap-3 pt-4'>
         <Button type='submit' disabled={loading}>
@@ -143,8 +167,8 @@ const AdminForm = ({ initialData, onClose, onSuccess }: AdminFormProps) => {
               ? 'Updating...'
               : 'Creating...'
             : initialData?.id
-            ? 'Update Admin'
-            : 'Create Admin'}
+              ? 'Update Admin'
+              : 'Create Admin'}
         </Button>
         <Button
           type='button'

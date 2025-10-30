@@ -9,6 +9,7 @@ export enum AdminRole {
 
 // Unified admin schema (password optional for updates)
 export const CreateAdminSchema = z.object({
+  avatar: z.string().optional(),
   name: z.string().min(1, 'Name is required'),
   email: z.string().email('Please enter a valid email address'),
   password: z.string().min(8, 'Password must be at least 8 characters').optional(),
@@ -24,6 +25,7 @@ export type UpdateAdminType = CreateAdminType // Use same type for both
 // Admin user response type (matches API response)
 export interface AdminUser {
   id: number
+  avatar: string
   name: string
   email: string
   isActive: boolean
