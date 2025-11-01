@@ -10,13 +10,13 @@ const requests = {
   get: <T = any>(url: string, config?: AxiosRequestConfig): Promise<T> =>
     axiosInstance.get<T>(url, config).then(responseBody),
 
-  post: <T = any>(url: string, body: object, config?: AxiosRequestConfig): Promise<T> =>
+  post: <T = any>(url: string, body: object = {}, config?: AxiosRequestConfig): Promise<T> =>
     axiosInstance.post<T>(url, body, config).then(responseBody),
 
-  patch: <T = any>(url: string, body: object, config?: AxiosRequestConfig): Promise<T> =>
+  patch: <T = any>(url: string, body: object = {}, config?: AxiosRequestConfig): Promise<T> =>
     axiosInstance.patch<T>(url, body, config).then(responseBody),
 
-  put: <T = any>(url: string, body: object, config?: AxiosRequestConfig): Promise<T> =>
+  put: <T = any>(url: string, body: object = {}, config?: AxiosRequestConfig): Promise<T> =>
     axiosInstance.put<T>(url, body, config).then(responseBody),
 
   delete: <T = any>(url: string, config?: AxiosRequestConfig): Promise<T> =>

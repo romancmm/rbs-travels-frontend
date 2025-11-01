@@ -174,6 +174,16 @@ export const navItems: NavItem[] = [
     ]
   },
   {
+    title: 'Menu Manager',
+    href: '/admin/menu-manager',
+    icon: FolderOpen
+  },
+  {
+    title: 'Page Builder',
+    href: '/admin/page-builder',
+    icon: FolderOpen
+  },
+  {
     title: 'File Manager',
     href: '/admin/file-manager',
     icon: FolderOpen
