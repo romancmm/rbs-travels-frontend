@@ -60,10 +60,8 @@ export function MenuItemsBuilder({ items, onChange }: MenuItemsBuilderProps) {
             title: 'New Menu Item',
             type: 'custom-link',
             link: '/',
-            parentId,
             order: 0,
             children: [],
-            status: 'published',
         }
 
         if (parentId === null) {

@@ -163,7 +163,7 @@ The backend returns structured component config to the frontend for rendering.
 
 7. Frontend Rendering Logic
 
-Fetch page data (via /api/pages/:slug)
+Fetch page data (via /pages/:slug)
 
 Parse layout JSON recursively:
 
@@ -183,14 +183,14 @@ Menu structure reference: Joomla-style hierarchical menus.
 
 9. API Endpoints (Examples)
    Method Endpoint Description
-   GET /api/menus Fetch all menus
-   POST /api/menus Create new menu
-   PUT /api/menus/:id Update menu
-   DELETE /api/menus/:id Delete menu
-   GET /api/pages/:slug Fetch page layout by slug
-   POST /api/pages Create new page
-   PUT /api/pages/:id Update page layout
-   DELETE /api/pages/:id Delete page
+   GET /menus Fetch all menus
+   POST /menus Create new menu
+   PUT /menus/:id Update menu
+   DELETE /menus/:id Delete menu
+   GET /pages/:slug Fetch page layout by slug
+   POST /pages Create new page
+   PUT /pages/:id Update page layout
+   DELETE /pages/:id Delete page
 10. Scalability Notes
 
 Store layout JSON in postgresql as flexible schema.

@@ -23,13 +23,6 @@ import {
 } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
 import { generateSlug, pageBuilderService } from '@/services/api/cms.service'
 import type { PageLayout } from '@/types/cms'
@@ -41,11 +34,13 @@ const pageSchema = z.object({
         .string()
         .min(1, 'Slug is required')
         .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, 'Slug must be lowercase with hyphens'),
-    status: z.enum(['published', 'draft']),
-    meta: z
+    description: z.string().optional(),
+    isPublished: z.boolean(),
+    seo: z
         .object({
             description: z.string().optional(),
-            keywords: z.string().optional(),
+            keywords: z.array(z.string()).optional(),
+            title: z.string().optional(),
         })
         .optional(),
 })
@@ -76,10 +71,12 @@ export function PageFormDialog({ open, onOpenChange, page, onSuccess }: PageForm
         defaultValues: {
             title: '',
             slug: '',
-            status: 'draft',
-            meta: {
+            description: '',
+            isPublished: false,
+            seo: {
                 description: '',
-                keywords: '',
+                keywords: [],
+                title: '',
             },
         },
     })
@@ -100,20 +97,24 @@ export function PageFormDialog({ open, onOpenChange, page, onSuccess }: PageForm
             reset({
                 title: page.title,
                 slug: page.slug,
-                status: page.status,
-                meta: {
-                    description: page.meta?.description || '',
-                    keywords: page.meta?.keywords || '',
+                description: page.description || '',
+                isPublished: page.isPublished,
+                seo: {
+                    description: page.seo?.description || '',
+                    keywords: page.seo?.keywords || [],
+                    title: page.seo?.title || '',
                 },
             })
         } else {
             reset({
                 title: '',
                 slug: '',
-                status: 'draft',
-                meta: {
+                description: '',
+                isPublished: false,
+                seo: {
                     description: '',
-                    keywords: '',
+                    keywords: [],
+                    title: '',
                 },
             })
         }
@@ -186,13 +187,25 @@ export function PageFormDialog({ open, onOpenChange, page, onSuccess }: PageForm
                         {errors.slug && <p className='text-destructive text-sm'>{errors.slug.message}</p>}
                     </div>
 
-                    {/* SEO Meta Description */}
+                    {/* Page Description */}
                     <div className='space-y-2'>
-                        <Label htmlFor='description'>Meta Description</Label>
+                        <Label htmlFor='description'>Description</Label>
                         <Textarea
                             id='description'
+                            placeholder='Brief description of the page'
+                            {...register('description')}
+                            disabled={loading}
+                            rows={2}
+                        />
+                    </div>
+
+                    {/* SEO Meta Description */}
+                    <div className='space-y-2'>
+                        <Label htmlFor='seo-description'>SEO Meta Description</Label>
+                        <Textarea
+                            id='seo-description'
                             placeholder='Brief description for SEO (recommended: 150-160 characters)'
-                            {...register('meta.description')}
+                            {...register('seo.description')}
                             disabled={loading}
                             rows={3}
                         />
@@ -201,35 +214,30 @@ export function PageFormDialog({ open, onOpenChange, page, onSuccess }: PageForm
                         </p>
                     </div>
 
-                    {/* SEO Keywords */}
+                    {/* SEO Title */}
                     <div className='space-y-2'>
-                        <Label htmlFor='keywords'>Meta Keywords</Label>
+                        <Label htmlFor='seo-title'>SEO Title</Label>
                         <Input
-                            id='keywords'
-                            placeholder='keyword1, keyword2, keyword3'
-                            {...register('meta.keywords')}
+                            id='seo-title'
+                            placeholder='Custom SEO title (defaults to page title)'
+                            {...register('seo.title')}
                             disabled={loading}
                         />
-                        <p className='text-muted-foreground text-xs'>Comma-separated keywords for SEO</p>
+                        <p className='text-muted-foreground text-xs'>Override page title for search engines</p>
                     </div>
 
-                    {/* Status */}
-                    <div className='space-y-2'>
-                        <Label htmlFor='status'>Status</Label>
-                        <Select
-                            value={watch('status')}
-                            onValueChange={(value) => setValue('status', value as 'published' | 'draft')}
+                    {/* Published Status */}
+                    <div className='flex items-center space-x-2'>
+                        <input
+                            type='checkbox'
+                            id='isPublished'
+                            {...register('isPublished')}
                             disabled={loading}
-                        >
-                            <SelectTrigger>
-                                <SelectValue placeholder='Select status' />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value='draft'>Draft</SelectItem>
-                                <SelectItem value='published'>Published</SelectItem>
-                            </SelectContent>
-                        </Select>
-                        {errors.status && <p className='text-destructive text-sm'>{errors.status.message}</p>}
+                            className='border-gray-300 rounded w-4 h-4'
+                        />
+                        <Label htmlFor='isPublished' className='cursor-pointer'>
+                            Publish immediately
+                        </Label>
                     </div>
 
                     <DialogFooter>

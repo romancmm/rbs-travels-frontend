@@ -34,7 +34,7 @@ function PageList() {
     }
   }>(() => {
     const url =
-      '/admin/page-builder' + (page ? `?page=${page}` : '') + (limit ? `&limit=${limit}` : '')
+      '/admin/page' + (page ? `?page=${page}` : '') + (limit ? `&limit=${limit}` : '')
     return url
   })
 
@@ -62,8 +62,11 @@ function PageList() {
 
   const handleStatusToggle = async (page: PageLayout) => {
     try {
-      const newStatus = page.status === 'published' ? 'draft' : 'published'
-      await pageBuilderService.updatePageStatus(page.id, newStatus)
+      if (page.isPublished) {
+        await pageBuilderService.unpublishPage(page.id)
+      } else {
+        await pageBuilderService.publishPage(page.id)
+      }
       mutate()
     } catch (error) {
       console.error('Failed to update page status:', error)
@@ -72,7 +75,7 @@ function PageList() {
 
   const handleDuplicate = async (page: PageLayout) => {
     try {
-      await pageBuilderService.duplicatePage(page.id, `${page.title} (Copy)`)
+      await pageBuilderService.duplicatePage(page.id)
       mutate()
     } catch (error) {
       console.error('Failed to duplicate page:', error)
@@ -149,7 +152,7 @@ function PageList() {
                   <div>
                     <div className='flex justify-between items-start gap-2 mb-1'>
                       <h3 className='font-semibold line-clamp-1'>{page.title}</h3>
-                      <CMSStatusBadge status={page.status} showIcon={false} />
+                      <CMSStatusBadge status={page.isPublished ? 'published' : 'draft'} showIcon={false} />
                     </div>
                     <p className='text-muted-foreground text-xs'>
                       /{page.slug}
@@ -157,7 +160,7 @@ function PageList() {
                   </div>
 
                   <div className='flex justify-between items-center text-muted-foreground text-xs'>
-                    <span>{page?.layout?.length} sections</span>
+                    <span>{page?.content?.sections?.length || 0} sections</span>
                     <span>{formatDate(page.updatedAt)}</span>
                   </div>
 
@@ -197,7 +200,7 @@ function PageList() {
                           Duplicate
                         </DropdownMenuItem>
                         <DropdownMenuItem onClick={() => handleStatusToggle(page)}>
-                          {page.status === 'published' ? 'Unpublish' : 'Publish'}
+                          {page.isPublished ? 'Unpublish' : 'Publish'}
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem

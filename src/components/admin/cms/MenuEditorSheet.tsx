@@ -66,7 +66,7 @@ export function MenuEditorSheet({ open, onOpenChange, menuId, onSuccess }: MenuE
 
         setSaving(true)
         try {
-            await menuService.updateMenuItems(menu.id, items)
+            await menuService.updateMenu(menu.id, { items })
             toast.success('Menu items updated successfully')
             onSuccess()
             onOpenChange(false)
@@ -120,7 +120,7 @@ export function MenuEditorSheet({ open, onOpenChange, menuId, onSuccess }: MenuE
                                     <div className='gap-2 grid text-sm'>
                                         <div className='flex justify-between items-center'>
                                             <span className='text-muted-foreground'>Location:</span>
-                                            <span className='font-medium capitalize'>{menu.location}</span>
+                                            <span className='font-medium capitalize'>{menu.position}</span>
                                         </div>
                                         <div className='flex justify-between items-center'>
                                             <span className='text-muted-foreground'>Slug:</span>
@@ -130,7 +130,7 @@ export function MenuEditorSheet({ open, onOpenChange, menuId, onSuccess }: MenuE
                                         </div>
                                         <div className='flex justify-between items-center'>
                                             <span className='text-muted-foreground'>Status:</span>
-                                            <span className='font-medium capitalize'>{menu.status}</span>
+                                            <span className='font-medium capitalize'>{menu.isPublished ? 'Published' : 'Draft'}</span>
                                         </div>
                                     </div>
                                 </div>

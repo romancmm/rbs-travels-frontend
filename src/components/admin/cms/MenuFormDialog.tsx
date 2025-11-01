@@ -30,7 +30,7 @@ import {
     SelectValue,
 } from '@/components/ui/select'
 import { generateSlug, menuService } from '@/services/api/cms.service'
-import type { Menu, MenuLocation } from '@/types/cms'
+import type { Menu } from '@/types/cms'
 import { toast } from 'sonner'
 
 const menuSchema = z.object({
@@ -39,8 +39,8 @@ const menuSchema = z.object({
         .string()
         .min(1, 'Slug is required')
         .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, 'Slug must be lowercase with hyphens'),
-    location: z.enum(['header', 'footer', 'sidebar', 'custom']),
-    status: z.enum(['published', 'draft']),
+    position: z.enum(['header', 'footer', 'sidebar', 'custom']),
+    isPublished: z.boolean(),
 })
 
 type MenuFormData = z.infer<typeof menuSchema>
@@ -68,8 +68,8 @@ export function MenuFormDialog({ open, onOpenChange, menu, onSuccess }: MenuForm
         defaultValues: {
             name: '',
             slug: '',
-            location: 'header',
-            status: 'draft',
+            position: 'header',
+            isPublished: false,
         },
     })
 
@@ -89,15 +89,15 @@ export function MenuFormDialog({ open, onOpenChange, menu, onSuccess }: MenuForm
             reset({
                 name: menu.name,
                 slug: menu.slug,
-                location: menu.location,
-                status: menu.status,
+                position: menu.position,
+                isPublished: menu.isPublished,
             })
         } else {
             reset({
                 name: '',
                 slug: '',
-                location: 'header',
-                status: 'draft',
+                position: 'header',
+                isPublished: false,
             })
         }
     }, [menu, reset])
@@ -168,18 +168,18 @@ export function MenuFormDialog({ open, onOpenChange, menu, onSuccess }: MenuForm
                         {errors.slug && <p className='text-destructive text-sm'>{errors.slug.message}</p>}
                     </div>
 
-                    {/* Location */}
+                    {/* Position */}
                     <div className='space-y-2'>
-                        <Label htmlFor='location'>
-                            Location <span className='text-destructive'>*</span>
+                        <Label htmlFor='position'>
+                            Position <span className='text-destructive'>*</span>
                         </Label>
                         <Select
-                            value={watch('location')}
-                            onValueChange={(value) => setValue('location', value as MenuLocation)}
+                            value={watch('position')}
+                            onValueChange={(value) => setValue('position', value as 'header' | 'footer' | 'sidebar' | 'custom')}
                             disabled={loading}
                         >
                             <SelectTrigger>
-                                <SelectValue placeholder='Select menu location' />
+                                <SelectValue placeholder='Select menu position' />
                             </SelectTrigger>
                             <SelectContent>
                                 <SelectItem value='header'>Header Menu</SelectItem>
@@ -188,28 +188,23 @@ export function MenuFormDialog({ open, onOpenChange, menu, onSuccess }: MenuForm
                                 <SelectItem value='custom'>Custom Menu</SelectItem>
                             </SelectContent>
                         </Select>
-                        {errors.location && (
-                            <p className='text-destructive text-sm'>{errors.location.message}</p>
+                        {errors.position && (
+                            <p className='text-destructive text-sm'>{errors.position.message}</p>
                         )}
                     </div>
 
-                    {/* Status */}
-                    <div className='space-y-2'>
-                        <Label htmlFor='status'>Status</Label>
-                        <Select
-                            value={watch('status')}
-                            onValueChange={(value) => setValue('status', value as 'published' | 'draft')}
+                    {/* Published Status */}
+                    <div className='flex items-center space-x-2'>
+                        <input
+                            type='checkbox'
+                            id='isPublished'
+                            {...register('isPublished')}
                             disabled={loading}
-                        >
-                            <SelectTrigger>
-                                <SelectValue placeholder='Select status' />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value='draft'>Draft</SelectItem>
-                                <SelectItem value='published'>Published</SelectItem>
-                            </SelectContent>
-                        </Select>
-                        {errors.status && <p className='text-destructive text-sm'>{errors.status.message}</p>}
+                            className='border-gray-300 rounded w-4 h-4'
+                        />
+                        <Label htmlFor='isPublished' className='cursor-pointer'>
+                            Publish immediately
+                        </Label>
                     </div>
 
                     <DialogFooter>

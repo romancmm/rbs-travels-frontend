@@ -66,8 +66,11 @@ function MenuList() {
 
   const handleStatusToggle = async (menu: Menu) => {
     try {
-      const newStatus = menu.status === 'published' ? 'draft' : 'published'
-      await menuService.updateMenuStatus(menu.id, newStatus)
+      if (menu.isPublished) {
+        await menuService.unpublishMenu(menu.id)
+      } else {
+        await menuService.publishMenu(menu.id)
+      }
       mutate()
     } catch (error) {
       console.error('Failed to update menu status:', error)
@@ -122,9 +125,9 @@ function MenuList() {
                   <div className='flex-1'>
                     <div className='flex items-center gap-3 mb-2'>
                       <h3 className='font-semibold text-lg'>{menu.name}</h3>
-                      <CMSStatusBadge status={menu.status} />
+                      <CMSStatusBadge status={menu.isPublished ? 'published' : 'draft'} />
                       <Badge variant='outline' className='capitalize'>
-                        {menu.location}
+                        {menu.position}
                       </Badge>
                     </div>
                     <p className='mb-2 text-muted-foreground text-sm'>
@@ -170,7 +173,7 @@ function MenuList() {
                           Duplicate
                         </DropdownMenuItem>
                         <DropdownMenuItem onClick={() => handleStatusToggle(menu)}>
-                          {menu.status === 'published' ? 'Unpublish' : 'Publish'}
+                          {menu.isPublished ? 'Unpublish' : 'Publish'}
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem
