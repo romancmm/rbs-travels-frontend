@@ -5,7 +5,7 @@
  * Full-screen drawer for editing menu and its items
  */
 
-import { Loader2, Save, X } from 'lucide-react'
+import { Loader2, Save } from 'lucide-react'
 import { useEffect, useState } from 'react'
 
 import { Button } from '@/components/ui/button'
@@ -92,14 +92,14 @@ export function MenuEditorSheet({ open, onOpenChange, menuId, onSuccess }: MenuE
                                 Manage menu items and their hierarchy
                             </SheetDescription>
                         </div>
-                        <Button
+                        {/* <Button
                             variant='ghost'
                             size='icon'
                             onClick={() => onOpenChange(false)}
                             disabled={saving}
                         >
                             <X className='w-5 h-5' />
-                        </Button>
+                        </Button> */}
                     </div>
                 </SheetHeader>
 

@@ -1,6 +1,6 @@
 'use client'
 
-import { Copy, Eye, Menu as MenuIcon, MoreVertical, Pencil, Trash2 } from 'lucide-react'
+import { Copy, Edit, Eye, Menu as MenuIcon, MoreVertical, Pencil, Trash2 } from 'lucide-react'
 import { Suspense, useState } from 'react'
 
 import { MenuEditorSheet } from '@/components/admin/cms/MenuEditorSheet'
@@ -118,7 +118,7 @@ function MenuList() {
             {menus.map((menu) => (
               <div
                 key={menu.id}
-                className='p-4 border hover:border-primary/50 rounded-lg transition-colors'
+                className='bg-white hover:shadow-lg p-4 border rounded-lg transition-colors'
               >
                 <div className='flex justify-between items-start'>
                   {/* Menu Info */}
@@ -130,11 +130,11 @@ function MenuList() {
                         {menu.position}
                       </Badge>
                     </div>
-                    <p className='mb-2 text-muted-foreground text-sm'>
-                      Slug: <code className='bg-muted px-1.5 py-0.5 rounded'>{menu.slug}</code>
+                    <p className='mb-2 text-muted-foreground text-xs'>
+                      Slug: <code className='px-1.5 py-0.5 rounded'>{menu.slug}</code>
                     </p>
-                    <p className='text-muted-foreground text-sm'>
-                      {menu.items.length} menu item{menu.items.length !== 1 ? 's' : ''}
+                    <p className='text-muted-foreground text-xs'>
+                      {menu?.items?.length} menu item{menu?.items?.length !== 1 ? 's' : ''}
                     </p>
                   </div>
 
@@ -145,8 +145,7 @@ function MenuList() {
                       size='sm'
                       onClick={() => handleEditItems(menu)}
                     >
-                      <Pencil className='mr-2 w-4 h-4' />
-                      Edit Items
+                      <Pencil className='w-4 h-4' />
                     </Button>
 
                     <DropdownMenu>
@@ -157,7 +156,7 @@ function MenuList() {
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align='end'>
                         <DropdownMenuItem onClick={() => handleEditBasic(menu)}>
-                          <Pencil className='mr-2 w-4 h-4' />
+                          <Edit className='mr-2 w-4 h-4' />
                           Edit Menu Info
                         </DropdownMenuItem>
                         <DropdownMenuItem onClick={() => handleEditItems(menu)}>
