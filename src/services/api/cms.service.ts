@@ -258,10 +258,15 @@ export const pageBuilderService = {
 // ==================== HELPER FUNCTIONS ====================
 
 /**
- * Generate unique ID for builder elements
+ * Generate unique ID for builder elements (UUID v4 format)
  */
 export const generateId = (): string => {
-  return `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
+  // Generate UUID v4
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+    const r = (Math.random() * 16) | 0
+    const v = c === 'x' ? r : (r & 0x3) | 0x8
+    return v.toString(16)
+  })
 }
 
 /**
@@ -305,4 +310,43 @@ export const generateSlug = (title: string): string => {
     .replace(/[^\w\s-]/g, '')
     .replace(/[\s_-]+/g, '-')
     .replace(/^-+|-+$/g, '')
+}
+
+/**
+ * Clean menu item data before sending to backend
+ * Removes null/empty values and ensures proper structure
+ */
+export const cleanMenuItem = (item: any): any => {
+  const cleaned: any = {
+    id: item.id,
+    title: item.title,
+    type: item.type,
+    order: item.order,
+    target: item.target || '_self'
+  }
+
+  // Only add optional fields if they have non-empty values
+  if (item.link && item.link.trim()) cleaned.link = item.link
+  if (item.categoryId && item.categoryId.trim()) cleaned.categoryId = item.categoryId
+  if (item.pageId && item.pageId.trim()) cleaned.pageId = item.pageId
+  if (item.articleId && item.articleId.trim()) cleaned.articleId = item.articleId
+  if (item.icon && item.icon.trim()) cleaned.icon = item.icon
+  if (item.menuId) cleaned.menuId = item.menuId
+  if (item.parentId !== undefined && item.parentId !== null) cleaned.parentId = item.parentId
+
+  // Recursively clean children
+  if (item.children && item.children.length > 0) {
+    cleaned.children = item.children.map(cleanMenuItem)
+  } else {
+    cleaned.children = []
+  }
+
+  return cleaned
+}
+
+/**
+ * Clean menu items array
+ */
+export const cleanMenuItems = (items: any[]): any[] => {
+  return items.map(cleanMenuItem)
 }

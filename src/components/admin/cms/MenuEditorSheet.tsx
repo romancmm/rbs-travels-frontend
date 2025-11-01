@@ -17,7 +17,7 @@ import {
     SheetHeader,
     SheetTitle,
 } from '@/components/ui/sheet'
-import { menuService } from '@/services/api/cms.service'
+import { cleanMenuItems, menuService } from '@/services/api/cms.service'
 import type { Menu, MenuItem } from '@/types/cms'
 import { toast } from 'sonner'
 import { MenuItemsBuilder } from './MenuItemsBuilder'
@@ -66,7 +66,9 @@ export function MenuEditorSheet({ open, onOpenChange, menuId, onSuccess }: MenuE
 
         setSaving(true)
         try {
-            await menuService.updateMenu(menu.id, { items })
+            // Clean menu items before sending to backend
+            const cleanedItems = cleanMenuItems(items)
+            await menuService.updateMenu(menu.id, { items: cleanedItems })
             toast.success('Menu items updated successfully')
             onSuccess()
             onOpenChange(false)
