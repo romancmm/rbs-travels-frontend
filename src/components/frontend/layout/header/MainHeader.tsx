@@ -14,7 +14,7 @@ export default function MainHeader({ data }: { data: any }) {
 
   return (
     <div className={containerVariants()}>
-      <div className='flex flex-row justify-between items-center gap-x-4 min-h-[80px] text-white'>
+      <div className='flex flex-row justify-between items-center gap-x-4 min-h-20 text-white'>
         {/* Logo Section */}
         <SiteLogo />
 

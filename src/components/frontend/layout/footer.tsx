@@ -7,27 +7,14 @@ import GotoTop from '@/components/common/GotoTop'
 import { Typography } from '@/components/common/typography'
 import { siteConfig } from '@/data/siteConfig'
 import { ArrowRight, Mail, Phone } from 'lucide-react'
-import { use, useState } from 'react'
+import { use } from 'react'
 
 export default function Footer({ data }: { data: any }) {
-  const [email, setEmail] = useState('')
-  const [isSubmitting, setIsSubmitting] = useState(false)
   const res: any = use(data)
 
-  const handleNewsletterSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!email) return
-
-    setIsSubmitting(true)
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 1000))
-    setIsSubmitting(false)
-    setEmail('')
-    // Show success message or handle the newsletter subscription
-  }
 
   return (
-    <footer className="relative bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 overflow-hidden text-white">
+    <footer className="relative bg-linear-gradient-to-br from-slate-900 via-slate-800 to-slate-900 overflow-hidden text-white">
       {/* Decorative Background Pattern */}
       <div
         className="absolute inset-0 opacity-5"

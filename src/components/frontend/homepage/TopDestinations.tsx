@@ -14,8 +14,6 @@ import {
   type CarouselApi
 } from '@/components/ui/carousel'
 import { cn } from '@/lib/utils'
-import Autoplay from 'embla-carousel-autoplay'
-import ClassNames from 'embla-carousel-class-names'
 import { Filter, MapPin } from 'lucide-react'
 import { useCallback, useEffect, useState } from 'react'
 
@@ -55,7 +53,7 @@ const DestinationCard = ({ destination, index }: { destination: OverseasDestinat
         />
 
         {/* Dynamic overlay gradient */}
-        <div className='absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent' />
+        <div className='absolute inset-0 bg-linear-gradient-to-t from-black/70 via-black/20 to-transparent' />
       </div>
 
       {/* Content */}
@@ -100,28 +98,11 @@ const DestinationCard = ({ destination, index }: { destination: OverseasDestinat
 }
 
 export default function TopDestinations({ data }: TopDestinationsProps) {
-  const [activeFilter, setActiveFilter] = useState('all')
   const [api, setApi] = useState<CarouselApi>()
   const [current, setCurrent] = useState(0)
   const [count, setCount] = useState(0)
   const [canScrollPrev, setCanScrollPrev] = useState(false)
   const [canScrollNext, setCanScrollNext] = useState(false)
-
-
-  // Enhanced auto-rotation plugin with better UX
-  const autoplayPlugin = Autoplay({
-    delay: 5000,
-    stopOnInteraction: true,
-    stopOnMouseEnter: true,
-    stopOnFocusIn: true
-  })
-
-  // Class names plugin for enhanced styling
-  const classNamesPlugin = ClassNames({
-    snapped: 'opacity-100 scale-100',
-    draggable: 'cursor-grab',
-    dragging: 'cursor-grabbing'
-  })
 
   const onSelect = useCallback((emblaApi: CarouselApi) => {
     if (!emblaApi) return
@@ -146,19 +127,12 @@ export default function TopDestinations({ data }: TopDestinationsProps) {
     }
   }, [api, onSelect])
 
-  // Reset carousel when filter changes
-  useEffect(() => {
-    if (api) {
-      api.scrollTo(0, true)
-    }
-  }, [activeFilter, api])
-
   if (!data?.destinations?.length) return null
 
   return (
     <Section variant={'xl'}
       className={cn(
-        'relative bg-gradient-to-br from-blue-50/50 via-white to-purple-50/30 overflow-hidden'
+        'relative bg-linear-gradient-to-br from-blue-50/50 via-white to-purple-50/30 overflow-hidden'
       )}
     >
       {/* Enhanced Background Pattern */}
@@ -323,7 +297,7 @@ export default function TopDestinations({ data }: TopDestinationsProps) {
           <div className='flex justify-center items-center gap-4 pt-4'>
             <Button
               size='lg'
-              className='bg-gradient-to-r from-primary hover:from-primary/90 to-primary/90 hover:to-primary shadow-xl hover:shadow-2xl px-4 lg:px-8 py-4 rounded-xl font-semibold text-white hover:scale-105 transition-all duration-300'
+              className='bg-linear-gradient-to-r from-primary hover:from-primary/90 to-primary/90 hover:to-primary shadow-xl hover:shadow-2xl px-4 lg:px-8 py-4 rounded-xl font-semibold text-white hover:scale-105 transition-all duration-300'
             >
               Plan My Journey
             </Button>

@@ -90,7 +90,7 @@ const Blog = ({ data, isLoading = false, className }: BlogProps) => {
               initial={{ width: 0 }}
               animate={{ width: '80px' }}
               transition={{ delay: 0.5, duration: 0.8 }}
-              className='bg-gradient-to-r from-primary to-accent mx-auto rounded-full h-1'
+              className='bg-linear-gradient-to-r from-primary to-accent mx-auto rounded-full h-1'
             />
           </motion.div>
         </div>
