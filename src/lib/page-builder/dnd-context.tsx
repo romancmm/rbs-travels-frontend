@@ -33,6 +33,11 @@ interface DragData {
     componentType?: ComponentType
     parentId?: string
     sourceIndex?: number
+    // For drop zones
+    columnId?: string
+    rowId?: string
+    sectionId?: string
+    accepts?: string[]
 }
 
 interface DndContextValue {
@@ -138,16 +143,24 @@ export function BuilderDndProvider({ children }: BuilderDndProviderProps) {
         if (
             activeData.type === 'component' &&
             activeData.componentType &&
-            !activeData.id.includes('-') // New component (not existing)
+            activeData.id.startsWith('new-') // New component from sidebar
         ) {
-            if (overData?.type === 'column') {
+            console.log('[DnD] New component drag detected:', { activeData, overData })
+            if (overData?.type === 'column' && overData.columnId) {
                 const newComponent = componentRegistry.createInstance(
                     activeData.componentType,
                     generateId()
                 )
-                addComponent(overData.id, newComponent, overData.sourceIndex)
+                console.log('[DnD] ✅ Adding new component to column:', {
+                    componentType: activeData.componentType,
+                    columnId: overData.columnId,
+                    component: newComponent
+                })
+                addComponent(overData.columnId, newComponent)
                 setActiveDragData(null)
                 return
+            } else {
+                console.log('[DnD] ❌ Cannot add component - invalid drop zone:', { overData })
             }
         }
 
@@ -299,13 +312,13 @@ export function BuilderDndProvider({ children }: BuilderDndProviderProps) {
                     }
                 }
                 // Moving to column (append)
-                else if (overData?.type === 'column') {
+                else if (overData?.type === 'column' && overData.columnId) {
                     const targetColumn = content.sections
                         .flatMap((s) => s.rows)
                         .flatMap((r) => r.columns)
-                        .find((c) => c.id === overData.id)
+                        .find((c) => c.id === overData.columnId)
                     if (targetColumn) {
-                        moveComponent(activeData.id, overData.id, targetColumn.components.length)
+                        moveComponent(activeData.id, overData.columnId, targetColumn.components.length)
                     }
                 }
             }

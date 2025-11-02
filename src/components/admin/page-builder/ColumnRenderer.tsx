@@ -81,11 +81,11 @@ export function ColumnRenderer({ column, sectionId, rowId }: ColumnRendererProps
             }}
             style={style}
             className={cn(
-                'group/column relative transition-all duration-200',
+                'group/column relative flex-1 transition-all duration-200',
                 isDragging && 'opacity-50',
                 isSelected && 'ring-2 ring-purple-500 ring-offset-2',
                 isHovered && !isSelected && 'ring-2 ring-purple-300 ring-offset-2',
-                isOver && 'ring-2 ring-blue-400'
+                isOver && 'ring-2 ring-blue-500 ring-offset-2 bg-blue-50/50'
             )}
             onClick={(e) => {
                 e.stopPropagation()
@@ -103,7 +103,10 @@ export function ColumnRenderer({ column, sectionId, rowId }: ColumnRendererProps
             {/* Column Content */}
             <div
                 style={columnStyles}
-                className="relative w-full min-h-[120px]"
+                className={cn(
+                    'relative w-full min-h-[120px]',
+                    isOver && 'bg-blue-50/30'
+                )}
             >
                 {/* Column Toolbar - Shows on hover/select */}
                 <div
@@ -175,11 +178,23 @@ export function ColumnRenderer({ column, sectionId, rowId }: ColumnRendererProps
 
                 {/* Components */}
                 {column.components.length === 0 ? (
-                    <div className="flex justify-center items-center min-h-[120px]">
-                        <div className="flex flex-col items-center gap-2 bg-gray-50 p-6 border-2 border-gray-300 border-dashed rounded-lg text-center">
-                            <Plus className="w-5 h-5 text-gray-400" />
-                            <span className="font-medium text-gray-600 text-xs">
-                                Drop component here
+                    <div className={cn(
+                        "flex justify-center items-center w-full h-full min-h-[120px]",
+                        isOver && "bg-blue-100 border-blue-400"
+                    )}>
+                        <div className={cn(
+                            "flex flex-col items-center gap-2 p-6 border-2 border-dashed rounded-lg text-center transition-all",
+                            isOver ? "bg-blue-50 border-blue-400 scale-105" : "bg-gray-50 border-gray-300"
+                        )}>
+                            <Plus className={cn(
+                                "w-6 h-6 transition-colors",
+                                isOver ? "text-blue-500" : "text-gray-400"
+                            )} />
+                            <span className={cn(
+                                "font-medium text-xs transition-colors",
+                                isOver ? "text-blue-700" : "text-gray-600"
+                            )}>
+                                {isOver ? "Drop to add component" : "Drop component here"}
                             </span>
                         </div>
                     </div>

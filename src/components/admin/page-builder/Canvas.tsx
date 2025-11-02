@@ -4,12 +4,15 @@ import { useDroppable } from '@dnd-kit/core'
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
 import { Plus } from 'lucide-react'
 
-import { useBuilderContent } from '@/lib/page-builder/builder-store'
+import { Button } from '@/components/ui/button'
+import { useBuilderContent, useBuilderStore } from '@/lib/page-builder/builder-store'
+import { createDefaultSection } from '@/lib/page-builder/builder-utils'
 import { cn } from '@/lib/utils'
 import { SectionRenderer } from './SectionRenderer'
 
 export function Canvas() {
     const content = useBuilderContent()
+    const addSection = useBuilderStore((state) => state.addSection)
 
     // Make canvas droppable for sections
     const { setNodeRef, isOver } = useDroppable({
@@ -21,6 +24,11 @@ export function Canvas() {
     })
 
     const sectionIds = content.sections.map((section) => section.id)
+
+    const handleAddSection = () => {
+        const newSection = createDefaultSection('Section 1')
+        addSection(newSection)
+    }
 
     return (
         <div className="flex justify-center items-center p-8 min-h-full">
@@ -41,9 +49,16 @@ export function Canvas() {
                             Start building your page
                         </h3>
                         <p className="mt-2 max-w-sm text-gray-500 text-sm">
-                            Drag components from the left sidebar to start creating your page layout.
-                            You can also drag sections to organize your content.
+                            Add a section to begin, then drag components from the sidebar to build your layout.
                         </p>
+                        <Button
+                            onClick={handleAddSection}
+                            size="lg"
+                            className="gap-2 mt-6"
+                        >
+                            <Plus className="w-5 h-5" />
+                            Add Your First Section
+                        </Button>
                     </div>
                 )}
 
