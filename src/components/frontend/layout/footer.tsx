@@ -89,7 +89,7 @@ export default function Footer({ data }: { data: any }) {
               </div>
 
               {/* 2️⃣ Navigation Links */}
-              {res?.data?.items?.map((nav: any, index: number) => (
+              {res?.data?.items?.slice(0, 2)?.map((nav: any, index: number) => (
                 <div key={index} className="space-y-5">
                   <Typography variant="h6" weight="semibold" className="text-white">
                     {nav.title}
