@@ -34,7 +34,7 @@ function PageList() {
     }
   }>(() => {
     const url =
-      '/admin/page' + (page ? `?page=${page}` : '') + (limit ? `&limit=${limit}` : '')
+      '/admin/pages' + (page ? `?page=${page}` : '') + (limit ? `&limit=${limit}` : '')
     return url
   })
 
@@ -131,15 +131,14 @@ function PageList() {
             {pages.map((page) => (
               <div
                 key={page.id}
-                className='group p-4 border hover:border-primary/50 rounded-lg transition-colors'
+                className='group bg-white p-4 border hover:border-primary/50 rounded-lg transition-colors'
               >
                 {/* Page Preview Thumbnail */}
                 <div className='relative flex justify-center items-center bg-muted mb-4 rounded-lg h-32 overflow-hidden'>
                   <FileText className='w-12 h-12 text-muted-foreground' />
                   <div className='absolute inset-0 flex justify-center items-center gap-2 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity'>
                     <Button size='sm' variant='secondary' onClick={() => handleEdit(page)}>
-                      <Pencil className='mr-2 w-4 h-4' />
-                      Edit
+                      <Pencil className='w-4 h-4' />
                     </Button>
                     <Button size='sm' variant='secondary'>
                       <Eye className='w-4 h-4' />
@@ -165,7 +164,7 @@ function PageList() {
                   </div>
 
                   {/* Actions */}
-                  <div className='flex items-center gap-2 pt-2 border-t'>
+                  <div className='flex items-center gap-2'>
                     <Button
                       variant='outline'
                       size='sm'
