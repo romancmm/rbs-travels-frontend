@@ -9,7 +9,7 @@ import { ChevronDown, Phone } from 'lucide-react'
 import { useState } from 'react'
 import MobileNav from './MobileNav'
 
-export default function MainHeader() {
+export default function MainHeader({ data }: { data: any }) {
   const [hoveredItem, setHoveredItem] = useState<number | null>(null)
 
   return (
@@ -19,9 +19,9 @@ export default function MainHeader() {
         <SiteLogo />
 
         {/* Main Navigation */}
-        {siteConfig.mainNav?.length > 0 && (
+        {data?.length > 0 && (
           <nav className='hidden xl:flex items-center gap-4 ml-10'>
-            {siteConfig.mainNav.map((item: any, index: number) => (
+            {data.map((item: any, index: number) => (
               <div
                 key={index}
                 className='relative'
@@ -39,7 +39,7 @@ export default function MainHeader() {
                   >
                     {item.title}
                   </Typography>
-                  {item.children && (
+                  {item.children?.length > 0 && (
                     <ChevronDown
                       className={`w-4 h-4 transition-transform duration-300 ${hoveredItem === index ? 'rotate-180' : ''
                         }`}
@@ -48,7 +48,7 @@ export default function MainHeader() {
                 </CustomLink>
 
                 {/* Dropdown Menu for Services */}
-                {item.children && hoveredItem === index && (
+                {item.children && item.children?.length > 0 && hoveredItem === index && (
                   <div className='top-full left-0 z-50 absolute bg-white slide-in-from-top-2 shadow-xl border border-gray-100 rounded-xl w-56 animate-in duration-200'>
                     {item.children.map((child: any, childIndex: number) => (
                       <CustomLink
