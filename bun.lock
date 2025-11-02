@@ -37,6 +37,7 @@
         "embla-carousel-fade": "^8.6.0",
         "embla-carousel-react": "^8.6.0",
         "html-react-parser": "^5.2.7",
+        "immer": "^10.2.0",
         "jodit-react": "^5.2.31",
         "jose": "^6.1.0",
         "js-cookie": "^3.0.5",
