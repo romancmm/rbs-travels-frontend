@@ -7,11 +7,12 @@ import GotoTop from '@/components/common/GotoTop'
 import { Typography } from '@/components/common/typography'
 import { siteConfig } from '@/data/siteConfig'
 import { ArrowRight, Mail, Phone } from 'lucide-react'
-import { useState } from 'react'
+import { use, useState } from 'react'
 
-export default function Footer() {
+export default function Footer({ data }: { data: any }) {
   const [email, setEmail] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const res: any = use(data)
 
   const handleNewsletterSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -88,7 +89,7 @@ export default function Footer() {
               </div>
 
               {/* 2️⃣ Navigation Links */}
-              {siteConfig?.footerNav?.map((nav: any, index: number) => (
+              {res?.data?.items?.map((nav: any, index: number) => (
                 <div key={index} className="space-y-5">
                   <Typography variant="h6" weight="semibold" className="text-white">
                     {nav.title}

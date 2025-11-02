@@ -8,12 +8,13 @@ export default function FrontLayout({
   children: React.ReactNode
 }>) {
   const mainMenus = fetchOnServer('/menus/header-menu', 300)
+  const footerMenus = fetchOnServer('/menus/footer-menu', 300)
 
   return (
     <>
       <Header data={mainMenus} />
       <main className='min-h-[500px]'>{children}</main>
-      <Footer />
+      <Footer data={footerMenus} />
     </>
   )
 }
