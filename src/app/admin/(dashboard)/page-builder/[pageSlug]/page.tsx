@@ -7,6 +7,7 @@ import { PageBuilder } from '@/components/admin/page-builder/PageBuilder'
 import { CMSListSkeleton } from '@/components/common/cms'
 import useAsync from '@/hooks/useAsync'
 import { createEmptyContent } from '@/lib/page-builder/builder-utils'
+import { samplePageContent } from '@/lib/page-builder/test-data'
 import { PageLayout } from '@/types/cms'
 
 function PageBuilderEdit() {
@@ -28,8 +29,9 @@ function PageBuilderEdit() {
         )
     }
 
-    // For now, use empty content. Later, transform API data to PageContent
-    const initialContent = createEmptyContent()
+    // For testing: Use sample content if pageSlug is 'test', otherwise empty
+    // Later, transform API data to PageContent from the `data` variable
+    const initialContent = pageSlug === 'test' ? samplePageContent : createEmptyContent()
 
     return (
         <PageBuilder

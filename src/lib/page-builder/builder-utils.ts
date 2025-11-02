@@ -95,14 +95,15 @@ export const addSection = (content: PageContent, section: Section, index?: numbe
     newSections.push(section)
   }
 
-  // Reorder all sections
-  newSections.forEach((s, i) => {
-    s.order = i
-  })
+  // Reorder all sections - create new objects with updated order
+  const reorderedSections = newSections.map((s, i) => ({
+    ...s,
+    order: i
+  }))
 
   return {
     ...content,
-    sections: newSections
+    sections: reorderedSections
   }
 }
 
@@ -112,14 +113,15 @@ export const addSection = (content: PageContent, section: Section, index?: numbe
 export const deleteSection = (content: PageContent, sectionId: string): PageContent => {
   const newSections = content.sections.filter((s) => s.id !== sectionId)
 
-  // Reorder remaining sections
-  newSections.forEach((s, i) => {
-    s.order = i
-  })
+  // Reorder remaining sections - create new objects with updated order
+  const reorderedSections = newSections.map((s, i) => ({
+    ...s,
+    order: i
+  }))
 
   return {
     ...content,
-    sections: newSections
+    sections: reorderedSections
   }
 }
 
@@ -155,14 +157,15 @@ export const moveSection = (
   const [section] = newSections.splice(oldIndex, 1)
   newSections.splice(newIndex, 0, section)
 
-  // Reorder all sections
-  newSections.forEach((s, i) => {
-    s.order = i
-  })
+  // Reorder all sections - create new objects with updated order
+  const reorderedSections = newSections.map((s, i) => ({
+    ...s,
+    order: i
+  }))
 
   return {
     ...content,
-    sections: newSections
+    sections: reorderedSections
   }
 }
 
@@ -203,12 +206,13 @@ export const addRow = (
         newRows.push(row)
       }
 
-      // Reorder all rows
-      newRows.forEach((r, i) => {
-        r.order = i
-      })
+      // Reorder all rows - create new objects with updated order
+      const reorderedRows = newRows.map((r, i) => ({
+        ...r,
+        order: i
+      }))
 
-      return { ...section, rows: newRows }
+      return { ...section, rows: reorderedRows }
     })
   }
 }
@@ -304,12 +308,13 @@ export const addColumn = (
           newColumns.push(column)
         }
 
-        // Reorder all columns
-        newColumns.forEach((c, i) => {
-          c.order = i
-        })
+        // Reorder all columns - create new objects with updated order
+        const reorderedColumns = newColumns.map((c, i) => ({
+          ...c,
+          order: i
+        }))
 
-        return { ...row, columns: newColumns }
+        return { ...row, columns: reorderedColumns }
       })
     }))
   }
@@ -419,12 +424,13 @@ export const addComponent = (
             newComponents.push(component)
           }
 
-          // Reorder all components
-          newComponents.forEach((c, i) => {
-            c.order = i
-          })
+          // Reorder all components - create new objects with updated order
+          const reorderedComponents = newComponents.map((c, i) => ({
+            ...c,
+            order: i
+          }))
 
-          return { ...column, components: newComponents }
+          return { ...column, components: reorderedComponents }
         })
       }))
     }))

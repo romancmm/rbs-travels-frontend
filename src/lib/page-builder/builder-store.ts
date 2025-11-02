@@ -363,11 +363,13 @@ export const useBuilderStore = create<BuilderStore>()(
       // ==================== ROW ACTIONS ====================
 
       addRow: (sectionId, row, index) => {
+        console.log('[Store] Adding row:', { sectionId, row, index })
         const { content } = get()
         set((state) => {
           state.content = addRow(content, sectionId, row, index)
           state.isDirty = true
         })
+        console.log('[Store] Row added, new content:', get().content)
         get().pushToHistory()
       },
 
@@ -404,11 +406,13 @@ export const useBuilderStore = create<BuilderStore>()(
       // ==================== COLUMN ACTIONS ====================
 
       addColumn: (rowId, column, index) => {
+        console.log('[Store] Adding column:', { rowId, column, index })
         const { content } = get()
         set((state) => {
           state.content = addColumn(content, rowId, column, index)
           state.isDirty = true
         })
+        console.log('[Store] Column added, new content:', get().content)
         get().pushToHistory()
       },
 
