@@ -194,25 +194,17 @@ export function BuilderDndProvider({ children }: BuilderDndProviderProps) {
         if (activeData.type === 'section' && overData?.type === 'section') {
             console.log('[DnD] 🔵 Section drag detected')
             if (activeId !== overId) {
-                // Use sortable index if available (more reliable)
-                let targetIndex = 0
-                if (overData.sortable?.index !== undefined) {
-                    targetIndex = overData.sortable.index
-                    console.log('[DnD] Using sortable index:', targetIndex)
-                } else {
-                    // Fallback: find section position manually
-                    targetIndex = content.sections.findIndex((s) => s.id === overId)
-                }
-
+                // Find section positions in the array
                 const activeIndex = content.sections.findIndex((s) => s.id === activeId)
+                const overIndex = content.sections.findIndex((s) => s.id === overId)
 
-                console.log('[DnD] Moving section from index', activeIndex, 'to', targetIndex)
+                console.log('[DnD] Moving section from index', activeIndex, 'to', overIndex)
 
-                if (activeIndex !== -1 && targetIndex !== -1) {
-                    moveSection(activeId, targetIndex)
+                if (activeIndex !== -1 && overIndex !== -1 && activeIndex !== overIndex) {
+                    moveSection(activeId, overIndex)
                     console.log('[DnD] ✅ Section moved successfully')
                 } else {
-                    console.log('[DnD] ❌ Invalid section indices')
+                    console.log('[DnD] ❌ Invalid section indices or same position')
                 }
             } else {
                 console.log('[DnD] ⚠️ Same section - no move needed')
@@ -237,23 +229,15 @@ export function BuilderDndProvider({ children }: BuilderDndProviderProps) {
                 // Moving to another row position
                 if (overData?.type === 'row') {
                     console.log('[DnD] Moving row to another row position')
-                    // Find target section
+                    // Find target section and row index
                     let targetSectionId: string | null = null
                     let targetRowIndex = 0
-
-                    // Use sortable index if available
-                    if (overData.sortable?.index !== undefined) {
-                        targetRowIndex = overData.sortable.index
-                        console.log('[DnD] Using sortable index:', targetRowIndex)
-                    }
 
                     for (const section of content.sections) {
                         const rowIndex = section.rows.findIndex((r) => r.id === overId)
                         if (rowIndex !== -1) {
                             targetSectionId = section.id
-                            if (overData.sortable?.index === undefined) {
-                                targetRowIndex = rowIndex
-                            }
+                            targetRowIndex = rowIndex
                             break
                         }
                     }
@@ -302,24 +286,16 @@ export function BuilderDndProvider({ children }: BuilderDndProviderProps) {
                 // Moving to another column position
                 if (overData?.type === 'column') {
                     console.log('[DnD] Moving column to another column position')
-                    // Find target row
+                    // Find target row and column index
                     let targetRowId: string | null = null
                     let targetColumnIndex = 0
-
-                    // Use sortable index if available
-                    if (overData.sortable?.index !== undefined) {
-                        targetColumnIndex = overData.sortable.index
-                        console.log('[DnD] Using sortable index:', targetColumnIndex)
-                    }
 
                     for (const section of content.sections) {
                         for (const row of section.rows) {
                             const columnIndex = row.columns.findIndex((c) => c.id === overId)
                             if (columnIndex !== -1) {
                                 targetRowId = row.id
-                                if (overData.sortable?.index === undefined) {
-                                    targetColumnIndex = columnIndex
-                                }
+                                targetColumnIndex = columnIndex
                                 break
                             }
                         }
@@ -388,34 +364,24 @@ export function BuilderDndProvider({ children }: BuilderDndProviderProps) {
                     // Check if moving within same column
                     const isSameColumn = sourceColumnId === targetColumnId
 
-                    // Use sortable index if available (more reliable for within-container moves)
+                    // Find target component position in target column
                     let targetComponentIndex = 0
-                    if (overData.sortable?.index !== undefined) {
-                        targetComponentIndex = overData.sortable.index
-                        console.log('[DnD] Using sortable index:', targetComponentIndex)
-                        console.log('[DnD] Same column?', isSameColumn)
-
-                        // When moving within the same column, the index is already correct
-                        // because @dnd-kit/sortable handles the adjustment
-                        if (isSameColumn) {
-                            console.log('[DnD] Within same column - using sortable index as-is')
-                        }
-                    } else {
-                        // Fallback: find component position manually
-                        for (const section of content.sections) {
-                            for (const row of section.rows) {
-                                for (const column of row.columns) {
+                    for (const section of content.sections) {
+                        for (const row of section.rows) {
+                            for (const column of row.columns) {
+                                if (column.id === targetColumnId) {
                                     const componentIndex = column.components.findIndex((c) => c.id === overId)
                                     if (componentIndex !== -1) {
                                         targetComponentIndex = componentIndex
-                                        break
                                     }
+                                    break
                                 }
-                                if (targetComponentIndex > 0) break
                             }
-                            if (targetComponentIndex > 0) break
                         }
                     }
+
+                    console.log('[DnD] Target component index:', targetComponentIndex)
+                    console.log('[DnD] Same column?', isSameColumn)
 
                     if (targetColumnId && activeId !== overId) {
                         console.log('[DnD] ══════════════════════════════════════')
