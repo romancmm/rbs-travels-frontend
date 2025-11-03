@@ -38,6 +38,12 @@ interface DragData {
     rowId?: string
     sectionId?: string
     accepts?: string[]
+    // Sortable data (from @dnd-kit/sortable)
+    sortable?: {
+        containerId: string
+        index: number
+        items: string[]
+    }
 }
 
 interface DndContextValue {
@@ -122,7 +128,15 @@ export function BuilderDndProvider({ children }: BuilderDndProviderProps) {
     const handleDragEnd = (event: DragEndEvent) => {
         const { active, over } = event
 
+        console.log('[DnD] 🎯 Drag end event:', {
+            active: active.id,
+            over: over?.id,
+            activeData: active.data.current,
+            overData: over?.data.current
+        })
+
         if (!over) {
+            console.log('[DnD] ❌ No drop target (over is null)')
             setActiveDragData(null)
             return
         }
@@ -131,11 +145,21 @@ export function BuilderDndProvider({ children }: BuilderDndProviderProps) {
         const overData = over.data.current as DragData
 
         if (!activeData) {
+            console.log('[DnD] ❌ No active data')
             setActiveDragData(null)
             return
         }
 
-        console.log('[DnD] Drag end:', { activeData, overData })
+        // The ID comes from the sortable element, not from data
+        const activeId = String(active.id)
+        const overId = String(over.id)
+
+        console.log('[DnD] 📦 Drag end details:', {
+            activeType: activeData.type,
+            overType: overData?.type,
+            activeId: activeId,
+            overId: overId
+        })
 
         // ==================== ADDING NEW ELEMENTS ====================
 
@@ -143,7 +167,7 @@ export function BuilderDndProvider({ children }: BuilderDndProviderProps) {
         if (
             activeData.type === 'component' &&
             activeData.componentType &&
-            activeData.id.startsWith('new-') // New component from sidebar
+            activeId.startsWith('new-') // New component from sidebar
         ) {
             console.log('[DnD] New component drag detected:', { activeData, overData })
             if (overData?.type === 'column' && overData.columnId) {
@@ -168,64 +192,103 @@ export function BuilderDndProvider({ children }: BuilderDndProviderProps) {
 
         // Moving section
         if (activeData.type === 'section' && overData?.type === 'section') {
-            if (activeData.id !== overData.id) {
-                const activeIndex = content.sections.findIndex((s) => s.id === activeData.id)
-                const overIndex = content.sections.findIndex((s) => s.id === overData.id)
-
-                if (activeIndex !== -1 && overIndex !== -1) {
-                    moveSection(activeData.id, overIndex)
+            console.log('[DnD] 🔵 Section drag detected')
+            if (activeId !== overId) {
+                // Use sortable index if available (more reliable)
+                let targetIndex = 0
+                if (overData.sortable?.index !== undefined) {
+                    targetIndex = overData.sortable.index
+                    console.log('[DnD] Using sortable index:', targetIndex)
+                } else {
+                    // Fallback: find section position manually
+                    targetIndex = content.sections.findIndex((s) => s.id === overId)
                 }
+
+                const activeIndex = content.sections.findIndex((s) => s.id === activeId)
+
+                console.log('[DnD] Moving section from index', activeIndex, 'to', targetIndex)
+
+                if (activeIndex !== -1 && targetIndex !== -1) {
+                    moveSection(activeId, targetIndex)
+                    console.log('[DnD] ✅ Section moved successfully')
+                } else {
+                    console.log('[DnD] ❌ Invalid section indices')
+                }
+            } else {
+                console.log('[DnD] ⚠️ Same section - no move needed')
             }
         }
 
         // Moving row
         if (activeData.type === 'row') {
+            console.log('[DnD] 🟢 Row drag detected')
             // Find row and its current section
             let sourceSectionId: string | null = null
             for (const section of content.sections) {
-                if (section.rows.some((r) => r.id === activeData.id)) {
+                if (section.rows.some((r) => r.id === activeId)) {
                     sourceSectionId = section.id
                     break
                 }
             }
 
+            console.log('[DnD] Row source section:', sourceSectionId)
+
             if (sourceSectionId) {
                 // Moving to another row position
                 if (overData?.type === 'row') {
+                    console.log('[DnD] Moving row to another row position')
                     // Find target section
                     let targetSectionId: string | null = null
                     let targetRowIndex = 0
 
+                    // Use sortable index if available
+                    if (overData.sortable?.index !== undefined) {
+                        targetRowIndex = overData.sortable.index
+                        console.log('[DnD] Using sortable index:', targetRowIndex)
+                    }
+
                     for (const section of content.sections) {
-                        const rowIndex = section.rows.findIndex((r) => r.id === overData.id)
+                        const rowIndex = section.rows.findIndex((r) => r.id === overId)
                         if (rowIndex !== -1) {
                             targetSectionId = section.id
-                            targetRowIndex = rowIndex
+                            if (overData.sortable?.index === undefined) {
+                                targetRowIndex = rowIndex
+                            }
                             break
                         }
                     }
 
-                    if (targetSectionId && activeData.id !== overData.id) {
-                        moveRow(activeData.id, targetSectionId, targetRowIndex)
+                    if (targetSectionId && activeId !== overId) {
+                        console.log('[DnD] Moving row', activeId, 'to section', targetSectionId, 'at index', targetRowIndex)
+                        moveRow(activeId, targetSectionId, targetRowIndex)
+                        console.log('[DnD] ✅ Row moved successfully')
+                    } else {
+                        console.log('[DnD] ⚠️ Same row or invalid target - no move needed')
                     }
                 }
                 // Moving to section (append)
                 else if (overData?.type === 'section') {
-                    const targetSection = content.sections.find((s) => s.id === overData.id)
+                    console.log('[DnD] Moving row to section (append)')
+                    const targetSection = content.sections.find((s) => s.id === overId)
                     if (targetSection) {
-                        moveRow(activeData.id, overData.id, targetSection.rows.length)
+                        console.log('[DnD] Appending row to section', overId)
+                        moveRow(activeId, overId, targetSection.rows.length)
+                        console.log('[DnD] ✅ Row appended successfully')
                     }
                 }
+            } else {
+                console.log('[DnD] ❌ Could not find source section for row')
             }
         }
 
         // Moving column
         if (activeData.type === 'column') {
+            console.log('[DnD] 🟣 Column drag detected')
             // Find column and its current row
             let sourceRowId: string | null = null
             for (const section of content.sections) {
                 for (const row of section.rows) {
-                    if (row.columns.some((c) => c.id === activeData.id)) {
+                    if (row.columns.some((c) => c.id === activeId)) {
                         sourceRowId = row.id
                         break
                     }
@@ -233,49 +296,70 @@ export function BuilderDndProvider({ children }: BuilderDndProviderProps) {
                 if (sourceRowId) break
             }
 
+            console.log('[DnD] Column source row:', sourceRowId)
+
             if (sourceRowId) {
                 // Moving to another column position
                 if (overData?.type === 'column') {
+                    console.log('[DnD] Moving column to another column position')
                     // Find target row
                     let targetRowId: string | null = null
                     let targetColumnIndex = 0
 
+                    // Use sortable index if available
+                    if (overData.sortable?.index !== undefined) {
+                        targetColumnIndex = overData.sortable.index
+                        console.log('[DnD] Using sortable index:', targetColumnIndex)
+                    }
+
                     for (const section of content.sections) {
                         for (const row of section.rows) {
-                            const columnIndex = row.columns.findIndex((c) => c.id === overData.id)
+                            const columnIndex = row.columns.findIndex((c) => c.id === overId)
                             if (columnIndex !== -1) {
                                 targetRowId = row.id
-                                targetColumnIndex = columnIndex
+                                if (overData.sortable?.index === undefined) {
+                                    targetColumnIndex = columnIndex
+                                }
                                 break
                             }
                         }
                         if (targetRowId) break
                     }
 
-                    if (targetRowId && activeData.id !== overData.id) {
-                        moveColumn(activeData.id, targetRowId, targetColumnIndex)
+                    if (targetRowId && activeId !== overId) {
+                        console.log('[DnD] Moving column', activeId, 'to row', targetRowId, 'at index', targetColumnIndex)
+                        moveColumn(activeId, targetRowId, targetColumnIndex)
+                        console.log('[DnD] ✅ Column moved successfully')
+                    } else {
+                        console.log('[DnD] ⚠️ Same column or invalid target - no move needed')
                     }
                 }
                 // Moving to row (append)
                 else if (overData?.type === 'row') {
+                    console.log('[DnD] Moving column to row (append)')
                     const targetRow = content.sections
                         .flatMap((s) => s.rows)
-                        .find((r) => r.id === overData.id)
+                        .find((r) => r.id === overId)
                     if (targetRow) {
-                        moveColumn(activeData.id, overData.id, targetRow.columns.length)
+                        console.log('[DnD] Appending column to row', overId)
+                        moveColumn(activeId, overId, targetRow.columns.length)
+                        console.log('[DnD] ✅ Column appended successfully')
                     }
                 }
+            } else {
+                console.log('[DnD] ❌ Could not find source row for column')
             }
         }
 
         // Moving component
-        if (activeData.type === 'component') {
+        if (activeData.type === 'component' && !activeId.startsWith('new-')) {
+            console.log('[DnD] 🟠 Component drag detected (existing component)')
             // Find component and its current column
             let sourceColumnId: string | null = null
             for (const section of content.sections) {
                 for (const row of section.rows) {
                     for (const column of row.columns) {
-                        if (column.components.some((c) => c.id === activeData.id)) {
+                        if (column.components.some((c) => c.id === activeId)) {
                             sourceColumnId = column.id
                             break
                         }
@@ -285,42 +369,100 @@ export function BuilderDndProvider({ children }: BuilderDndProviderProps) {
                 if (sourceColumnId) break
             }
 
+            console.log('[DnD] Component source column:', sourceColumnId)
+
             if (sourceColumnId) {
                 // Moving to another component position
                 if (overData?.type === 'component') {
-                    // Find target column
-                    let targetColumnId: string | null = null
-                    let targetComponentIndex = 0
+                    console.log('[DnD] Moving component to another component position')
 
-                    for (const section of content.sections) {
-                        for (const row of section.rows) {
-                            for (const column of row.columns) {
-                                const componentIndex = column.components.findIndex((c) => c.id === overData.id)
-                                if (componentIndex !== -1) {
-                                    targetColumnId = column.id
-                                    targetComponentIndex = componentIndex
-                                    break
-                                }
-                            }
-                            if (targetColumnId) break
-                        }
-                        if (targetColumnId) break
+                    // Get target column ID from overData
+                    const targetColumnId = overData.columnId || null
+
+                    if (!targetColumnId) {
+                        console.log('[DnD] ❌ No target column ID in overData')
+                        setActiveDragData(null)
+                        return
                     }
 
-                    if (targetColumnId && activeData.id !== overData.id) {
-                        moveComponent(activeData.id, targetColumnId, targetComponentIndex)
+                    // Check if moving within same column
+                    const isSameColumn = sourceColumnId === targetColumnId
+
+                    // Use sortable index if available (more reliable for within-container moves)
+                    let targetComponentIndex = 0
+                    if (overData.sortable?.index !== undefined) {
+                        targetComponentIndex = overData.sortable.index
+                        console.log('[DnD] Using sortable index:', targetComponentIndex)
+                        console.log('[DnD] Same column?', isSameColumn)
+
+                        // When moving within the same column, the index is already correct
+                        // because @dnd-kit/sortable handles the adjustment
+                        if (isSameColumn) {
+                            console.log('[DnD] Within same column - using sortable index as-is')
+                        }
+                    } else {
+                        // Fallback: find component position manually
+                        for (const section of content.sections) {
+                            for (const row of section.rows) {
+                                for (const column of row.columns) {
+                                    const componentIndex = column.components.findIndex((c) => c.id === overId)
+                                    if (componentIndex !== -1) {
+                                        targetComponentIndex = componentIndex
+                                        break
+                                    }
+                                }
+                                if (targetComponentIndex > 0) break
+                            }
+                            if (targetComponentIndex > 0) break
+                        }
+                    }
+
+                    if (targetColumnId && activeId !== overId) {
+                        console.log('[DnD] ══════════════════════════════════════')
+                        console.log('[DnD] 🎯 COMPONENT MOVE OPERATION')
+                        console.log('[DnD] Active component ID:', activeId)
+                        console.log('[DnD] Over component ID:', overId)
+                        console.log('[DnD] Source column:', sourceColumnId)
+                        console.log('[DnD] Target column:', targetColumnId)
+                        console.log('[DnD] Target index:', targetComponentIndex)
+                        console.log('[DnD] Same column:', sourceColumnId === targetColumnId)
+
+                        // Get current positions before move
+                        const sourceColumn = content.sections
+                            .flatMap((s) => s.rows)
+                            .flatMap((r) => r.columns)
+                            .find((c) => c.id === sourceColumnId)
+                        const targetColumn = content.sections
+                            .flatMap((s) => s.rows)
+                            .flatMap((r) => r.columns)
+                            .find((c) => c.id === targetColumnId)
+
+                        console.log('[DnD] Source column components:', sourceColumn?.components.map(c => ({ id: c.id, type: c.type, order: c.order })))
+                        console.log('[DnD] Target column components:', targetColumn?.components.map(c => ({ id: c.id, type: c.type, order: c.order })))
+
+                        moveComponent(activeId, targetColumnId, targetComponentIndex)
+
+                        console.log('[DnD] ✅ Component moved successfully')
+                        console.log('[DnD] ══════════════════════════════════════')
+                    } else {
+                        console.log('[DnD] ⚠️ Same component or invalid target - no move needed')
                     }
                 }
                 // Moving to column (append)
                 else if (overData?.type === 'column' && overData.columnId) {
+                    console.log('[DnD] Moving component to column (append)')
                     const targetColumn = content.sections
                         .flatMap((s) => s.rows)
                         .flatMap((r) => r.columns)
                         .find((c) => c.id === overData.columnId)
                     if (targetColumn) {
-                        moveComponent(activeData.id, overData.columnId, targetColumn.components.length)
+                        console.log('[DnD] Appending component to column', overData.columnId)
+                        moveComponent(activeId, overData.columnId, targetColumn.components.length)
+                        console.log('[DnD] ✅ Component appended successfully')
                     }
                 }
+            } else {
+                console.log('[DnD] ❌ Could not find source column for component')
             }
         }
 

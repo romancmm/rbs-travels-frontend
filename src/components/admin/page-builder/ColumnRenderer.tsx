@@ -22,14 +22,6 @@ interface ColumnRendererProps {
 export function ColumnRenderer({ column, sectionId, rowId }: ColumnRendererProps) {
     const [isPickerOpen, setIsPickerOpen] = useState(false)
 
-    console.log('[ColumnRenderer] Rendering column:', {
-        columnId: column.id,
-        width: column.width,
-        componentsCount: column.components.length,
-        rowId,
-        sectionId
-    })
-
     const selectedId = useBuilderStore((state) => state.selection.selectedId)
     const hoveredId = useBuilderStore((state) => state.selection.hoveredId)
     const selectElement = useBuilderStore((state) => state.selectElement)
@@ -197,7 +189,7 @@ export function ColumnRenderer({ column, sectionId, rowId }: ColumnRendererProps
                             onClick={(e) => {
                                 e.stopPropagation()
                                 e.preventDefault()
-                                console.log('[ColumnRenderer] Add component button clicked for column:', column.id)
+                                // console.log('[ColumnRenderer] Add component button clicked for column:', column.id)
                                 setIsPickerOpen(true)
                             }}
                             title='Add component'

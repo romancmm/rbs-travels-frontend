@@ -518,7 +518,14 @@ export const moveComponent = (
   targetColumnId: string,
   newIndex: number
 ): PageContent => {
+  console.log('[builder-utils] 🔧 moveComponent called:', {
+    componentId,
+    targetColumnId,
+    newIndex
+  })
+
   let componentToMove: Component | null = null
+  let sourceColumnId: string | null = null
 
   // Find and remove component from source
   const contentWithoutComponent: PageContent = {
@@ -531,11 +538,17 @@ export const moveComponent = (
           const componentIndex = column.components.findIndex((c) => c.id === componentId)
           if (componentIndex !== -1) {
             componentToMove = column.components[componentIndex]
+            sourceColumnId = column.id
+            console.log('[builder-utils] Found component in column:', column.id)
+            console.log('[builder-utils] Component was at index:', componentIndex)
+            console.log('[builder-utils] Components before removal:', column.components.length)
+            const filtered = column.components
+              .filter((c) => c.id !== componentId)
+              .map((c, i) => ({ ...c, order: i }))
+            console.log('[builder-utils] Components after removal:', filtered.length)
             return {
               ...column,
-              components: column.components
-                .filter((c) => c.id !== componentId)
-                .map((c, i) => ({ ...c, order: i }))
+              components: filtered
             }
           }
           return column
@@ -544,10 +557,39 @@ export const moveComponent = (
     }))
   }
 
-  if (!componentToMove) return content
+  if (!componentToMove) {
+    console.log('[builder-utils] ❌ Component not found:', componentId)
+    return content
+  }
+
+  console.log(
+    '[builder-utils] Moving component from column:',
+    sourceColumnId,
+    'to column:',
+    targetColumnId
+  )
+  console.log('[builder-utils] Target index:', newIndex)
 
   // Add component to target column
-  return addComponent(contentWithoutComponent, targetColumnId, componentToMove, newIndex)
+  const result = addComponent(contentWithoutComponent, targetColumnId, componentToMove, newIndex)
+
+  // Log result
+  const targetColumn = result.sections
+    .flatMap((s) => s.rows)
+    .flatMap((r) => r.columns)
+    .find((c) => c.id === targetColumnId)
+
+  console.log(
+    '[builder-utils] ✅ Component moved. Target column now has',
+    targetColumn?.components.length,
+    'components'
+  )
+  console.log(
+    '[builder-utils] Component order in target:',
+    targetColumn?.components.map((c, i) => `${i}: ${c.type}(${c.id.substring(0, 8)})`)
+  )
+
+  return result
 }
 
 /**
