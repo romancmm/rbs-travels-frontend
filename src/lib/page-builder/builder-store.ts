@@ -4,6 +4,7 @@
  * Central state management for the entire page builder
  */
 
+import requests from '@/services/network/http'
 import type {
   BuilderError,
   Column,
@@ -78,6 +79,10 @@ interface HistoryState {
 interface BuilderStore {
   // Core data
   pageId: string | null
+  pageSlug: string | null
+  pageTitle: string | null
+  pageDescription: string | null
+  pageSEO: any | null
   content: PageContent
   originalContent: PageContent | null
 
@@ -151,7 +156,16 @@ interface BuilderStore {
   canPaste: () => boolean
 
   // Actions - Page
-  loadPage: (pageId: string, content: PageContent) => void
+  loadPage: (
+    pageId: string,
+    content: PageContent,
+    metadata?: {
+      slug?: string
+      title?: string
+      description?: string
+      seo?: any
+    }
+  ) => void
   savePage: () => Promise<void>
   publishPage: () => Promise<void>
   resetPage: () => void
@@ -202,6 +216,10 @@ export const useBuilderStore = create<BuilderStore>()(
     immer((set, get) => ({
       // Initial state
       pageId: null,
+      pageSlug: null,
+      pageTitle: null,
+      pageDescription: null,
+      pageSEO: null,
       content: createEmptyContent(),
       originalContent: null,
       selection: initialSelectionState,
@@ -617,9 +635,13 @@ export const useBuilderStore = create<BuilderStore>()(
 
       // ==================== PAGE ACTIONS ====================
 
-      loadPage: (pageId, content) => {
+      loadPage: (pageId, content, metadata) => {
         set((state) => {
           state.pageId = pageId
+          state.pageSlug = metadata?.slug || null
+          state.pageTitle = metadata?.title || null
+          state.pageDescription = metadata?.description || null
+          state.pageSEO = metadata?.seo || null
           state.content = content
           state.originalContent = JSON.parse(JSON.stringify(content))
           state.isDirty = false
@@ -630,8 +652,11 @@ export const useBuilderStore = create<BuilderStore>()(
       },
 
       savePage: async () => {
-        const { pageId, content } = get()
-        if (!pageId) return
+        const { pageId, pageSlug, pageTitle, pageDescription, pageSEO, content } = get()
+        if (!pageId) {
+          console.error('[Store] Cannot save: pageId is null')
+          return
+        }
 
         set((state) => {
           state.isSaving = true
@@ -644,21 +669,45 @@ export const useBuilderStore = create<BuilderStore>()(
             throw new Error(`Invalid content: ${validation.errors.join(', ')}`)
           }
 
-          // TODO: Implement actual API call
-          // await pageBuilderService.updatePage(pageId, { content })
+          // Prepare payload with all page data
+          const payload: any = {
+            content: content
+          }
+
+          // Include additional metadata if available
+          if (pageSlug) payload.slug = pageSlug
+          if (pageTitle) payload.title = pageTitle
+          if (pageDescription) payload.description = pageDescription
+          if (pageSEO) payload.seo = pageSEO
+
+          console.log('[Store] Saving page:', { pageId, payload })
+
+          // Call API to save page content
+          // Using PUT to update the page with new content
+          const response = await requests.put(`/admin/pages/${pageId}`, payload)
+
+          console.log('[Store] Page saved successfully:', response)
 
           set((state) => {
             state.isDirty = false
             state.lastSaved = new Date()
             state.originalContent = JSON.parse(JSON.stringify(content))
           })
+
+          // Success notification (you might want to use a toast notification system)
+          console.log('[Store] ✅ Page saved successfully!')
         } catch (error: any) {
+          console.error('[Store] Failed to save page:', error)
+
           get().addError({
             id: Date.now().toString(),
             type: 'save',
             message: error.message || 'Failed to save page',
             timestamp: new Date()
           })
+
+          // Re-throw to allow caller to handle the error
+          throw error
         } finally {
           set((state) => {
             state.isSaving = false
@@ -668,7 +717,10 @@ export const useBuilderStore = create<BuilderStore>()(
 
       publishPage: async () => {
         const { pageId } = get()
-        if (!pageId) return
+        if (!pageId) {
+          console.error('[Store] Cannot publish: pageId is null')
+          return
+        }
 
         set((state) => {
           state.isPublishing = true
@@ -678,15 +730,24 @@ export const useBuilderStore = create<BuilderStore>()(
           // Save first, then publish
           await get().savePage()
 
-          // TODO: Implement actual API call
-          // await pageBuilderService.publishPage(pageId)
+          console.log('[Store] Publishing page:', pageId)
+
+          // Call API to publish the page
+          const response = await requests.post(`/admin/pages/${pageId}/publish`)
+
+          console.log('[Store] ✅ Page published successfully:', response)
         } catch (error: any) {
+          console.error('[Store] Failed to publish page:', error)
+
           get().addError({
             id: Date.now().toString(),
             type: 'save',
             message: error.message || 'Failed to publish page',
             timestamp: new Date()
           })
+
+          // Re-throw to allow caller to handle the error
+          throw error
         } finally {
           set((state) => {
             state.isPublishing = false
