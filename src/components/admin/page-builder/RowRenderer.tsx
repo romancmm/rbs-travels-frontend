@@ -23,6 +23,7 @@ export function RowRenderer({ row, sectionId }: RowRendererProps) {
   const hoverElement = useBuilderStore((state) => state.hoverElement)
   const deleteRow = useBuilderStore((state) => state.deleteRow)
   const addColumn = useBuilderStore((state) => state.addColumn)
+  const updateColumn = useBuilderStore((state) => state.updateColumn)
 
   const isSelected = selectedId === row.id
   const isHovered = hoveredId === row.id
@@ -91,7 +92,7 @@ export function RowRenderer({ row, sectionId }: RowRendererProps) {
         {/* Row Toolbar - Shows on hover/select */}
         <div
           className={cn(
-            '-top-9 right-0 left-0 z-20 absolute flex items-center gap-2 opacity-0 transition-opacity',
+            '-top-9 right-0 left-0 z-20 absolute flex items-center gap-2 opacity-0 w-fit transition-opacity',
             (isHovered || isSelected) && 'opacity-100'
           )}
         >
@@ -159,37 +160,46 @@ export function RowRenderer({ row, sectionId }: RowRendererProps) {
               size='sm'
               className='gap-1 px-2 h-7'
               onClick={(e) => {
-                console.log('[RowRenderer] 🔵 Add Column button clicked!')
                 e.stopPropagation()
+                e.preventDefault()
+                console.log('[RowRenderer] 🔵 Add Column button clicked!')
 
-                console.log('[RowRenderer] Current row:', row)
-                console.log('[RowRenderer] Current columns:', row.columns)
+                const currentColumnCount = row.columns.length
+                const newColumnCount = currentColumnCount + 1
 
-                // Calculate total width of existing columns
-                const totalWidth = row.columns.reduce((sum, col) => sum + col.width, 0)
-                const availableWidth = 12 - totalWidth
-
-                console.log('[RowRenderer] Width calculation:', {
-                  totalWidth,
-                  availableWidth,
-                  maxWidth: 12
-                })
-
-                // If no space, show warning and don't add
-                if (availableWidth <= 0) {
-                  console.warn('[RowRenderer] ❌ Cannot add column: row is full (12/12 width)')
-                  alert(
-                    'Cannot add column: row is full (12/12 width). Reduce existing column widths first.'
-                  )
+                // Check if we can add more columns (max 12 columns)
+                if (newColumnCount > 12) {
+                  console.warn('[RowRenderer] ❌ Cannot add column: maximum 12 columns reached')
+                  alert('Cannot add column: maximum 12 columns per row')
                   return
                 }
 
-                // Create new column with available width
-                const columnWidth = availableWidth
+                // Calculate equal width for all columns after adding new one
+                const equalWidth = Math.floor(12 / newColumnCount)
+                const remainder = 12 % newColumnCount
+
+                console.log('[RowRenderer] Width distribution:', {
+                  currentColumns: currentColumnCount,
+                  newColumns: newColumnCount,
+                  equalWidth,
+                  remainder
+                })
+
+                // Update all existing columns to have equal width
+                row.columns.forEach((col, index) => {
+                  const newWidth = equalWidth + (index < remainder ? 1 : 0)
+                  console.log(
+                    `[RowRenderer] Updating column ${col.id} width: ${col.width} -> ${newWidth}`
+                  )
+                  updateColumn(col.id, { width: newWidth })
+                })
+
+                // Create new column with equal width (plus 1 if there's remainder and it's one of the first columns)
+                const newColumnWidth = equalWidth + (currentColumnCount < remainder ? 1 : 0)
 
                 const newColumn: Column = {
                   id: generateId(),
-                  width: columnWidth,
+                  width: newColumnWidth,
                   order: row.columns.length,
                   components: []
                 }
@@ -197,22 +207,20 @@ export function RowRenderer({ row, sectionId }: RowRendererProps) {
                 console.log('[RowRenderer] ✅ Creating new column:', {
                   rowId: row.id,
                   newColumn,
-                  existingColumns: row.columns.length,
-                  totalWidth,
-                  availableWidth,
-                  columnWidth
+                  distribution: `${newColumnCount} columns = ${equalWidth} width each + ${remainder} columns get +1`
                 })
 
-                console.log('[RowRenderer] Calling addColumn store action...')
                 addColumn(row.id, newColumn)
                 console.log('[RowRenderer] addColumn store action called!')
               }}
               title={
-                row.columns.reduce((sum, col) => sum + col.width, 0) >= 12
-                  ? 'Row is full (12/12 width)'
-                  : 'Add column'
+                row.columns.length >= 12
+                  ? 'Maximum 12 columns per row'
+                  : `Add column (${row.columns.length + 1} columns = ${Math.floor(
+                      12 / (row.columns.length + 1)
+                    )} width each)`
               }
-              //   disabled={row.columns.reduce((sum, col) => sum + col.width, 0) >= 12}
+              disabled={row.columns.length >= 12}
             >
               <Columns className='w-3.5 h-3.5' />
               <span className='text-xs'>Add Column</span>
@@ -228,7 +236,7 @@ export function RowRenderer({ row, sectionId }: RowRendererProps) {
                 e.stopPropagation()
                 const newColumn: Column = {
                   id: generateId(),
-                  width: 12,
+                  width: 12, // First column gets full width
                   order: 0,
                   components: []
                 }
@@ -255,44 +263,6 @@ export function RowRenderer({ row, sectionId }: RowRendererProps) {
                   rowId={row.id}
                 />
               ))}
-
-              {/* Visual indicator for available space */}
-              {row.columns.reduce((sum, col) => sum + col.width, 0) < 12 &&
-                (isHovered || isSelected) && (
-                  <div
-                    className='flex flex-col justify-center items-center gap-2 bg-green-50/50 hover:bg-green-100/70 p-4 border-2 border-green-300 border-dashed rounded-lg min-h-[100px] transition-all cursor-pointer'
-                    style={{
-                      flex: `0 0 calc(${
-                        ((12 - row.columns.reduce((sum, col) => sum + col.width, 0)) / 12) * 100
-                      }% - 1rem)`
-                    }}
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      const totalWidth = row.columns.reduce((sum, col) => sum + col.width, 0)
-                      const availableWidth = 12 - totalWidth
-
-                      if (availableWidth <= 0) return
-
-                      const newColumn: Column = {
-                        id: generateId(),
-                        width: availableWidth,
-                        order: row.columns.length,
-                        components: []
-                      }
-
-                      addColumn(row.id, newColumn)
-                    }}
-                    title={`Click to add column (${
-                      12 - row.columns.reduce((sum, col) => sum + col.width, 0)
-                    }/12 available)`}
-                  >
-                    <Columns className='w-5 h-5 text-green-600' />
-                    <span className='font-medium text-green-700 text-xs text-center'>
-                      Available Space
-                      <br />({12 - row.columns.reduce((sum, col) => sum + col.width, 0)}/12)
-                    </span>
-                  </div>
-                )}
             </div>
           </SortableContext>
         )}

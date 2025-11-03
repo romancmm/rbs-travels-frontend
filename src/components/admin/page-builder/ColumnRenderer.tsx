@@ -127,7 +127,7 @@ export function ColumnRenderer({ column, sectionId, rowId }: ColumnRendererProps
         {/* Column Toolbar - Shows on hover/select */}
         <div
           className={cn(
-            '-top-9 right-0 left-0 z-30 absolute flex items-center gap-2 opacity-0 transition-opacity',
+            '-top-9 right-0 left-0 z-30 absolute flex items-center gap-2 opacity-0 w-fit transition-opacity',
             (isHovered || isSelected) && 'opacity-100'
           )}
         >
@@ -196,6 +196,7 @@ export function ColumnRenderer({ column, sectionId, rowId }: ColumnRendererProps
               className='gap-1 px-2 h-7 text-blue-600 hover:text-blue-700'
               onClick={(e) => {
                 e.stopPropagation()
+                e.preventDefault()
                 console.log('[ColumnRenderer] Add component button clicked for column:', column.id)
                 setIsPickerOpen(true)
               }}
