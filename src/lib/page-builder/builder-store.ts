@@ -636,6 +636,13 @@ export const useBuilderStore = create<BuilderStore>()(
       // ==================== PAGE ACTIONS ====================
 
       loadPage: (pageId, content, metadata) => {
+        console.log('[Store] 📥 loadPage called:', {
+          pageId,
+          contentSections: content.sections.length,
+          metadata,
+          fullContent: JSON.stringify(content, null, 2)
+        })
+
         set((state) => {
           state.pageId = pageId
           state.pageSlug = metadata?.slug || null
@@ -649,13 +656,27 @@ export const useBuilderStore = create<BuilderStore>()(
           state.history = initialHistoryState
           state.errors = []
         })
+
+        console.log('[Store] ✅ Page loaded, current content:', get().content)
       },
 
       savePage: async () => {
         const { pageId, pageSlug, pageTitle, pageDescription, pageSEO, content } = get()
+        console.log('[content] :>> ', content)
+        console.log('[Store] 🔍 savePage called with:', {
+          pageId,
+          pageSlug,
+          contentSections: content.sections.length,
+          fullContent: JSON.stringify(content, null, 2)
+        })
+
         if (!pageId) {
           console.error('[Store] Cannot save: pageId is null')
           return
+        }
+
+        if (content.sections.length === 0) {
+          console.warn('[Store] ⚠️ Content is empty (no sections)! Is this intentional?')
         }
 
         set((state) => {
@@ -673,14 +694,18 @@ export const useBuilderStore = create<BuilderStore>()(
           const payload: any = {
             content: content
           }
-
           // Include additional metadata if available
           if (pageSlug) payload.slug = pageSlug
           if (pageTitle) payload.title = pageTitle
           if (pageDescription) payload.description = pageDescription
           if (pageSEO) payload.seo = pageSEO
 
-          console.log('[Store] Saving page:', { pageId, payload })
+          console.log('[Store] 💾 Saving page:', {
+            pageId,
+            payload,
+            payloadContentSections: payload.content.sections.length
+          })
+          console.log('[payload2] :>> ', payload)
 
           // Call API to save page content
           // Using PUT to update the page with new content
