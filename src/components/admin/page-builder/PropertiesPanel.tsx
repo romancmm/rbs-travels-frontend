@@ -17,7 +17,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { useBuilderStore } from '@/lib/page-builder/builder-store'
 import { findElementById } from '@/lib/page-builder/builder-utils'
 import { componentRegistry } from '@/lib/page-builder/component-registry'
-import type { BaseComponent } from '@/types/page-builder'
+import type { BaseComponent, Column, Row, Section } from '@/types/page-builder'
 
 export function PropertiesPanel() {
     const selectedId = useBuilderStore((state) => state.selection.selectedId)
@@ -25,6 +25,9 @@ export function PropertiesPanel() {
     const rightPanelOpen = useBuilderStore((state) => state.ui.rightPanelOpen)
     const content = useBuilderStore((state) => state.content)
     const updateComponent = useBuilderStore((state) => state.updateComponent)
+    const updateSection = useBuilderStore((state) => state.updateSection)
+    const updateRow = useBuilderStore((state) => state.updateRow)
+    const updateColumn = useBuilderStore((state) => state.updateColumn)
 
     if (!rightPanelOpen) return null
 
@@ -52,7 +55,22 @@ export function PropertiesPanel() {
 
                 {/* Content */}
                 <div className='flex-1 p-4 overflow-auto'>
-                    {selectedElement?.type === 'component' && selectedElement.element ? (
+                    {selectedElement?.type === 'section' && selectedElement.element ? (
+                        <SectionProperties
+                            section={selectedElement.element}
+                            onUpdate={(updates: Partial<Section>) => updateSection(selectedId!, updates)}
+                        />
+                    ) : selectedElement?.type === 'row' && selectedElement.element ? (
+                        <RowProperties
+                            row={selectedElement.element}
+                            onUpdate={(updates: Partial<Row>) => updateRow(selectedId!, updates)}
+                        />
+                    ) : selectedElement?.type === 'column' && selectedElement.element ? (
+                        <ColumnProperties
+                            column={selectedElement.element}
+                            onUpdate={(updates: Partial<Column>) => updateColumn(selectedId!, updates)}
+                        />
+                    ) : selectedElement?.type === 'component' && selectedElement.element ? (
                         <ComponentProperties
                             component={selectedElement.element as BaseComponent}
                             onUpdate={(updates) => updateComponent(selectedId!, updates)}
@@ -66,7 +84,7 @@ export function PropertiesPanel() {
                                 <p className='mt-1 text-gray-500 text-xs'>ID: {selectedId}</p>
                             </div>
                             <p className='text-muted-foreground text-sm'>
-                                Properties for {selectedType} coming soon...
+                                Unable to load properties for {selectedType}
                             </p>
                         </div>
                     ) : (
@@ -78,6 +96,387 @@ export function PropertiesPanel() {
                             </p>
                         </div>
                     )}
+                </div>
+            </div>
+        </div>
+    )
+}
+
+// ==================== SECTION PROPERTIES ====================
+
+function SectionProperties({ section, onUpdate }: any) {
+    const [localSettings, setLocalSettings] = useState(section.settings || {})
+
+    useEffect(() => {
+        setLocalSettings(section.settings || {})
+    }, [section])
+
+    const handleChange = (path: string, value: any) => {
+        const keys = path.split('.')
+        const newSettings = { ...localSettings }
+        let current: any = newSettings
+
+        for (let i = 0; i < keys.length - 1; i++) {
+            if (!current[keys[i]]) current[keys[i]] = {}
+            current = current[keys[i]]
+        }
+
+        current[keys[keys.length - 1]] = value
+        setLocalSettings(newSettings)
+        onUpdate({ settings: newSettings })
+    }
+
+    return (
+        <div className='space-y-6'>
+            <div className='bg-blue-50 p-3 border border-blue-200 rounded-lg'>
+                <p className='font-medium text-sm'>Section</p>
+                <p className='mt-1 text-muted-foreground text-xs'>Configure section layout and styling</p>
+            </div>
+
+            {/* Section Name */}
+            <div>
+                <Label>Section Name</Label>
+                <Input
+                    value={section.name || ''}
+                    onChange={(e) => onUpdate({ name: e.target.value })}
+                    placeholder='Hero, Features, etc.'
+                />
+            </div>
+
+            {/* Background */}
+            <div className='space-y-3'>
+                <h3 className='font-medium text-sm'>Background</h3>
+                <div>
+                    <Label>Background Color</Label>
+                    <Input
+                        type='color'
+                        value={localSettings.background?.color || '#ffffff'}
+                        onChange={(e) => handleChange('background.color', e.target.value)}
+                    />
+                </div>
+                <div>
+                    <Label>Background Image URL</Label>
+                    <Input
+                        value={localSettings.background?.image || ''}
+                        onChange={(e) => handleChange('background.image', e.target.value)}
+                        placeholder='https://example.com/image.jpg'
+                    />
+                </div>
+            </div>
+
+            {/* Padding */}
+            <div className='space-y-3'>
+                <h3 className='font-medium text-sm'>Padding</h3>
+                <div className='gap-2 grid grid-cols-2'>
+                    <div>
+                        <Label>Top</Label>
+                        <Input
+                            value={localSettings.padding?.top || ''}
+                            onChange={(e) => handleChange('padding.top', e.target.value)}
+                            placeholder='0px'
+                        />
+                    </div>
+                    <div>
+                        <Label>Bottom</Label>
+                        <Input
+                            value={localSettings.padding?.bottom || ''}
+                            onChange={(e) => handleChange('padding.bottom', e.target.value)}
+                            placeholder='0px'
+                        />
+                    </div>
+                    <div>
+                        <Label>Left</Label>
+                        <Input
+                            value={localSettings.padding?.left || ''}
+                            onChange={(e) => handleChange('padding.left', e.target.value)}
+                            placeholder='0px'
+                        />
+                    </div>
+                    <div>
+                        <Label>Right</Label>
+                        <Input
+                            value={localSettings.padding?.right || ''}
+                            onChange={(e) => handleChange('padding.right', e.target.value)}
+                            placeholder='0px'
+                        />
+                    </div>
+                </div>
+            </div>
+
+            {/* Margin */}
+            <div className='space-y-3'>
+                <h3 className='font-medium text-sm'>Margin</h3>
+                <div className='gap-2 grid grid-cols-2'>
+                    <div>
+                        <Label>Top</Label>
+                        <Input
+                            value={localSettings.margin?.top || ''}
+                            onChange={(e) => handleChange('margin.top', e.target.value)}
+                            placeholder='0px'
+                        />
+                    </div>
+                    <div>
+                        <Label>Bottom</Label>
+                        <Input
+                            value={localSettings.margin?.bottom || ''}
+                            onChange={(e) => handleChange('margin.bottom', e.target.value)}
+                            placeholder='0px'
+                        />
+                    </div>
+                </div>
+            </div>
+        </div>
+    )
+}
+
+// ==================== ROW PROPERTIES ====================
+
+function RowProperties({ row, onUpdate }: any) {
+    const [localSettings, setLocalSettings] = useState(row.settings || {})
+
+    useEffect(() => {
+        setLocalSettings(row.settings || {})
+    }, [row])
+
+    const handleChange = (path: string, value: any) => {
+        const keys = path.split('.')
+        const newSettings = { ...localSettings }
+        let current: any = newSettings
+
+        for (let i = 0; i < keys.length - 1; i++) {
+            if (!current[keys[i]]) current[keys[i]] = {}
+            current = current[keys[i]]
+        }
+
+        current[keys[keys.length - 1]] = value
+        setLocalSettings(newSettings)
+        onUpdate({ settings: newSettings })
+    }
+
+    return (
+        <div className='space-y-6'>
+            <div className='bg-green-50 p-3 border border-green-200 rounded-lg'>
+                <p className='font-medium text-sm'>Row</p>
+                <p className='mt-1 text-muted-foreground text-xs'>Configure row layout and spacing</p>
+            </div>
+
+            {/* Layout */}
+            <div className='space-y-3'>
+                <h3 className='font-medium text-sm'>Layout</h3>
+                <div>
+                    <Label>Columns Gap</Label>
+                    <Input
+                        value={localSettings.columnsGap || ''}
+                        onChange={(e) => handleChange('columnsGap', e.target.value)}
+                        placeholder='1rem, 16px'
+                    />
+                </div>
+                <div>
+                    <Label>Alignment</Label>
+                    <Select
+                        value={localSettings.alignment || 'left'}
+                        onValueChange={(value) => handleChange('alignment', value)}
+                    >
+                        <SelectTrigger>
+                            <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value='left'>Left</SelectItem>
+                            <SelectItem value='center'>Center</SelectItem>
+                            <SelectItem value='right'>Right</SelectItem>
+                        </SelectContent>
+                    </Select>
+                </div>
+            </div>
+
+            {/* Background */}
+            <div className='space-y-3'>
+                <h3 className='font-medium text-sm'>Background</h3>
+                <div>
+                    <Label>Background Color</Label>
+                    <Input
+                        type='color'
+                        value={localSettings.background || '#ffffff'}
+                        onChange={(e) => handleChange('background', e.target.value)}
+                    />
+                </div>
+            </div>
+
+            {/* Padding */}
+            <div className='space-y-3'>
+                <h3 className='font-medium text-sm'>Padding</h3>
+                <div className='gap-2 grid grid-cols-2'>
+                    <div>
+                        <Label>Top</Label>
+                        <Input
+                            value={localSettings.padding?.top || ''}
+                            onChange={(e) => handleChange('padding.top', e.target.value)}
+                            placeholder='0px'
+                        />
+                    </div>
+                    <div>
+                        <Label>Bottom</Label>
+                        <Input
+                            value={localSettings.padding?.bottom || ''}
+                            onChange={(e) => handleChange('padding.bottom', e.target.value)}
+                            placeholder='0px'
+                        />
+                    </div>
+                    <div>
+                        <Label>Left</Label>
+                        <Input
+                            value={localSettings.padding?.left || ''}
+                            onChange={(e) => handleChange('padding.left', e.target.value)}
+                            placeholder='0px'
+                        />
+                    </div>
+                    <div>
+                        <Label>Right</Label>
+                        <Input
+                            value={localSettings.padding?.right || ''}
+                            onChange={(e) => handleChange('padding.right', e.target.value)}
+                            placeholder='0px'
+                        />
+                    </div>
+                </div>
+            </div>
+        </div>
+    )
+}
+
+// ==================== COLUMN PROPERTIES ====================
+
+function ColumnProperties({ column, onUpdate }: any) {
+    const [localSettings, setLocalSettings] = useState(column.settings || {})
+
+    useEffect(() => {
+        setLocalSettings(column.settings || {})
+    }, [column])
+
+    const handleChange = (path: string, value: any) => {
+        const keys = path.split('.')
+        const newSettings = { ...localSettings }
+        let current: any = newSettings
+
+        for (let i = 0; i < keys.length - 1; i++) {
+            if (!current[keys[i]]) current[keys[i]] = {}
+            current = current[keys[i]]
+        }
+
+        current[keys[keys.length - 1]] = value
+        setLocalSettings(newSettings)
+        onUpdate({ settings: newSettings })
+    }
+
+    return (
+        <div className='space-y-6'>
+            <div className='bg-purple-50 p-3 border border-purple-200 rounded-lg'>
+                <p className='font-medium text-sm'>Column ({column.width}/12)</p>
+                <p className='mt-1 text-muted-foreground text-xs'>Configure column layout and styling</p>
+            </div>
+
+            {/* Layout */}
+            <div className='space-y-3'>
+                <h3 className='font-medium text-sm'>Layout</h3>
+                <div>
+                    <Label>Width (1-12)</Label>
+                    <Input
+                        type='number'
+                        min={1}
+                        max={12}
+                        value={column.width}
+                        onChange={(e) => onUpdate({ width: parseInt(e.target.value) || 1 })}
+                    />
+                </div>
+                <div>
+                    <Label>Vertical Align</Label>
+                    <Select
+                        value={localSettings.verticalAlign || 'top'}
+                        onValueChange={(value) => handleChange('verticalAlign', value)}
+                    >
+                        <SelectTrigger>
+                            <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value='top'>Top</SelectItem>
+                            <SelectItem value='center'>Center</SelectItem>
+                            <SelectItem value='bottom'>Bottom</SelectItem>
+                            <SelectItem value='stretch'>Stretch</SelectItem>
+                        </SelectContent>
+                    </Select>
+                </div>
+            </div>
+
+            {/* Background */}
+            <div className='space-y-3'>
+                <h3 className='font-medium text-sm'>Background</h3>
+                <div>
+                    <Label>Background Color</Label>
+                    <Input
+                        type='color'
+                        value={localSettings.background || '#ffffff'}
+                        onChange={(e) => handleChange('background', e.target.value)}
+                    />
+                </div>
+            </div>
+
+            {/* Padding */}
+            <div className='space-y-3'>
+                <h3 className='font-medium text-sm'>Padding</h3>
+                <div className='gap-2 grid grid-cols-2'>
+                    <div>
+                        <Label>Top</Label>
+                        <Input
+                            value={localSettings.padding?.top || ''}
+                            onChange={(e) => handleChange('padding.top', e.target.value)}
+                            placeholder='0px'
+                        />
+                    </div>
+                    <div>
+                        <Label>Bottom</Label>
+                        <Input
+                            value={localSettings.padding?.bottom || ''}
+                            onChange={(e) => handleChange('padding.bottom', e.target.value)}
+                            placeholder='0px'
+                        />
+                    </div>
+                    <div>
+                        <Label>Left</Label>
+                        <Input
+                            value={localSettings.padding?.left || ''}
+                            onChange={(e) => handleChange('padding.left', e.target.value)}
+                            placeholder='0px'
+                        />
+                    </div>
+                    <div>
+                        <Label>Right</Label>
+                        <Input
+                            value={localSettings.padding?.right || ''}
+                            onChange={(e) => handleChange('padding.right', e.target.value)}
+                            placeholder='0px'
+                        />
+                    </div>
+                </div>
+            </div>
+
+            {/* Border */}
+            <div className='space-y-3'>
+                <h3 className='font-medium text-sm'>Border</h3>
+                <div>
+                    <Label>Border</Label>
+                    <Input
+                        value={localSettings.border || ''}
+                        onChange={(e) => handleChange('border', e.target.value)}
+                        placeholder='1px solid #ccc'
+                    />
+                </div>
+                <div>
+                    <Label>Border Radius</Label>
+                    <Input
+                        value={localSettings.borderRadius || ''}
+                        onChange={(e) => handleChange('borderRadius', e.target.value)}
+                        placeholder='4px, 0.5rem'
+                    />
                 </div>
             </div>
         </div>

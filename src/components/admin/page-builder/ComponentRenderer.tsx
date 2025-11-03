@@ -108,7 +108,7 @@ export function ComponentRenderer({
                         className='p-0 w-7 h-7'
                         onClick={(e) => {
                             e.stopPropagation()
-                            // TODO: Open settings panel
+                            selectElement(component.id, 'component')
                         }}
                         title='Component settings'
                     >
