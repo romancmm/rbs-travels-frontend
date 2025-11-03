@@ -371,6 +371,38 @@ function ImageProperties({ props, onChange }: any) {
 // ==================== VIDEO PROPERTIES ====================
 
 function VideoProperties({ props, onChange }: any) {
+    // Extract video ID from URL
+    const getVideoEmbedUrl = (url: string, provider: string) => {
+        if (!url) return null
+
+        try {
+            if (provider === 'youtube') {
+                // Handle various YouTube URL formats
+                let videoId = ''
+                if (url.includes('youtube.com/watch?v=')) {
+                    videoId = url.split('v=')[1]?.split('&')[0]
+                } else if (url.includes('youtu.be/')) {
+                    videoId = url.split('youtu.be/')[1]?.split('?')[0]
+                } else if (url.includes('youtube.com/embed/')) {
+                    videoId = url.split('embed/')[1]?.split('?')[0]
+                }
+                return videoId ? `https://www.youtube.com/embed/${videoId}` : null
+            } else if (provider === 'vimeo') {
+                // Handle Vimeo URLs
+                const match = url.match(/vimeo\.com\/(\d+)/)
+                return match ? `https://player.vimeo.com/video/${match[1]}` : null
+            } else if (provider === 'direct') {
+                // Direct video URL
+                return url
+            }
+        } catch (error) {
+            console.error('Error parsing video URL:', error)
+        }
+        return null
+    }
+
+    const embedUrl = getVideoEmbedUrl(props.url || '', props.provider || 'youtube')
+
     return (
         <div className='space-y-4'>
             <div>
@@ -420,6 +452,46 @@ function VideoProperties({ props, onChange }: any) {
                     </SelectContent>
                 </Select>
             </div>
+
+            {/* Video Preview */}
+            {embedUrl && (
+                <div>
+                    <Label>Preview</Label>
+                    <div className='relative bg-black mt-2 rounded-lg overflow-hidden'>
+                        <div
+                            style={{
+                                paddingBottom:
+                                    props.aspectRatio === '4/3'
+                                        ? '75%'
+                                        : props.aspectRatio === '1/1'
+                                            ? '100%'
+                                            : props.aspectRatio === '21/9'
+                                                ? '42.86%'
+                                                : '56.25%' // Default 16/9
+                            }}
+                            className='relative w-full'
+                        >
+                            {props.provider === 'direct' ? (
+                                <video
+                                    src={embedUrl}
+                                    controls
+                                    className='absolute inset-0 w-full h-full'
+                                >
+                                    Your browser does not support the video tag.
+                                </video>
+                            ) : (
+                                <iframe
+                                    src={embedUrl}
+                                    className='absolute inset-0 w-full h-full'
+                                    allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture'
+                                    allowFullScreen
+                                    title='Video preview'
+                                />
+                            )}
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     )
 }
