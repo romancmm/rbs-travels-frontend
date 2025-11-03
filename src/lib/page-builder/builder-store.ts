@@ -406,13 +406,30 @@ export const useBuilderStore = create<BuilderStore>()(
       // ==================== COLUMN ACTIONS ====================
 
       addColumn: (rowId, column, index) => {
-        console.log('[Store] Adding column:', { rowId, column, index })
+        console.log('[Store] 🟢 addColumn called with:', { rowId, column, index })
         const { content } = get()
+        console.log('[Store] Current content before add:', JSON.parse(JSON.stringify(content)))
+
+        const newContent = addColumn(content, rowId, column, index)
+        console.log(
+          '[Store] New content after addColumn utility:',
+          JSON.parse(JSON.stringify(newContent))
+        )
+
         set((state) => {
-          state.content = addColumn(content, rowId, column, index)
+          state.content = newContent
           state.isDirty = true
         })
-        console.log('[Store] Column added, new content:', get().content)
+
+        console.log('[Store] ✅ State updated, final content:', get().content)
+        console.log('[Store] Sections count:', get().content.sections.length)
+        get().content.sections.forEach((section, idx) => {
+          console.log(`[Store] Section ${idx} has ${section.rows.length} rows`)
+          section.rows.forEach((row, ridx) => {
+            console.log(`[Store]   Row ${ridx} (id: ${row.id}) has ${row.columns.length} columns`)
+          })
+        })
+
         get().pushToHistory()
       },
 

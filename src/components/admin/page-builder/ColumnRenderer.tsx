@@ -4,11 +4,13 @@ import { useDroppable } from '@dnd-kit/core'
 import { SortableContext, useSortable, verticalListSortingStrategy } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { Copy, GripVertical, Plus, Settings, Trash2 } from 'lucide-react'
+import { useState } from 'react'
 
 import { Button } from '@/components/ui/button'
 import { useBuilderStore } from '@/lib/page-builder/builder-store'
 import { cn } from '@/lib/utils'
 import type { Column } from '@/types/page-builder'
+import { ComponentPickerModal } from './ComponentPickerModal'
 import { ComponentRenderer } from './ComponentRenderer'
 
 interface ColumnRendererProps {
@@ -18,6 +20,8 @@ interface ColumnRendererProps {
 }
 
 export function ColumnRenderer({ column, sectionId, rowId }: ColumnRendererProps) {
+    const [isPickerOpen, setIsPickerOpen] = useState(false)
+
     const selectedId = useBuilderStore((state) => state.selection.selectedId)
     const hoveredId = useBuilderStore((state) => state.selection.hoveredId)
     const selectElement = useBuilderStore((state) => state.selectElement)
@@ -173,8 +177,30 @@ export function ColumnRenderer({ column, sectionId, rowId }: ColumnRendererProps
                         >
                             <Trash2 className="w-3.5 h-3.5" />
                         </Button>
+
+                        <Button
+                            variant="ghost"
+                            size="sm"
+                            className="gap-1 px-2 h-7 text-blue-600 hover:text-blue-700"
+                            onClick={(e) => {
+                                e.stopPropagation()
+                                console.log('[ColumnRenderer] Add component button clicked for column:', column.id)
+                                setIsPickerOpen(true)
+                            }}
+                            title="Add component"
+                        >
+                            <Plus className="w-3.5 h-3.5" />
+                            <span className="text-xs">Add</span>
+                        </Button>
                     </div>
                 </div>
+
+                {/* Component Picker Modal */}
+                <ComponentPickerModal
+                    open={isPickerOpen}
+                    onOpenChange={setIsPickerOpen}
+                    columnId={column.id}
+                />
 
                 {/* Components */}
                 {column.components.length === 0 ? (

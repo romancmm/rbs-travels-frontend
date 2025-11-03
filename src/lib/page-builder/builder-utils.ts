@@ -293,20 +293,36 @@ export const addColumn = (
   column: Column,
   index?: number
 ): PageContent => {
-  return {
+  console.log('[builder-utils] 🔧 addColumn utility called:', { rowId, column, index })
+  console.log('[builder-utils] Looking for row with id:', rowId)
+
+  let rowFound = false
+
+  const result = {
     ...content,
     sections: content.sections.map((section) => ({
       ...section,
       rows: section.rows.map((row) => {
-        if (row.id !== rowId) return row
+        if (row.id !== rowId) {
+          console.log('[builder-utils] Skipping row:', row.id)
+          return row
+        }
+
+        rowFound = true
+        console.log('[builder-utils] ✅ Found matching row:', row.id)
+        console.log('[builder-utils] Current columns in row:', row.columns.length)
 
         const newColumns = [...row.columns]
 
         if (index !== undefined && index >= 0 && index <= newColumns.length) {
           newColumns.splice(index, 0, column)
+          console.log('[builder-utils] Inserted column at index:', index)
         } else {
           newColumns.push(column)
+          console.log('[builder-utils] Pushed column to end')
         }
+
+        console.log('[builder-utils] New columns count:', newColumns.length)
 
         // Reorder all columns - create new objects with updated order
         const reorderedColumns = newColumns.map((c, i) => ({
@@ -314,10 +330,20 @@ export const addColumn = (
           order: i
         }))
 
+        console.log('[builder-utils] Reordered columns:', reorderedColumns.length)
+
         return { ...row, columns: reorderedColumns }
       })
     }))
   }
+
+  if (!rowFound) {
+    console.error('[builder-utils] ❌ ERROR: Row not found with id:', rowId)
+  } else {
+    console.log('[builder-utils] ✅ Column added successfully')
+  }
+
+  return result
 }
 
 /**

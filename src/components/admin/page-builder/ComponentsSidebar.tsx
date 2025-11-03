@@ -133,7 +133,7 @@ export function ComponentsSidebar() {
 
             {/* Category Tabs */}
             <Tabs value={activeCategory} onValueChange={setActiveCategory} className='flex flex-col flex-1'>
-                <TabsList className='justify-start gap-1 bg-transparent px-4 pt-4 w-full shrink-0'>
+                <TabsList className='flex-wrap justify-start gap-1 bg-transparent px-4 pt-4 w-full shrink-0'>
                     <TabsTrigger value='all' className='text-xs'>
                         All
                     </TabsTrigger>

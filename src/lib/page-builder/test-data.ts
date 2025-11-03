@@ -31,7 +31,7 @@ export const samplePageContent: PageContent = {
           columns: [
             {
               id: 'col-1',
-              width: 6,
+              width: 8,
               order: 0,
               components: [
                 {
@@ -48,7 +48,7 @@ export const samplePageContent: PageContent = {
             },
             {
               id: 'col-2',
-              width: 6,
+              width: 2,
               order: 1,
               components: [
                 {

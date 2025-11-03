@@ -122,7 +122,7 @@ export function PageBuilder({ pageId, initialContent }: PageBuilderProps) {
                     {/* Right: Actions */}
                     <div className="flex items-center gap-2">
                         {/* Undo/Redo */}
-                        <div className="flex items-center gap-1 bg-gray-50 p-1 border rounded-lg">
+                        <div className="flex items-center gap-1 bg-gray-50 border rounded-lg">
                             <Button
                                 variant="ghost"
                                 size="sm"

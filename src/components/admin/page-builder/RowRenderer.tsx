@@ -162,16 +162,58 @@ export function RowRenderer({ row, sectionId }: RowRendererProps) {
                             size="sm"
                             className="gap-1 px-2 h-7"
                             onClick={(e) => {
+                                console.log('[RowRenderer] 🔵 Add Column button clicked!')
                                 e.stopPropagation()
+
+                                console.log('[RowRenderer] Current row:', row)
+                                console.log('[RowRenderer] Current columns:', row.columns)
+
+                                // Calculate total width of existing columns
+                                const totalWidth = row.columns.reduce((sum, col) => sum + col.width, 0)
+                                const availableWidth = 12 - totalWidth
+
+                                console.log('[RowRenderer] Width calculation:', {
+                                    totalWidth,
+                                    availableWidth,
+                                    maxWidth: 12
+                                })
+
+                                // If no space, show warning and don't add
+                                if (availableWidth <= 0) {
+                                    console.warn('[RowRenderer] ❌ Cannot add column: row is full (12/12 width)')
+                                    alert('Cannot add column: row is full (12/12 width). Reduce existing column widths first.')
+                                    return
+                                }
+
+                                // Create new column with available width
+                                const columnWidth = availableWidth
+
                                 const newColumn: Column = {
                                     id: generateId(),
-                                    width: 12,
+                                    width: columnWidth,
                                     order: row.columns.length,
                                     components: [],
                                 }
+
+                                console.log('[RowRenderer] ✅ Creating new column:', {
+                                    rowId: row.id,
+                                    newColumn,
+                                    existingColumns: row.columns.length,
+                                    totalWidth,
+                                    availableWidth,
+                                    columnWidth
+                                })
+
+                                console.log('[RowRenderer] Calling addColumn store action...')
                                 addColumn(row.id, newColumn)
+                                console.log('[RowRenderer] addColumn store action called!')
                             }}
-                            title="Add column"
+                            title={
+                                row.columns.reduce((sum, col) => sum + col.width, 0) >= 12
+                                    ? "Row is full (12/12 width)"
+                                    : "Add column"
+                            }
+                            disabled={row.columns.reduce((sum, col) => sum + col.width, 0) >= 12}
                         >
                             <Columns className="w-3.5 h-3.5" />
                             <span className="text-xs">Add Column</span>
@@ -188,9 +230,13 @@ export function RowRenderer({ row, sectionId }: RowRendererProps) {
                                 const newColumn: Column = {
                                     id: generateId(),
                                     width: 12,
-                                    order: row.columns.length,
+                                    order: 0,
                                     components: [],
                                 }
+                                console.log('[RowRenderer] Adding first column to empty row:', {
+                                    rowId: row.id,
+                                    newColumn
+                                })
                                 addColumn(row.id, newColumn)
                             }}
                             className="flex flex-col items-center gap-2 bg-white hover:bg-green-50 p-6 border-2 border-gray-300 hover:border-green-400 border-dashed rounded-lg text-center transition-colors"
