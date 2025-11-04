@@ -60,7 +60,7 @@ export const menuService = {
    * Fetch menu by slug (for frontend rendering)
    */
   getMenuBySlug: (slug: string) => {
-    return requests.get<CMSItemResponse<Menu>>(`/menu/${slug}`)
+    return requests.get<CMSItemResponse<Menu>>(`/admin/menu/${slug}`)
   },
 
   /**

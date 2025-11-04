@@ -3,7 +3,6 @@
 import { Copy, Edit, Eye, Menu as MenuIcon, MoreVertical, Pencil, Trash2 } from 'lucide-react'
 import { Suspense, useState } from 'react'
 
-import { MenuEditorSheet } from '@/components/admin/cms/MenuEditorSheet'
 import { MenuFormDialog } from '@/components/admin/cms/MenuFormDialog'
 import PageHeader from '@/components/common/PageHeader'
 import { AddButton } from '@/components/common/PermissionGate'
@@ -21,12 +20,13 @@ import useAsync from '@/hooks/useAsync'
 import { useFilter } from '@/hooks/useFilter'
 import { menuService } from '@/services/api/cms.service'
 import { Menu } from '@/types/cms'
+import { useRouter } from 'next/navigation'
 
 function MenuList() {
   const { page, limit } = useFilter(10)
   const [isDialogOpen, setIsDialogOpen] = useState(false)
-  const [isEditorOpen, setIsEditorOpen] = useState(false)
   const [selectedMenu, setSelectedMenu] = useState<Menu | null>(null)
+  const router = useRouter()
 
   const { data, loading, mutate } = useAsync<{
     data: {
@@ -49,8 +49,7 @@ function MenuList() {
   }
 
   const handleEditItems = (menu: Menu) => {
-    setSelectedMenu(menu)
-    setIsEditorOpen(true)
+    router.push(`/admin/menu-manager/${menu.slug}`)
   }
 
   const handleDelete = async (id: string) => {
@@ -200,12 +199,6 @@ function MenuList() {
         onSuccess={mutate}
       />
 
-      <MenuEditorSheet
-        open={isEditorOpen}
-        onOpenChange={setIsEditorOpen}
-        menuId={selectedMenu?.id || null}
-        onSuccess={mutate}
-      />
     </div>
   )
 }

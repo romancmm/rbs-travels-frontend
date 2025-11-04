@@ -4,7 +4,6 @@
  */
 
 // Menu Manager Components
-export { MenuEditorSheet } from './MenuEditorSheet'
 export { MenuFormDialog } from './MenuFormDialog'
 export { MenuItemsBuilder } from './MenuItemsBuilder'
 

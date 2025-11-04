@@ -97,7 +97,7 @@ export function NavMain({ items }: { items: NavItem[] }) {
   }
 
   return (
-    <div className='space-y-1 p-2'>
+    <div className='space-y-1'>
       <Accordion type='multiple' className='w-full' defaultValue={defaultOpenValues}>
         {filteredItems.map((item, index) => {
           const hasChildren = item.children && item.children.length > 0
@@ -108,20 +108,26 @@ export function NavMain({ items }: { items: NavItem[] }) {
             return (
               <AccordionItem key={item.title} value={`item-${index}`} className='border-none'>
                 <div
-                  className={`rounded-lg p-1 transition-colors 
-                    ${parentHasActiveChild
-                      ? 'bg-[rgba(39,218,224,0.1)]'
-                      : 'hover:bg-[rgba(39,218,224,0.1)]'
-                    }`
-                  }
+                  className={`rounded-lg transition-all duration-200 ${
+                    parentHasActiveChild
+                      ? 'bg-primary/10 shadow-sm'
+                      : 'hover:bg-accent/50'
+                  }`}
                 >
                   <AccordionTrigger className='flex items-center p-0 w-full hover:no-underline [&[data-state=open]>div>svg:last-child]:rotate-180'>
-                    <div className='flex justify-between items-center gap-3 px-2 py-1.5 w-full'>
+                    <div className='flex justify-between items-center gap-3 px-3 py-2.5 w-full'>
                       <div className='flex items-center gap-3'>
-                        {item.icon && <item.icon className='size-[18px] text-muted' />}
-                        <span
-                          className={`text-sm ${parentHasActiveChild ? 'text-primary/70 font-medium' : 'text-muted'
+                        {item.icon && (
+                          <item.icon
+                            className={`size-[18px] ${
+                              parentHasActiveChild ? 'text-primary' : 'text-muted-foreground'
                             }`}
+                          />
+                        )}
+                        <span
+                          className={`text-sm font-medium ${
+                            parentHasActiveChild ? 'text-primary' : 'text-foreground'
+                          }`}
                         >
                           {item.title}
                         </span>
@@ -129,24 +135,30 @@ export function NavMain({ items }: { items: NavItem[] }) {
                     </div>
                   </AccordionTrigger>
                 </div>
-                <AccordionContent className='pb-0'>
-                  <div className='space-y-1 mt-1'>
+                <AccordionContent className='pb-1'>
+                  <div className='space-y-0.5 mt-1 ml-3 pl-4 border-l-2 border-border/40'>
                     {item?.children?.map((subItem) => {
                       const isActive = isChildActive(subItem.href)
                       return (
                         <Link
                           onClick={() => {
                             setOpen(false)
-                            // window.scrollTo({ top: 0, behavior: 'smooth' })
                           }}
                           key={subItem.title}
                           href={subItem.href}
-                          className={`px-2 py-1.5 pl-9 text-sm font-normal tracking-[0.5%] rounded-lg transition-colors flex items-center gap-2 ${isActive
-                            ? 'text-primary font-semibold'
-                            : 'text-white hover:bg-[rgba(39,218,224,0.1)]'
-                            }`}
+                          className={`px-3 py-2 text-sm rounded-md transition-all duration-200 flex items-center gap-2.5 group ${
+                            isActive
+                              ? 'bg-primary/10 text-primary font-medium shadow-sm'
+                              : 'text-muted-foreground hover:text-foreground hover:bg-accent/50'
+                          }`}
                         >
-                          <CircleDashed className='size-2' strokeWidth={3} /> {subItem.title}
+                          <CircleDashed
+                            className={`size-2 ${
+                              isActive ? 'text-primary' : 'text-muted-foreground/50 group-hover:text-foreground'
+                            }`}
+                            strokeWidth={3}
+                          />
+                          <span className='flex-1'>{subItem.title}</span>
                         </Link>
                       )
                     })}
@@ -159,21 +171,28 @@ export function NavMain({ items }: { items: NavItem[] }) {
           return (
             <div
               key={item.title}
-              className={`rounded-lg transition-colors ${pathname === item.href
-                ? 'bg-[rgba(39,218,224,0.1)]'
-                : 'hover:bg-[rgba(39,218,224,0.1)]'
-                }`}
+              className={`rounded-lg transition-all duration-200 ${
+                pathname === item.href
+                  ? 'bg-primary/10 shadow-sm'
+                  : 'hover:bg-accent/50'
+              }`}
             >
               <Link
                 href={item.href}
                 onClick={() => setOpen(false)}
-                className={`flex items-center gap-3 p-2.5 w-full ${pathname === item.href ? 'text-primary font-medium' : ''
-                  }`}
+                className='flex items-center gap-3 px-3 py-2.5 w-full group'
               >
-                {item.icon && <item.icon className='size-[18px] text-muted' />}
-                <span
-                  className={`text-sm font-normal tracking-[0.5%] ${pathname === item.href ? 'text-primary font-medium' : 'text-white'
+                {item.icon && (
+                  <item.icon
+                    className={`size-[18px] ${
+                      pathname === item.href ? 'text-primary' : 'text-muted-foreground group-hover:text-foreground'
                     }`}
+                  />
+                )}
+                <span
+                  className={`text-sm font-medium ${
+                    pathname === item.href ? 'text-primary' : 'text-foreground'
+                  }`}
                 >
                   {item.title}
                 </span>
