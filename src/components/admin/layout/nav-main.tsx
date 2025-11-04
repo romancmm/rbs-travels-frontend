@@ -108,26 +108,23 @@ export function NavMain({ items }: { items: NavItem[] }) {
             return (
               <AccordionItem key={item.title} value={`item-${index}`} className='border-none'>
                 <div
-                  className={`rounded-lg transition-all duration-200 ${
-                    parentHasActiveChild
+                  className={`rounded-lg transition-all duration-200 ${parentHasActiveChild
                       ? 'bg-primary/10 shadow-sm'
                       : 'hover:bg-accent/50'
-                  }`}
+                    }`}
                 >
                   <AccordionTrigger className='flex items-center p-0 w-full hover:no-underline [&[data-state=open]>div>svg:last-child]:rotate-180'>
                     <div className='flex justify-between items-center gap-3 px-3 py-2.5 w-full'>
                       <div className='flex items-center gap-3'>
                         {item.icon && (
                           <item.icon
-                            className={`size-[18px] ${
-                              parentHasActiveChild ? 'text-primary' : 'text-muted-foreground'
-                            }`}
+                            className={`size-[18px] ${parentHasActiveChild ? 'text-primary' : 'text-muted-foreground'
+                              }`}
                           />
                         )}
                         <span
-                          className={`text-sm font-medium ${
-                            parentHasActiveChild ? 'text-primary' : 'text-foreground'
-                          }`}
+                          className={`text-sm font-medium ${parentHasActiveChild ? 'text-primary' : 'text-foreground'
+                            }`}
                         >
                           {item.title}
                         </span>
@@ -136,7 +133,7 @@ export function NavMain({ items }: { items: NavItem[] }) {
                   </AccordionTrigger>
                 </div>
                 <AccordionContent className='pb-1'>
-                  <div className='space-y-0.5 mt-1 ml-3 pl-4 border-l-2 border-border/40'>
+                  <div className='space-y-0.5 mt-1 ml-3 pl-4 border-border/40 border-l-2'>
                     {item?.children?.map((subItem) => {
                       const isActive = isChildActive(subItem.href)
                       return (
@@ -146,16 +143,14 @@ export function NavMain({ items }: { items: NavItem[] }) {
                           }}
                           key={subItem.title}
                           href={subItem.href}
-                          className={`px-3 py-2 text-sm rounded-md transition-all duration-200 flex items-center gap-2.5 group ${
-                            isActive
+                          className={`px-3 py-2 text-sm rounded-md transition-all duration-200 flex items-center gap-2.5 group ${isActive
                               ? 'bg-primary/10 text-primary font-medium shadow-sm'
                               : 'text-muted-foreground hover:text-foreground hover:bg-accent/50'
-                          }`}
+                            }`}
                         >
                           <CircleDashed
-                            className={`size-2 ${
-                              isActive ? 'text-primary' : 'text-muted-foreground/50 group-hover:text-foreground'
-                            }`}
+                            className={`size-2 ${isActive ? 'text-primary' : 'text-muted-foreground/50 group-hover:text-foreground'
+                              }`}
                             strokeWidth={3}
                           />
                           <span className='flex-1'>{subItem.title}</span>
@@ -171,28 +166,25 @@ export function NavMain({ items }: { items: NavItem[] }) {
           return (
             <div
               key={item.title}
-              className={`rounded-lg transition-all duration-200 ${
-                pathname === item.href
+              className={`rounded-lg transition-all duration-200 ${pathname === item.href
                   ? 'bg-primary/10 shadow-sm'
                   : 'hover:bg-accent/50'
-              }`}
+                }`}
             >
               <Link
                 href={item.href}
                 onClick={() => setOpen(false)}
-                className='flex items-center gap-3 px-3 py-2.5 w-full group'
+                className='group flex items-center gap-3 px-3 py-2.5 w-full'
               >
                 {item.icon && (
                   <item.icon
-                    className={`size-[18px] ${
-                      pathname === item.href ? 'text-primary' : 'text-muted-foreground group-hover:text-foreground'
-                    }`}
+                    className={`size-[18px] ${pathname === item.href ? 'text-primary' : 'text-muted-foreground group-hover:text-foreground'
+                      }`}
                   />
                 )}
                 <span
-                  className={`text-sm font-medium ${
-                    pathname === item.href ? 'text-primary' : 'text-foreground'
-                  }`}
+                  className={`text-sm font-medium ${pathname === item.href ? 'text-primary' : 'text-foreground'
+                    }`}
                 >
                   {item.title}
                 </span>
