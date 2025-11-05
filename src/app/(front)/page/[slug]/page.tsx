@@ -2,75 +2,76 @@
 import { Container } from '@/components/common/container'
 import { Section } from '@/components/common/section'
 import { Typography } from '@/components/common/typography'
-import UnderConstruction from '@/components/frontend/UnderConstruction'
+import { Skeleton } from '@/components/ui/skeleton'
+import useAsync from '@/hooks/useAsync'
 import { notFound, useParams } from 'next/navigation'
 
 export default function DynamicPage() {
   const params = useParams()
   const pageKey = params.slug
-  // const { data, loading } = useAsync<{ data: any }>(
-  //   () => (pageKey ? `/settings/key/${pageKey}` : null),
-  //   true
-  // )
+  const { data, loading } = useAsync<{ data: any }>(
+    () => (pageKey ? `/settings/key/${pageKey}` : null),
+    true
+  )
 
   if (!pageKey) {
     notFound()
   }
 
-  // if (loading) {
-  //   return (
-  //     <>
-  //       <Section className="bg-[linear-gradient(to_right,rgba(0,0,0,0.6),rgba(0,0,0,0.2)),url('/images/bg/breadcrumb.jpg')] bg-cover bg-center">
-  //         <Container>
-  //           <div className='py-12'>
-  //             <Skeleton className='bg-white/20 mb-4 w-3/4 h-12' />
-  //           </div>
-  //         </Container>
-  //       </Section>
+  if (loading) {
+    return (
+      <>
+        <Section className="bg-[linear-gradient(to_right,rgba(0,0,0,0.6),rgba(0,0,0,0.2)),url('/images/bg/breadcrumb.jpg')] bg-cover bg-center">
+          <Container>
+            <div className='py-12'>
+              <Skeleton className='bg-white/20 mb-4 w-3/4 h-12' />
+            </div>
+          </Container>
+        </Section>
 
-  //       <Section variant={'xl'}>
-  //         <Container>
-  //           <div className='space-y-6'>
-  //             {/* Content loading skeletons */}
-  //             <div className='space-y-4'>
-  //               <Skeleton className='w-2/3 h-8' />
-  //               <div className='space-y-3'>
-  //                 <Skeleton className='w-full h-4' />
-  //                 <Skeleton className='w-full h-4' />
-  //                 <Skeleton className='w-5/6 h-4' />
-  //               </div>
-  //             </div>
+        <Section variant={'xl'}>
+          <Container>
+            <div className='space-y-6'>
+              {/* Content loading skeletons */}
+              <div className='space-y-4'>
+                <Skeleton className='w-2/3 h-8' />
+                <div className='space-y-3'>
+                  <Skeleton className='w-full h-4' />
+                  <Skeleton className='w-full h-4' />
+                  <Skeleton className='w-5/6 h-4' />
+                </div>
+              </div>
 
-  //             <div className='space-y-4'>
-  //               <Skeleton className='w-1/2 h-6' />
-  //               <div className='space-y-3'>
-  //                 <Skeleton className='w-full h-4' />
-  //                 <Skeleton className='w-4/5 h-4' />
-  //                 <Skeleton className='w-3/4 h-4' />
-  //               </div>
-  //             </div>
+              <div className='space-y-4'>
+                <Skeleton className='w-1/2 h-6' />
+                <div className='space-y-3'>
+                  <Skeleton className='w-full h-4' />
+                  <Skeleton className='w-4/5 h-4' />
+                  <Skeleton className='w-3/4 h-4' />
+                </div>
+              </div>
 
-  //             <div className='space-y-4'>
-  //               <Skeleton className='w-3/5 h-6' />
-  //               <div className='space-y-3'>
-  //                 <Skeleton className='w-full h-4' />
-  //                 <Skeleton className='w-full h-4' />
-  //                 <Skeleton className='w-2/3 h-4' />
-  //               </div>
-  //             </div>
-  //           </div>
-  //         </Container>
-  //       </Section>
-  //     </>
-  //   )
-  // }
+              <div className='space-y-4'>
+                <Skeleton className='w-3/5 h-6' />
+                <div className='space-y-3'>
+                  <Skeleton className='w-full h-4' />
+                  <Skeleton className='w-full h-4' />
+                  <Skeleton className='w-2/3 h-4' />
+                </div>
+              </div>
+            </div>
+          </Container>
+        </Section>
+      </>
+    )
+  }
 
   // Handle case when page is not found or has no content
-  // if (!data?.data?.value) {
-  //   notFound()
-  // }
+  if (!data?.data?.value) {
+    notFound()
+  }
 
-  return <UnderConstruction />
+  // return <UnderConstruction />
   return (
     <>
       <Section
