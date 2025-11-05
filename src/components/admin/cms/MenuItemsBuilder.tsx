@@ -22,6 +22,7 @@ import { Typography } from '@/components/common/typography'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Sheet, SheetClose, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet'
+import { useConfirmationModal } from '@/hooks/useConfirmationModal'
 import { cn } from '@/lib/utils'
 import { generateId, menuService } from '@/services/api/cms.service'
 import type { MenuItem, MenuItemType } from '@/types/cms'
@@ -41,6 +42,17 @@ export function MenuItemsBuilder({ items, groupId }: MenuItemsBuilderProps) {
 
   // maintain a local copy of items so we can optimistically update UI
   const [localItems, setLocalItems] = useState<MenuItem[]>(items)
+
+  // Confirmation modal for delete action
+  const deleteModal = useConfirmationModal({
+    title: 'Delete Menu Item',
+    description:
+      'Are you sure you want to delete this menu item? This will also delete all child items. This action cannot be undone.',
+    confirmText: 'Delete',
+    cancelText: 'Cancel',
+    variant: 'destructive',
+    icon: Trash2
+  })
 
   useEffect(() => {
     setLocalItems(items)
@@ -121,17 +133,18 @@ export function MenuItemsBuilder({ items, groupId }: MenuItemsBuilderProps) {
   }
 
   const deleteItem = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this menu item?')) return
-    try {
-      if (groupId) {
-        await menuService.deleteMenuItem(groupId, id)
+    deleteModal.openModal(async () => {
+      try {
+        if (groupId) {
+          await menuService.deleteMenuItem(groupId, id)
+        }
+        toast.success('Menu item deleted')
+      } catch (err) {
+        console.error('Failed to delete menu item', err)
+        toast.error('Failed to delete menu item')
+        throw err // Re-throw to prevent modal from closing on error
       }
-      setLocalItems((prev) => deleteItemRecursive(prev, id))
-      toast.success('Menu item deleted')
-    } catch (err) {
-      console.error('Failed to delete menu item', err)
-      toast.error('Failed to delete menu item')
-    }
+    })
   }
 
   // recursive helpers
@@ -155,12 +168,6 @@ export function MenuItemsBuilder({ items, groupId }: MenuItemsBuilderProps) {
         return { ...item, children: updateItemRecursive(item.children, id, updates) }
       return item
     })
-  }
-
-  const deleteItemRecursive = (items: MenuItem[], id: string): MenuItem[] => {
-    return items
-      .filter((item) => item.id !== id)
-      .map((item) => ({ ...item, children: deleteItemRecursive(item.children || [], id) }))
   }
 
   const getMenuItemIcon = (type: MenuItemType) => {
@@ -249,7 +256,11 @@ export function MenuItemsBuilder({ items, groupId }: MenuItemsBuilderProps) {
               type='button'
               variant='ghost'
               size='icon'
-              onClick={() => deleteItem(item.id)}
+              onClick={(e) => {
+                e.stopPropagation()
+                console.log('[Button] Delete button clicked for item:', item.id)
+                deleteItem(item.id)
+              }}
               title='Delete'
               className='text-destructive hover:text-destructive'
             >
@@ -270,6 +281,10 @@ export function MenuItemsBuilder({ items, groupId }: MenuItemsBuilderProps) {
 
   return (
     <div className='space-y-4'>
+      {/* Delete Confirmation Modal */}
+      <deleteModal.ModalComponent />
+
+      {/* Edit Sheet */}
       <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
         <SheetContent>
           <SheetHeader>
@@ -286,6 +301,7 @@ export function MenuItemsBuilder({ items, groupId }: MenuItemsBuilderProps) {
           />
         </SheetContent>
       </Sheet>
+
       <div className='flex justify-between items-center'>
         <div>
           <Typography variant={'h6'}>Menu Items</Typography>
