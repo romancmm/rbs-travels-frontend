@@ -22,6 +22,7 @@ import { Typography } from '@/components/common/typography'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Sheet, SheetClose, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet'
+import { Switch } from '@/components/ui/switch'
 import { useConfirmationModal } from '@/hooks/useConfirmationModal'
 import { cn } from '@/lib/utils'
 import { generateId, menuService } from '@/services/api/cms.service'
@@ -147,6 +148,20 @@ export function MenuItemsBuilder({ items, groupId }: MenuItemsBuilderProps) {
     })
   }
 
+  const togglePublished = async (item: MenuItem, currentStatus: boolean) => {
+    try {
+      const newStatus = !currentStatus
+      if (groupId) {
+        await menuService.updateMenuItem(groupId, item.id, { isPublished: newStatus } as any)
+      }
+      setLocalItems((prev) => updateItemRecursive(prev, item.id, { isPublished: newStatus } as any))
+      toast.success(`Menu item ${newStatus ? 'published' : 'unpublished'}`)
+    } catch (err) {
+      console.error('Failed to update menu item status', err)
+      toast.error('Failed to update menu item status')
+    }
+  }
+
   // recursive helpers
   const addChildRecursive = (items: MenuItem[], parentId: string, child: MenuItem): MenuItem[] => {
     return items.map((it) => {
@@ -233,7 +248,16 @@ export function MenuItemsBuilder({ items, groupId }: MenuItemsBuilderProps) {
           </div>
 
           {/* Actions */}
-          <div className='flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity'>
+          <div className='flex items-center gap-3 opacity-0 group-hover:opacity-100 transition-opacity'>
+            {/* Published Toggle */}
+            <Switch
+              checked={(item as any).isPublished || false}
+              onCheckedChange={() => togglePublished(item, (item as any).isPublished || false)}
+              onClick={(e) => e.stopPropagation()}
+            />
+
+            <div className='bg-border w-px h-4' />
+
             <Button
               type='button'
               variant='ghost'
