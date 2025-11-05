@@ -18,53 +18,58 @@ export default function MainHeader({ data }: { data: any }) {
         {/* Logo Section */}
         <SiteLogo />
 
-        {/* Main Navigation */}
-        {data?.length > 0 && (
+        {/* Main Navigation (dynamic) */}
+        {data?.filter((i: any) => i.isPublished).length > 0 && (
           <nav className='hidden xl:flex items-center gap-4 ml-10'>
-            {data.map((item: any, index: number) => (
-              <div
-                key={index}
-                className='relative'
-                onMouseEnter={() => setHoveredItem(index)}
-                onMouseLeave={() => setHoveredItem(null)}
-              >
-                <CustomLink
-                  href={item.href ?? '#'}
-                  className='group flex items-center gap-1 hover:bg-white/10 px-3 py-2 rounded-lg transition-all duration-300'
-                >
-                  <Typography
-                    variant='body1'
-                    weight='medium'
-                    className='text-white group-hover:text-white transition-colors duration-300'
-                  >
-                    {item.title}
-                  </Typography>
-                  {item.children?.length > 0 && (
-                    <ChevronDown
-                      className={`w-4 h-4 transition-transform duration-300 ${hoveredItem === index ? 'rotate-180' : ''
-                        }`}
-                    />
-                  )}
-                </CustomLink>
+            {data
+              .filter((i: any) => i.isPublished)
+              .map((item: any, index: number) => {
+                const publishedChildren = item.children?.filter((c: any) => c.isPublished) ?? []
 
-                {/* Dropdown Menu for Services */}
-                {item.children && item.children?.length > 0 && hoveredItem === index && (
-                  <div className='top-full left-0 z-50 absolute bg-white slide-in-from-top-2 shadow-xl border border-gray-100 rounded-xl w-56 animate-in duration-200'>
-                    {item.children.map((child: any, childIndex: number) => (
-                      <CustomLink
-                        key={childIndex}
-                        href={child.href ?? '#'}
-                        className='block hover:bg-primary/10 px-4 py-3 text-gray-700 hover:text-primary transition-colors duration-200'
+                return (
+                  <div
+                    key={item.id ?? index}
+                    className='relative'
+                    onMouseEnter={() => setHoveredItem(index)}
+                    onMouseLeave={() => setHoveredItem(null)}
+                  >
+                    <CustomLink
+                      href={item?.type === 'custom-link' ? item.link : `/pages/${item.slug}`}
+                      className='group flex items-center gap-1 hover:bg-white/10 px-3 py-2 rounded-lg transition-all duration-300'
+                    >
+                      <Typography
+                        variant='body1'
+                        weight='medium'
+                        className='text-white group-hover:text-white transition-colors duration-300'
                       >
-                        <Typography variant='body2' weight='medium'>
-                          {child.title}
-                        </Typography>
-                      </CustomLink>
-                    ))}
+                        {item.title}
+                      </Typography>
+                      {publishedChildren.length > 0 && (
+                        <ChevronDown
+                          className={`w-4 h-4 transition-transform duration-300 ${hoveredItem === index ? 'rotate-180' : ''}`}
+                        />
+                      )}
+                    </CustomLink>
+
+                    {/* Dropdown Menu for Services */}
+                    {publishedChildren.length > 0 && hoveredItem === index && (
+                      <div className='top-full left-0 z-50 absolute bg-white slide-in-from-top-2 shadow-xl border border-gray-100 rounded-xl w-56 animate-in duration-200'>
+                        {publishedChildren.map((child: any, childIndex: number) => (
+                          <CustomLink
+                            key={child.id ?? childIndex}
+                            href={child.link ?? '#'}
+                            className='block hover:bg-primary/10 px-4 py-3 text-gray-700 hover:text-primary transition-colors duration-200'
+                          >
+                            <Typography variant='body2' weight='medium'>
+                              {child.title}
+                            </Typography>
+                          </CustomLink>
+                        ))}
+                      </div>
+                    )}
                   </div>
-                )}
-              </div>
-            ))}
+                )
+              })}
           </nav>
         )}
 
@@ -93,7 +98,7 @@ export default function MainHeader({ data }: { data: any }) {
         </div>
 
         {/* Mobile Navigation */}
-        <MobileNav items={siteConfig.mainNav} />
+        <MobileNav items={data} />
       </div>
     </div>
   )

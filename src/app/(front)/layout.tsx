@@ -7,7 +7,7 @@ export default function FrontLayout({
 }: Readonly<{
   children: React.ReactNode
 }>) {
-  const mainMenus = fetchOnServer('/menus/header-menu', 300)
+  const mainMenus = fetchOnServer('/menus/main-menu', 300)
   const footerMenus = fetchOnServer('/menus/footer-menu', 300)
 
   return (
