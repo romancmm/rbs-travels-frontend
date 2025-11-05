@@ -10,51 +10,55 @@ import {
     ChevronRight,
     ExternalLink,
     FileText,
-    FolderOpen,
-    GripVertical,
-    Link as LinkIcon,
+    FolderOpen, Link as LinkIcon,
     Plus,
-    Trash2,
+    Trash2
 } from 'lucide-react'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { toast } from 'sonner'
 
+import { Typography } from '@/components/common/typography'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from '@/components/ui/select'
+import { Sheet, SheetClose, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet'
 import { cn } from '@/lib/utils'
-import { generateId } from '@/services/api/cms.service'
+import { generateId, menuService } from '@/services/api/cms.service'
 import type { MenuItem, MenuItemType } from '@/types/cms'
 
 interface MenuItemsBuilderProps {
+    groupId: string
     items: MenuItem[]
-    onChange: (items: MenuItem[]) => void
 }
 
-export function MenuItemsBuilder({ items, onChange }: MenuItemsBuilderProps) {
+export function MenuItemsBuilder({ items, groupId }: MenuItemsBuilderProps) {
     const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set())
-    const [editingItem, setEditingItem] = useState<string | null>(null)
+
+    // editor drawer state
+    const [editingItem, setEditingItem] = useState<MenuItem | null>(null)
+    const [isSheetOpen, setIsSheetOpen] = useState(false)
+
+    // maintain a local copy of items so we can optimistically update UI
+    const [localItems, setLocalItems] = useState<MenuItem[]>(items)
+
+    useEffect(() => {
+        setLocalItems(items)
+    }, [items])
 
     const toggleExpand = (id: string) => {
         setExpandedItems((prev) => {
             const next = new Set(prev)
-            if (next.has(id)) {
-                next.delete(id)
-            } else {
-                next.add(id)
-            }
+            if (next.has(id)) next.delete(id)
+            else next.add(id)
             return next
         })
     }
 
-    const addItem = (parentId: string | null = null) => {
+    const openEditor = (item: MenuItem) => {
+        setEditingItem(item)
+        setIsSheetOpen(true)
+    }
+
+    const addItem = async (parentId?: string) => {
         const newItem: MenuItem = {
             id: generateId(),
             title: 'New Menu Item',
@@ -64,72 +68,91 @@ export function MenuItemsBuilder({ items, onChange }: MenuItemsBuilderProps) {
             children: [],
         }
 
-        if (parentId === null) {
-            onChange([...items, newItem])
-        } else {
-            onChange(addChildToParent(items, parentId, newItem))
+        // Persist to backend when groupId is available
+        if (groupId) {
+            try {
+                const payload = { ...newItem, parentId: parentId || null }
+                const res = await menuService.addMenuItem(groupId, payload as any)
+                const created: MenuItem = res.data
+
+                if (parentId) {
+                    setLocalItems((prev) => addChildRecursive(prev, parentId, created))
+                } else {
+                    setLocalItems((prev) => [...prev, created])
+                }
+
+                openEditor(created)
+                toast.success('Menu item added')
+            } catch (err) {
+                console.error('Failed to add menu item', err)
+                toast.error('Failed to add menu item')
+            }
+            return
         }
 
-        setEditingItem(newItem.id)
+        // Local-only fallback
+        const created = newItem
+        if (parentId) {
+            setLocalItems((prev) => addChildRecursive(prev, parentId, created))
+        } else {
+            setLocalItems((prev) => [...prev, created])
+        }
+        openEditor(created)
     }
 
-    const addChildToParent = (
-        items: MenuItem[],
-        parentId: string,
-        newItem: MenuItem
-    ): MenuItem[] => {
-        return items.map((item) => {
-            if (item.id === parentId) {
-                return {
-                    ...item,
-                    children: [...item.children, newItem],
-                }
+    const updateItem = async (id: string, updates: Partial<MenuItem>) => {
+        try {
+            if (groupId) {
+                // prefer the explicit updateMenuItem(menuId, itemId, payload)
+                await menuService.updateMenuItem(groupId, id, updates as any)
             }
-            if (item.children.length > 0) {
-                return {
-                    ...item,
-                    children: addChildToParent(item.children, parentId, newItem),
-                }
-            }
-            return item
-        })
+
+            setLocalItems((prev) => updateItemRecursive(prev, id, updates))
+            toast.success('Menu item updated')
+            // close sheet after save
+            setIsSheetOpen(false)
+            setEditingItem(null)
+        } catch (err) {
+            console.error('Failed to update menu item', err)
+            toast.error('Failed to update menu item')
+        }
     }
 
-    const updateItem = (id: string, updates: Partial<MenuItem>) => {
-        onChange(updateItemRecursive(items, id, updates))
-    }
-
-    const updateItemRecursive = (
-        items: MenuItem[],
-        id: string,
-        updates: Partial<MenuItem>
-    ): MenuItem[] => {
-        return items.map((item) => {
-            if (item.id === id) {
-                return { ...item, ...updates }
-            }
-            if (item.children.length > 0) {
-                return {
-                    ...item,
-                    children: updateItemRecursive(item.children, id, updates),
-                }
-            }
-            return item
-        })
-    }
-
-    const deleteItem = (id: string) => {
+    const deleteItem = async (id: string) => {
         if (!confirm('Are you sure you want to delete this menu item?')) return
-        onChange(deleteItemRecursive(items, id))
+        try {
+            if (groupId) {
+                await menuService.deleteMenuItem(groupId, id)
+            }
+            setLocalItems((prev) => deleteItemRecursive(prev, id))
+            toast.success('Menu item deleted')
+        } catch (err) {
+            console.error('Failed to delete menu item', err)
+            toast.error('Failed to delete menu item')
+        }
+    }
+
+    // recursive helpers
+    const addChildRecursive = (items: MenuItem[], parentId: string, child: MenuItem): MenuItem[] => {
+        return items.map((it) => {
+            if (it.id === parentId) return { ...it, children: [...(it.children || []), child] }
+            if (it.children && it.children?.length > 0) return { ...it, children: addChildRecursive(it.children, parentId, child) }
+            return it
+        })
+    }
+
+    const updateItemRecursive = (items: MenuItem[], id: string, updates: Partial<MenuItem>): MenuItem[] => {
+        return items.map((item) => {
+            if (item.id === id) return { ...item, ...updates }
+            if (item.children && item.children?.length > 0) return { ...item, children: updateItemRecursive(item.children, id, updates) }
+            return item
+        })
     }
 
     const deleteItemRecursive = (items: MenuItem[], id: string): MenuItem[] => {
         return items
             .filter((item) => item.id !== id)
-            .map((item) => ({
-                ...item,
-                children: deleteItemRecursive(item.children, id),
-            }))
+            .map((item) => ({ ...item, children: deleteItemRecursive(item.children || [], id) }))
     }
 
     const getMenuItemIcon = (type: MenuItemType) => {
@@ -149,23 +172,17 @@ export function MenuItemsBuilder({ items, onChange }: MenuItemsBuilderProps) {
 
     const renderMenuItem = (item: MenuItem, level: number = 0) => {
         const isExpanded = expandedItems.has(item.id)
-        const isEditing = editingItem === item.id
-        const hasChildren = item.children.length > 0
+        const hasChildren = item.children?.length > 0
 
         return (
             <div key={item.id} className='space-y-1'>
                 {/* Menu Item Row */}
                 <div
                     className={cn(
-                        'group flex items-center gap-2 bg-background p-3 border rounded-lg transition-colors',
+                        'group flex items-center gap-4 bg-background p-3 border rounded-lg transition-colors',
                         level > 0 && 'ml-8'
                     )}
                 >
-                    {/* Drag Handle */}
-                    <div className='text-muted-foreground hover:text-foreground cursor-grab'>
-                        <GripVertical className='w-4 h-4' />
-                    </div>
-
                     {/* Expand/Collapse */}
                     {hasChildren && (
                         <button
@@ -186,29 +203,18 @@ export function MenuItemsBuilder({ items, onChange }: MenuItemsBuilderProps) {
 
                     {/* Content */}
                     <div className='flex-1'>
-                        {isEditing ? (
-                            <MenuItemEditor
-                                item={item}
-                                onSave={(updates) => {
-                                    updateItem(item.id, updates)
-                                    setEditingItem(null)
-                                }}
-                                onCancel={() => setEditingItem(null)}
-                            />
-                        ) : (
-                            <div className='space-y-1'>
-                                <div className='flex items-center gap-2'>
-                                    <span className='font-medium'>{item.title}</span>
-                                    <Badge variant='secondary' className='text-xs'>
-                                        {item.type.replace('-', ' ')}
-                                    </Badge>
-                                    {item.target === '_blank' && <ExternalLink className='w-3 h-3' />}
-                                </div>
-                                <p className='text-muted-foreground text-xs'>
-                                    {item.link || item.pageId || item.categoryId || item.articleId}
-                                </p>
+                        <div className='space-y-1'>
+                            <div className='flex items-center gap-2'>
+                                <span className='font-medium'>{item.title}</span>
+                                <Badge variant='secondary' className='text-xs'>
+                                    {item.type.replace('-', ' ')}
+                                </Badge>
+                                {item.target === '_blank' && <ExternalLink className='w-3 h-3' />}
                             </div>
-                        )}
+                            <p className='text-muted-foreground text-xs'>
+                                {item.link || item.pageId || item.categoryId || item.articleId}
+                            </p>
+                        </div>
                     </div>
 
                     {/* Actions */}
@@ -217,7 +223,7 @@ export function MenuItemsBuilder({ items, onChange }: MenuItemsBuilderProps) {
                             type='button'
                             variant='ghost'
                             size='icon'
-                            onClick={() => addItem(item.id)}
+                            onClick={() => setIsDrawerOpen(true)}
                             title='Add child item'
                         >
                             <Plus className='w-4 h-4' />
@@ -226,7 +232,7 @@ export function MenuItemsBuilder({ items, onChange }: MenuItemsBuilderProps) {
                             type='button'
                             variant='ghost'
                             size='icon'
-                            onClick={() => setEditingItem(item.id)}
+                            onClick={() => openEditor(item)}
                             title='Edit'
                         >
                             <FileText className='w-4 h-4' />
@@ -256,203 +262,51 @@ export function MenuItemsBuilder({ items, onChange }: MenuItemsBuilderProps) {
 
     return (
         <div className='space-y-4'>
+            <Sheet open={isDrawerOpen} onOpenChange={setIsDrawerOpen}>
+                <SheetContent>
+                    <SheetHeader>
+                        <SheetTitle>Edit Menu Item</SheetTitle>
+                        <SheetClose />
+                    </SheetHeader>
+                    <MenuItemForm
+                        item={editingItem}
+                        onSave={(updates) => editingItem && updateItem(editingItem.id, updates)}
+                        onCancel={() => {
+                            setEditingItem(null)
+                            setIsDrawerOpen(false)
+                        }}
+                    />
+
+                </SheetContent>
+            </Sheet>
             <div className='flex justify-between items-center'>
                 <div>
-                    <h3 className='font-semibold text-lg'>Menu Items</h3>
-                    <p className='text-muted-foreground text-sm'>
+                    <Typography variant={'h6'}>Menu Items</Typography>
+                    <Typography variant={'body2'} className='text-muted-foreground'>
                         Add and organize menu items. You can nest items by adding child items.
-                    </p>
+                    </Typography>
                 </div>
-                <Button type='button' onClick={() => addItem()}>
+                <Button type='button' onClick={() => setIsDrawerOpen(true)}>
                     <Plus className='mr-2 w-4 h-4' />
                     Add Item
                 </Button>
             </div>
 
-            {items.length === 0 ? (
+            {localItems?.length === 0 ? (
                 <div className='flex flex-col justify-center items-center p-12 border border-dashed rounded-lg text-center'>
                     <LinkIcon className='mb-4 w-12 h-12 text-muted-foreground' />
                     <h3 className='mb-2 font-semibold text-lg'>No menu items yet</h3>
                     <p className='mb-4 text-muted-foreground text-sm'>
                         Start building your menu by adding your first item.
                     </p>
-                    <Button type='button' onClick={() => addItem()}>
+                    <Button type='button' onClick={() => setIsDrawerOpen(true)}>
                         <Plus className='mr-2 w-4 h-4' />
                         Add First Item
                     </Button>
                 </div>
             ) : (
-                <div className='space-y-2'>{items.map((item) => renderMenuItem(item))}</div>
+                <div className='space-y-2'>{localItems.map((item) => renderMenuItem(item))}</div>
             )}
         </div>
-    )
-}
-
-// Menu Item Editor Component
-interface MenuItemEditorProps {
-    item: MenuItem
-    onSave: (updates: Partial<MenuItem>) => void
-    onCancel: () => void
-}
-
-function MenuItemEditor({ item, onSave, onCancel }: MenuItemEditorProps) {
-    const [formData, setFormData] = useState({
-        title: item.title,
-        type: item.type,
-        link: item.link || '',
-        pageId: item.pageId || '',
-        categoryId: item.categoryId || '',
-        articleId: item.articleId || '',
-        target: item.target || '_self',
-        icon: item.icon || '',
-    })
-
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault()
-        onSave(formData)
-    }
-
-    return (
-        <form onSubmit={handleSubmit} className='space-y-3 bg-muted/50 p-4 border rounded-lg'>
-            <div className='gap-3 grid sm:grid-cols-2'>
-                {/* Title */}
-                <div className='space-y-1'>
-                    <Label htmlFor='title' className='text-xs'>
-                        Title
-                    </Label>
-                    <Input
-                        id='title'
-                        value={formData.title}
-                        onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                        placeholder='Menu title'
-                        required
-                    />
-                </div>
-
-                {/* Type */}
-                <div className='space-y-1'>
-                    <Label htmlFor='type' className='text-xs'>
-                        Type
-                    </Label>
-                    <Select
-                        value={formData.type}
-                        onValueChange={(value: MenuItemType) => setFormData({ ...formData, type: value })}
-                    >
-                        <SelectTrigger>
-                            <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem value='custom-link'>Custom Link</SelectItem>
-                            <SelectItem value='custom-page'>Custom Page</SelectItem>
-                            <SelectItem value='category-blogs'>Category Blogs</SelectItem>
-                            <SelectItem value='article'>Article</SelectItem>
-                        </SelectContent>
-                    </Select>
-                </div>
-
-                {/* Dynamic field based on type */}
-                {formData.type === 'custom-link' && (
-                    <div className='space-y-1'>
-                        <Label htmlFor='link' className='text-xs'>
-                            URL
-                        </Label>
-                        <Input
-                            id='link'
-                            value={formData.link}
-                            onChange={(e) => setFormData({ ...formData, link: e.target.value })}
-                            placeholder='/about or https://...'
-                            required
-                        />
-                    </div>
-                )}
-
-                {formData.type === 'custom-page' && (
-                    <div className='space-y-1'>
-                        <Label htmlFor='pageId' className='text-xs'>
-                            Page Slug
-                        </Label>
-                        <Input
-                            id='pageId'
-                            value={formData.pageId}
-                            onChange={(e) => setFormData({ ...formData, pageId: e.target.value })}
-                            placeholder='about-us'
-                            required
-                        />
-                    </div>
-                )}
-
-                {formData.type === 'category-blogs' && (
-                    <div className='space-y-1'>
-                        <Label htmlFor='categoryId' className='text-xs'>
-                            Category Slug
-                        </Label>
-                        <Input
-                            id='categoryId'
-                            value={formData.categoryId}
-                            onChange={(e) => setFormData({ ...formData, categoryId: e.target.value })}
-                            placeholder='news'
-                            required
-                        />
-                    </div>
-                )}
-
-                {formData.type === 'article' && (
-                    <div className='space-y-1'>
-                        <Label htmlFor='articleId' className='text-xs'>
-                            Article Slug
-                        </Label>
-                        <Input
-                            id='articleId'
-                            value={formData.articleId}
-                            onChange={(e) => setFormData({ ...formData, articleId: e.target.value })}
-                            placeholder='my-article'
-                            required
-                        />
-                    </div>
-                )}
-
-                {/* Target */}
-                <div className='space-y-1'>
-                    <Label htmlFor='target' className='text-xs'>
-                        Open In
-                    </Label>
-                    <Select
-                        value={formData.target}
-                        onValueChange={(value: '_blank' | '_self') => setFormData({ ...formData, target: value })}
-                    >
-                        <SelectTrigger>
-                            <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem value='_self'>Same Window</SelectItem>
-                            <SelectItem value='_blank'>New Tab</SelectItem>
-                        </SelectContent>
-                    </Select>
-                </div>
-
-                {/* Icon (optional) */}
-                <div className='space-y-1'>
-                    <Label htmlFor='icon' className='text-xs'>
-                        Icon (optional)
-                    </Label>
-                    <Input
-                        id='icon'
-                        value={formData.icon}
-                        onChange={(e) => setFormData({ ...formData, icon: e.target.value })}
-                        placeholder='icon-name'
-                    />
-                </div>
-            </div>
-
-            {/* Actions */}
-            <div className='flex justify-end gap-2'>
-                <Button type='button' variant='outline' size='sm' onClick={onCancel}>
-                    Cancel
-                </Button>
-                <Button type='submit' size='sm'>
-                    Save
-                </Button>
-            </div>
-        </form>
     )
 }

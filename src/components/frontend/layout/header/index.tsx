@@ -11,6 +11,9 @@ export default function Header({ data }: { data: any }) {
       {/* Top announcement bar */}
       <TopBar />
 
+      <div className="">
+        {JSON.stringify(res.data.items)}
+      </div>
       {/* Main header */}
       <header
         className={cn(

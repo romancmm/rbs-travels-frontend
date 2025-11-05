@@ -59,9 +59,9 @@ export const menuService = {
   /**
    * Fetch menu by slug (for frontend rendering)
    */
-  getMenuBySlug: (slug: string) => {
-    return requests.get<CMSItemResponse<Menu>>(`/admin/menu/${slug}`)
-  },
+  // getMenuBySlug: (slug: string) => {
+  //   return requests.get<CMSItemResponse<Menu>>(`/admin/menu/${slug}`)
+  // },
 
   /**
    * Create new menu
@@ -82,6 +82,26 @@ export const menuService = {
    */
   deleteMenu: (id: string) => {
     return requests.delete(`/admin/menu/${id}`)
+  },
+
+  /**
+   * Create new menu items
+   */
+  addMenuItems: (payload: MenuItem & { parentId: string }) => {
+    return requests.post<CMSItemResponse<MenuItem>>(
+      `/admin/menu/${payload.parentId}/items`,
+      payload
+    )
+  },
+
+  /**
+   * Create new menu items
+   */
+  updateMenuItems: (payload: MenuItem & { parentId: string }) => {
+    return requests.put<CMSItemResponse<MenuItem>>(
+      `/admin/menu/${payload.parentId}/items/${payload.id}`,
+      payload
+    )
   },
 
   /**
@@ -118,10 +138,7 @@ export const menuService = {
    * Update menu item
    */
   updateMenuItem: (menuId: string, itemId: string, payload: UpdateMenuItemPayload) => {
-    return requests.patch<CMSItemResponse<MenuItem>>(
-      `/admin/menu/${menuId}/item/${itemId}`,
-      payload
-    )
+    return requests.put<CMSItemResponse<MenuItem>>(`/admin/menu/${menuId}/items/${itemId}`, payload)
   },
 
   /**

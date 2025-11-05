@@ -1,64 +1,19 @@
 'use client'
 
 import { Loader2 } from 'lucide-react'
-import { useParams, useRouter } from 'next/navigation'
-import { useEffect, useState } from 'react'
-import { toast } from 'sonner'
+import { useParams } from 'next/navigation'
 
 import { MenuItemsBuilder } from '@/components/admin/cms/MenuItemsBuilder'
 import { Typography } from '@/components/common/typography'
-import { cleanMenuItems, menuService } from '@/services/api/cms.service'
-import type { Menu, MenuItem } from '@/types/cms'
+import useAsync from '@/hooks/useAsync'
 
 export default function MenuGroupPage() {
     const params = useParams()
-    const router = useRouter()
     const groupSlug = params.groupSlug as string
 
-    const [loading, setLoading] = useState(true)
-    const [saving, setSaving] = useState(false)
-    const [menu, setMenu] = useState<Menu | null>(null)
-    const [items, setItems] = useState<MenuItem[]>([])
-
-    // Fetch menu data
-    useEffect(() => {
-        if (!groupSlug) return
-
-        const fetchMenu = async () => {
-            setLoading(true)
-            try {
-                const response = await menuService.getMenuBySlug(groupSlug)
-                setMenu(response.data)
-                setItems(response.data.items || [])
-            } catch (error) {
-                console.error('Failed to fetch menu:', error)
-                toast.error('Failed to load menu')
-                router.push('/admin/menu-manager')
-            } finally {
-                setLoading(false)
-            }
-        }
-
-        fetchMenu()
-    }, [groupSlug, router])
-
-    const handleSave = async () => {
-        if (!menu) return
-
-        setSaving(true)
-        try {
-            // Clean menu items before sending to backend
-            const cleanedItems = cleanMenuItems(items)
-            await menuService.updateMenu(menu.id, { items: cleanedItems })
-            toast.success('Menu items updated successfully')
-            router.push('/admin/menu-manager')
-        } catch (error: any) {
-            console.error('Failed to update menu items:', error)
-            toast.error(error?.response?.data?.message || 'Failed to save menu items')
-        } finally {
-            setSaving(false)
-        }
-    }
+    const { data, loading, mutate } = useAsync(() => groupSlug ? `/admin/menu/${groupSlug}` : null)
+    const menu = data?.data
+    const items = data?.data?.items || []
 
     if (loading) {
         return (
@@ -71,7 +26,7 @@ export default function MenuGroupPage() {
         )
     }
 
-    if (!menu) {
+    if (!data?.data) {
         return null
     }
 
@@ -93,8 +48,8 @@ export default function MenuGroupPage() {
                             </div>
                             <span
                                 className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold ${menu.isPublished
-                                        ? 'bg-emerald-100 text-emerald-700'
-                                        : 'bg-orange-100 text-orange-700'
+                                    ? 'bg-emerald-100 text-emerald-700'
+                                    : 'bg-orange-100 text-orange-700'
                                     }`}
                             >
                                 <span className={`w-1.5 h-1.5 rounded-full ${menu.isPublished ? 'bg-emerald-500' : 'bg-orange-500'
@@ -146,7 +101,7 @@ export default function MenuGroupPage() {
                                 </div>
                                 <div>
                                     <p className='font-medium text-slate-500 text-xs'>Total Items</p>
-                                    <p className='mt-0.5 font-semibold text-slate-900 text-sm'>{items.length} items</p>
+                                    <p className='mt-0.5 font-semibold text-slate-900 text-sm'>{items?.length} items</p>
                                 </div>
                             </div>
                         </div>
@@ -175,7 +130,7 @@ export default function MenuGroupPage() {
 
             {/* Menu Items Builder */}
             <div className="lg:col-span-3">
-                <MenuItemsBuilder items={items} onChange={setItems} />
+                <MenuItemsBuilder items={items} groupId={menu.id} />
             </div>
         </div>
     )
