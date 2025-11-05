@@ -62,40 +62,55 @@ export default function ConfirmationModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className='bg-background max-w-xs!'>
-        <DialogHeader className='flex justify-center items-center gap-4 text-center!'>
-          <div className='flex justify-center'>
-            <div
-              className={`rounded-full p-3 ${
-                variant === 'destructive'
-                  ? 'bg-red-500/10 text-red-500'
-                  : 'bg-primary/10 text-primary'
-              }`}
-            >
-              <Icon className='w-10 h-10' />
-            </div>
+      <DialogContent className='gap-0 p-0 sm:max-w-[440px] overflow-hidden'>
+        {/* Icon Header with Gradient Background */}
+        <div
+          className={`flex flex-col items-center justify-center pt-8 pb-6 px-6 ${
+            variant === 'destructive'
+              ? 'bg-linear-to-br from-red-500/10 via-red-500/5 to-background'
+              : 'bg-linear-to-br from-primary/10 via-primary/5 to-background'
+          }`}
+        >
+          <div
+            className={`rounded-full p-4 mb-4 ring-4 ${
+              variant === 'destructive'
+                ? 'bg-red-500/15 text-red-500 ring-red-500/10'
+                : 'bg-primary/15 text-primary ring-primary/10'
+            }`}
+          >
+            <Icon className='w-8 h-8' strokeWidth={2} />
           </div>
-          <DialogTitle className='text-white text-lg'>{title}</DialogTitle>
-          <DialogDescription className='text-muted text-sm'>{description}</DialogDescription>
-          {showInput && inputConfig && (
+
+          <DialogHeader className='space-y-3 text-center'>
+            <DialogTitle className='font-semibold text-xl tracking-tight'>{title}</DialogTitle>
+            <DialogDescription className='max-w-sm text-muted-foreground text-sm leading-relaxed'>
+              {description}
+            </DialogDescription>
+          </DialogHeader>
+        </div>
+
+        {/* Input Section */}
+        {showInput && inputConfig && (
+          <div className='bg-muted/30 px-6 py-4'>
             <CustomInput
               name={inputConfig.name}
               label={inputConfig.label}
               placeholder={inputConfig.placeholder}
               type={inputConfig.type || 'text'}
-              className='mt-4 w-full'
+              className='w-full'
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
             />
-          )}
-        </DialogHeader>
+          </div>
+        )}
 
-        <DialogFooter className='flex gap-3 mt-6'>
+        {/* Action Buttons */}
+        <DialogFooter className='flex flex-row gap-3 bg-background p-6'>
           <Button
             variant='outline'
             onClick={handleClose}
             disabled={isLoading}
-            className='flex-1 bg-transparent hover:bg-white/10 border-white/20 text-white'
+            className='flex-1 h-10'
           >
             {cancelText}
           </Button>
@@ -103,13 +118,16 @@ export default function ConfirmationModal({
             variant={variant}
             onClick={handleConfirm}
             disabled={isLoading || (showInput && inputConfig?.required && !inputValue.trim())}
-            className={`flex-1 font-semibold ${
-              variant === 'destructive'
-                ? 'bg-red-500 hover:bg-red-600 text-white'
-                : 'bg-primary hover:bg-primary/90 text-background'
-            }`}
+            className='flex-1 h-10 font-medium'
           >
-            {isLoading ? 'Processing...' : confirmText}
+            {isLoading ? (
+              <span className='flex items-center gap-2'>
+                <span className='border-2 border-current border-t-transparent rounded-full w-4 h-4 animate-spin' />
+                Processing...
+              </span>
+            ) : (
+              confirmText
+            )}
           </Button>
         </DialogFooter>
       </DialogContent>

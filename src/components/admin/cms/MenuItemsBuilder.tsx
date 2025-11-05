@@ -25,21 +25,23 @@ import { Sheet, SheetClose, SheetContent, SheetHeader, SheetTitle } from '@/comp
 import { Switch } from '@/components/ui/switch'
 import { useConfirmationModal } from '@/hooks/useConfirmationModal'
 import { cn } from '@/lib/utils'
-import { generateId, menuService } from '@/services/api/cms.service'
+import { menuService } from '@/services/api/cms.service'
 import type { MenuItem, MenuItemType } from '@/types/cms'
 import MenuItemForm from './MenuItemForm'
 
 interface MenuItemsBuilderProps {
   groupId: string
   items: MenuItem[]
+  refetch?: () => Promise<void>
 }
 
-export function MenuItemsBuilder({ items, groupId }: MenuItemsBuilderProps) {
+export function MenuItemsBuilder({ items, groupId, refetch }: MenuItemsBuilderProps) {
   const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set())
 
   // editor drawer state
   const [editingItem, setEditingItem] = useState<MenuItem | null>(null)
   const [isSheetOpen, setIsSheetOpen] = useState(false)
+  const [parentItemId, setParentItemId] = useState<string | undefined>(undefined)
 
   // maintain a local copy of items so we can optimistically update UI
   const [localItems, setLocalItems] = useState<MenuItem[]>(items)
@@ -70,66 +72,60 @@ export function MenuItemsBuilder({ items, groupId }: MenuItemsBuilderProps) {
 
   const openEditor = (item: MenuItem) => {
     setEditingItem(item)
+    setParentItemId(undefined)
     setIsSheetOpen(true)
   }
 
-  const addItem = async (parentId?: string) => {
-    const newItem: MenuItem = {
-      id: generateId(),
-      title: 'New Menu Item',
-      type: 'custom-link',
-      link: '/',
-      order: 0,
-      children: []
-    }
+  const openAddItemForm = (parentId?: string) => {
+    setEditingItem(null)
+    setParentItemId(parentId)
+    setIsSheetOpen(true)
+  }
 
-    // Persist to backend when groupId is available
-    if (groupId) {
-      try {
-        const payload = { ...newItem, parentId: parentId || null }
-        const res = await menuService.addMenuItem(groupId, payload as any)
-        const created: MenuItem = res.data
-
-        if (parentId) {
-          setLocalItems((prev) => addChildRecursive(prev, parentId, created))
-        } else {
-          setLocalItems((prev) => [...prev, created])
-        }
-
-        openEditor(created)
-        toast.success('Menu item added')
-      } catch (err) {
-        console.error('Failed to add menu item', err)
-        toast.error('Failed to add menu item')
+  const addItem = async (parentId: string | undefined, itemData: Partial<MenuItem>) => {
+    try {
+      if (!groupId) {
+        toast.error('Menu group not found')
+        return
       }
-      return
-    }
 
-    // Local-only fallback
-    const created = newItem
-    if (parentId) {
-      setLocalItems((prev) => addChildRecursive(prev, parentId, created))
-    } else {
-      setLocalItems((prev) => [...prev, created])
+      const payload = { ...itemData, parentId: parentId || null }
+      await menuService.addMenuItem(groupId, payload as any)
+
+      toast.success('Menu item added')
+      await refetch?.()
+      setIsSheetOpen(false)
+      setEditingItem(null)
+      setParentItemId(undefined)
+    } catch (err) {
+      console.error('Failed to add menu item', err)
+      toast.error('Failed to add menu item')
     }
-    openEditor(created)
   }
 
   const updateItem = async (id: string, updates: Partial<MenuItem>) => {
     try {
       if (groupId) {
-        // prefer the explicit updateMenuItem(menuId, itemId, payload)
         await menuService.updateMenuItem(groupId, id, updates as any)
       }
-
-      setLocalItems((prev) => updateItemRecursive(prev, id, updates))
+      await refetch?.()
       toast.success('Menu item updated')
-      // close sheet after save
       setIsSheetOpen(false)
       setEditingItem(null)
+      setParentItemId(undefined)
     } catch (err) {
       console.error('Failed to update menu item', err)
       toast.error('Failed to update menu item')
+    }
+  }
+
+  const handleFormSave = async (updates: Partial<MenuItem>) => {
+    if (editingItem) {
+      // Edit existing item
+      await updateItem(editingItem.id, updates)
+    } else {
+      // Add new item
+      await addItem(parentItemId, updates)
     }
   }
 
@@ -139,11 +135,14 @@ export function MenuItemsBuilder({ items, groupId }: MenuItemsBuilderProps) {
         if (groupId) {
           await menuService.deleteMenuItem(groupId, id)
         }
+
         toast.success('Menu item deleted')
       } catch (err) {
         console.error('Failed to delete menu item', err)
         toast.error('Failed to delete menu item')
         throw err // Re-throw to prevent modal from closing on error
+      } finally {
+        refetch?.()
       }
     })
   }
@@ -154,35 +153,13 @@ export function MenuItemsBuilder({ items, groupId }: MenuItemsBuilderProps) {
       if (groupId) {
         await menuService.updateMenuItem(groupId, item.id, { isPublished: newStatus } as any)
       }
-      setLocalItems((prev) => updateItemRecursive(prev, item.id, { isPublished: newStatus } as any))
+
+      refetch?.()
       toast.success(`Menu item ${newStatus ? 'published' : 'unpublished'}`)
     } catch (err) {
       console.error('Failed to update menu item status', err)
       toast.error('Failed to update menu item status')
     }
-  }
-
-  // recursive helpers
-  const addChildRecursive = (items: MenuItem[], parentId: string, child: MenuItem): MenuItem[] => {
-    return items.map((it) => {
-      if (it.id === parentId) return { ...it, children: [...(it.children || []), child] }
-      if (it.children && it.children?.length > 0)
-        return { ...it, children: addChildRecursive(it.children, parentId, child) }
-      return it
-    })
-  }
-
-  const updateItemRecursive = (
-    items: MenuItem[],
-    id: string,
-    updates: Partial<MenuItem>
-  ): MenuItem[] => {
-    return items.map((item) => {
-      if (item.id === id) return { ...item, ...updates }
-      if (item.children && item.children?.length > 0)
-        return { ...item, children: updateItemRecursive(item.children, id, updates) }
-      return item
-    })
   }
 
   const getMenuItemIcon = (type: MenuItemType) => {
@@ -262,7 +239,7 @@ export function MenuItemsBuilder({ items, groupId }: MenuItemsBuilderProps) {
               type='button'
               variant='ghost'
               size='icon'
-              onClick={() => setIsSheetOpen(true)}
+              onClick={() => openAddItemForm(item.id)}
               title='Add child item'
             >
               <Plus className='w-4 h-4' />
@@ -282,7 +259,6 @@ export function MenuItemsBuilder({ items, groupId }: MenuItemsBuilderProps) {
               size='icon'
               onClick={(e) => {
                 e.stopPropagation()
-                console.log('[Button] Delete button clicked for item:', item.id)
                 deleteItem(item.id)
               }}
               title='Delete'
@@ -312,14 +288,15 @@ export function MenuItemsBuilder({ items, groupId }: MenuItemsBuilderProps) {
       <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
         <SheetContent>
           <SheetHeader>
-            <SheetTitle>Edit Menu Item</SheetTitle>
+            <SheetTitle>{editingItem ? 'Edit Menu Item' : 'Add Menu Item'}</SheetTitle>
             <SheetClose />
           </SheetHeader>
           <MenuItemForm
             item={editingItem}
-            onSave={(updates) => editingItem && updateItem(editingItem.id, updates)}
+            onSave={handleFormSave}
             onCancel={() => {
               setEditingItem(null)
+              setParentItemId(undefined)
               setIsSheetOpen(false)
             }}
           />
@@ -333,7 +310,7 @@ export function MenuItemsBuilder({ items, groupId }: MenuItemsBuilderProps) {
             Add and organize menu items. You can nest items by adding child items.
           </Typography>
         </div>
-        <Button type='button' onClick={() => setIsSheetOpen(true)}>
+        <Button type='button' onClick={() => openAddItemForm()}>
           <Plus className='mr-2 w-4 h-4' />
           Add Item
         </Button>
@@ -346,7 +323,7 @@ export function MenuItemsBuilder({ items, groupId }: MenuItemsBuilderProps) {
           <p className='mb-4 text-muted-foreground text-sm'>
             Start building your menu by adding your first item.
           </p>
-          <Button type='button' onClick={() => setIsSheetOpen(true)}>
+          <Button type='button' onClick={() => openAddItemForm()}>
             <Plus className='mr-2 w-4 h-4' />
             Add First Item
           </Button>

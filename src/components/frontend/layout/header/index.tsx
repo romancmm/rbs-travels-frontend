@@ -5,15 +5,12 @@ import TopBar from './TopBar'
 
 export default function Header({ data }: { data: any }) {
   const res: any = use(data)
-  console.log('res :>> ', res);
+
   return (
     <>
       {/* Top announcement bar */}
       <TopBar />
 
-      <div className="">
-        {JSON.stringify(res.data.items)}
-      </div>
       {/* Main header */}
       <header
         className={cn(

@@ -197,7 +197,7 @@ export default function MenuGroupPage() {
 
       {/* Menu Items Builder */}
       <div className='lg:col-span-3'>
-        <MenuItemsBuilder items={items} groupId={menu.id} />
+        <MenuItemsBuilder items={items} groupId={menu.id} refetch={mutate} />
       </div>
     </div>
   )
