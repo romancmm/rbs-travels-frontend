@@ -2,9 +2,9 @@
 
 import { Suspense, useState } from 'react'
 
-import { adminColumns } from '@/components/admin/admins/admin-columns'
 import { CustomTable } from '@/components/admin/common/data-table'
 import AdminForm from '@/components/admin/form/Admin'
+import { adminColumns } from '@/components/admin/table/admins/admin-columns'
 import PageHeader from '@/components/common/PageHeader'
 import { Pagination } from '@/components/common/Pagination'
 import { AddButton } from '@/components/common/PermissionGate'

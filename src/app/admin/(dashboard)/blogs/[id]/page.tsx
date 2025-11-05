@@ -1,6 +1,6 @@
 'use client'
 
-import BlogDetail from '@/components/admin/blogs/BlogDetail'
+import BlogDetail from '@/components/admin/table/blogs/BlogDetail'
 import CustomLink from '@/components/common/CustomLink'
 import PageHeader from '@/components/common/PageHeader'
 import { buttonVariants } from '@/components/ui/button'

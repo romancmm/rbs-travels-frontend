@@ -2,9 +2,9 @@
 
 import { Suspense, useState } from 'react'
 
-import { blogCategoryColumns } from '@/components/admin/blogs/blog-categories-columns'
 import { CustomTable } from '@/components/admin/common/data-table'
 import { BlogCategoryForm } from '@/components/admin/form/BlogCategory'
+import { blogCategoryColumns } from '@/components/admin/table/blogs/blog-categories-columns'
 import PageHeader from '@/components/common/PageHeader'
 import { Pagination } from '@/components/common/Pagination'
 import { AddButton } from '@/components/common/PermissionGate'

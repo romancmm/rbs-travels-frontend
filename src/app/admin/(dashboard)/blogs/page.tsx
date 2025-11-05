@@ -2,8 +2,8 @@
 
 import { Suspense } from 'react'
 
-import { blogColumns } from '@/components/admin/blogs/blogs-columns'
 import { CustomTable } from '@/components/admin/common/data-table'
+import { blogColumns } from '@/components/admin/table/blogs/blogs-columns'
 import PageHeader from '@/components/common/PageHeader'
 import { Pagination } from '@/components/common/Pagination'
 import useAsync from '@/hooks/useAsync'
