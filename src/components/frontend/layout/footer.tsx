@@ -14,7 +14,7 @@ export default function Footer({ data }: { data: any }) {
 
 
   return (
-    <footer className="relative bg-linear-gradient-to-br from-slate-900 via-slate-800 to-slate-900 overflow-hidden text-white">
+    <footer className="relative bg-slate-900 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 overflow-hidden text-white">
       {/* Decorative Background Pattern */}
       <div
         className="absolute inset-0 opacity-5"

@@ -82,7 +82,7 @@ const FAQ = ({ data, className }: FAQProps) => {
             transition={{ delay: 0.5, duration: 0.6 }}
             className='mt-12 text-center'
           >
-            <div className='bg-linear-gradient-to-r from-primary/10 via-primary/5 to-primary/10 p-8 rounded-2xl'>
+            <div className='bg-gradient-to-r from-primary/10 via-primary/5 to-primary/10 p-8 rounded-2xl'>
               <Typography variant='h5' weight='semibold' className='mb-4 text-foreground'>
                 Still have questions?
               </Typography>

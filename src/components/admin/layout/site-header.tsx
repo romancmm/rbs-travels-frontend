@@ -189,7 +189,7 @@ export function SiteHeader() {
                 <Button variant='ghost' className='flex items-center gap-[5px] p-2 h-auto'>
                   <Avatar className='w-9 h-9'>
                     <AvatarImage src={'/'} alt={adminInfo?.firstName} />
-                    <AvatarFallback className='bg-linear-gradient-to-br from-gray-300 to-gray-500 text-white'>
+                    <AvatarFallback className='bg-gradient-to-br from-gray-300 to-gray-500 text-white'>
                       {adminInfo
                         ? `${adminInfo.firstName?.charAt(0) ?? ''}${adminInfo.lastName?.charAt(0) ?? ''
                         }`
@@ -220,7 +220,7 @@ export function SiteHeader() {
             </DropdownMenu>
           ) : (
             <Avatar className='w-9 h-9'>
-              <AvatarFallback className='bg-linear-gradient-to-br from-gray-300 to-gray-500 text-white'>
+              <AvatarFallback className='bg-gradient-to-br from-gray-300 to-gray-500 text-white'>
                 AD
               </AvatarFallback>
             </Avatar>

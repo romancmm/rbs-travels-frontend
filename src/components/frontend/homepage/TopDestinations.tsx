@@ -53,7 +53,7 @@ const DestinationCard = ({ destination, index }: { destination: OverseasDestinat
         />
 
         {/* Dynamic overlay gradient */}
-        <div className='absolute inset-0 bg-linear-gradient-to-t from-black/70 via-black/20 to-transparent' />
+        <div className='absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent' />
       </div>
 
       {/* Content */}
@@ -132,7 +132,7 @@ export default function TopDestinations({ data }: TopDestinationsProps) {
   return (
     <Section variant={'xl'}
       className={cn(
-        'relative bg-linear-gradient-to-br from-blue-50/50 via-white to-purple-50/30 overflow-hidden'
+        'relative bg-gradient-to-br from-blue-50/50 via-white to-purple-50/30 overflow-hidden'
       )}
     >
       {/* Enhanced Background Pattern */}
@@ -297,7 +297,7 @@ export default function TopDestinations({ data }: TopDestinationsProps) {
           <div className='flex justify-center items-center gap-4 pt-4'>
             <Button
               size='lg'
-              className='bg-linear-gradient-to-r from-primary hover:from-primary/90 to-primary/90 hover:to-primary shadow-xl hover:shadow-2xl px-4 lg:px-8 py-4 rounded-xl font-semibold text-white hover:scale-105 transition-all duration-300'
+              className='bg-gradient-to-r from-primary hover:from-primary/90 to-primary/90 hover:to-primary shadow-xl hover:shadow-2xl px-4 lg:px-8 py-4 rounded-xl font-semibold text-white hover:scale-105 transition-all duration-300'
             >
               Plan My Journey
             </Button>

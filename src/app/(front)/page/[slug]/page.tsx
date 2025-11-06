@@ -21,7 +21,7 @@ export default function DynamicPage() {
   if (loading) {
     return (
       <>
-        <Section className="bg-[linear-gradient(to_right,rgba(0,0,0,0.6),rgba(0,0,0,0.2)),url('/images/bg/breadcrumb.jpg')] bg-cover bg-center">
+        <Section className="bg-[gradient(to_right,rgba(0,0,0,0.6),rgba(0,0,0,0.2)),url('/images/bg/breadcrumb.jpg')] bg-cover bg-center">
           <Container>
             <div className='py-12'>
               <Skeleton className='bg-white/20 mb-4 w-3/4 h-12' />
@@ -79,7 +79,7 @@ export default function DynamicPage() {
     <>
       {/* <Section
         variant={'xs'}
-        className="bg-cover bg-center __bg-[linear-gradient(to_right,rgba(0,0,0,0.6),rgba(0,0,0,0.2)),url('/images/bg/breadcrumb.jpg')]"
+        className="bg-cover bg-center __bg-[gradient(to_right,rgba(0,0,0,0.6),rgba(0,0,0,0.2)),url('/images/bg/breadcrumb.jpg')]"
       >
         <Container>
           <div className='py-12'>

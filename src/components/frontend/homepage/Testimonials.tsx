@@ -60,7 +60,7 @@ const Testimonials = ({ data, isLoading = false, className }: TestimonialsProps)
   }
 
   return (
-    <Section variant="xl" className={cn('bg-linear-gradient-to-b from-accent/5 to-background', className)}>
+    <Section variant="xl" className={cn('bg-gradient-to-b from-accent/5 to-background', className)}>
       <Container>
         <Header data={data} />
         <CarouselContainer testimonials={data.testimonials} />
