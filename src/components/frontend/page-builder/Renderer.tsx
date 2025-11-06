@@ -3,7 +3,6 @@
 import { Container } from '@/components/common/container'
 import CustomImage from '@/components/common/CustomImage'
 import CustomLink from '@/components/common/CustomLink'
-import PageHeader from '@/components/common/PageHeader'
 import { Section } from '@/components/common/section'
 import { Typography } from '@/components/common/typography'
 import type { BaseComponent, Column as ColumnType, PageContent, Row as RowType, Section as SectionType } from '@/types/page-builder'
@@ -279,7 +278,7 @@ function SectionRenderer({ section }: { section: SectionType }) {
                         <div aria-hidden className='absolute inset-0 pointer-events-none' style={{ backgroundColor: secOverlay.color, opacity: secOverlay.opacity }} />
                     )}
 
-                    {section.name && <PageHeader title={section.name} />}
+                    {/* {section.name && <PageHeader title={section.name} />} */}
                     {section.rows.map((r) => (
                         <div key={r.id} className='mb-6'>
                             <RowRenderer row={r} />

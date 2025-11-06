@@ -1,7 +1,9 @@
 import {
+  FileCog,
   FileText,
   FolderOpen,
   LayoutDashboard,
+  ListTodo,
   LucideIcon,
   Settings,
   ShieldAlert,
@@ -176,12 +178,12 @@ export const navItems: NavItem[] = [
   {
     title: 'Menu Manager',
     href: '/admin/menu-manager',
-    icon: FolderOpen
+    icon: ListTodo
   },
   {
     title: 'Page Builder',
     href: '/admin/page-builder',
-    icon: FolderOpen
+    icon: FileCog
   },
   {
     title: 'File Manager',

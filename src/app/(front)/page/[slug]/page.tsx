@@ -97,7 +97,6 @@ export default function DynamicPage() {
 
       <div className='space-y-6'>
         {page?.content ? (
-          // PageBuilderRenderer expects PageContent shape
           <PageBuilderRenderer content={page.content} />
         ) : (
           <div className='text-gray-600'>No content available</div>
