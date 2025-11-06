@@ -260,7 +260,7 @@ export default function AboutPage() {
       <section
         className={cn(
           sectionVariants({ variant: 'xl' }),
-          'relative overflow-hidden bg-gradient-to-br from-blue-50 via-white to-purple-50/30'
+          'relative overflow-hidden bg-linear-to-br from-blue-50 via-white to-purple-50/30'
         )}
       >
         {/* Background Pattern */}
@@ -321,7 +321,7 @@ export default function AboutPage() {
                   height={400}
                   className='w-full h-96 object-cover'
                 />
-                <div className='absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent' />
+                <div className='absolute inset-0 bg-linear-to-t from-black/20 via-transparent to-transparent' />
               </div>
 
               {/* Floating Badge */}
@@ -368,7 +368,7 @@ export default function AboutPage() {
 
           {/* Timeline */}
           <div className='relative'>
-            <div className='left-1/2 absolute bg-gradient-to-b from-primary via-primary/50 to-primary/20 rounded-full w-1 h-full -translate-x-1/2 transform' />
+            <div className='left-1/2 absolute bg-linear-to-b from-primary via-primary/50 to-primary/20 rounded-full w-1 h-full -translate-x-1/2 transform' />
 
             <div className='space-y-12'>
               {aboutData.story.milestones.map((milestone, index) => (
@@ -422,7 +422,7 @@ export default function AboutPage() {
       <section
         className={cn(
           sectionVariants({ variant: 'xl' }),
-          'bg-gradient-to-br from-gray-50 to-blue-50/30'
+          'bg-linear-to-br from-gray-50 to-blue-50/30'
         )}
       >
         <Container>
@@ -515,7 +515,7 @@ export default function AboutPage() {
             {aboutData.services.map((service, index) => (
               <motion.div
                 key={index}
-                className='bg-gradient-to-br from-white to-gray-50/50 shadow-lg hover:shadow-xl p-8 border border-gray-100 rounded-3xl transition-all duration-300'
+                className='bg-linear-to-br from-white to-gray-50/50 shadow-lg hover:shadow-xl p-8 border border-gray-100 rounded-3xl transition-all duration-300'
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: index * 0.1 }}
@@ -553,7 +553,7 @@ export default function AboutPage() {
       <section
         className={cn(
           sectionVariants({ variant: 'xl' }),
-          'bg-gradient-to-br from-blue-50/50 via-white to-purple-50/30'
+          'bg-linear-to-br from-blue-50/50 via-white to-purple-50/30'
         )}
       >
         <Container>
@@ -591,7 +591,7 @@ export default function AboutPage() {
                     height={250}
                     className='w-full h-full object-cover hover:scale-105 transition-transform duration-500'
                   />
-                  <div className='absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent' />
+                  <div className='absolute inset-0 bg-linear-to-t from-black/30 via-transparent to-transparent' />
                 </div>
 
                 <div className='p-6'>
@@ -650,7 +650,7 @@ export default function AboutPage() {
       <section
         className={cn(
           sectionVariants({ variant: 'xl' }),
-          'bg-gradient-to-r from-primary via-primary/90 to-primary/80 text-white relative overflow-hidden'
+          'bg-linear-to-r from-primary via-primary/90 to-primary/80 text-white relative overflow-hidden'
         )}
       >
         {/* Background Pattern */}

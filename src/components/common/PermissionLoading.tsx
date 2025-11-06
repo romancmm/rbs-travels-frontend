@@ -34,7 +34,7 @@ export default function PermissionLoading({
           <div className='relative mb-4'>
             <div
               className={cn(
-                'flex justify-center items-center bg-gradient-to-br from-blue-100 to-blue-200 shadow-sm rounded-full',
+                'flex justify-center items-center bg-linear-to-br from-blue-100 to-blue-200 shadow-sm rounded-full',
                 iconSizes[size].main
               )}
             >

@@ -90,7 +90,7 @@ const Blog = ({ data, isLoading = false, className }: BlogProps) => {
               initial={{ width: 0 }}
               animate={{ width: '80px' }}
               transition={{ delay: 0.5, duration: 0.8 }}
-              className='bg-gradient-to-r from-primary to-accent mx-auto rounded-full h-1'
+              className='bg-linear-to-r from-primary to-accent mx-auto rounded-full h-1'
             />
           </motion.div>
         </div>
@@ -110,7 +110,7 @@ const Blog = ({ data, isLoading = false, className }: BlogProps) => {
           transition={{ delay: 0.8, duration: 0.6 }}
           className={cn(
             'group relative px-8 py-2.5 rounded-full overflow-hidden',
-            'bg-gradient-to-r from-primary/10 to-accent/10',
+            'bg-linear-to-r from-primary/10 to-accent/10',
             'border-2 border-primary/30 transition-all duration-500',
             'hover:border-primary/60 hover:shadow-xl hover:shadow-primary/25 hover:from-primary/90 hover:to-primary',
             'text-primary font-semibold'
@@ -121,7 +121,7 @@ const Blog = ({ data, isLoading = false, className }: BlogProps) => {
             initial={{ x: '-100%' }}
             whileHover={{ x: '0%' }}
             transition={{ duration: 0.5, ease: 'easeInOut' }}
-            className='absolute inset-0 bg-gradient-to-r from-primary to-primary/80'
+            className='absolute inset-0 bg-linear-to-r from-primary to-primary/80'
           />
 
           {/* Button Content * /}
@@ -181,7 +181,7 @@ const Blog = ({ data, isLoading = false, className }: BlogProps) => {
           initial={{ opacity: 0, scale: 0.8 }}
           whileHover={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.3 }}
-          className='-z-10 absolute -inset-1 bg-gradient-to-r from-primary/20 to-accent/20 blur-lg rounded-full'
+          className='-z-10 absolute -inset-1 bg-linear-to-r from-primary/20 to-accent/20 blur-lg rounded-full'
         />
       </motion.button> */}
       </Container>

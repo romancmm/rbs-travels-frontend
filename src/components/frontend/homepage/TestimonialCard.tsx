@@ -60,7 +60,7 @@ const TestimonialCard = ({ testimonial, className }: TestimonialCardProps) => {
       onHoverEnd={() => setIsHovered(false)}
       className={cn(
         'group relative rounded-3xl overflow-hidden transition-all duration-300',
-        'bg-gradient-to-br from-card/90 to-card/70 backdrop-blur-sm',
+        'bg-linear-to-br from-card/90 to-card/70 backdrop-blur-sm',
         'border-2 border-border/80 border-dashed',
         'hover:shadow-xl hover:shadow-primary/8',
         'p-8 space-y-6',
@@ -69,8 +69,8 @@ const TestimonialCard = ({ testimonial, className }: TestimonialCardProps) => {
     >
       {/* Background Pattern */}
       {/* <div className='absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300'>
-        <div className='top-0 right-0 absolute bg-gradient-to-br from-primary/8 to-transparent blur-3xl rounded-full w-32 h-32' />
-        <div className='bottom-0 left-0 absolute bg-gradient-to-tr from-accent/8 to-transparent blur-2xl rounded-full w-24 h-24' />
+        <div className='top-0 right-0 absolute bg-linear-to-br from-primary/8 to-transparent blur-3xl rounded-full w-32 h-32' />
+        <div className='bottom-0 left-0 absolute bg-linear-to-tr from-accent/8 to-transparent blur-2xl rounded-full w-24 h-24' />
       </div> */}
 
       {/* Quote Icon */}
@@ -87,7 +87,7 @@ const TestimonialCard = ({ testimonial, className }: TestimonialCardProps) => {
       </div>
 
       {/* User Info */}
-      <div className='z-10 relative flex items-center gap-4 pt-4 border-t border-border/20'>
+      <div className='z-10 relative flex items-center gap-4 pt-4 border-border/20 border-t'>
         {/* Avatar */}
         <div
           className={cn(

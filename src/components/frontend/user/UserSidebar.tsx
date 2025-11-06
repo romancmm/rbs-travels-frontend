@@ -86,7 +86,7 @@ export default function UserSidebar() {
       {/* User Info Card */}
       {/* <Card className='bg-background/50 backdrop-blur-sm p-4 border-border/50'>
         <div className='text-center'>
-          <div className='flex justify-center items-center bg-gradient-to-br from-primary/90 to-purple-400 mx-auto mb-3 rounded-full w-12 h-12'>
+          <div className='flex justify-center items-center bg-linear-to-br from-primary/90 to-purple-400 mx-auto mb-3 rounded-full w-12 h-12'>
             <User className='w-6 h-6' />
           </div>
           <h3 className='font-semibold text-sm'>Welcome back!</h3>
@@ -108,10 +108,9 @@ export default function UserSidebar() {
                 href={item.href}
                 className={`
                   group relative flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 ease-in-out
-                  ${
-                    active
-                      ? 'bg-gradient-to-r from-primary to-primary/80 text-white border border-primary/20'
-                      : 'text-white/70 hover:text-white hover:bg-white/10'
+                  ${active
+                    ? 'bg-linear-to-r from-primary to-primary/80 text-white border border-primary/20'
+                    : 'text-white/70 hover:text-white hover:bg-white/10'
                   }
                   ${isHovered ? 'transform scale-[1.02]' : ''}
                 `}
@@ -158,10 +157,9 @@ export default function UserSidebar() {
                 href={item.href}
                 className={`
                   group relative flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 ease-in-out
-                  ${
-                    active
-                      ? 'bg-gradient-to-r from-orange-500/20 to-red-500/20 text-white border border-orange-500/30'
-                      : 'text-white/70 hover:text-white hover:bg-white/10'
+                  ${active
+                    ? 'bg-linear-to-r from-orange-500/20 to-red-500/20 text-white border border-orange-500/30'
+                    : 'text-white/70 hover:text-white hover:bg-white/10'
                   }
                   ${isHovered ? 'transform scale-[1.02]' : ''}
                 `}

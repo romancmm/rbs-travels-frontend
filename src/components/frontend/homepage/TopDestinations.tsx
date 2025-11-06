@@ -53,7 +53,7 @@ const DestinationCard = ({ destination, index }: { destination: OverseasDestinat
         />
 
         {/* Dynamic overlay gradient */}
-        <div className='absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent' />
+        <div className='absolute inset-0 bg-linear-to-t from-black/70 via-black/20 to-transparent' />
       </div>
 
       {/* Content */}
@@ -87,7 +87,7 @@ const DestinationCard = ({ destination, index }: { destination: OverseasDestinat
         {/* Enhanced Action Button */}
         {/* <CustomLink
           href={`/destination/${destination.id}`}
-          className='group/btn inline-flex justify-center items-center gap-2 bg-gradient-to-r from-primary hover:from-primary/90 to-primary/90 hover:to-primary shadow-lg hover:shadow-xl px-4 py-3 rounded-xl w-full font-semibold text-white hover:scale-105 transition-all duration-300'
+          className='group/btn inline-flex justify-center items-center gap-2 bg-linear-to-r from-primary hover:from-primary/90 to-primary/90 hover:to-primary shadow-lg hover:shadow-xl px-4 py-3 rounded-xl w-full font-semibold text-white hover:scale-105 transition-all duration-300'
         >
           <span>Explore Destination</span>
           <ArrowRight className='w-4 h-4 transition-transform group-hover/btn:translate-x-1' />
@@ -132,7 +132,7 @@ export default function TopDestinations({ data }: TopDestinationsProps) {
   return (
     <Section variant={'xl'}
       className={cn(
-        'relative bg-gradient-to-br from-blue-50/50 via-white to-purple-50/30 overflow-hidden'
+        'relative bg-linear-to-br from-blue-50/50 via-white to-purple-50/30 overflow-hidden'
       )}
     >
       {/* Enhanced Background Pattern */}
@@ -297,7 +297,7 @@ export default function TopDestinations({ data }: TopDestinationsProps) {
           <div className='flex justify-center items-center gap-4 pt-4'>
             <Button
               size='lg'
-              className='bg-gradient-to-r from-primary hover:from-primary/90 to-primary/90 hover:to-primary shadow-xl hover:shadow-2xl px-4 lg:px-8 py-4 rounded-xl font-semibold text-white hover:scale-105 transition-all duration-300'
+              className='bg-linear-to-r from-primary hover:from-primary/90 to-primary/90 hover:to-primary shadow-xl hover:shadow-2xl px-4 lg:px-8 py-4 rounded-xl font-semibold text-white hover:scale-105 transition-all duration-300'
             >
               Plan My Journey
             </Button>

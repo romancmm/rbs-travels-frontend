@@ -190,7 +190,7 @@ CVA and `cn()` utility handle intelligent class merging:
 // Custom colors override CVA defaults safely
 <StatusBadge
   status="CUSTOM"
-  className="bg-gradient-to-r from-purple-400 to-pink-400"
+  className="bg-linear-to-r from-purple-400 to-pink-400"
 />
 ```
 

@@ -27,7 +27,7 @@ const Stats = ({ data, isLoading = false, className }: StatsProps) => {
             className={cn(
               'gap-3 lg:gap-6 grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4',
               'py-2 lg:py-4 border rounded-2xl border-border/50 w-full',
-              'bg-gradient-to-r from-background via-accent/5 to-background'
+              'bg-linear-to-r from-background via-accent/5 to-background'
             )}
             role='region'
             aria-label='Company statistics'

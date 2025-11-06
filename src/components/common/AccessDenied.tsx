@@ -65,13 +65,13 @@ export default function AccessDenied({
       >
         <Card className='relative bg-white/80 shadow-2xl backdrop-blur-sm border-0 overflow-hidden'>
           {/* Decorative gradient background */}
-          <div className='absolute inset-0 bg-gradient-to-br from-red-50/50 via-orange-50/30 to-yellow-50/50' />
+          <div className='absolute inset-0 bg-linear-to-br from-red-50/50 via-orange-50/30 to-yellow-50/50' />
 
           <CardHeader className='relative pb-6 text-center'>
             {/* Icon with animated background */}
             <div className='relative mx-auto mb-6'>
               <div className='absolute inset-0 bg-red-100 rounded-full animate-pulse' />
-              <div className='relative flex justify-center items-center bg-gradient-to-br from-red-100 to-red-200 shadow-lg rounded-full w-20 h-20'>
+              <div className='relative flex justify-center items-center bg-linear-to-br from-red-100 to-red-200 shadow-lg rounded-full w-20 h-20'>
                 <Lock className='w-10 h-10 text-red-600' />
               </div>
             </div>
@@ -88,7 +88,7 @@ export default function AccessDenied({
 
           <CardContent className='relative space-y-6'>
             {/* Permission notice with improved styling */}
-            <div className='bg-gradient-to-r from-amber-50 to-orange-50 shadow-sm p-5 border border-amber-200 rounded-xl'>
+            <div className='bg-linear-to-r from-amber-50 to-orange-50 shadow-sm p-5 border border-amber-200 rounded-xl'>
               <div className='flex items-start gap-4'>
                 <div className='flex-shrink-0 bg-amber-100 p-2 rounded-full'>
                   <Shield className='w-5 h-5 text-amber-700' />
@@ -104,7 +104,7 @@ export default function AccessDenied({
             </div>
 
             {/* Countdown with improved design */}
-            <div className='bg-gradient-to-r from-blue-50 to-indigo-50 p-4 border border-blue-200 rounded-lg text-center'>
+            <div className='bg-linear-to-r from-blue-50 to-indigo-50 p-4 border border-blue-200 rounded-lg text-center'>
               <div className='flex justify-center items-center gap-2 text-blue-800'>
                 <Clock className='w-5 h-5' />
                 <span className='font-medium text-sm'>
@@ -132,7 +132,7 @@ export default function AccessDenied({
 
               {showHomeButton && (
                 <Link href={redirectPath} className='flex-1'>
-                  <Button className='group bg-gradient-to-r from-blue-600 hover:from-blue-700 to-indigo-600 hover:to-indigo-700 shadow-lg hover:shadow-xl w-full h-12 hover:scale-105 transition-all duration-200'>
+                  <Button className='group bg-linear-to-r from-blue-600 hover:from-blue-700 to-indigo-600 hover:to-indigo-700 shadow-lg hover:shadow-xl w-full h-12 hover:scale-105 transition-all duration-200'>
                     <Home className='mr-2 w-5 h-5 group-hover:scale-110 transition-transform' />
                     Dashboard
                   </Button>

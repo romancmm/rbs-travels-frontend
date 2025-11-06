@@ -31,7 +31,7 @@ const FeatureCard = ({ icon: Icon, title, desc, index, className }: FeatureCardP
         <Typography className='text-gray-600'>{desc}</Typography>
       </div>
       {/* Subtle hover indicator */}
-      <div className='bottom-0 left-1/2 absolute bg-gradient-to-r from-primary to-primary/50 rounded-t-full w-0 group-hover:w-12 h-1 transition-all -translate-x-1/2 duration-300' />
+      <div className='bottom-0 left-1/2 absolute bg-linear-to-r from-primary to-primary/50 rounded-t-full w-0 group-hover:w-12 h-1 transition-all -translate-x-1/2 duration-300' />
     </div>
   )
 }

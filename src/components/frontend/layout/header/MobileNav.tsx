@@ -24,7 +24,7 @@ export default function MobileNav({ items }: { items: any[] }) {
       </SheetTrigger>
       <SheetContent
         side='right'
-        className='bg-gradient-to-b from-slate-900 to-slate-800 p-0 border-0 w-80'
+        className='bg-linear-to-b from-slate-900 to-slate-800 p-0 border-0 w-80'
       >
         <SheetHeader className='flex flex-row justify-between items-center p-6 border-white/10 border-b'>
           <SheetTitle className='text-white'>

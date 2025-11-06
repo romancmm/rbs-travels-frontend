@@ -38,7 +38,7 @@ const BlogCard = ({ post, index, className }: BlogCardProps) => {
         'group relative bg-card/80 backdrop-blur-sm rounded-3xl overflow-hidden',
         'border border-border/30 transition-all duration-500',
         'hover:border-border hover:shadow-xl hover:shadow-primary/15',
-        'hover:bg-gradient-to-br hover:from-card/90 hover:to-primary/5',
+        'hover:bg-linear-to-br hover:from-card/90 hover:to-primary/5',
         className
       )}
     >
@@ -69,7 +69,7 @@ const BlogCard = ({ post, index, className }: BlogCardProps) => {
         </div>
 
         {/* Gradient Overlay */}
-        <div className='absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent' />
+        <div className='absolute inset-0 bg-linear-to-t from-black/20 via-transparent to-transparent' />
       </div>
 
       {/* Content Section */}

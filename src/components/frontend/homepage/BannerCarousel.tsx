@@ -105,7 +105,7 @@ const BannerCarousel = ({ banners }: BannerCarouselProps) => {
                 }}
               >
                 {/* Enhanced overlay with gradient */}
-                <div className='absolute inset-0 bg-gradient-to-b from-black/30 via-black/50 to-black/70' />
+                <div className='absolute inset-0 bg-linear-to-b from-black/30 via-black/50 to-black/70' />
 
                 {/* Animated particles background */}
                 <div className='absolute inset-0 overflow-hidden'>
@@ -180,9 +180,9 @@ const BannerCarousel = ({ banners }: BannerCarouselProps) => {
                             {banner.button}
                           </span>
                           {/* Animated gradient overlay */}
-                          <div className='absolute inset-0 bg-gradient-to-r from-primary/60 via-primary to-primary/60 opacity-0 group-hover:opacity-100 transition-opacity duration-500' />
+                          <div className='absolute inset-0 bg-linear-to-r from-primary/60 via-primary to-primary/60 opacity-0 group-hover:opacity-100 transition-opacity duration-500' />
                           {/* Shine effect */}
-                          <div className='absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent transition-transform -translate-x-full group-hover:translate-x-full duration-700' />
+                          <div className='absolute inset-0 bg-linear-to-r from-transparent via-white/20 to-transparent transition-transform -translate-x-full group-hover:translate-x-full duration-700' />
                         </Button>
 
                         {/* Secondary Button */}
@@ -199,7 +199,7 @@ const BannerCarousel = ({ banners }: BannerCarouselProps) => {
                         >
                           Learn More
                           {/* Glassmorphism background */}
-                          <div className='absolute inset-0 bg-gradient-to-r from-white/5 to-white/10 opacity-0 group-hover:opacity-100 rounded-full transition-opacity duration-300' />
+                          <div className='absolute inset-0 bg-linear-to-r from-white/5 to-white/10 opacity-0 group-hover:opacity-100 rounded-full transition-opacity duration-300' />
                         </Button>
                       </motion.div>
 
@@ -228,9 +228,9 @@ const BannerCarousel = ({ banners }: BannerCarouselProps) => {
 
                         <div className='flex items-center gap-2 text-sm'>
                           <div className='flex -space-x-2'>
-                            <div className='bg-gradient-to-r from-primary to-primary/70 border-2 border-white rounded-full w-8 h-8' />
-                            <div className='bg-gradient-to-r from-purple-500 to-purple-700 border-2 border-white rounded-full w-8 h-8' />
-                            <div className='bg-gradient-to-r from-green-500 to-green-700 border-2 border-white rounded-full w-8 h-8' />
+                            <div className='bg-linear-to-r from-primary to-primary/70 border-2 border-white rounded-full w-8 h-8' />
+                            <div className='bg-linear-to-r from-purple-500 to-purple-700 border-2 border-white rounded-full w-8 h-8' />
+                            <div className='bg-linear-to-r from-green-500 to-green-700 border-2 border-white rounded-full w-8 h-8' />
                           </div>
                           <span className='hidden sm:inline'>Join 10,000+ happy travelers</span>
                         </div>

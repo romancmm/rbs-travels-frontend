@@ -55,7 +55,7 @@ export default function InlineAccessDenied({
           <div className='mx-auto mb-4'>
             <div
               className={cn(
-                'flex justify-center items-center bg-gradient-to-br from-red-100 to-red-200 shadow-sm rounded-full',
+                'flex justify-center items-center bg-linear-to-br from-red-100 to-red-200 shadow-sm rounded-full',
                 iconSizes[size].main
               )}
             >

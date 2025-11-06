@@ -40,7 +40,7 @@ const DestinationCardSkeleton = () => (
 export default function TopDestinationsLoading() {
   return (
     <section
-      className={cn(sectionVariants({ variant: 'xl' }), 'bg-gradient-to-b from-gray-50 to-white')}
+      className={cn(sectionVariants({ variant: 'xl' }), 'bg-linear-to-b from-gray-50 to-white')}
     >
       <Container>
         {/* Header skeleton */}
