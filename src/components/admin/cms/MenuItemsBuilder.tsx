@@ -18,7 +18,6 @@ import {
 import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
 
-import { Typography } from '@/components/common/typography'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Sheet, SheetClose, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet'
@@ -33,15 +32,21 @@ interface MenuItemsBuilderProps {
   groupId: string
   items: MenuItem[]
   refetch?: () => Promise<void>
+  isSheetOpen?: boolean
+  setIsSheetOpen?: (open: boolean) => void
 }
 
-export function MenuItemsBuilder({ items, groupId, refetch }: MenuItemsBuilderProps) {
+export function MenuItemsBuilder({ items, groupId, refetch, isSheetOpen: externalIsSheetOpen, setIsSheetOpen: externalSetIsSheetOpen }: MenuItemsBuilderProps) {
   const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set())
 
   // editor drawer state
   const [editingItem, setEditingItem] = useState<MenuItem | null>(null)
-  const [isSheetOpen, setIsSheetOpen] = useState(false)
+  const [internalIsSheetOpen, setInternalIsSheetOpen] = useState(false)
   const [parentItemId, setParentItemId] = useState<string | undefined>(undefined)
+
+  // Use external state if provided, otherwise use internal
+  const isSheetOpen = externalIsSheetOpen !== undefined ? externalIsSheetOpen : internalIsSheetOpen
+  const setIsSheetOpen = externalSetIsSheetOpen || setInternalIsSheetOpen
 
   // maintain a local copy of items so we can optimistically update UI
   const [localItems, setLocalItems] = useState<MenuItem[]>(items)
@@ -303,18 +308,6 @@ export function MenuItemsBuilder({ items, groupId, refetch }: MenuItemsBuilderPr
         </SheetContent>
       </Sheet>
 
-      <div className='flex justify-between items-center'>
-        <div>
-          <Typography variant={'h6'}>Menu Items</Typography>
-          <Typography variant={'body2'} className='text-muted-foreground'>
-            Add and organize menu items. You can nest items by adding child items.
-          </Typography>
-        </div>
-        <Button type='button' onClick={() => openAddItemForm()}>
-          <Plus className='mr-2 w-4 h-4' />
-          Add Item
-        </Button>
-      </div>
 
       {localItems?.length === 0 ? (
         <div className='flex flex-col justify-center items-center p-12 border border-dashed rounded-lg text-center'>
