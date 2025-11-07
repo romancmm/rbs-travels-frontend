@@ -77,6 +77,7 @@ const analyticsSchema = z.object({
 
 // === Main Site Settings Schema ===
 export const siteSettingsSchema = z.object({
+  id: optionalStr(),
   name: optionalStr(),
   email: z.string().email().optional().or(z.literal('')),
   phone: optionalStr(),

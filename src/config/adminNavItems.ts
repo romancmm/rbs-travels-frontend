@@ -212,17 +212,22 @@ export const navItems: NavItem[] = [
     title: 'Site Settings',
     href: '',
     icon: Settings,
-    permission: { resource: 'settings', action: 'index' },
+    // permission: { resource: 'dashboard', action: 'index' },
     children: [
       {
+        title: 'Logo Management',
+        href: '/admin/settings/logo-management'
+        // permission: { resource: 'settings', action: 'update' }
+      },
+      {
         title: 'General Settings',
-        href: '/admin/settings/general',
-        permission: { resource: 'settings', action: 'update' }
+        href: '/admin/settings'
+        // permission: { resource: 'settings', action: 'update' }
       },
       {
         title: 'Social Links',
-        href: '/admin/settings/social-links',
-        permission: { resource: 'settings', action: 'update' }
+        href: '/admin/settings/social-links'
+        // permission: { resource: 'settings', action: 'update' }
       }
     ]
   },
