@@ -11,24 +11,17 @@ import {
   CarouselPrevious
 } from '@/components/ui/carousel'
 import { cn } from '@/lib/utils'
+import { BannerType } from '@/lib/validations/schemas/homepageSettings'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { AnimatePresence, motion } from 'motion/react'
 import { useEffect, useState } from 'react'
 
-interface Banner {
-  id: number
-  title: string
-  subtitle: string
-  description: string
-  button: string
-  image: string
-}
 
 interface BannerCarouselProps {
-  banners: Banner[]
+  data: BannerType
 }
 
-const BannerCarousel = ({ banners }: BannerCarouselProps) => {
+const BannerCarousel = ({ data }: BannerCarouselProps) => {
   const [api, setApi] = useState<CarouselApi>()
   const [current, setCurrent] = useState(0)
   const [isAutoPlaying, setIsAutoPlaying] = useState(true)
@@ -84,8 +77,8 @@ const BannerCarousel = ({ banners }: BannerCarouselProps) => {
         onMouseLeave={handleMouseLeave}
       >
         <CarouselContent>
-          {banners.map((banner, index) => (
-            <CarouselItem key={banner.id}>
+          {data.map((banner, index) => (
+            <CarouselItem key={index}>
               <div
                 className={cn(
                   'relative flex justify-center items-center w-screen',
@@ -95,7 +88,7 @@ const BannerCarousel = ({ banners }: BannerCarouselProps) => {
                   '-mx-4 sm:-mx-6 md:-mx-8'
                 )}
                 style={{
-                  backgroundImage: `url(${banner.image})`,
+                  backgroundImage: `url(${banner.bgImage})`,
                   backgroundSize: 'cover',
                   backgroundPosition: 'center center',
                   backgroundAttachment: isMobile ? 'scroll' : 'fixed',
@@ -116,7 +109,7 @@ const BannerCarousel = ({ banners }: BannerCarouselProps) => {
                 <AnimatePresence mode='wait'>
                   {current === index && (
                     <motion.div
-                      key={`banner-${banner.id}`}
+                      key={`banner-${index}`}
                       initial={{ opacity: 0, y: 60, scale: 0.9 }}
                       animate={{ opacity: 1, y: 0, scale: 1 }}
                       exit={{ opacity: 0, y: -30, scale: 1.1 }}
@@ -134,7 +127,7 @@ const BannerCarousel = ({ banners }: BannerCarouselProps) => {
                         className='mb-3'
                       >
                         <span className='inline-flex items-center gap-2 bg-primary/20 backdrop-blur-sm px-4 py-1.5 border border-white/20 rounded-full font-semibold text-xs md:text-sm uppercase tracking-wider'>
-                          {banner.subtitle}
+                          {banner.subTitle}
                         </span>
                       </motion.div>
 
@@ -155,53 +148,52 @@ const BannerCarousel = ({ banners }: BannerCarouselProps) => {
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.6, duration: 0.6 }}
                       >
-                        {banner.description}
+                        {banner.desc}
                       </motion.p>
 
                       {/* Enhanced buttons with hover effects */}
-                      <motion.div
-                        initial={{ opacity: 0, y: 30, scale: 0.8 }}
-                        animate={{ opacity: 1, y: 0, scale: 1 }}
-                        transition={{ delay: 0.8, duration: 0.5 }}
-                        className='flex justify-center items-center gap-3 sm:gap-6'
-                      >
-                        {/* Primary CTA Button */}
-                        <Button
-                          size='lg'
-                          className={cn(
-                            'group relative bg-primary hover:bg-primary/90 overflow-hidden',
-                            'px-8 lg:px-10 py-2.5 lg:py-5 text-white font-medium text-sm lg:text-base transition-all duration-500',
-                            'border-2 border-primary hover:border-primary/70',
-                            'shadow-2xl hover:shadow-3xl hover:shadow-primary/30',
-                            'hover:scale-105 hover:-translate-y-1 active:scale-95 rounded-full'
-                          )}
+                      {banner.buttons && banner.buttons.length > 0 && (
+                        <motion.div
+                          initial={{ opacity: 0, y: 30, scale: 0.8 }}
+                          animate={{ opacity: 1, y: 0, scale: 1 }}
+                          transition={{ delay: 0.8, duration: 0.5 }}
+                          className='flex justify-center items-center gap-3 sm:gap-6'
                         >
-                          <span className='z-10 relative flex justify-center items-center gap-3'>
-                            {banner.button}
-                          </span>
-                          {/* Animated gradient overlay */}
-                          <div className='absolute inset-0 bg-linear-to-r from-primary/60 via-primary to-primary/60 opacity-0 group-hover:opacity-100 transition-opacity duration-500' />
-                          {/* Shine effect */}
-                          <div className='absolute inset-0 bg-linear-to-r from-transparent via-white/20 to-transparent transition-transform -translate-x-full group-hover:translate-x-full duration-700' />
-                        </Button>
-
-                        {/* Secondary Button */}
-                        <Button
-                          variant='outline'
-                          size='lg'
-                          className={cn(
-                            'group relative bg-white/10 backdrop-blur-md border border-white/40 text-white',
-                            'hover:bg-white/20 hover:border-white/60 hover:text-white transition-all duration-500',
-                            'px-8 lg:px-10 py-2.5 lg:py-5 font-medium text-sm lg:text-base',
-                            'hover:scale-105 hover:-translate-y-1 active:scale-95',
-                            'rounded-full shadow-lg hover:shadow-xl hover:shadow-white/10'
-                          )}
-                        >
-                          Learn More
-                          {/* Glassmorphism background */}
-                          <div className='absolute inset-0 bg-linear-to-r from-white/5 to-white/10 opacity-0 group-hover:opacity-100 rounded-full transition-opacity duration-300' />
-                        </Button>
-                      </motion.div>
+                          {banner.buttons.map((button, btnIndex) => (
+                            <Button
+                              key={btnIndex}
+                              asChild
+                              size='lg'
+                              variant={btnIndex === 0 ? 'default' : 'outline'}
+                              className={cn(
+                                'group relative overflow-hidden transition-all duration-500',
+                                'px-8 lg:px-10 py-2.5 lg:py-5 font-medium text-sm lg:text-base',
+                                'hover:scale-105 hover:-translate-y-1 active:scale-95 rounded-full',
+                                btnIndex === 0
+                                  ? 'bg-primary hover:bg-primary/90 text-white border-2 border-primary hover:border-primary/70 shadow-2xl hover:shadow-3xl hover:shadow-primary/30'
+                                  : 'bg-white/10 backdrop-blur-md border border-white/40 text-white hover:bg-white/20 hover:border-white/60 hover:text-white shadow-lg hover:shadow-xl hover:shadow-white/10'
+                              )}
+                            >
+                              <a href={button.url}>
+                                <span className='z-10 relative flex justify-center items-center gap-3'>
+                                  {button.title}
+                                </span>
+                                {/* Animated gradient overlay for primary */}
+                                {btnIndex === 0 && (
+                                  <>
+                                    <div className='absolute inset-0 bg-linear-to-r from-primary/60 via-primary to-primary/60 opacity-0 group-hover:opacity-100 transition-opacity duration-500' />
+                                    <div className='absolute inset-0 bg-linear-to-r from-transparent via-white/20 to-transparent transition-transform -translate-x-full group-hover:translate-x-full duration-700' />
+                                  </>
+                                )}
+                                {/* Glassmorphism for secondary */}
+                                {btnIndex !== 0 && (
+                                  <div className='absolute inset-0 bg-linear-to-r from-white/5 to-white/10 opacity-0 group-hover:opacity-100 rounded-full transition-opacity duration-300' />
+                                )}
+                              </a>
+                            </Button>
+                          ))}
+                        </motion.div>
+                      )}
 
                       {/* Additional Action Elements */}
                       {/* <motion.div
@@ -266,7 +258,7 @@ const BannerCarousel = ({ banners }: BannerCarouselProps) => {
 
         {/* Enhanced slide indicators */}
         <div className='bottom-8 left-1/2 absolute flex gap-3 -translate-x-1/2'>
-          {banners.map((_, index) => (
+          {data.map((_, index) => (
             <button
               key={index}
               onClick={() => api?.scrollTo(index)}
@@ -288,9 +280,9 @@ const BannerCarousel = ({ banners }: BannerCarouselProps) => {
             initial={{ width: '0%' }}
             animate={{
               width:
-                current === banners.length - 1
+                current === data.length - 1
                   ? '100%'
-                  : `${((current + 1) / banners.length) * 100}%`
+                  : `${((current + 1) / data.length) * 100}%`
             }}
             transition={{ duration: 0.3 }}
           />

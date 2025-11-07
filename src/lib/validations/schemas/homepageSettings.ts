@@ -77,7 +77,7 @@ export const homepageSettingsSchema = z
 export type HomepageSettings = z.infer<typeof homepageSettingsSchema>
 
 // Section-specific types for better modularity
-export type BannerSection = z.infer<typeof bannerSectionSchema>
+export type BannerType = z.infer<typeof bannerSectionSchema>
 export type GameChangerSection = z.infer<typeof gameChangerSectionSchema>
 export type AgencySection = z.infer<typeof agencySectionSchema>
 export type WhyChooseSection = z.infer<typeof whyChooseSectionSchema>

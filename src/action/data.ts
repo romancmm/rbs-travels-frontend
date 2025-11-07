@@ -55,7 +55,7 @@ export const getSiteConfig = async (): Promise<any | null> => {
 }
 
 export const getHomepageData = async (): Promise<HomepageSettings | null> => {
-  const data = await fetchOnServer('/settings/key/homepage_settings', 3600) // 1 hour revalidation
+  const data = await fetchOnServer('/settings/homepage_settings', 3600) // 1 hour revalidation
   if (data.error) {
     return null
   }
