@@ -21,8 +21,11 @@ export interface MenuItem {
   articleId?: string // For article (FK to Post)
   icon?: string
   target?: '_self' | '_blank'
+  cssClass?: string // Custom CSS class for styling
   parentId?: string | null // For relational structure
   order: number
+  isPublished?: boolean // Published status
+  meta?: Record<string, any> // Additional metadata
   children: MenuItem[] // Nested children for tree structure (from cache or transformed)
   createdAt?: string
   updatedAt?: string
@@ -62,8 +65,11 @@ export interface CreateMenuItemPayload {
   articleId?: string
   icon?: string
   target?: '_self' | '_blank'
+  cssClass?: string
   parentId?: string | null
   order: number
+  isPublished?: boolean
+  meta?: Record<string, any>
 }
 
 export type UpdateMenuItemPayload = Partial<CreateMenuItemPayload>

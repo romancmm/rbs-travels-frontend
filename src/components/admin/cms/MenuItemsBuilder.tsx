@@ -296,15 +296,17 @@ export function MenuItemsBuilder({ items, groupId, refetch, isSheetOpen: externa
             <SheetTitle>{editingItem ? 'Edit Menu Item' : 'Add Menu Item'}</SheetTitle>
             <SheetClose />
           </SheetHeader>
-          <MenuItemForm
-            item={editingItem}
-            onSave={handleFormSave}
-            onCancel={() => {
-              setEditingItem(null)
-              setParentItemId(undefined)
-              setIsSheetOpen(false)
-            }}
-          />
+          <div className="px-4 pb-8 overflow-y-auto">
+            <MenuItemForm
+              item={editingItem}
+              onSave={handleFormSave}
+              onCancel={() => {
+                setEditingItem(null)
+                setParentItemId(undefined)
+                setIsSheetOpen(false)
+              }}
+            />
+          </div>
         </SheetContent>
       </Sheet>
 
