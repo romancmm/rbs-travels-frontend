@@ -37,8 +37,8 @@ export default function HomeConfigPage() {
   return (
     <>
       <PageHeader
-        title='Homepage Configuration'
-        subTitle='Manage homepage settings and content'
+        title='Hero Banners / Carousel'
+        subTitle='Manage the hero banners displayed on the homepage'
         extra={
           <Button variant={edit ? 'destructive' : 'default'} onClick={() => setEdit(!edit)}>
             {edit ? 'Cancel' : 'Update'}

@@ -80,12 +80,20 @@ const HomeBanner = ({ settingsKey, initialValues, refetch }: TProps) => {
 
   return (
     <form onSubmit={onSubmit} className='space-y-6'>
-      <div className='flex justify-between items-center mb-4'>
-        <h2 className='font-semibold text-xl'>Hero Banners / Carousel</h2>
-        <Button
-          type='button'
-          variant='outline'
-          size='sm'
+      {bannerFields.map((banner, bannerIndex) => (
+        <BannerCard
+          key={banner.id}
+          control={control}
+          bannerIndex={bannerIndex}
+          errors={errors.banners}
+          removeBanner={removeBanner}
+          canRemove={bannerFields.length > 1}
+        />
+      ))}
+
+      {bannerFields.length < 10 && (
+        <div
+          className='group flex flex-col justify-center items-center bg-linear-to-br from-indigo-50 hover:from-indigo-100 via-purple-50 hover:via-purple-100 to-pink-50 hover:to-pink-100 shadow-sm hover:shadow-md p-8 border-2 border-indigo-200 hover:border-indigo-300 border-dashed rounded-xl transition-all duration-300 cursor-pointer'
           onClick={() =>
             appendBanner({
               title: '',
@@ -97,21 +105,22 @@ const HomeBanner = ({ settingsKey, initialValues, refetch }: TProps) => {
             })
           }
         >
-          <Plus className='mr-2 w-4 h-4' />
-          Add Banner
-        </Button>
-      </div>
-
-      {bannerFields.map((banner, bannerIndex) => (
-        <BannerCard
-          key={banner.id}
-          control={control}
-          bannerIndex={bannerIndex}
-          errors={errors.banners}
-          removeBanner={removeBanner}
-          canRemove={bannerFields.length > 1}
-        />
-      ))}
+          <div className='flex justify-center items-center bg-white shadow-md group-hover:shadow-lg mb-4 rounded-full w-16 h-16 group-hover:scale-105 transition-all duration-300'>
+            <Plus className='w-6 h-6 text-indigo-600 group-hover:rotate-90 transition-transform duration-300' />
+          </div>
+          <Button
+            type='button'
+            variant='default'
+            size='lg'
+            className='bg-indigo-600 hover:bg-indigo-700 shadow-lg hover:shadow-xl pointer-events-none'
+          >
+            Add New Banner Slide
+          </Button>
+          <p className='mt-3 text-gray-600 text-sm text-center'>
+            Create a new carousel slide with custom content and call-to-action buttons
+          </p>
+        </div>
+      )}
 
       <Button type='submit' size='lg' disabled={isSubmitting}>
         {isSubmitting ? 'Saving...' : initialValues ? 'Update Banners' : 'Save Banners'}

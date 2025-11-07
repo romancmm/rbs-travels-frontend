@@ -18,7 +18,7 @@ import { useEffect, useState } from 'react'
 
 
 interface BannerCarouselProps {
-  data: BannerType
+  data: BannerType | undefined
 }
 
 const BannerCarousel = ({ data }: BannerCarouselProps) => {
@@ -77,7 +77,7 @@ const BannerCarousel = ({ data }: BannerCarouselProps) => {
         onMouseLeave={handleMouseLeave}
       >
         <CarouselContent>
-          {data.map((banner, index) => (
+          {data?.map((banner, index) => (
             <CarouselItem key={index}>
               <div
                 className={cn(
@@ -258,7 +258,7 @@ const BannerCarousel = ({ data }: BannerCarouselProps) => {
 
         {/* Enhanced slide indicators */}
         <div className='bottom-8 left-1/2 absolute flex gap-3 -translate-x-1/2'>
-          {data.map((_, index) => (
+          {data?.map((_, index) => (
             <button
               key={index}
               onClick={() => api?.scrollTo(index)}
@@ -280,9 +280,9 @@ const BannerCarousel = ({ data }: BannerCarouselProps) => {
             initial={{ width: '0%' }}
             animate={{
               width:
-                current === data.length - 1
+                current === (data?.length ?? 0) - 1
                   ? '100%'
-                  : `${((current + 1) / data.length) * 100}%`
+                  : `${((current + 1) / (data?.length ?? 1)) * 100}%`
             }}
             transition={{ duration: 0.3 }}
           />
