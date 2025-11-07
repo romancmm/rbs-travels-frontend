@@ -17,7 +17,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { Plus, Trash2 } from 'lucide-react'
 import { Controller, useFieldArray, useForm } from 'react-hook-form'
 import { toast } from 'sonner'
-import IconPickerModal from '../../common/IconPickerModal'
+import IconPickerModal from '../../../common/IconPickerModal'
 
 type TProps = {
   settingsKey: string
@@ -33,11 +33,7 @@ const HomepageSettings = ({ settingsKey, initialValues, refetch }: TProps) => {
   } = useForm({
     resolver: zodResolver(homepageSettingsSchema),
     defaultValues: {
-      hero: {
-        title: initialValues?.hero?.title || '',
-        subTitle: initialValues?.hero?.subTitle || '',
-        desc: initialValues?.hero?.desc || ''
-      },
+
       gameChanger: {
         title: initialValues?.gameChanger?.title || '',
         subTitle: initialValues?.gameChanger?.subTitle || '',
@@ -133,44 +129,6 @@ const HomepageSettings = ({ settingsKey, initialValues, refetch }: TProps) => {
 
   return (
     <form onSubmit={onSubmit} className='space-y-6'>
-      <Card>
-        <CardHeader>
-          <CardTitle>Hero Section</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className='space-y-4'>
-            <Controller
-              control={control}
-              name='hero.title'
-              render={({ field }) => (
-                <CustomInput
-                  label='Title'
-                  placeholder='Enter site name'
-                  error={errors.hero?.title?.message}
-                  {...field}
-                  value={field.value ?? ''}
-                />
-              )}
-            />
-
-            <Controller
-              control={control}
-              name='hero.desc'
-              render={({ field }) => (
-                <CustomInput
-                  label='Description'
-                  type='textarea'
-                  rows={3}
-                  placeholder='Brief description of the site'
-                  error={errors.hero?.desc?.message}
-                  {...field}
-                  value={field.value ?? ''}
-                />
-              )}
-            />
-          </div>
-        </CardContent>
-      </Card>
 
       <Card>
         <CardHeader>

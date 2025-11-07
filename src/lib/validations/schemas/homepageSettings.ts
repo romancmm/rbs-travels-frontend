@@ -25,7 +25,21 @@ const howToWorksSchema = titleSubtitleDescSchema.extend({
   facilities: z.array(facilityItemSchema).default([])
 })
 // === Complex Component Schemas ===
-const heroSectionSchema = titleSubtitleDescSchema
+export const bannerSectionSchema = z.array(
+  titleSubtitleDescSchema.extend({
+    bgImage: z.string(),
+    isActive: z.boolean().default(true),
+    buttons: z
+      .array(
+        z.object({
+          title: z.string(),
+          url: z.string()
+        })
+      )
+      .optional()
+  })
+)
+
 const gameChangerSectionSchema = titleSubtitleDescSchema
 const agencySectionSchema = z.object({
   title: optionalString,
@@ -46,7 +60,7 @@ const subscribeSectionSchema = titleSubtitleDescSchema
 // === Main Homepage Settings Schema ===
 export const homepageSettingsSchema = z
   .object({
-    hero: heroSectionSchema.optional(),
+    banners: bannerSectionSchema.optional(),
     gameChanger: gameChangerSectionSchema.optional(),
     agency: agencySectionSchema.optional(),
     whyChoose: whyChooseSectionSchema.optional(),
@@ -63,7 +77,7 @@ export const homepageSettingsSchema = z
 export type HomepageSettings = z.infer<typeof homepageSettingsSchema>
 
 // Section-specific types for better modularity
-export type HeroSection = z.infer<typeof heroSectionSchema>
+export type BannerSection = z.infer<typeof bannerSectionSchema>
 export type GameChangerSection = z.infer<typeof gameChangerSectionSchema>
 export type AgencySection = z.infer<typeof agencySectionSchema>
 export type WhyChooseSection = z.infer<typeof whyChooseSectionSchema>

@@ -3,6 +3,7 @@ import { toast } from 'sonner'
 import { clearSession } from './authUtils'
 
 export const handleApiError = (error: AxiosError) => {
+  console.log('error :>> ', error)
   const status = error.response?.status
 
   // Define the error messages based on status codes

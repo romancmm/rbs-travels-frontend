@@ -26,11 +26,15 @@ export const useImageUploader = ({
   const [uploadState, setUploadState] = useState(initialUploadState)
   const [deletedUrls, setDeletedUrls] = useState<string[]>([])
   const uploadInProgress = useRef(false)
+  const initialValueSet = useRef(false)
 
   useEffect(() => {
-    // Don't reset fileLists if upload is in progress to preserve temporary files
+    // Only set fileLists on initial mount or when value changes externally
+    // Skip if upload is in progress to preserve temporary files
     if (!uploadInProgress.current) {
-      setFileLists(convertToFileList(value))
+      const newFileList = convertToFileList(value)
+      setFileLists(newFileList)
+      initialValueSet.current = true
     }
   }, [value])
 
@@ -57,8 +61,11 @@ export const useImageUploader = ({
 
             // Extract all URLs from the updated file list for onChange callback
             const allUrls = updatedFileList.filter((f) => f.url).map((f) => f.url!)
-            // Call onChange with all URLs (existing + new)
-            onChange?.(multiple ? allUrls : allUrls[0])
+
+            // Defer onChange call to avoid setState during render
+            setTimeout(() => {
+              onChange?.(multiple ? allUrls : allUrls[0])
+            }, 0)
 
             return updatedFileList
           })
@@ -83,9 +90,11 @@ export const useImageUploader = ({
     // Update file list
     setFileLists(newFileList)
 
-    // Extract URLs from remaining files and notify parent immediately
+    // Extract URLs from remaining files and notify parent (deferred to avoid setState during render)
     const remainingUrls = newFileList.filter((f) => f.url).map((f) => f.url!)
-    onChange?.(multiple ? remainingUrls : remainingUrls[0] || '')
+    setTimeout(() => {
+      onChange?.(multiple ? remainingUrls : remainingUrls[0] || '')
+    }, 0)
   }
 
   const onPreview = async (file: any) => {

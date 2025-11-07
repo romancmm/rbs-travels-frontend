@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 
-import HomepageSettings from '@/components/admin/form/settings/HomepageSettings'
+import HomepageSettings from '@/components/admin/form/settings/home/HomepageSettings'
 import { EmptyState } from '@/components/common/EmptyState'
 import PageHeader from '@/components/common/PageHeader'
 import RenderData from '@/components/common/RenderData'
