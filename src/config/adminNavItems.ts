@@ -3,6 +3,7 @@ import {
   FileText,
   FolderOpen,
   LayoutDashboard,
+  LayoutTemplate,
   ListTodo,
   LucideIcon,
   Settings,
@@ -24,6 +25,152 @@ export const navItems: NavItem[] = [
     href: '/admin/dashboard',
     icon: LayoutDashboard
   },
+
+  // Blogs & Content
+  {
+    title: 'Blog & Content',
+    href: '',
+    icon: FileText,
+    // permission: { resource: 'blogs', action: 'index' },
+    children: [
+      {
+        title: 'Categories',
+        href: '/admin/blogs/categories'
+        // permission: { resource: 'blogs', action: 'index' }
+      },
+      {
+        title: 'Posts',
+        href: '/admin/blogs'
+        // permission: { resource: 'blogs', action: 'index' }
+      }
+    ]
+  },
+
+  // Menu Manger
+  {
+    title: 'Menu Manager',
+    href: '/admin/menu-manager',
+    icon: ListTodo
+  },
+
+  // Page Builder
+  {
+    title: 'Page Builder',
+    href: '/admin/page-builder',
+    icon: LayoutTemplate
+  },
+
+  // File Manager
+  {
+    title: 'File Manager',
+    href: '/admin/file-manager',
+    icon: FolderOpen
+  },
+
+  // SEO Settings
+  {
+    title: 'SEO Settings',
+    href: '',
+    icon: TrendingUp,
+    permission: { resource: 'seo', action: 'index' },
+    children: [
+      {
+        title: 'Page Meta',
+        href: '/admin/seo/page-meta',
+        permission: { resource: 'seo', action: 'index' }
+      },
+      {
+        title: 'Analytics Scripts',
+        href: '/admin/seo/analytics-scripts',
+        permission: { resource: 'seo', action: 'index' }
+      }
+    ]
+  },
+
+  // Site Settings
+  {
+    title: 'Site Settings',
+    href: '',
+    icon: Settings,
+    // permission: { resource: 'dashboard', action: 'index' },
+    children: [
+      {
+        title: 'Logo Management',
+        href: '/admin/settings/logo-management'
+        // permission: { resource: 'settings', action: 'update' }
+      },
+      {
+        title: 'General Settings',
+        href: '/admin/settings'
+        // permission: { resource: 'settings', action: 'update' }
+      },
+      {
+        title: 'Social Links',
+        href: '/admin/settings/social-links'
+        // permission: { resource: 'settings', action: 'update' }
+      }
+    ]
+  },
+
+  // Homepage Builder
+  {
+    title: 'Homepage Builder',
+    href: '',
+    icon: FileCog,
+    // permission: { resource: 'settings', action: 'index' },
+    children: [
+      {
+        title: 'Banner Management',
+        href: '/admin/homepage-settings/banners'
+        // permission: { resource: 'settings', action: 'index' }
+      },
+      {
+        title: 'About Us',
+        href: '/admin/homepage-settings/about'
+      },
+      {
+        title: 'Who we are',
+        href: '/admin/homepage-settings/who-we-are'
+      },
+      {
+        title: 'Top Countries',
+        href: '/admin/homepage-settings/top-countries'
+      },
+      {
+        title: 'News & Events',
+        href: '/admin/homepage-settings/news-and-events'
+      },
+      {
+        title: 'Testimonials',
+        href: '/admin/homepage-settings/testimonials'
+      },
+      {
+        title: 'Faqs',
+        href: '/admin/homepage-settings/faqs'
+      }
+    ]
+  },
+
+  // Administration
+  {
+    title: 'Administration',
+    href: '',
+    icon: ShieldAlert,
+    permission: { resource: 'accounts', action: 'index' },
+    children: [
+      {
+        title: 'Manage Admins',
+        href: '/admin/administration/admins',
+        permission: { resource: 'accounts', action: 'index' }
+      },
+      {
+        title: 'Roles & Permissions',
+        href: '/admin/administration/roles',
+        permission: { resource: 'accounts', action: 'index' }
+      }
+    ]
+  }
+
   // {
   //   title: 'Customers',
   //   href: '',
@@ -157,96 +304,4 @@ export const navItems: NavItem[] = [
   //     }
   //   ]
   // },
-  {
-    title: 'Blog & Content',
-    href: '',
-    icon: FileText,
-    permission: { resource: 'blogs', action: 'index' },
-    children: [
-      {
-        title: 'Categories',
-        href: '/admin/blogs/categories',
-        permission: { resource: 'blogs', action: 'index' }
-      },
-      {
-        title: 'Posts',
-        href: '/admin/blogs',
-        permission: { resource: 'blogs', action: 'index' }
-      }
-    ]
-  },
-  {
-    title: 'Menu Manager',
-    href: '/admin/menu-manager',
-    icon: ListTodo
-  },
-  {
-    title: 'Page Builder',
-    href: '/admin/page-builder',
-    icon: FileCog
-  },
-  {
-    title: 'File Manager',
-    href: '/admin/file-manager',
-    icon: FolderOpen
-  },
-  {
-    title: 'SEO Settings',
-    href: '',
-    icon: TrendingUp,
-    permission: { resource: 'seo', action: 'index' },
-    children: [
-      {
-        title: 'Page Meta',
-        href: '/admin/seo/page-meta',
-        permission: { resource: 'seo', action: 'index' }
-      },
-      {
-        title: 'Analytics Scripts',
-        href: '/admin/seo/analytics-scripts',
-        permission: { resource: 'seo', action: 'index' }
-      }
-    ]
-  },
-  {
-    title: 'Site Settings',
-    href: '',
-    icon: Settings,
-    // permission: { resource: 'dashboard', action: 'index' },
-    children: [
-      {
-        title: 'Logo Management',
-        href: '/admin/settings/logo-management'
-        // permission: { resource: 'settings', action: 'update' }
-      },
-      {
-        title: 'General Settings',
-        href: '/admin/settings'
-        // permission: { resource: 'settings', action: 'update' }
-      },
-      {
-        title: 'Social Links',
-        href: '/admin/settings/social-links'
-        // permission: { resource: 'settings', action: 'update' }
-      }
-    ]
-  },
-  {
-    title: 'Administration',
-    href: '',
-    icon: ShieldAlert,
-    permission: { resource: 'accounts', action: 'index' },
-    children: [
-      {
-        title: 'Manage Admins',
-        href: '/admin/administration/admins',
-        permission: { resource: 'accounts', action: 'index' }
-      },
-      {
-        title: 'Roles & Permissions',
-        href: '/admin/administration/roles',
-        permission: { resource: 'accounts', action: 'index' }
-      }
-    ]
-  }
 ]

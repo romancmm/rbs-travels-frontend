@@ -94,15 +94,15 @@ export default function SiteConfigPage() {
       )}
 
       {/* Important Notes Section */}
-      <Card className='bg-foreground mt-6 border-primary border-dashed'>
+      <Card className='mt-6'>
         <CardHeader>
-          <CardTitle className='flex items-center gap-2 text-primary'>
+          <CardTitle className='flex items-center gap-2'>
             <AlertCircle className='w-5 h-5' />
             Important Notes
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <ul className='space-y-2 text-muted text-sm'>
+          <ul className='space-y-2 text-gray-700 text-sm'>
             <li className='flex gap-2'>
               <span className='font-semibold'>•</span>
               <span>

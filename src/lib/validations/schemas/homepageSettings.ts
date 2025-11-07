@@ -21,6 +21,9 @@ const statItemSchema = z.object({
   count: optionalString
 })
 
+const howToWorksSchema = titleSubtitleDescSchema.extend({
+  facilities: z.array(facilityItemSchema).default([])
+})
 // === Complex Component Schemas ===
 const heroSectionSchema = titleSubtitleDescSchema
 const gameChangerSectionSchema = titleSubtitleDescSchema
@@ -48,6 +51,7 @@ export const homepageSettingsSchema = z
     agency: agencySectionSchema.optional(),
     whyChoose: whyChooseSectionSchema.optional(),
     offers: offersSectionSchema.optional(),
+    howToWorks: howToWorksSchema.optional(),
     about: aboutSectionSchema.optional(),
     categories: categoriesSectionSchema.optional(),
     platform: platformSectionSchema.optional(),
