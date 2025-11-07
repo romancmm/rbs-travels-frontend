@@ -47,10 +47,11 @@ export const revalidateTags = async (tags: string) => {
 }
 
 export const getSiteConfig = async (): Promise<any | null> => {
-  const data = await fetchOnServer('/settings/key/site_settings', 3600) // 1 hour revalidation
+  const data = await fetchOnServer('/settings/system_site_settings', 3600) // 1 hour revalidation
   if (data.error) {
     return null
   }
+
   return data?.data?.value
 }
 

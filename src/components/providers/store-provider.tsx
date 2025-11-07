@@ -26,7 +26,7 @@ export function SiteProvider({
   children: ReactNode
   data: SiteSettings | null
 }) {
-  const [siteConfig, setSiteConfig] = useState<SiteSettings | null>(null)
+  const [siteConfig, setSiteConfig] = useState<SiteSettings | null>(data)
 
   useEffect(() => {
     if (data) {

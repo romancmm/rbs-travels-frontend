@@ -1,4 +1,5 @@
 // import { buildSiteMetadata } from '@/lib/seo/metaBuilders'
+import { getSiteConfig } from '@/action/data'
 import { SiteProvider } from '@/components/providers/store-provider'
 import { Metadata } from 'next'
 import { Manrope } from 'next/font/google'
@@ -72,9 +73,7 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode
 }>) {
-  // const siteConfig: any = await getSiteConfig()
-  const siteConfig = null
-
+  const siteConfig: any = await getSiteConfig()
   return (
     <html lang='en' suppressHydrationWarning>
       <body className={`${manrope.variable} font-manrope antialiased`}>
