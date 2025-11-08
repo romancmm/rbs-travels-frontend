@@ -9,7 +9,8 @@ import { SiteSettings, siteSettingsSchema } from '@/lib/validations/schemas/site
 import requests from '@/services/network/http'
 import { SITE_CONFIG } from '@/types/cache-keys'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Controller, useForm } from 'react-hook-form'
+import { Plus, Trash2 } from 'lucide-react'
+import { Controller, useFieldArray, useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 
 type TProps = {
@@ -24,13 +25,15 @@ const SiteConfiguration = ({ settingsKey, initialValues, refetch }: TProps) => {
     control,
     formState: { errors, isSubmitting }
   } = useForm<SiteSettings>({
-    resolver: zodResolver(siteSettingsSchema),
+    resolver: zodResolver(siteSettingsSchema) as any,
     defaultValues: {
       ...initialValues,
       name: initialValues?.name || '',
       email: initialValues?.email || '',
       phone: initialValues?.phone || '',
+      hotline: initialValues?.hotline || '',
       address: initialValues?.address || '',
+      addresses: initialValues?.addresses || [],
       website: initialValues?.website || '',
       shortDescription: initialValues?.shortDescription || '',
       logo: {
@@ -38,13 +41,30 @@ const SiteConfiguration = ({ settingsKey, initialValues, refetch }: TProps) => {
         dark: initialValues?.logo?.dark || ''
       },
       // seo: initialValues?.seo || {},
-      footer: initialValues?.footer || {},
+      footer: {
+        copyright: initialValues?.footer?.copyright || '',
+        credit: {
+          companyName: initialValues?.footer?.credit?.companyName || '',
+          url: initialValues?.footer?.credit?.url || '',
+          showCredit: initialValues?.footer?.credit?.showCredit ?? true
+        }
+      },
       favicon: initialValues?.favicon || ''
     }
   })
 
+  const {
+    fields: addressFields,
+    append: appendAddress,
+    remove: removeAddress
+  } = useFieldArray({
+    control,
+    name: 'addresses'
+  })
+
 
   const onSubmit = handleSubmit(async (data) => {
+    console.log('data :>> ', data);
     try {
       const res = await requests[initialValues ? 'put' : 'post'](`/admin/setting/settings/${initialValues ? `key/${settingsKey}` : ''}`, {
         key: settingsKey,
@@ -114,6 +134,21 @@ const SiteConfiguration = ({ settingsKey, initialValues, refetch }: TProps) => {
 
             <Controller
               control={control}
+              name='hotline'
+              render={({ field }) => (
+                <CustomInput
+                  label='Hotline'
+                  type='tel'
+                  placeholder='+1 (555) 000-0000'
+                  error={errors.hotline?.message}
+                  {...field}
+                  value={field.value ?? ''}
+                />
+              )}
+            />
+
+            <Controller
+              control={control}
               name='website'
               render={({ field }) => (
                 <CustomInput
@@ -166,6 +201,118 @@ const SiteConfiguration = ({ settingsKey, initialValues, refetch }: TProps) => {
         </CardContent>
       </Card>
 
+      {/* Multiple Addresses */}
+      <Card>
+        <CardHeader>
+          <div className='flex justify-between items-center'>
+            <CardTitle>Addresses</CardTitle>
+            {addressFields.length < 2 && <Button
+              type='button'
+              variant='outline'
+              size='sm'
+              onClick={() =>
+                appendAddress({
+                  title: '',
+                  address: '',
+                  phone: '',
+                  email: ''
+                })
+              }
+            >
+              <Plus className='mr-2 w-4 h-4' />
+              Add Address
+            </Button>}
+          </div>
+        </CardHeader>
+        <CardContent>
+          {addressFields.length > 0 ? (
+            <div className='space-y-6'>
+              {addressFields.map((field, index) => (
+                <div key={field.id} className='relative bg-gray-50 p-4 border rounded-lg'>
+                  <div className='flex justify-between items-center mb-4'>
+                    <h4 className='font-medium'>Address {index + 1}</h4>
+                    <Button
+                      type='button'
+                      variant='destructive'
+                      size='sm'
+                      onClick={() => removeAddress(index)}
+                    >
+                      <Trash2 className='w-4 h-4' />
+                    </Button>
+                  </div>
+                  <div className='gap-4 grid grid-cols-1 lg:grid-cols-2'>
+                    <div className='lg:col-span-2'>
+                      <Controller
+                        control={control}
+                        name={`addresses.${index}.title`}
+                        render={({ field }) => (
+                          <CustomInput
+                            label='Title'
+                            placeholder='e.g., Head Office, Branch Office'
+                            error={errors.addresses?.[index]?.title?.message}
+                            {...field}
+                            value={field.value ?? ''}
+                          />
+                        )}
+                      />
+                    </div>
+                    <div className='lg:col-span-2'>
+                      <Controller
+                        control={control}
+                        name={`addresses.${index}.address`}
+                        render={({ field }) => (
+                          <CustomInput
+                            label='Address'
+                            type='textarea'
+                            rows={2}
+                            placeholder='Enter full address'
+                            error={errors.addresses?.[index]?.address?.message}
+                            {...field}
+                            value={field.value ?? ''}
+                          />
+                        )}
+                      />
+                    </div>
+                    <Controller
+                      control={control}
+                      name={`addresses.${index}.phone`}
+                      render={({ field }) => (
+                        <CustomInput
+                          label='Phone'
+                          type='tel'
+                          placeholder='+1 (555) 123-4567'
+                          error={errors.addresses?.[index]?.phone?.message}
+                          {...field}
+                          value={field.value ?? ''}
+                        />
+                      )}
+                    />
+                    <Controller
+                      control={control}
+                      name={`addresses.${index}.email`}
+                      render={({ field }) => (
+                        <CustomInput
+                          label='Email'
+                          type='email'
+                          placeholder='contact@example.com'
+                          error={errors.addresses?.[index]?.email?.message}
+                          {...field}
+                          value={field.value ?? ''}
+                        />
+                      )}
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className='py-8 text-gray-500 text-center'>
+              <p>No addresses added yet. Click &quot;Add Address&quot; to create one.</p>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
       <Card title='Footer'>
         <CardHeader>
           <CardTitle>Footer</CardTitle>
@@ -195,7 +342,7 @@ const SiteConfiguration = ({ settingsKey, initialValues, refetch }: TProps) => {
               name='footer.credit.companyName'
               render={({ field }) => (
                 <CustomInput
-                  label='Credit Company Name'
+                  label='Developed by'
                   placeholder='Enter company name'
                   error={errors.footer?.credit?.companyName?.message}
                   {...field}
@@ -209,12 +356,25 @@ const SiteConfiguration = ({ settingsKey, initialValues, refetch }: TProps) => {
               name='footer.credit.url'
               render={({ field }) => (
                 <CustomInput
-                  label='Credit Company URL'
+                  label='Developed by URL'
                   type='url'
                   placeholder='https://example.com'
                   error={errors.footer?.credit?.url?.message}
                   {...field}
                   value={field.value ?? ''}
+                />
+              )}
+            />
+            <Controller
+              control={control}
+              name='footer.credit.showCredit'
+              render={({ field }) => (
+                <CustomInput
+                  type='switch'
+                  label={field.value ? `Show Credit` : `Hide Credit`}
+                  checked={field.value}
+                  onCheckedChange={field.onChange}
+                  error={errors.footer?.credit?.showCredit?.message}
                 />
               )}
             />

@@ -99,8 +99,59 @@ export default function SiteConfigPage() {
           <RenderData
             title='Site Info'
             data={siteConfig}
-            excludedFields={['logo', 'favicon', 'seo', 'header', 'footer']}
+            excludedFields={['logo', 'favicon', 'seo', 'header', 'footer', 'addresses']}
           />
+
+          {/* Addresses Card View */}
+          {siteConfig?.addresses && siteConfig.addresses.length > 0 && (
+            <Card>
+              <CardHeader>
+                <CardTitle>Addresses</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className='gap-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3'>
+                  {siteConfig.addresses.map((address, index) => (
+                    <Card key={index} className='bg-gray-50 border-gray-200'>
+                      <CardHeader className='pb-3'>
+                        <CardTitle className='flex items-center gap-2 text-base'>
+                          <Badge variant='secondary' className='text-xs'>
+                            #{index + 1}
+                          </Badge>
+                          {address.title || `Address ${index + 1}`}
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent className='space-y-3 text-sm'>
+                        {address.address && (
+                          <div>
+                            <div className='mb-1 font-medium text-gray-600 text-xs uppercase'>
+                              Address
+                            </div>
+                            <div className='text-gray-900'>{address.address}</div>
+                          </div>
+                        )}
+                        {address.phone && (
+                          <div>
+                            <div className='mb-1 font-medium text-gray-600 text-xs uppercase'>
+                              Phone
+                            </div>
+                            <div className='text-gray-900'>{address.phone}</div>
+                          </div>
+                        )}
+                        {address.email && (
+                          <div>
+                            <div className='mb-1 font-medium text-gray-600 text-xs uppercase'>
+                              Email
+                            </div>
+                            <div className='text-gray-900'>{address.email}</div>
+                          </div>
+                        )}
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          )}
 
           <RenderData title='Footer Info' data={siteConfig.footer ?? {}} />
         </div>

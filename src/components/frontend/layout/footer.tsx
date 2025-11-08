@@ -1,16 +1,16 @@
 'use client'
 
 import { Container } from '@/components/common/container'
-import CustomImage from '@/components/common/CustomImage'
 import CustomLink from '@/components/common/CustomLink'
-import GotoTop from '@/components/common/GotoTop'
 import { Typography } from '@/components/common/typography'
-import { siteConfig } from '@/data/siteConfig'
+import { useSiteConfig } from '@/components/providers/store-provider'
 import { ArrowRight, Mail, Phone } from 'lucide-react'
 import { use } from 'react'
 
 export default function Footer({ data }: { data: any }) {
-  const res: any = use(data)
+  const { siteConfig } = useSiteConfig()
+
+  const footerNav: any = use(data)
 
 
   return (
@@ -41,11 +41,11 @@ export default function Footer({ data }: { data: any }) {
                     />
                   </div> */}
                   <Typography variant="h6" weight="bold" className="text-white">
-                    {siteConfig.name}
+                    {siteConfig?.name}
                   </Typography>
                 </div>
                 <Typography variant="body1" className="max-w-sm text-slate-300 leading-relaxed">
-                  {siteConfig.description}
+                  {siteConfig?.shortDescription}
                 </Typography>
 
                 {/* Social Links */}
@@ -54,7 +54,7 @@ export default function Footer({ data }: { data: any }) {
                     Follow Us
                   </Typography>
                   <div className="flex flex-wrap gap-3">
-                    {siteConfig?.socialLinks?.map((item, index) => (
+                    {/* {siteConfig?.socialLinks?.map((item, index) => (
                       <CustomLink
                         key={index}
                         href={item.url}
@@ -70,13 +70,13 @@ export default function Footer({ data }: { data: any }) {
                           className="group-hover:brightness-0 group-hover:invert object-contain transition-all duration-300"
                         />
                       </CustomLink>
-                    ))}
+                    ))} */}
                   </div>
                 </div>
               </div>
 
               {/* 2️⃣ Navigation Links */}
-              {res?.data?.items?.slice(0, 2)?.map((nav: any, index: number) => (
+              {footerNav?.data?.items?.slice(0, 2)?.map((nav: any, index: number) => (
                 <div key={index} className="space-y-5">
                   <Typography variant="h6" weight="semibold" className="text-white">
                     {nav.title}
@@ -108,51 +108,56 @@ export default function Footer({ data }: { data: any }) {
                   Get in Touch
                 </Typography>
 
-                {siteConfig.contact.offices.map((office, index) => (
+                {siteConfig?.addresses?.map((office, index) => (
                   <div key={index} className="space-y-3">
-                    <Typography
-                      variant="body1"
-                      weight="semibold"
-                      className="text-primary uppercase tracking-wide"
-                    >
-                      {office.country}
-                    </Typography>
+                    {office.title && (
+                      <Typography
+                        variant="body1"
+                        weight="semibold"
+                        className="text-primary uppercase tracking-wide"
+                      >
+                        {office.title}
+                      </Typography>
+                    )}
 
                     {/* Address */}
-                    <div className="flex items-start gap-3 text-slate-300 hover:text-white transition-colors">
-                      {/* <div className="flex justify-center items-center bg-primary/20 rounded-lg w-8 h-8 shrink-0">
-                        <MapPin className="w-4 h-4" />
-                      </div> */}
-                      <Typography variant="body2" className="leading-relaxed">
-                        {office.address}
-                      </Typography>
-                    </div>
+                    {office.address && (
+                      <div className="flex items-start gap-3 text-slate-300 hover:text-white transition-colors">
+                        <Typography variant="body2" className="leading-relaxed">
+                          {office.address}
+                        </Typography>
+                      </div>
+                    )}
 
                     {/* Phone */}
-                    <div className="flex items-center gap-3 text-slate-300 hover:text-white transition-colors">
-                      <div className="flex justify-center items-center bg-primary/20 rounded-lg w-8 h-8 shrink-0">
-                        <Phone className="w-4 h-4" />
+                    {office.phone && (
+                      <div className="flex items-center gap-3 text-slate-300 hover:text-white transition-colors">
+                        <div className="flex justify-center items-center bg-primary/20 rounded-lg w-8 h-8 shrink-0">
+                          <Phone className="w-4 h-4" />
+                        </div>
+                        <CustomLink
+                          href={`tel:${office.phone.replace(/\s+/g, '')}`}
+                          className="hover:text-primary transition-colors"
+                        >
+                          <Typography variant="body2">{office.phone}</Typography>
+                        </CustomLink>
                       </div>
-                      <CustomLink
-                        href={`tel:${office.phone.replace(/\s+/g, '')}`}
-                        className="hover:text-primary transition-colors"
-                      >
-                        <Typography variant="body2">{office.phone}</Typography>
-                      </CustomLink>
-                    </div>
+                    )}
 
                     {/* Email */}
-                    <div className="flex items-center gap-3 text-slate-300 hover:text-white transition-colors">
-                      <div className="flex justify-center items-center bg-primary/20 rounded-lg w-8 h-8 shrink-0">
-                        <Mail className="w-4 h-4" />
+                    {office.email && (
+                      <div className="flex items-center gap-3 text-slate-300 hover:text-white transition-colors">
+                        <div className="flex justify-center items-center bg-primary/20 rounded-lg w-8 h-8 shrink-0">
+                          <Mail className="w-4 h-4" />
+                        </div>
+                        <CustomLink
+                          href={`mailto:${office.email}`}
+                          className="hover:text-primary transition-colors"
+                        >
+                          <Typography variant="body2">{office.email}</Typography>
+                        </CustomLink>
                       </div>
-                      <CustomLink
-                        href={`mailto:${office.email}`}
-                        className="hover:text-primary transition-colors"
-                      >
-                        <Typography variant="body2">{office.email}</Typography>
-                      </CustomLink>
-                    </div>
+                    )}
                   </div>
                 ))}
               </div>
@@ -166,9 +171,12 @@ export default function Footer({ data }: { data: any }) {
             <div className="flex md:flex-row flex-col justify-between items-center gap-4 text-slate-400 text-sm">
               <Typography variant="body2" className="md:text-left text-center">
                 {siteConfig?.footer?.copyright}
+                {siteConfig?.footer?.credit?.showCredit && (
+                  <span className="text-slate-400"> Developed by <CustomLink href={siteConfig?.footer?.credit?.url ?? '#'}>{siteConfig?.footer?.credit?.companyName}</CustomLink></span>
+                )}
               </Typography>
 
-              <div className="flex items-center gap-6">
+              {/* <div className="flex items-center gap-6">
                 <div className="flex items-center gap-4">
                   <CustomLink href="/page/terms" className="hover:text-primary transition-colors">
                     Terms
@@ -182,7 +190,7 @@ export default function Footer({ data }: { data: any }) {
                   </CustomLink>
                 </div>
                 <GotoTop />
-              </div>
+              </div> */}
             </div>
           </Container>
         </div>

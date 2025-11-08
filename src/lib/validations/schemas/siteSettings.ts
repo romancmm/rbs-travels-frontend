@@ -52,6 +52,7 @@ const headerSchema = z.object({
 
 // === Footer Credit ===
 const footerCreditSchema = z.object({
+  showCredit: z.boolean().optional(),
   companyName: optionalStr(),
   url: optionalStr()
 })
@@ -75,13 +76,23 @@ const analyticsSchema = z.object({
   facebookPixelId: optionalStr()
 })
 
+// === Address Item ===
+const addressItemSchema = z.object({
+  title: optionalStr(),
+  address: optionalStr(),
+  phone: optionalStr(),
+  email: z.string().email().optional().or(z.literal(''))
+})
+
 // === Main Site Settings Schema ===
 export const siteSettingsSchema = z.object({
   id: optionalStr(),
   name: optionalStr(),
   email: z.string().email().optional().or(z.literal('')),
   phone: optionalStr(),
+  hotline: optionalStr(),
   address: optionalStr(),
+  addresses: z.array(addressItemSchema).optional(),
   website: relaxedUrl(),
   shortDescription: optionalStr(),
   favicon: relaxedUrl(),
