@@ -3,22 +3,10 @@ import CustomImage from '@/components/common/CustomImage'
 import { Section } from '@/components/common/section'
 import { Typography } from '@/components/common/typography'
 import { cn } from '@/lib/utils'
+import { AboutType } from '@/lib/validations/schemas/homepageSettings'
+import * as LucideIcons from 'lucide-react'
 
-interface Facility {
-  icon: React.ComponentType<{ className?: string; color?: string }> | string
-  title: string
-  desc?: string
-}
-
-interface AboutData {
-  title: string
-  subtitle: string
-  description: string
-  image: string
-  facilities: Facility[]
-}
-
-const AboutUs = ({ data }: { data?: AboutData }) => {
+const AboutUs = ({ data }: { data?: AboutType }) => {
   if (!data) return null
 
   return (
@@ -36,7 +24,7 @@ const AboutUs = ({ data }: { data?: AboutData }) => {
               )}
               style={{ animationDelay: '100ms', animationFillMode: 'both' }}
             >
-              {data.subtitle}
+              {data.subTitle}
             </Typography>
 
             {/* Title with better typography */}
@@ -62,7 +50,7 @@ const AboutUs = ({ data }: { data?: AboutData }) => {
               )}
               style={{ animationDelay: '300ms', animationFillMode: 'both' }}
             >
-              {data.description}
+              {data.desc}
             </Typography>
 
             {/* Enhanced Facilities Grid */}
@@ -71,7 +59,11 @@ const AboutUs = ({ data }: { data?: AboutData }) => {
                 const row = Math.floor(index / 2)
                 const col = index % 2
                 const isAccent = (row + col) % 2 === 0
-                const Icon = facility.icon
+
+                // Check if icon is a Lucide icon name
+                const iconName = facility.icon
+                const LucideIcon = iconName && (LucideIcons as any)[iconName]
+                // const isLucideIcon = !!LucideIcon && typeof LucideIcon === 'function'
 
                 return (
                   <div
@@ -88,11 +80,7 @@ const AboutUs = ({ data }: { data?: AboutData }) => {
                     <div className='relative flex md:flex-row flex-col items-center gap-3 lg:gap-4'>
                       {/* Enhanced icon container */}
                       <div className='flex justify-center items-center bg-white rounded-full w-12 lg:w-14 h-12 lg:h-14'>
-                        {typeof Icon === 'string' ? (
-                          <CustomImage src={Icon} height={28} width={28} alt={facility.title} />
-                        ) : (
-                          <Icon className='w-6 lg:w-7 h-6 lg:h-7' color='#0f6578' />
-                        )}
+                        <LucideIcon className='w-6 lg:w-7 h-6 lg:h-7 text-primary' />
                       </div>
 
                       {/* Enhanced typography */}
@@ -123,26 +111,28 @@ const AboutUs = ({ data }: { data?: AboutData }) => {
             </div>
 
             {/* Enhanced Experience Badge */}
-            <div
-              className={cn(
-                'hidden -right-6 -bottom-6 absolute md:flex items-center gap-4 bg-primary shadow-2xl p-5 rounded-xl',
-                'text-white transform transition-all duration-500 hover:scale-105',
-                'animate-in fade-in slide-in-from-bottom-4 duration-600',
-                'max-w-64 backdrop-blur-sm border border-primary-foreground/10'
-              )}
-              style={{ animationDelay: '800ms', animationFillMode: 'both' }}
-            >
-              <div className='pr-4 border-white/20 border-r'>
-                <Typography variant='h3' weight='bold' className='text-white leading-none'>
-                  05
-                </Typography>
+            {data?.experience &&
+              <div
+                className={cn(
+                  'hidden -right-6 -bottom-6 absolute md:flex items-center gap-4 bg-primary shadow-2xl p-5 rounded-xl',
+                  'text-white transform transition-all duration-500 hover:scale-105',
+                  'animate-in fade-in slide-in-from-bottom-4 duration-600',
+                  'max-w-64 backdrop-blur-sm border border-primary-foreground/10'
+                )}
+                style={{ animationDelay: '800ms', animationFillMode: 'both' }}
+              >
+                <div className='pr-4 border-white/20 border-r'>
+                  <Typography variant='h3' weight='bold' className='text-white leading-none'>
+                    {data?.experience?.years}
+                  </Typography>
+                </div>
+                <div>
+                  <Typography variant='h6' weight='semibold' className='text-white/90 leading-tight'>
+                    {data?.experience?.text}
+                  </Typography>
+                </div>
               </div>
-              <div>
-                <Typography variant='h6' weight='semibold' className='text-white/90 leading-tight'>
-                  Years of experience
-                </Typography>
-              </div>
-            </div>
+            }
           </div>
         </div>
       </Container>

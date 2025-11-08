@@ -5,9 +5,9 @@ export interface StatItem {
   /** The value to display (e.g. "1.6k+", "98%") */
   value: string
   /** The label describing the statistic (e.g. "Happy Travelers") */
-  label: string
-  /** The icon component to display */
-  icon: React.ComponentType<{ className?: string; color?: string }>
+  label?: string
+  /** The icon (can be a Lucide icon name or image URL) */
+  icon?: string
 }
 
 /**
