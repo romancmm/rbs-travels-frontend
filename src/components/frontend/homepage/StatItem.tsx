@@ -29,7 +29,7 @@ const StatItem = ({ value, label, icon, className, index = 0 }: StatItemProps) =
       {/* Content */}
       <div className='flex-1 min-w-0'>
         <Typography variant='h4' weight='bold' className='mb-1 text-foreground' aria-live='polite'>
-          <AnimatedCounter value={value} />
+          <AnimatedCounter value={value ?? ''} />
         </Typography>
         <Typography id={`stat-${index}-label`} variant='body2' className='leading-tight'>
           {label}

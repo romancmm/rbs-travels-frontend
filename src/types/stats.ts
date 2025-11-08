@@ -3,7 +3,7 @@
  */
 export interface StatItem {
   /** The value to display (e.g. "1.6k+", "98%") */
-  value: string
+  value?: string
   /** The label describing the statistic (e.g. "Happy Travelers") */
   label?: string
   /** The icon (can be a Lucide icon name or image URL) */
