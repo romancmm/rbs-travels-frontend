@@ -46,13 +46,8 @@ export const bannerSectionSchema = z.array(
   })
 )
 
-const gameChangerSectionSchema = titleSubtitleDescSchema
-const agencySectionSchema = z.object({
-  title: optionalString,
-  agencies: z.array(optionalString).default([])
-})
 const whyChooseSectionSchema = titleSubtitleDescSchema.extend({
-  facilities: z.array(facilityItemSchema).default([])
+  data: z.array(facilityItemSchema).default([])
 })
 const offersSectionSchema = titleSubtitleDescSchema
 const aboutSectionSchema = titleSubtitleDescSchema.extend({
@@ -61,6 +56,11 @@ const aboutSectionSchema = titleSubtitleDescSchema.extend({
   facilities: z.array(facilityItemSchema).default([]),
   stats: z.array(statItemSchema).default([])
 })
+
+const whoWeAreSectionSchema = titleSubtitleDescSchema.extend({
+  features: z.array(facilityItemSchema).default([])
+})
+
 const categoriesSectionSchema = titleSubtitleDescSchema
 const platformSectionSchema = titleSubtitleDescSchema
 const subscribeSectionSchema = titleSubtitleDescSchema
@@ -70,8 +70,7 @@ export const homepageSettingsSchema = z
   .object({
     banners: bannerSectionSchema.optional(),
     about: aboutSectionSchema.optional(),
-    gameChanger: gameChangerSectionSchema.optional(),
-    agency: agencySectionSchema.optional(),
+    whoWeAre: whoWeAreSectionSchema.optional(),
     whyChoose: whyChooseSectionSchema.optional(),
     offers: offersSectionSchema.optional(),
     howToWorks: howToWorksSchema.optional(),
@@ -86,8 +85,7 @@ export type HomepageSettings = z.infer<typeof homepageSettingsSchema>
 
 // Section-specific types for better modularity
 export type BannerType = z.infer<typeof bannerSectionSchema>
-export type GameChangerSection = z.infer<typeof gameChangerSectionSchema>
-export type AgencySection = z.infer<typeof agencySectionSchema>
+export type WhoWeAreType = z.infer<typeof whoWeAreSectionSchema>
 export type WhyChooseSection = z.infer<typeof whyChooseSectionSchema>
 export type OffersSection = z.infer<typeof offersSectionSchema>
 export type AboutType = z.infer<typeof aboutSectionSchema>

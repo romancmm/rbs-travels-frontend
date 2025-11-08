@@ -37,6 +37,7 @@ const HomeBanner = ({ settingsKey, initialValues, refetch }: TProps) => {
   } = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
+      ...initialValues,
       banners: initialValues?.banners || [
         {
           title: '',

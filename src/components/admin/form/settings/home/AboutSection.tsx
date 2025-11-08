@@ -32,6 +32,7 @@ const AboutSection = ({ settingsKey, initialValues, refetch }: TProps) => {
   } = useForm({
     resolver: zodResolver(homepageSettingsSchema),
     defaultValues: {
+      ...initialValues,
       about: {
         title: initialValues?.about?.title || '',
         subTitle: initialValues?.about?.subTitle || '',

@@ -4,22 +4,11 @@ import { Section } from '@/components/common/section'
 import { WhoWeAreLoadingSkeleton } from '@/components/common/Skeleton'
 import { Typography } from '@/components/common/typography'
 import { cn } from '@/lib/utils'
+import { WhoWeAreType } from '@/lib/validations/schemas/homepageSettings'
 import FeatureCard from './FeatureCard'
 
-interface Feature {
-  icon: React.ComponentType<{ className?: string; color?: string }>
-  title: string
-  desc: string
-}
-
-interface WhoWeAreData {
-  title: string
-  subtitle: string
-  features: Feature[]
-}
-
 interface WhoWeAreProps {
-  data?: WhoWeAreData
+  data?: WhoWeAreType
   isLoading?: boolean
   className?: string
 }
@@ -44,23 +33,36 @@ const WhoWeAre = ({ data, isLoading = false, className }: WhoWeAreProps) => {
               role='banner'
               aria-labelledby='whoweare-title'
             >
-              <Typography
-                variant='subtitle1'
-                className='mb-1 font-semibold text-primary uppercase tracking-wide animate-in duration-500 fade-in'
-                style={{ animationDelay: '100ms', animationFillMode: 'both' }}
-              >
-                {data.subtitle}
-              </Typography>
-              <Typography
-                id='whoweare-title'
-                variant='h2'
-                as='h2'
-                weight='bold'
-                className='slide-in-from-top-6 text-foreground leading-tight animate-in duration-600 fade-in'
-                style={{ animationDelay: '200ms', animationFillMode: 'both' }}
-              >
-                {data.title}
-              </Typography>
+              {data.subTitle && (
+                <Typography
+                  variant='subtitle1'
+                  className='mb-1 font-semibold text-primary uppercase tracking-wide animate-in duration-500 fade-in'
+                  style={{ animationDelay: '100ms', animationFillMode: 'both' }}
+                >
+                  {data.subTitle}
+                </Typography>
+              )}
+              {data.title && (
+                <Typography
+                  id='whoweare-title'
+                  variant='h2'
+                  as='h2'
+                  weight='bold'
+                  className='slide-in-from-top-6 text-foreground leading-tight animate-in duration-600 fade-in'
+                  style={{ animationDelay: '200ms', animationFillMode: 'both' }}
+                >
+                  {data.title}
+                </Typography>
+              )}
+              {data.desc && (
+                <Typography
+                  variant='body1'
+                  className='mx-auto mt-4 max-w-3xl text-muted-foreground animate-in duration-700 fade-in'
+                  style={{ animationDelay: '300ms', animationFillMode: 'both' }}
+                >
+                  {data.desc}
+                </Typography>
+              )}
             </div>
 
             {/* Enhanced Features Grid */}
