@@ -17,8 +17,14 @@ const facilityItemSchema = z.object({
 })
 
 const statItemSchema = z.object({
-  title: optionalString,
-  count: optionalString
+  value: optionalString,
+  label: optionalString,
+  icon: optionalString
+})
+
+const experienceSchema = z.object({
+  years: optionalString,
+  text: optionalString
 })
 
 const howToWorksSchema = titleSubtitleDescSchema.extend({
@@ -51,6 +57,8 @@ const whyChooseSectionSchema = titleSubtitleDescSchema.extend({
 const offersSectionSchema = titleSubtitleDescSchema
 const aboutSectionSchema = titleSubtitleDescSchema.extend({
   image: optionalString,
+  experience: experienceSchema.optional(),
+  facilities: z.array(facilityItemSchema).default([]),
   stats: z.array(statItemSchema).default([])
 })
 const categoriesSectionSchema = titleSubtitleDescSchema
@@ -61,12 +69,12 @@ const subscribeSectionSchema = titleSubtitleDescSchema
 export const homepageSettingsSchema = z
   .object({
     banners: bannerSectionSchema.optional(),
+    about: aboutSectionSchema.optional(),
     gameChanger: gameChangerSectionSchema.optional(),
     agency: agencySectionSchema.optional(),
     whyChoose: whyChooseSectionSchema.optional(),
     offers: offersSectionSchema.optional(),
     howToWorks: howToWorksSchema.optional(),
-    about: aboutSectionSchema.optional(),
     categories: categoriesSectionSchema.optional(),
     platform: platformSectionSchema.optional(),
     subscribe: subscribeSectionSchema.optional()

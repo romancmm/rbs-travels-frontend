@@ -1,4 +1,5 @@
 import { getHomepageData } from '@/action/data'
+import AboutUs from '@/components/frontend/homepage/AboutUs'
 import BannerCarousel from '@/components/frontend/homepage/BannerCarousel'
 
 export default async function HomePage() {
@@ -11,7 +12,8 @@ export default async function HomePage() {
   return (
     <>
       <BannerCarousel data={homeData?.banners} />
-      {/* <AboutUs data={homeData?.about} />
+      <AboutUs data={homeData?.about} />
+      {/* 
       <Stats data={homeData?.about?.stats} />
       <WhoWeAre data={homeData?.whoWeAre} />
       <TopDestinations data={homeData?.overseasAndTravels} />

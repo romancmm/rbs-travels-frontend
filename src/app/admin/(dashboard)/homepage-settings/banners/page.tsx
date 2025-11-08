@@ -21,7 +21,7 @@ type SettingsData<T> = {
 }
 
 // Main component
-export default function HomeConfigPage() {
+export default function HomeBannerConfigPage() {
   const [edit, setEdit] = useState(false)
   const settingsKey = 'homepage_settings'
   const { data, mutate, loading } = useAsync<SettingsData<HomepageSettings>>(
@@ -29,6 +29,7 @@ export default function HomeConfigPage() {
     true
   )
   const homeConfig = data?.data?.value ?? undefined
+
   const onClose = () => {
     mutate()
     setEdit(false)

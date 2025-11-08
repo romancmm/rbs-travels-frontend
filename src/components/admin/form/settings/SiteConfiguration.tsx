@@ -64,7 +64,6 @@ const SiteConfiguration = ({ settingsKey, initialValues, refetch }: TProps) => {
 
 
   const onSubmit = handleSubmit(async (data) => {
-    console.log('data :>> ', data);
     try {
       const res = await requests[initialValues ? 'put' : 'post'](`/admin/setting/settings/${initialValues ? `key/${settingsKey}` : ''}`, {
         key: settingsKey,
