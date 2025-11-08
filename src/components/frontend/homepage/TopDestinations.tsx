@@ -14,29 +14,17 @@ import {
   type CarouselApi
 } from '@/components/ui/carousel'
 import { cn } from '@/lib/utils'
-import { Filter, MapPin } from 'lucide-react'
+import { TopCountriesType, type DestinationItem } from '@/lib/validations/schemas/homepageSettings'
+import { Briefcase, DollarSign, Filter, MapPin, Users } from 'lucide-react'
 import { useCallback, useEffect, useState } from 'react'
 
-export interface OverseasDestination {
-  id: number
-  name: string
-  image: string
-  workers: string
-  description: string
-  topSectors: string[]
-  averageSalary: string
-  visaType: string
-}
-
-interface TopDestinationsProps {
-  data: {
-    title: string
-    subtitle: string
-    destinations: OverseasDestination[]
-  }
-}
-
-const DestinationCard = ({ destination, index }: { destination: OverseasDestination; index: number }) => {
+const DestinationCard = ({
+  destination,
+  index
+}: {
+  destination: DestinationItem
+  index: number
+}) => {
   return (
     <div
       className='group slide-in-from-bottom-4 relative bg-white shadow-lg hover:shadow-2xl rounded-3xl overflow-hidden transition-all hover:-translate-y-2 animate-in duration-700'
@@ -45,8 +33,8 @@ const DestinationCard = ({ destination, index }: { destination: OverseasDestinat
       {/* Image Container */}
       <div className='relative aspect-square overflow-hidden'>
         <CustomImage
-          src={destination.image}
-          alt={destination.name}
+          src={destination.image || ''}
+          alt={destination.name || 'Destination'}
           width={400}
           height={300}
           className='w-full h-full object-cover group-hover:scale-105 transition-transform duration-700'
@@ -67,37 +55,57 @@ const DestinationCard = ({ destination, index }: { destination: OverseasDestinat
           >
             {destination.name}
           </Typography>
-          <Typography variant='body2' className='text-gray-600 line-clamp-3 leading-relaxed'>
+          <Typography variant='body2' className='text-gray-600 line-clamp-2 leading-relaxed'>
             {destination.description}
           </Typography>
         </div>
 
         {/* Metadata with enhanced styling */}
-        {/* <div className='flex justify-between items-center pt-2 border-gray-100 border-t'>
-          <div className='flex items-center gap-1 text-gray-500'>
-            <Calendar className='w-4 h-4' />
-            <span className='font-medium text-sm'>{destination.duration}</span>
-          </div>
-          <div className='flex items-center gap-1 text-gray-500'>
-            <Users className='w-4 h-4' />
-            <span className='font-medium text-sm'>{destination.tours} tours</span>
-          </div>
-        </div> */}
+        <div className='space-y-2 pt-2 border-gray-100 border-t'>
+          {destination.workers && (
+            <div className='flex items-center gap-2 text-gray-600'>
+              <Users className='w-4 h-4 text-primary' />
+              <span className='font-medium text-sm'>{destination.workers} Workers</span>
+            </div>
+          )}
+          {destination.averageSalary && (
+            <div className='flex items-center gap-2 text-gray-600'>
+              <DollarSign className='w-4 h-4 text-primary' />
+              <span className='font-medium text-sm'>{destination.averageSalary}</span>
+            </div>
+          )}
+          {destination.visaType && (
+            <div className='flex items-center gap-2 text-gray-600'>
+              <Briefcase className='w-4 h-4 text-primary' />
+              <span className='font-medium text-sm'>{destination.visaType}</span>
+            </div>
+          )}
+        </div>
 
-        {/* Enhanced Action Button */}
-        {/* <CustomLink
-          href={`/destination/${destination.id}`}
-          className='group/btn inline-flex justify-center items-center gap-2 bg-linear-to-r from-primary hover:from-primary/90 to-primary/90 hover:to-primary shadow-lg hover:shadow-xl px-4 py-3 rounded-xl w-full font-semibold text-white hover:scale-105 transition-all duration-300'
-        >
-          <span>Explore Destination</span>
-          <ArrowRight className='w-4 h-4 transition-transform group-hover/btn:translate-x-1' />
-        </CustomLink> */}
+        {/* Top Sectors */}
+        {destination.topSectors && destination.topSectors.length > 0 && (
+          <div className='pt-2'>
+            <Typography variant='body2' weight='medium' className='mb-2 text-gray-700'>
+              Top Sectors:
+            </Typography>
+            <div className='flex flex-wrap gap-2'>
+              {destination.topSectors.slice(0, 3).map((sector, idx) => (
+                <span
+                  key={idx}
+                  className='bg-primary/10 px-2 py-1 rounded-full font-medium text-primary text-xs'
+                >
+                  {sector}
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   )
 }
 
-export default function TopDestinations({ data }: TopDestinationsProps) {
+export default function TopDestinations({ data }: { data?: TopCountriesType }) {
   const [api, setApi] = useState<CarouselApi>()
   const [current, setCurrent] = useState(0)
   const [count, setCount] = useState(0)
@@ -151,11 +159,11 @@ export default function TopDestinations({ data }: TopDestinationsProps) {
           <div className='inline-flex justify-center items-center gap-2 bg-primary/10 px-4 py-2 rounded-full text-primary'>
             <MapPin className='w-4 h-4' />
             <Typography variant='body2' weight='medium' className='uppercase tracking-wider'>
-              {data.subtitle}
+              {data.subtitle || 'Top Destinations'}
             </Typography>
           </div>
           <Typography variant='h2' weight='bold' className='mx-auto max-w-3xl text-gray-800'>
-            {data.title}
+            {data.title || 'Explore Top Countries'}
           </Typography>
           <Typography variant='body1' className='mx-auto max-w-2xl text-gray-600 leading-relaxed'>
             Discover the world&apos;s most breathtaking destinations with our curated collection of

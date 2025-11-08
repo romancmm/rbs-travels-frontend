@@ -2,6 +2,7 @@ import { getHomepageData } from '@/action/data'
 import AboutUs from '@/components/frontend/homepage/AboutUs'
 import BannerCarousel from '@/components/frontend/homepage/BannerCarousel'
 import Stats from '@/components/frontend/homepage/Stats'
+import TopDestinations from '@/components/frontend/homepage/TopDestinations'
 import WhoWeAre from '@/components/frontend/homepage/WhoWeAre'
 
 export default async function HomePage() {
@@ -17,10 +18,8 @@ export default async function HomePage() {
       <AboutUs data={homeData?.about} />
       <Stats data={homeData?.about?.stats} />
       <WhoWeAre data={homeData?.whoWeAre} />
+      <TopDestinations data={homeData?.topCountries} />
       {/* 
-      
-      
-      <TopDestinations data={homeData?.overseasAndTravels} />
       <Blog data={homeData?.blog} />
       <Testimonials data={homeData?.testimonials} />
       <FAQ data={homeData?.faq} /> */}

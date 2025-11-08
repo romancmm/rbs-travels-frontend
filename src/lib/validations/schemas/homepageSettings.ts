@@ -27,9 +27,17 @@ const experienceSchema = z.object({
   text: optionalString
 })
 
-const howToWorksSchema = titleSubtitleDescSchema.extend({
-  facilities: z.array(facilityItemSchema).default([])
+const destinationItemSchema = z.object({
+  id: z.number().optional(),
+  name: optionalString,
+  image: optionalString,
+  workers: optionalString,
+  description: optionalString,
+  topSectors: z.array(z.string()).default([]),
+  averageSalary: optionalString,
+  visaType: optionalString
 })
+
 // === Complex Component Schemas ===
 export const bannerSectionSchema = z.array(
   titleSubtitleDescSchema.extend({
@@ -46,10 +54,6 @@ export const bannerSectionSchema = z.array(
   })
 )
 
-const whyChooseSectionSchema = titleSubtitleDescSchema.extend({
-  data: z.array(facilityItemSchema).default([])
-})
-const offersSectionSchema = titleSubtitleDescSchema
 const aboutSectionSchema = titleSubtitleDescSchema.extend({
   image: optionalString,
   experience: experienceSchema.optional(),
@@ -61,9 +65,18 @@ const whoWeAreSectionSchema = titleSubtitleDescSchema.extend({
   features: z.array(facilityItemSchema).default([])
 })
 
-const categoriesSectionSchema = titleSubtitleDescSchema
-const platformSectionSchema = titleSubtitleDescSchema
-const subscribeSectionSchema = titleSubtitleDescSchema
+const topCountriesSectionSchema = z.object({
+  title: optionalString,
+  subtitle: optionalString,
+  destinations: z.array(destinationItemSchema).default([])
+})
+// const offersSectionSchema = titleSubtitleDescSchema
+// const categoriesSectionSchema = titleSubtitleDescSchema
+// const platformSectionSchema = titleSubtitleDescSchema
+// const subscribeSectionSchema = titleSubtitleDescSchema
+// const howToWorksSchema = titleSubtitleDescSchema.extend({
+//   facilities: z.array(facilityItemSchema).default([])
+// })
 
 // === Main Homepage Settings Schema ===
 export const homepageSettingsSchema = z
@@ -71,12 +84,13 @@ export const homepageSettingsSchema = z
     banners: bannerSectionSchema.optional(),
     about: aboutSectionSchema.optional(),
     whoWeAre: whoWeAreSectionSchema.optional(),
-    whyChoose: whyChooseSectionSchema.optional(),
-    offers: offersSectionSchema.optional(),
-    howToWorks: howToWorksSchema.optional(),
-    categories: categoriesSectionSchema.optional(),
-    platform: platformSectionSchema.optional(),
-    subscribe: subscribeSectionSchema.optional()
+    topCountries: topCountriesSectionSchema.optional()
+    // whyChoose: whyChooseSectionSchema.optional()
+    // offers: offersSectionSchema.optional(),
+    // howToWorks: howToWorksSchema.optional()
+    // categories: categoriesSectionSchema.optional(),
+    // platform: platformSectionSchema.optional(),
+    // subscribe: subscribeSectionSchema.optional()
   })
   .strict()
 
@@ -86,16 +100,13 @@ export type HomepageSettings = z.infer<typeof homepageSettingsSchema>
 // Section-specific types for better modularity
 export type BannerType = z.infer<typeof bannerSectionSchema>
 export type WhoWeAreType = z.infer<typeof whoWeAreSectionSchema>
-export type WhyChooseSection = z.infer<typeof whyChooseSectionSchema>
-export type OffersSection = z.infer<typeof offersSectionSchema>
 export type AboutType = z.infer<typeof aboutSectionSchema>
-export type CategoriesSection = z.infer<typeof categoriesSectionSchema>
-export type PlatformSection = z.infer<typeof platformSectionSchema>
-export type SubscribeSection = z.infer<typeof subscribeSectionSchema>
+export type TopCountriesType = z.infer<typeof topCountriesSectionSchema>
 
 // Utility types for form components
 export type FacilityItem = z.infer<typeof facilityItemSchema>
 export type StatItem = z.infer<typeof statItemSchema>
+export type DestinationItem = z.infer<typeof destinationItemSchema>
 
 // === Schema Validation Helpers ===
 export const validateHomepageSettings = (data: unknown) => {
