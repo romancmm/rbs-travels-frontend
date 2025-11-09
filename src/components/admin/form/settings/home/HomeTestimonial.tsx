@@ -4,22 +4,21 @@ import { revalidateTags } from '@/action/data'
 import CustomInput from '@/components/common/CustomInput'
 import FileUploader from '@/components/common/FileUploader'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Label } from '@/components/ui/label'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { showError } from '@/lib/errMsg'
 import {
-  homepageTestimonialSchema,
-  HomepageTestimonialType
+  TestimonialSettings,
+  testimonialSettingsSchema
 } from '@/lib/validations/schemas/testimonialSettings'
 import requests from '@/services/network/http'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Minus, Plus } from 'lucide-react'
+import { MessageSquareQuote, Plus, Star, Trash2, User } from 'lucide-react'
 import { Controller, useFieldArray, useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 
 type TProps = {
   settingsKey: string
-  initialValues?: HomepageTestimonialType
+  initialValues?: TestimonialSettings | undefined
   refetch?: () => void
 }
 
@@ -28,20 +27,17 @@ const HomeTestimonial = ({ settingsKey, initialValues, refetch }: TProps) => {
     handleSubmit,
     control,
     formState: { errors, isSubmitting }
-  } = useForm<HomepageTestimonialType>({
-    resolver: zodResolver(homepageTestimonialSchema),
+  } = useForm({
+    resolver: zodResolver(testimonialSettingsSchema),
     defaultValues: {
       title: initialValues?.title || '',
-      subTitle: initialValues?.subTitle || '',
-      desc: initialValues?.desc || '',
-      testimonials: initialValues?.testimonials || [
-        { name: '', designation: '', company: '', avatar: '', rating: 5, review: '' }
-      ]
+      subtitle: initialValues?.subtitle || '',
+      testimonials: initialValues?.testimonials || []
     }
   })
 
   const {
-    fields: testimonialFields,
+    fields: testimonialsFields,
     append: appendTestimonial,
     remove: removeTestimonial
   } = useFieldArray({
@@ -51,11 +47,15 @@ const HomeTestimonial = ({ settingsKey, initialValues, refetch }: TProps) => {
 
   const onSubmit = handleSubmit(async (data) => {
     try {
-      const res = await requests.post(`/admin/settings/${settingsKey}`, {
-        value: data
-      })
+      const res = await requests[initialValues ? 'put' : 'post'](
+        `/admin/setting/settings${initialValues ? `/key/${settingsKey}` : ''}`,
+        {
+          key: settingsKey,
+          value: data
+        }
+      )
       if (res?.success) {
-        await revalidateTags(`/admin/settings/${settingsKey}`)
+        await revalidateTags(settingsKey)
         toast.success('Settings updated successfully!')
         refetch?.()
       }
@@ -66,9 +66,14 @@ const HomeTestimonial = ({ settingsKey, initialValues, refetch }: TProps) => {
 
   return (
     <form onSubmit={onSubmit} className='space-y-6'>
-      <Card>
+      {/* Section Info Card */}
+      <Card className='border-l-4 border-l-primary'>
         <CardHeader>
-          <CardTitle>Section Info</CardTitle>
+          <CardTitle className='flex items-center gap-2'>
+            <MessageSquareQuote className='w-5 h-5 text-primary' />
+            Section Information
+          </CardTitle>
+          <CardDescription>Configure the testimonials section title and subtitle</CardDescription>
         </CardHeader>
         <CardContent className='space-y-4'>
           <Controller
@@ -77,7 +82,7 @@ const HomeTestimonial = ({ settingsKey, initialValues, refetch }: TProps) => {
             render={({ field }) => (
               <CustomInput
                 label='Title'
-                placeholder='Enter section title'
+                placeholder='e.g., What Our Clients Say'
                 error={errors.title?.message}
                 {...field}
                 value={field.value ?? ''}
@@ -87,28 +92,12 @@ const HomeTestimonial = ({ settingsKey, initialValues, refetch }: TProps) => {
 
           <Controller
             control={control}
-            name='subTitle'
+            name='subtitle'
             render={({ field }) => (
               <CustomInput
-                label='Sub Title'
-                placeholder='Enter section sub title'
-                error={errors.subTitle?.message}
-                {...field}
-                value={field.value ?? ''}
-              />
-            )}
-          />
-
-          <Controller
-            control={control}
-            name='desc'
-            render={({ field }) => (
-              <CustomInput
-                label='Description'
-                type='textarea'
-                rows={4}
-                placeholder='Short description...'
-                error={errors.desc?.message}
+                label='Subtitle'
+                placeholder='e.g., Client Testimonials'
+                error={errors.subtitle?.message}
                 {...field}
                 value={field.value ?? ''}
               />
@@ -117,154 +106,244 @@ const HomeTestimonial = ({ settingsKey, initialValues, refetch }: TProps) => {
         </CardContent>
       </Card>
 
-      <Card>
+      {/* Testimonials List Card */}
+      <Card className='border-l-4 border-l-accent'>
         <CardHeader>
-          <CardTitle>Testimonial Items</CardTitle>
-        </CardHeader>
-        <CardContent className='space-y-4'>
-          {testimonialFields.map((testimonialField, testimonialIndex) => (
-            <div
-              key={testimonialField.id}
-              className='space-y-4 p-4 border border-dashed rounded-lg'
-            >
-              <div className='flex justify-between items-center'>
-                <Label className='font-medium text-sm'>Testimonial #{testimonialIndex + 1}</Label>
-                <div className='flex gap-2'>
-                  <Button
-                    type='button'
-                    variant='outline'
-                    size='sm'
-                    onClick={() => removeTestimonial(testimonialIndex)}
-                    disabled={testimonialFields.length === 1}
-                  >
-                    <Minus className='w-4 h-4' />
-                  </Button>
-                  {testimonialIndex === testimonialFields.length - 1 && (
-                    <Button
-                      type='button'
-                      variant='outline'
-                      size='sm'
-                      onClick={() =>
-                        appendTestimonial({
-                          name: '',
-                          designation: '',
-                          company: '',
-                          avatar: '',
-                          rating: 5,
-                          review: ''
-                        })
-                      }
-                      disabled={testimonialFields.length >= 20}
-                    >
-                      <Plus className='w-4 h-4' />
-                    </Button>
-                  )}
-                </div>
-              </div>
-
-              <div className='gap-4 grid grid-cols-1 md:grid-cols-2'>
-                <Controller
-                  control={control}
-                  name={`testimonials.${testimonialIndex}.name`}
-                  render={({ field }) => (
-                    <CustomInput
-                      label='Name'
-                      placeholder='Customer name'
-                      error={errors?.testimonials?.[testimonialIndex]?.name?.message}
-                      {...field}
-                      value={field.value ?? ''}
-                    />
-                  )}
-                />
-
-                <Controller
-                  control={control}
-                  name={`testimonials.${testimonialIndex}.designation`}
-                  render={({ field }) => (
-                    <CustomInput
-                      label='Designation'
-                      placeholder='Job title'
-                      error={errors?.testimonials?.[testimonialIndex]?.designation?.message}
-                      {...field}
-                      value={field.value ?? ''}
-                    />
-                  )}
-                />
-
-                <Controller
-                  control={control}
-                  name={`testimonials.${testimonialIndex}.company`}
-                  render={({ field }) => (
-                    <CustomInput
-                      label='Company'
-                      placeholder='Company name'
-                      error={errors?.testimonials?.[testimonialIndex]?.company?.message}
-                      {...field}
-                      value={field.value ?? ''}
-                    />
-                  )}
-                />
-
-                <Controller
-                  control={control}
-                  name={`testimonials.${testimonialIndex}.rating`}
-                  render={({ field }) => (
-                    <CustomInput
-                      label='Rating'
-                      type='number'
-                      placeholder='Rating (1-5)'
-                      min={1}
-                      max={5}
-                      step={0.1}
-                      error={errors?.testimonials?.[testimonialIndex]?.rating?.message}
-                      {...field}
-                      value={field.value ?? 5}
-                      onChange={(e) => {
-                        const value = parseFloat(e.target.value)
-                        if (isNaN(value)) return
-                        const clampedValue = Math.min(Math.max(value, 1), 5)
-                        const roundedValue = Math.round(clampedValue * 10) / 10
-                        field.onChange(roundedValue)
-                      }}
-                    />
-                  )}
-                />
-
-                <div className='space-y-2'>
-                  <Label>Avatar</Label>
-                  <Controller
-                    control={control}
-                    name={`testimonials.${testimonialIndex}.avatar`}
-                    render={({ field }) => (
-                      <FileUploader value={field.value || ''} onChangeAction={field.onChange} />
-                    )}
-                  />
-                </div>
-              </div>
-
-              <Controller
-                control={control}
-                name={`testimonials.${testimonialIndex}.review`}
-                render={({ field }) => (
-                  <CustomInput
-                    label='Review'
-                    type='textarea'
-                    rows={3}
-                    placeholder='Customer testimonial/review'
-                    error={errors?.testimonials?.[testimonialIndex]?.review?.message}
-                    {...field}
-                    value={field.value ?? ''}
-                  />
+          <div className='flex justify-between items-center'>
+            <div>
+              <CardTitle className='flex items-center gap-2'>
+                <User className='w-5 h-5 text-accent' />
+                Customer Testimonials
+              </CardTitle>
+              <CardDescription>
+                Add and manage customer reviews and testimonials
+                {testimonialsFields.length > 0 && (
+                  <span className='ml-2 font-medium text-primary'>
+                    ({testimonialsFields.length} {testimonialsFields.length === 1 ? 'testimonial' : 'testimonials'})
+                  </span>
                 )}
-              />
+              </CardDescription>
             </div>
-          ))}
+            <Button
+              type='button'
+              variant='default'
+              size='sm'
+              onClick={() =>
+                appendTestimonial({
+                  name: '',
+                  avatar: '',
+                  rating: 5,
+                  review: '',
+                  designation: ''
+                })
+              }
+              className='flex items-center gap-2 shrink-0'
+            >
+              <Plus className='w-4 h-4' />
+              Add Testimonial
+            </Button>
+          </div>
+        </CardHeader>
+        <CardContent>
+          {testimonialsFields.length === 0 ? (
+            <div className='flex flex-col justify-center items-center gap-4 bg-muted/30 p-12 border-2 border-dashed rounded-xl text-center'>
+              <div className='flex justify-center items-center bg-primary/10 rounded-full w-16 h-16'>
+                <MessageSquareQuote className='w-8 h-8 text-primary' />
+              </div>
+              <div className='space-y-2'>
+                <p className='font-semibold text-lg'>No testimonials yet</p>
+                <p className='text-muted-foreground text-sm'>
+                  Get started by adding your first customer testimonial
+                </p>
+              </div>
+              <Button
+                type='button'
+                variant='default'
+                onClick={() =>
+                  appendTestimonial({
+                    name: '',
+                    avatar: '',
+                    rating: 5,
+                    review: '',
+                    designation: ''
+                  })
+                }
+                className='flex items-center gap-2 mt-2'
+              >
+                <Plus className='w-4 h-4' />
+                Add Your First Testimonial
+              </Button>
+            </div>
+          ) : (
+            <div className='space-y-4'>
+              {testimonialsFields.map((field, index) => (
+                <Card
+                  key={field.id}
+                  className='relative border-2 hover:border-primary/50 overflow-hidden transition-all duration-200'
+                >
+                  {/* Gradient accent */}
+                  <div className='top-0 absolute inset-x-0 bg-linear-to-r from-primary/10 via-accent/10 to-transparent h-1' />
+
+                  <CardContent className='pt-6'>
+                    <div className='flex justify-between items-start gap-4 mb-6'>
+                      <div className='flex items-center gap-3'>
+                        <div className='flex justify-center items-center bg-primary/10 rounded-full w-10 h-10'>
+                          <span className='font-bold text-primary text-sm'>#{index + 1}</span>
+                        </div>
+                        <div>
+                          <h4 className='font-semibold text-base'>Testimonial {index + 1}</h4>
+                          <p className='text-muted-foreground text-xs'>
+                            Customer review and rating
+                          </p>
+                        </div>
+                      </div>
+                      <Button
+                        type='button'
+                        variant='ghost'
+                        size='icon'
+                        onClick={() => removeTestimonial(index)}
+                        className='hover:bg-red-50 hover:text-red-600 shrink-0'
+                      >
+                        <Trash2 className='w-4 h-4' />
+                      </Button>
+                    </div>
+
+                    <div className='gap-4 grid grid-cols-1 md:grid-cols-2'>
+                      {/* Name */}
+                      <Controller
+                        control={control}
+                        name={`testimonials.${index}.name`}
+                        render={({ field }) => (
+                          <CustomInput
+                            label='Customer Name'
+                            placeholder='e.g., John Doe'
+                            error={errors.testimonials?.[index]?.name?.message}
+                            {...field}
+                            value={field.value ?? ''}
+                          />
+                        )}
+                      />
+
+                      {/* Designation */}
+                      <Controller
+                        control={control}
+                        name={`testimonials.${index}.designation`}
+                        render={({ field }) => (
+                          <CustomInput
+                            label='Designation / Role'
+                            placeholder='e.g., Marketing Manager'
+                            error={errors.testimonials?.[index]?.designation?.message}
+                            {...field}
+                            value={field.value ?? ''}
+                          />
+                        )}
+                      />
+
+                      {/* Review */}
+                      <div className='md:col-span-2'>
+                        <Controller
+                          control={control}
+                          name={`testimonials.${index}.review`}
+                          render={({ field }) => (
+                            <CustomInput
+                              label='Review / Testimonial'
+                              type='textarea'
+                              rows={4}
+                              placeholder='Share what the customer said about your service...'
+                              error={errors.testimonials?.[index]?.review?.message}
+                              {...field}
+                              value={field.value ?? ''}
+                            />
+                          )}
+                        />
+                      </div>
+
+                      {/* Rating */}
+                      <Controller
+                        control={control}
+                        name={`testimonials.${index}.rating`}
+                        render={({ field }) => (
+                          <div className='space-y-2'>
+                            <CustomInput
+                              label='Rating'
+                              type='number'
+                              placeholder='5'
+                              min={1}
+                              max={5}
+                              step={0.5}
+                              error={errors.testimonials?.[index]?.rating?.message}
+                              {...field}
+                              value={field.value ?? 5}
+                              onChange={(e) => {
+                                const value = parseFloat(e.target.value)
+                                if (isNaN(value)) return
+                                const clampedValue = Math.min(Math.max(value, 1), 5)
+                                field.onChange(clampedValue)
+                              }}
+                            />
+                            <div className='flex items-center gap-1'>
+                              {Array.from({ length: 5 }).map((_, i) => (
+                                <Star
+                                  key={i}
+                                  className={`w-4 h-4 ${i < (field.value || 0)
+                                      ? 'text-yellow-400 fill-yellow-400'
+                                      : 'text-gray-300'
+                                    }`}
+                                />
+                              ))}
+                              <span className='ml-2 text-muted-foreground text-sm'>
+                                {field.value || 0} / 5
+                              </span>
+                            </div>
+                          </div>
+                        )}
+                      />
+
+                      {/* Avatar Upload */}
+                      <div className='space-y-2'>
+                        <label className='font-medium text-sm'>Customer Avatar</label>
+                        <Controller
+                          control={control}
+                          name={`testimonials.${index}.avatar`}
+                          render={({ field }) => (
+                            <FileUploader
+                              value={field.value || ''}
+                              onChangeAction={field.onChange}
+                              size='small'
+                            />
+                          )}
+                        />
+                        {errors.testimonials?.[index]?.avatar && (
+                          <span className='text-red-500 text-xs'>
+                            {errors.testimonials[index]?.avatar?.message}
+                          </span>
+                        )}
+                        <p className='text-muted-foreground text-xs'>
+                          Optional: Upload customer photo or avatar
+                        </p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          )}
         </CardContent>
       </Card>
 
-      <Button type='submit' disabled={isSubmitting} size={'lg'}>
-        {isSubmitting ? 'Saving...' : initialValues ? 'Update Settings' : 'Save Settings'}
-      </Button>
+      {/* Submit Button */}
+      <div className='flex justify-end items-center gap-4 pt-4'>
+        <Button type='submit' size='lg' disabled={isSubmitting} className='min-w-[200px]'>
+          {isSubmitting ? (
+            <>
+              <span className='mr-2 border-2 border-white/30 border-t-white rounded-full w-4 h-4 animate-spin' />
+              Saving...
+            </>
+          ) : (
+            <>{initialValues ? 'Update Settings' : 'Save Settings'}</>
+          )}
+        </Button>
+      </div>
     </form>
   )
 }
