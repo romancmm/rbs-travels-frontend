@@ -5,6 +5,11 @@
  * It serves as the central type registry for the entire frontend application.
  */
 
+declare module '*.css' {
+  const content: string
+  export default content
+}
+
 // ================================
 // GLOBAL DECLARATIONS
 // ================================

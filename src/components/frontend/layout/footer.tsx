@@ -13,7 +13,7 @@ export default function Footer({ data }: { data: any }) {
   const footerNav: any = use(data)
 
   return (
-    <footer className='relative bg-slate-900 bg-linear-to-br from-slate-900 via-slate-800 to-slate-900 overflow-hidden text-white'>
+    <footer className='relative bg-footer_bg bg-linear-to-br from-slate-900 via-slate-800 to-slate-900 overflow-hidden text-footer_text text-white __bg-slate-900'>
       {/* Decorative Background Pattern */}
       <div
         className='absolute inset-0 opacity-5'

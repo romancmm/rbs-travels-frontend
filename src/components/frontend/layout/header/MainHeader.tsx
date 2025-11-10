@@ -5,6 +5,7 @@ import SiteLogo from '@/components/common/SiteLogo'
 import { containerVariants } from '@/components/common/container'
 import { Typography } from '@/components/common/typography'
 import { siteConfig } from '@/data/siteConfig'
+import { cn } from '@/lib/utils'
 import { ChevronDown, Phone } from 'lucide-react'
 import { useState } from 'react'
 import MobileNav from './MobileNav'
@@ -13,7 +14,7 @@ export default function MainHeader({ data }: { data: any }) {
   const [hoveredItem, setHoveredItem] = useState<number | null>(null)
 
   return (
-    <div className={containerVariants()}>
+    <div className={cn(containerVariants())}>
       <div className='flex flex-row justify-between items-center gap-x-4 min-h-20 text-white'>
         {/* Logo Section */}
         <SiteLogo />
@@ -46,7 +47,9 @@ export default function MainHeader({ data }: { data: any }) {
                       </Typography>
                       {publishedChildren.length > 0 && (
                         <ChevronDown
-                          className={`w-4 h-4 transition-transform duration-300 ${hoveredItem === index ? 'rotate-180' : ''}`}
+                          className={`w-4 h-4 transition-transform duration-300 ${
+                            hoveredItem === index ? 'rotate-180' : ''
+                          }`}
                         />
                       )}
                     </CustomLink>
@@ -57,7 +60,9 @@ export default function MainHeader({ data }: { data: any }) {
                         {publishedChildren.map((child: any, childIndex: number) => (
                           <CustomLink
                             key={child.id ?? childIndex}
-                            href={child?.type === 'custom-link' ? child.link : `/page/${child.slug}`}
+                            href={
+                              child?.type === 'custom-link' ? child.link : `/page/${child.slug}`
+                            }
                             className='block hover:bg-primary/10 px-4 py-3 text-gray-700 hover:text-primary transition-colors duration-200'
                           >
                             <Typography variant='body2' weight='medium'>
@@ -85,7 +90,11 @@ export default function MainHeader({ data }: { data: any }) {
                 Call us
               </Typography>
 
-              <Typography href={`tel:${siteConfig.hotline?.replace(' ', '')}`} variant='body2' weight='semibold'>
+              <Typography
+                href={`tel:${siteConfig.hotline?.replace(' ', '')}`}
+                variant='body2'
+                weight='semibold'
+              >
                 {siteConfig.hotline?.replace('+88', '')}
               </Typography>
             </div>
