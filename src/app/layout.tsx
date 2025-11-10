@@ -2,13 +2,12 @@
 import { getSiteConfig } from '@/action/data'
 import { SiteProvider } from '@/components/providers/store-provider'
 import { Metadata } from 'next'
-import { Manrope } from 'next/font/google'
 import './globals.css'
 
-const manrope = Manrope({
-  subsets: ['latin'],
-  variable: '--font-manrope'
-})
+// const manrope = Manrope({
+//   subsets: ['latin'],
+//   variable: '--font-manrope'
+// })
 
 // export async function generateMetadata(): Promise<Metadata> {
 //   const data = await getSiteConfig()
@@ -76,7 +75,7 @@ export default async function RootLayout({
   const siteConfig: any = await getSiteConfig()
   return (
     <html lang='en' suppressHydrationWarning>
-      <body className={`${manrope.variable} font-manrope antialiased`}>
+      <body className={`font-manrope antialiased`}>
         <SiteProvider data={siteConfig}>{children}</SiteProvider>
       </body>
     </html>
