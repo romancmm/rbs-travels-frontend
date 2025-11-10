@@ -12,10 +12,10 @@ const themeSchema = z.object({
       secondary: optionalStr(),
       accent: optionalStr(),
       text: optionalStr(),
-      header_bg: optionalStr(),
-      header_text: optionalStr(),
-      footer_bg: optionalStr(),
-      footer_text: optionalStr()
+      'header-background': optionalStr(),
+      'header-color': optionalStr(),
+      'footer-background': optionalStr(),
+      'footer-color': optionalStr()
     })
     .optional(),
   fontFamily: optionalStr(),

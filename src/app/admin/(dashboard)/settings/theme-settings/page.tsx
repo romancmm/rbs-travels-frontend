@@ -57,18 +57,20 @@ const ThemePreview = ({ theme }: { theme?: SiteSettings['theme'] }) => {
               {section.items.map((item) => (
                 <div
                   key={item.key}
-                  className='space-y-2 bg-muted/10 shadow-sm p-4 border border-border/60 rounded-lg'
+                  className='flex flex-col justify-between gap-y-2 bg-muted/10 shadow-sm p-4 border border-border/60 rounded-lg'
                 >
-                  <div className='flex justify-between items-center gap-2'>
-                    <span className='font-medium text-foreground text-sm'>{item.label}</span>
-                    <Badge variant='outline' className='font-mono text-[11px] uppercase'>
-                      {item.value}
-                    </Badge>
+                  <div className="space-y-0.5">
+                    <div className='flex justify-between items-center gap-2'>
+                      <span className='font-medium text-foreground text-sm'>{item.label}</span>
+                      <Badge variant='outline' className='font-mono text-[11px] uppercase'>
+                        {item.value}
+                      </Badge>
+                    </div>
+                    <p className='text-muted-foreground text-xs'>{item.hint}</p>
                   </div>
-                  <p className='text-muted-foreground text-xs'>{item.hint}</p>
-                  <div className='flex items-center gap-3 pt-2'>
+                  <div className='gap-3 space-x-1.5 pt-2 flex_items-center'>
                     <span
-                      className='shadow-sm border border-border rounded-md w-12 h-12'
+                      className='float-start shadow-sm border border-border rounded-md w-12 h-12 aspect-square'
                       style={{ backgroundColor: item.value }}
                     />
                     <div className='space-y-1 text-[11px] text-muted-foreground'>

@@ -15,7 +15,7 @@ export default function MainHeader({ data }: { data: any }) {
 
   return (
     <div className={cn(containerVariants())}>
-      <div className='flex flex-row justify-between items-center gap-x-4 min-h-20 text-header_text'>
+      <div className='flex flex-row justify-between items-center gap-x-4 min-h-20 text-header-color'>
         {/* Logo Section */}
         <SiteLogo />
 
@@ -41,7 +41,7 @@ export default function MainHeader({ data }: { data: any }) {
                       <Typography
                         variant='body1'
                         weight='medium'
-                        className='text-header_text group-hover:text-header_text/90 transition-colors duration-300'
+                        className='text-header-color group-hover:text-header-color/90 transition-colors duration-300'
                       >
                         {item.title}
                       </Typography>
@@ -62,7 +62,7 @@ export default function MainHeader({ data }: { data: any }) {
                             href={
                               child?.type === 'custom-link' ? child.link : `/page/${child.slug}`
                             }
-                            className='block hover:bg-primary/10 px-4 py-3 text-header_text hover:text-primary transition-colors duration-200'
+                            className='block hover:bg-primary/10 px-4 py-3 text-header-color hover:text-primary transition-colors duration-200'
                           >
                             <Typography variant='body2' weight='medium'>
                               {child.title}
@@ -80,12 +80,12 @@ export default function MainHeader({ data }: { data: any }) {
         {/* Contact & CTA Section */}
         <div className='hidden lg:flex items-center gap-4'>
           {/* Phone Number */}
-          <div className='flex items-center gap-2 text-header_text/90 hover:text-header_text transition-colors'>
+          <div className='flex items-center gap-2 text-header-color/90 hover:text-header-color transition-colors'>
             <div className='flex justify-center items-center bg-primary/20 rounded-lg w-10 h-10'>
               <Phone className='w-5 h-5' />
             </div>
             <div className='text-sm'>
-              <Typography variant='caption' className='text-header_text/70'>
+              <Typography variant='caption' className='text-header-color/70'>
                 Call us
               </Typography>
 

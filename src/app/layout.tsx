@@ -81,10 +81,10 @@ export default async function RootLayout({
     secondary: '#13C2C2',
     accent: '#FAAD14',
     text: '#1F1F1F',
-    header_bg: '#F5F5F5',
-    header_text: '#1F1F1F',
-    footer_bg: '#001529',
-    footer_text: '#FFFFFF'
+    'header-background': '#F5F5F5',
+    'header-color': '#1F1F1F',
+    'footer-background': '#001529',
+    'footer-color': '#FFFFFF'
   }
 
   const HEX_COLOR_REGEX = /^#([0-9A-F]{6})$/i
