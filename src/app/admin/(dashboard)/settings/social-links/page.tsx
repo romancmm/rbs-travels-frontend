@@ -8,7 +8,7 @@ import { Suspense } from 'react'
 function SocialLinks() {
   const settingsKey = 'system_social_links'
   const { data, mutate, loading } = useAsync<SettingsData<SocialLinksType>>(
-    () => `/admin/settings/key/${settingsKey}`,
+    () => `/admin/setting/settings/key/${settingsKey}`,
     true
   )
 

@@ -2,6 +2,7 @@
 
 import { Container } from '@/components/common/container'
 import CustomLink from '@/components/common/CustomLink'
+import SocialLinks from '@/components/common/SocialLinks'
 import { Typography } from '@/components/common/typography'
 import { useSiteConfig } from '@/components/providers/store-provider'
 import { ArrowRight, Mail, Phone } from 'lucide-react'
@@ -9,7 +10,6 @@ import { use } from 'react'
 
 export default function Footer({ data }: { data: any }) {
   const { siteConfig } = useSiteConfig()
-
   const footerNav: any = use(data)
 
   return (
@@ -52,25 +52,7 @@ export default function Footer({ data }: { data: any }) {
                   <Typography variant='h6' weight='semibold' className='mb-3 text-white'>
                     Follow Us
                   </Typography>
-                  <div className='flex flex-wrap gap-3'>
-                    {/* {siteConfig?.socialLinks?.map((item, index) => (
-                      <CustomLink
-                        key={index}
-                        href={item.url}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="group flex justify-center items-center bg-slate-800 hover:bg-primary rounded-xl w-10 h-10 hover:scale-110 transition-all duration-300"
-                      >
-                        <CustomImage
-                          src={item.icon}
-                          width={20}
-                          height={20}
-                          alt={item.name}
-                          className="group-hover:brightness-0 group-hover:invert object-contain transition-all duration-300"
-                        />
-                      </CustomLink>
-                    ))} */}
-                  </div>
+                  <SocialLinks />
                 </div>
               </div>
 

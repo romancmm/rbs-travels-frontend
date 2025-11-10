@@ -19,8 +19,6 @@ type TProps = {
 }
 
 const LogoManagement = ({ settingsKey, initialValues, refetch }: TProps) => {
-
-  console.log('siteConfig :>> ', initialValues);
   const {
     handleSubmit,
     control,

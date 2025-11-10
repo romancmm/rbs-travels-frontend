@@ -90,7 +90,8 @@ const SocialLinksForm = ({ settingsKey, initialValues, refetch }: TProps) => {
 
   const onSubmit = handleSubmit(async (data) => {
     try {
-      const res = await requests.post(`/admin/settings/${settingsKey}`, {
+      const res = await requests[initialValues ? 'put' : 'post'](`/admin/setting/settings/${initialValues ? `key/${settingsKey}` : ''}`, {
+        key: settingsKey,
         value: data
       })
       if (res?.success) {

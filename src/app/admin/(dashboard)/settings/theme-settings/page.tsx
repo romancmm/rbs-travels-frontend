@@ -98,6 +98,7 @@ export default function ThemeSettingsPage() {
     () => `/admin/setting/settings/key/${settingsKey}`,
     true
   )
+
   const siteConfig = data?.data?.value ?? undefined
   const onClose = () => {
     mutate()
@@ -112,7 +113,7 @@ export default function ThemeSettingsPage() {
         extra={
           siteConfig && (
             <Button variant={edit ? 'destructive' : 'default'} onClick={() => setEdit(!edit)}>
-              {edit ? 'Cancel' : 'Edit'}
+              {edit ? 'Cancel' : 'Update'}
             </Button>
           )
         }
