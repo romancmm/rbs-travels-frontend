@@ -3,23 +3,13 @@
 import CustomImage from '@/components/common/CustomImage'
 import { Typography } from '@/components/common/typography'
 import { cn } from '@/lib/utils'
+import { TestimonialItem } from '@/lib/validations/schemas/homepageSettings'
 import { Quote, Star } from 'lucide-react'
 import { motion } from 'motion/react'
 import { useState } from 'react'
 
-interface Testimonial {
-  id: number
-  name: string
-  location: string
-  avatar?: string
-  rating: number
-  review: string
-  tripType: string
-  date: string
-}
-
 interface TestimonialCardProps {
-  testimonial: Testimonial
+  testimonial: TestimonialItem
   index: number
   className?: string
 }
@@ -83,7 +73,7 @@ const TestimonialCard = ({ testimonial, className }: TestimonialCardProps) => {
         </Typography>
 
         {/* Rating */}
-        <StarRating rating={testimonial.rating} />
+        {testimonial.rating && <StarRating rating={testimonial.rating} />}
       </div>
 
       {/* User Info */}
@@ -99,13 +89,15 @@ const TestimonialCard = ({ testimonial, className }: TestimonialCardProps) => {
           {testimonial.avatar ? (
             <CustomImage
               src={testimonial.avatar}
-              alt={testimonial.name}
+              alt={testimonial.name || 'User'}
               width={56}
               height={56}
               className='w-full h-full object-cover'
             />
           ) : (
-            <span className='font-bold text-primary text-lg'>{getInitials(testimonial.name)}</span>
+            <span className='font-bold text-primary text-lg'>
+              {testimonial.name ? getInitials(testimonial.name) : 'NA'}
+            </span>
           )}
         </div>
 
@@ -114,9 +106,11 @@ const TestimonialCard = ({ testimonial, className }: TestimonialCardProps) => {
           <Typography variant='h6' weight='semibold' className='truncate'>
             {testimonial.name}
           </Typography>
-          <Typography variant='body2' className='truncate'>
-            {testimonial.location}
-          </Typography>
+          {testimonial.designation && (
+            <Typography variant='body2' className='truncate'>
+              {testimonial.designation}
+            </Typography>
+          )}
         </div>
       </div>
     </motion.div>
