@@ -2,12 +2,15 @@
 import { getSiteConfig } from '@/action/data'
 import { SiteProvider } from '@/components/providers/store-provider'
 import { Metadata } from 'next'
+import { Manrope } from 'next/font/google'
+import type { CSSProperties } from 'react'
+// @ts-expect-error - Next.js allows side-effect CSS imports in root layout
 import './globals.css'
 
-// const manrope = Manrope({
-//   subsets: ['latin'],
-//   variable: '--font-manrope'
-// })
+const manrope = Manrope({
+  subsets: ['latin'],
+  variable: '--font-manrope'
+})
 
 // export async function generateMetadata(): Promise<Metadata> {
 //   const data = await getSiteConfig()
@@ -73,9 +76,56 @@ export default async function RootLayout({
   children: React.ReactNode
 }>) {
   const siteConfig: any = await getSiteConfig()
+  const FALLBACK_THEME_COLORS: Record<string, string> = {
+    primary: '#1677FF',
+    secondary: '#13C2C2',
+    accent: '#FAAD14',
+    text: '#1F1F1F',
+    header_bg: '#F5F5F5',
+    header_text: '#1F1F1F',
+    footer_bg: '#001529',
+    footer_text: '#FFFFFF'
+  }
+
+  const HEX_COLOR_REGEX = /^#([0-9A-F]{6})$/i
+  const ALLOWED_THEME_KEYS = new Set(Object.keys(FALLBACK_THEME_COLORS))
+
+  const buildThemeStyles = (): Record<string, string> => {
+    const styles: Record<string, string> = {}
+    const themeColors = siteConfig?.theme?.color as Record<string, unknown> | undefined
+
+    if (!themeColors) return styles
+
+    for (const [rawKey, rawValue] of Object.entries(themeColors)) {
+      const key = rawKey.toString().toLowerCase()
+
+      if (!ALLOWED_THEME_KEYS.has(key)) continue
+
+      const fallback = FALLBACK_THEME_COLORS[key]
+      const hexValue =
+        typeof rawValue === 'string' && HEX_COLOR_REGEX.test(rawValue.trim())
+          ? rawValue.trim().toUpperCase()
+          : fallback
+
+      styles[`--${key}`] = hexValue
+    }
+
+    return styles
+  }
+
+  const themeStyleVars = buildThemeStyles()
+  const isDarkMode = siteConfig?.theme?.darkMode
   return (
-    <html lang='en' suppressHydrationWarning>
-      <body className={`font-manrope antialiased`}>
+    <html
+      lang='en'
+      suppressHydrationWarning
+      className={isDarkMode ? 'dark' : ''}
+      style={{
+        colorScheme: isDarkMode ? 'dark' : 'light',
+        ...(themeStyleVars as CSSProperties)
+      }}
+    >
+      <body className={`${manrope.variable} font-manrope antialiased`}>
         <SiteProvider data={siteConfig}>{children}</SiteProvider>
       </body>
     </html>

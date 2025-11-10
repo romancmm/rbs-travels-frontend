@@ -14,7 +14,7 @@ export default function Header({ data }: { data: any }) {
       {/* Main header */}
       <header
         className={cn(
-          'bg-slate-900/95 backdrop-blur-md border-white/10 border-b',
+          'bg-header_bg backdrop-blur-md border-white/10 border-b text-header_text',
           'shadow-lg shadow-black/5 top-0 z-50 sticky'
         )}
       >

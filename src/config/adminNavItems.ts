@@ -105,6 +105,11 @@ export const navItems: NavItem[] = [
         // permission: { resource: 'settings', action: 'update' }
       },
       {
+        title: 'Theme Settings',
+        href: '/admin/settings/theme-settings'
+        // permission: { resource: 'settings', action: 'update' }
+      },
+      {
         title: 'Social Links',
         href: '/admin/settings/social-links'
         // permission: { resource: 'settings', action: 'update' }
