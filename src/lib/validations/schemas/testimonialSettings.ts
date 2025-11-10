@@ -6,8 +6,8 @@ const testimonial = z.object({
   designation: z.string().optional(),
   avatar: z.string().optional(),
   rating: z.number().min(1).max(5).optional(),
-  review: z.string().optional()
-  // date: z.string().optional()
+  review: z.string().optional(),
+  company: z.string().optional()
 })
 
 export const testimonialSettingsSchema = z.object({

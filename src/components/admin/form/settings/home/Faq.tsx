@@ -155,7 +155,7 @@ const FaqForm = ({ settingsKey, initialValues, refetch }: TProps) => {
     defaultValues: {
       title: initialValues?.title || '',
       description: initialValues?.description || '',
-      groups: initialValues?.groups || [{ name: '', faqs: [{ question: '', answer: '' }] }]
+      faqs: initialValues?.faqs || [{ name: '', faqs: [{ question: '', answer: '' }] }]
     }
   })
 
@@ -165,7 +165,7 @@ const FaqForm = ({ settingsKey, initialValues, refetch }: TProps) => {
     remove: removeGroup
   } = useFieldArray({
     control,
-    name: 'groups'
+    name: 'faqs'
   })
 
   const onSubmit = handleSubmit(async (data) => {
