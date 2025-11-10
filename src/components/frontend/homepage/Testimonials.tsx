@@ -26,7 +26,6 @@ interface TestimonialsProps {
 
 const Testimonials = ({ data, className }: TestimonialsProps) => {
   const res: any = use(data)
-  console.log('res :>> ', res);
   const testimonialData = res?.data?.value
   // if (isLoading) return <TestimonialsLoadingSkeleton />
 

@@ -18,7 +18,7 @@ export const faqSettingsSchema = z.object({
     .min(2, { message: 'Title must be at least 2 characters' }),
 
   description: z.string().max(255).optional(),
-  groups: z.array(groups).optional()
+  faqs: z.array(groups).optional()
 })
 
 export const homepageFaqSchema = titleSubtitleDescSchema.extend({
