@@ -4,7 +4,6 @@ import { SiteProvider } from '@/components/providers/store-provider'
 import { Metadata } from 'next'
 import { Manrope } from 'next/font/google'
 import type { CSSProperties } from 'react'
-// @ts-expect-error - Next.js allows side-effect CSS imports in root layout
 import './globals.css'
 
 const manrope = Manrope({

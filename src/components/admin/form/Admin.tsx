@@ -138,26 +138,7 @@ const AdminForm = ({ initialData, onClose, onSuccess }: AdminFormProps) => {
             </div>
           )}
         />
-      </div>
 
-      {/* Status Checkboxes */}
-      <div className='flex flex-col gap-2'>
-        <Label className='text-sm'>Thumbnail</Label>
-        <Controller
-          name='isActive'
-          control={control}
-          render={({ field }) => (
-            <CustomInput
-              type='switch'
-              label={`Status (${field.value ? 'Active' : 'Inactive'})`}
-              error={errors.password?.message}
-              {...field}
-            />
-          )}
-        />
-      </div>
-
-      <div className="">
         <div>
           <Label className='mb-2'>Thumbnail</Label>
           <Controller
@@ -177,7 +158,27 @@ const AdminForm = ({ initialData, onClose, onSuccess }: AdminFormProps) => {
             <span className='font-medium text-red-500 text-xs'>{errors.avatar.message}</span>
           )}
         </div>
+
+        {/* Status Checkboxes */}
+        <div className='flex flex-col gap-2'>
+          <Label className='text-sm'>Status</Label>
+          <Controller
+            name='isActive'
+            control={control}
+            render={({ field }) => (
+              <CustomInput
+                type='switch'
+                label={`${field.value ? 'Active' : 'Inactive'}`}
+                checked={field.value}
+                onCheckedChange={field.onChange}
+                error={errors.isActive?.message}
+                {...field}
+              />
+            )}
+          />
+        </div>
       </div>
+
 
       {/* Form Actions */}
       <div className='flex gap-3 pt-4'>

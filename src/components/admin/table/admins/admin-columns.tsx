@@ -205,6 +205,3 @@ export const adminColumns = (mutate?: () => void): TableColumn<AdminUser>[] => {
     }
   ]
 }
-
-// Export the default columns for backward compatibility
-export const defaulAdminUserColumns = adminColumns()

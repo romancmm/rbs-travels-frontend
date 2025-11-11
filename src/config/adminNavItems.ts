@@ -161,17 +161,17 @@ export const navItems: NavItem[] = [
     title: 'Administration',
     href: '',
     icon: ShieldAlert,
-    permission: { resource: 'accounts', action: 'index' },
+    // permission: { resource: 'accounts', action: 'index' },
     children: [
       {
         title: 'Manage Admins',
-        href: '/admin/administration/admins',
-        permission: { resource: 'accounts', action: 'index' }
+        href: '/admin/administration/admins'
+        // permission: { resource: 'accounts', action: 'index' }
       },
       {
         title: 'Roles & Permissions',
-        href: '/admin/administration/roles',
-        permission: { resource: 'accounts', action: 'index' }
+        href: '/admin/administration/roles'
+        // permission: { resource: 'accounts', action: 'index' }
       }
     ]
   }
