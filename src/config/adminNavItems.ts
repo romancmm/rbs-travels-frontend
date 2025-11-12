@@ -172,6 +172,11 @@ export const navItems: NavItem[] = [
         title: 'Roles & Permissions',
         href: '/admin/administration/roles'
         // permission: { resource: 'accounts', action: 'index' }
+      },
+      {
+        title: 'Permissions',
+        href: '/admin/administration/permissions'
+        // permission: { resource: 'accounts', action: 'index' }
       }
     ]
   }
