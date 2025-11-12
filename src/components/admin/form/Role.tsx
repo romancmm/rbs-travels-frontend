@@ -156,7 +156,7 @@ export default function RoleForm({ initialData, onClose, onSuccess }: RoleFormPr
         <form onSubmit={onSubmit} className='space-y-6'>
             {/* Basic Information */}
             <Card>
-                <CardContent className='space-y-4 pt-6'>
+                <CardContent className='space-y-4'>
                     <Controller
                         control={control}
                         name='name'
@@ -192,7 +192,7 @@ export default function RoleForm({ initialData, onClose, onSuccess }: RoleFormPr
             <Card>
                 <CardContent>
                     <div className='space-y-4'>
-                        <div className='flex sm:flex-row flex-col sm:justify-between sm:items-center gap-3'>
+                        <div className='flex sm:flex-row flex-col sm:justify-between sm:items-start gap-3'>
                             <div>
                                 <h3 className='font-semibold text-lg'>Permissions</h3>
                                 <p className='text-muted-foreground text-sm'>
@@ -206,6 +206,7 @@ export default function RoleForm({ initialData, onClose, onSuccess }: RoleFormPr
                                     size='sm'
                                     onClick={handleSelectAll}
                                     disabled={permissionsLoading || availablePermissions.length === 0}
+                                    className='text-sm'
                                 >
                                     {selectedPermissions.length === availablePermissions.length
                                         ? 'Deselect All'
@@ -241,9 +242,9 @@ export default function RoleForm({ initialData, onClose, onSuccess }: RoleFormPr
                                     return (
                                         <Card
                                             key={resource}
-                                            className={`border-2 transition-all ${themeClass}`}
+                                            className={`border transition-all ${themeClass}`}
                                         >
-                                            <CardContent className='space-y-3 p-4'>
+                                            <CardContent className='space-y-3 px-3'>
                                                 {/* Group Header with Select All */}
                                                 <div className='flex justify-between items-center pb-2 border-b'>
                                                     <div className='flex items-center gap-3'>
@@ -273,7 +274,7 @@ export default function RoleForm({ initialData, onClose, onSuccess }: RoleFormPr
                                                 </div>
 
                                                 {/* Permission Items */}
-                                                <div className='space-y-2'>
+                                                <div className='space-y-1'>
                                                     {permissions.map((permission) => {
                                                         // Extract action from permission name (e.g., "admin.create" -> "create")
                                                         const action = permission.name.split('.')[1] || permission.name
