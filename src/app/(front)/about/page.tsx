@@ -536,7 +536,7 @@ export default function AboutPage() {
                 <div className='space-y-3'>
                   {service.features.map((feature, featureIndex) => (
                     <div key={featureIndex} className='flex items-center gap-3'>
-                      <CheckCircle className='flex-shrink-0 w-5 h-5 text-green-500' />
+                      <CheckCircle className='w-5 h-5 text-green-500 shrink-0' />
                       <Typography variant='body2' className='text-gray-600'>
                         {feature}
                       </Typography>

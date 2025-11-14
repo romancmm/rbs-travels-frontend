@@ -10,7 +10,7 @@ import { z } from 'zod'
 // Menu Item Editor Component — uses react-hook-form + zod (same concept as BlogCategory)
 const MenuItemSchema = z.object({
   title: z.string().min(1, 'Title is required'),
-  type: z.enum(['custom-link', 'custom-page', 'category-blogs', 'article']),
+  type: z.enum(['custom-link', 'custom-page', 'category-blogs', 'article', 'gallery']),
   link: z.string().optional(),
   pageId: z.string().optional(),
   categoryId: z.string().optional(),
@@ -109,7 +109,8 @@ export default function MenuItemForm({ item, onSave, onCancel }: MenuItemEditorP
                 { value: 'custom-link', label: 'Custom Link' },
                 { value: 'custom-page', label: 'Custom Page' },
                 { value: 'category-blogs', label: 'Category Blogs' },
-                { value: 'article', label: 'Article' }
+                { value: 'article', label: 'Article' },
+                { value: 'gallery', label: 'Gallery' }
               ]}
             />
           )}
@@ -124,6 +125,22 @@ export default function MenuItemForm({ item, onSave, onCancel }: MenuItemEditorP
                 label='URL'
                 placeholder='/about or https://...'
                 error={errors.link?.message}
+                {...field}
+              />
+            )}
+          />
+        )}
+
+        {watchType === 'gallery' && (
+          <Controller
+            control={control}
+            name='link'
+            render={({ field }) => (
+              <CustomInput
+                label='Gallery Folder Name'
+                placeholder='vacation-photos'
+                error={errors.link?.message}
+                helperText='Enter the folder name from /gallery/ directory (e.g., "vacation-photos" for /gallery/vacation-photos)'
                 {...field}
               />
             )}

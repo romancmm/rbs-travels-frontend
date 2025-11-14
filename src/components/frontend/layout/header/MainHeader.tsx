@@ -35,7 +35,15 @@ export default function MainHeader({ data }: { data: any }) {
                     onMouseLeave={() => setHoveredItem(null)}
                   >
                     <CustomLink
-                      href={item?.type === 'custom-link' ? item.link : `/page/${item.slug}`}
+                      href={
+                        item?.type === 'custom-link'
+                          ? item.link
+                          : item?.type === 'gallery'
+                            ? `/gallery/${item.link || item.slug}`
+                            : item?.type === 'custom-page'
+                              ? `/page/${item.pageId}`
+                              : `/page/${item.slug}`
+                      }
                       className='group flex items-center gap-1 hover:bg-white/10 px-3 py-2 rounded-lg transition-all duration-300'
                     >
                       <Typography
@@ -60,7 +68,13 @@ export default function MainHeader({ data }: { data: any }) {
                           <CustomLink
                             key={child.id ?? childIndex}
                             href={
-                              child?.type === 'custom-link' ? child.link : `/page/${child.slug}`
+                              child?.type === 'custom-link'
+                                ? child.link
+                                : child?.type === 'gallery'
+                                  ? `/gallery/${child.link || child.slug}`
+                                  : child?.type === 'custom-page'
+                                    ? `/page/${child.pageId}`
+                                    : `/page/${child.slug}`
                             }
                             className='block hover:bg-primary/10 px-4 py-3 text-header-color hover:text-primary transition-colors duration-200'
                           >

@@ -68,7 +68,15 @@ export default function MobileNav({ items }: { items: any[] }) {
                           {item.children.map((child: any, childIndex: number) => (
                             <CustomLink
                               key={childIndex}
-                              href={child.href ?? '#'}
+                              href={
+                                child?.type === 'custom-link'
+                                  ? child.link
+                                  : child?.type === 'gallery'
+                                    ? `/gallery/${child.link || child.slug}`
+                                    : child?.type === 'custom-page'
+                                      ? `/page/${child.pageId}`
+                                      : child.href ?? `/page/${child.slug}`
+                              }
                               onClick={() => setIsOpen(false)}
                               className='block hover:bg-white/10 px-3 py-2 rounded-lg text-slate-300 hover:text-white transition-colors'
                             >
@@ -81,7 +89,15 @@ export default function MobileNav({ items }: { items: any[] }) {
                   ) : (
                     // Regular navigation item
                     <CustomLink
-                      href={item.href ?? '#'}
+                      href={
+                        item?.type === 'custom-link'
+                          ? item.link
+                          : item?.type === 'gallery'
+                            ? `/gallery/${item.link || item.slug}`
+                            : item?.type === 'custom-page'
+                              ? `/page/${item.pageId}`
+                              : item.href ?? `/page/${item.slug}`
+                      }
                       onClick={() => setIsOpen(false)}
                       className='block hover:bg-white/10 px-4 py-3 rounded-lg text-white transition-colors'
                     >
