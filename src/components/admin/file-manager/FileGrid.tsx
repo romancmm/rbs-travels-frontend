@@ -2,7 +2,6 @@
 
 import CustomImage from '@/components/common/CustomImage'
 import { Button } from '@/components/ui/button'
-import { Card } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
 import { formatDistanceToNow } from 'date-fns'
 import { Eye } from 'lucide-react'
@@ -58,22 +57,22 @@ export function FileGrid({
     }
   }
 
-  console.log('Rendering FileGrid with files:', files);
-
   return (
-    <div className='p-4'>
-      <div className='gap-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8'>
+    <div className='bg-gray-50/30 p-6'>
+      <div className='gap-6 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 2xl:grid-cols-8 xl:grid-cols-6'>
         {files.map((file, index) => {
           const Icon = getFileIcon(file)
           const selected = isSelected(file)
 
           return (
-            <Card
+            <div
               key={index}
               className={cn(
-                'group relative hover:shadow-md transition-all duration-200 cursor-pointer',
-                'aspect-square flex flex-col overflow-hidden',
-                selected && 'ring-2 ring-primary bg-primary/5'
+                'group relative hover:shadow-2xl border hover:scale-[1.03] transition-all duration-300 cursor-pointer',
+                'flex flex-col overflow-hidden rounded-2xl bg-white',
+                selected
+                  ? 'ring-2 ring-primary ring-offset-2 border-primary bg-primary/5 shadow-xl'
+                  : 'border-gray-200/80 hover:border-primary/40 shadow-sm'
               )}
               onClick={() => handleClick(file)}
               onDoubleClick={() => {
@@ -83,48 +82,63 @@ export function FileGrid({
               }}
             >
               {/* File Preview */}
-              <div className='relative flex flex-col flex-1 justify-center items-center'>
+              <div className='relative flex flex-col flex-1 justify-center items-center bg-gradient-to-br from-gray-50 via-gray-50/50 to-white px-4'>
                 {file.type === 'folder' ? (
-                  <Icon className='w-8 h-8 text-primary' />
+                  <div className='flex flex-col justify-center items-center'>
+                    <div className='flex justify-center items-center bg-gradient-to-br from-primary/10 group-hover:from-primary/20 to-primary/5 group-hover:to-primary/10 shadow-sm mb-2 rounded-3xl w-20 h-20 transition-all duration-300'>
+                      <Icon className='drop-shadow-sm w-9 h-9 text-primary' />
+                    </div>
+                  </div>
                 ) : file.fileType === 'image' && file.thumbnail ? (
-                  <div className='relative w-full h-full aspect-video'>
+                  <div className='relative shadow-sm rounded-xl w-full h-full min-h-32 overflow-hidden'>
                     <CustomImage
                       src={file.thumbnail}
                       alt={file.name}
                       fill
-                      className='rounded-sm object-cover'
-                      sizes='(max-width: 768px) 50vw, (max-width: 1200px) 25vw, 12.5vw'
+                      className='rounded-xl h-full object-cover group-hover:scale-110 transition-transform duration-500'
+                    // sizes='(max-width: 768px) 50vw, (max-width: 1200px) 25vw, 12.5vw'
                     />
+                    <div className='absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300' />
                   </div>
                 ) : (
-                  <Icon className='w-8 h-8 text-muted-foreground' />
+                  <div className='flex flex-col justify-center items-center'>
+                    <div className='flex justify-center items-center bg-gradient-to-br from-gray-100 group-hover:from-gray-200 to-gray-200/80 group-hover:to-gray-300/80 shadow-sm mb-2 rounded-3xl w-20 h-20 transition-all duration-300'>
+                      <Icon className='w-9 h-9 text-gray-600' />
+                    </div>
+                  </div>
                 )}
               </div>
 
               {/* File Info */}
-              <div className='bg-background px-2 py-0.5 border-t text-center'>
-                <div className='font-medium text-xs truncate' title={file.name}>
+              <div className='bg-white/95 backdrop-blur-sm px-4 py-3 border-gray-100 border-t'>
+                <div className='font-semibold text-gray-800 group-hover:text-primary text-xs truncate transition-colors duration-200' title={file.name}>
                   {file.name}
                 </div>
-                {/* <div className='flex justify-between items-center mt-1 text-muted-foreground text-xs'>
-                  <span>{file.type === 'folder' ? 'Folder' : formatFileSize(file.size)}</span>
-                  <span>{formatDate(file.updatedAt)}</span>
-                </div> */}
+                <div className='flex justify-between items-center gap-2 mt-1.5'>
+                  <span className='font-medium text-[11px] text-muted-foreground truncate'>
+                    {file.type === 'folder' ? 'Folder' : formatFileSize(file.size)}
+                  </span>
+                  {file.type === 'file' && file.mime && (
+                    <span className='flex-shrink-0 bg-primary/10 px-1.5 py-0.5 rounded font-semibold text-[10px] text-primary'>
+                      {file.mime.split('/')[1]?.toUpperCase() || 'FILE'}
+                    </span>
+                  )}
+                </div>
               </div>
 
               {/* Actions Menu */}
-              <div className='top-1 right-1 absolute flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity'>
+              <div className='top-3 right-3 absolute flex gap-2 opacity-0 group-hover:opacity-100 transition-all duration-200'>
                 {file.type === 'file' && (
                   <Button
                     variant='ghost'
                     size='sm'
-                    className='bg-background/80 backdrop-blur-sm p-0 w-6 h-6'
+                    className='bg-white/98 hover:bg-white shadow-lg hover:shadow-xl backdrop-blur-md p-0 border border-gray-200/50 rounded-xl w-8 h-8 hover:scale-110 transition-all duration-200'
                     onClick={(e) => {
                       e.stopPropagation()
                       onFilePreview(file)
                     }}
                   >
-                    <Eye className='w-3 h-3' />
+                    <Eye className='w-4 h-4 text-primary' />
                   </Button>
                 )}
                 <FileContextMenu
@@ -133,17 +147,18 @@ export function FileGrid({
                   onRename={onFileRename}
                   onDelete={onFileDelete}
                   onFolderOpen={onFolderClick}
-                  className='bg-background/80 backdrop-blur-sm p-0 w-6 h-6'
+                  className='bg-white/98 hover:bg-white shadow-lg hover:shadow-xl backdrop-blur-md p-0 border border-gray-200/50 rounded-xl w-8 h-8 hover:scale-110 transition-all duration-200'
                 />
               </div>
 
               {/* Selection Indicator */}
               {selected && (
-                <div className='top-2 left-2 absolute flex justify-center items-center bg-primary rounded-full w-4 h-4'>
-                  <div className='bg-primary-foreground rounded-full w-2 h-2' />
+                <div className='top-3 left-3 absolute flex justify-center items-center bg-primary shadow-lg rounded-full ring-2 ring-white w-6 h-6 animate-in duration-200 zoom-in-50'>
+                  <div className='bg-white rounded-full w-2.5 h-2.5' />
                 </div>
               )}
-            </Card>
+
+            </div>
           )
         })}
       </div>

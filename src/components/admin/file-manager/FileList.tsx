@@ -66,120 +66,138 @@ export function FileList({
   }
 
   return (
-    <div className='p-4'>
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead className='w-8'></TableHead>
-            <TableHead>Name</TableHead>
-            <TableHead className='w-32'>Type</TableHead>
-            <TableHead className='w-24'>Size</TableHead>
-            <TableHead className='w-40'>Modified</TableHead>
-            <TableHead className='w-12'></TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {files.map((file, index) => {
-            const Icon = getFileIcon(file)
-            const selected = isSelected(file)
+    <div className='bg-gray-50/30 p-6'>
+      <div className='bg-white shadow-md border border-gray-200/80 rounded-2xl overflow-hidden'>
+        <Table>
+          <TableHeader>
+            <TableRow className='bg-gradient-to-r from-gray-50 hover:from-gray-50 to-gray-50/50 hover:to-gray-50/50 border-gray-100 border-b-2'>
+              <TableHead className='w-12 font-bold text-gray-600'></TableHead>
+              <TableHead className='font-bold text-gray-700'>Name</TableHead>
+              <TableHead className='w-32 font-bold text-gray-700'>Type</TableHead>
+              <TableHead className='w-28 font-bold text-gray-700'>Size</TableHead>
+              <TableHead className='w-40 font-bold text-gray-700'>Modified</TableHead>
+              <TableHead className='w-24 font-bold text-gray-700 text-right'>Actions</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {files.map((file, index) => {
+              const Icon = getFileIcon(file)
+              const selected = isSelected(file)
 
-            return (
-              <TableRow
-                key={index}
-                className={cn(
-                  'hover:bg-muted/50 transition-colors cursor-pointer',
-                  selected && 'bg-primary/5 border-l-2 border-l-primary'
-                )}
-                onClick={() => handleClick(file)}
-                onDoubleClick={() => {
-                  if (file.type === 'file') {
-                    onFilePreview(file)
-                  }
-                }}
-              >
-                <TableCell>
-                  <div className='relative flex justify-center items-center w-8 h-8'>
-                    {file.type === 'folder' ? (
-                      <Icon className='w-5 h-5 text-primary' />
-                    ) : file.fileType === 'image' && file.thumbnail ? (
-                      <Image
-                        src={file.thumbnail}
-                        alt={file.name}
-                        width={32}
-                        height={32}
-                        className='rounded object-cover'
-                      />
-                    ) : (
-                      <Icon className='w-5 h-5 text-muted-foreground' />
-                    )}
+              return (
+                <TableRow
+                  key={index}
+                  className={cn(
+                    'group hover:bg-primary/5 hover:shadow-sm border-gray-100/50 border-b transition-all duration-200 cursor-pointer',
+                    selected && 'bg-gradient-to-r from-primary/10 to-primary/5 border-l-4 border-l-primary shadow-md ring-1 ring-primary/20'
+                  )}
+                  onClick={() => handleClick(file)}
+                  onDoubleClick={() => {
+                    if (file.type === 'file') {
+                      onFilePreview(file)
+                    }
+                  }}
+                >
+                  <TableCell>
+                    <div className='relative flex justify-center items-center w-11 h-11'>
+                      {file.type === 'folder' ? (
+                        <div className='flex justify-center items-center bg-gradient-to-br from-primary/10 group-hover:from-primary/20 to-primary/5 group-hover:to-primary/10 shadow-sm rounded-xl w-full h-full transition-all duration-200'>
+                          <Icon className='drop-shadow-sm w-5 h-5 text-primary' />
+                        </div>
+                      ) : file.fileType === 'image' && file.thumbnail ? (
+                        <div className='relative shadow-sm rounded-xl ring-1 ring-gray-200/50 w-full h-full overflow-hidden'>
+                          <Image
+                            src={file.thumbnail}
+                            alt={file.name}
+                            width={44}
+                            height={44}
+                            className='rounded-xl w-full h-full object-cover group-hover:scale-110 transition-transform duration-300'
+                          />
+                        </div>
+                      ) : (
+                        <div className='flex justify-center items-center bg-gradient-to-br from-gray-100 group-hover:from-gray-200 to-gray-200/80 group-hover:to-gray-300/80 shadow-sm rounded-xl w-full h-full transition-all duration-200'>
+                          <Icon className='w-5 h-5 text-gray-600' />
+                        </div>
+                      )}
 
-                    {selected && (
-                      <div className='-top-1 -right-1 absolute flex justify-center items-center bg-primary rounded-full w-3 h-3'>
-                        <div className='bg-primary-foreground rounded-full w-1.5 h-1.5' />
-                      </div>
-                    )}
-                  </div>
-                </TableCell>
+                      {selected && (
+                        <div className='-top-1 -right-1 absolute flex justify-center items-center bg-primary shadow-lg rounded-full ring-2 ring-white w-5 h-5 animate-in duration-200 zoom-in-50'>
+                          <div className='bg-white rounded-full w-2 h-2' />
+                        </div>
+                      )}
+                    </div>
+                  </TableCell>
 
-                <TableCell>
-                  <div className='flex flex-col'>
-                    <span className='max-w-xs font-medium truncate' title={file.name}>
-                      {file.name}
+                  <TableCell>
+                    <div className='flex flex-col gap-1'>
+                      <span className='max-w-md font-bold text-gray-800 group-hover:text-primary text-sm truncate transition-colors duration-200' title={file.name}>
+                        {file.name}
+                      </span>
+                      {file.type === 'file' && file.mime && (
+                        <span className='font-medium text-muted-foreground text-xs'>{file.mime}</span>
+                      )}
+                    </div>
+                  </TableCell>
+
+                  <TableCell>
+                    <span className='inline-flex items-center gap-1.5 bg-gradient-to-r from-gray-100 group-hover:from-primary/10 to-gray-50 group-hover:to-primary/5 shadow-sm px-3 py-1.5 rounded-lg font-semibold text-gray-700 text-xs capitalize transition-all duration-200'>
+                      {file.type === 'folder' ? (
+                        <>
+                          <Icon className='w-3.5 h-3.5' />
+                          Folder
+                        </>
+                      ) : (
+                        <>
+                          <Icon className='w-3.5 h-3.5' />
+                          {file.fileType || 'File'}
+                        </>
+                      )}
                     </span>
-                    {file.type === 'file' && file.mime && (
-                      <span className='text-muted-foreground text-xs'>{file.mime}</span>
-                    )}
-                  </div>
-                </TableCell>
+                  </TableCell>
 
-                <TableCell>
-                  <span className='text-sm capitalize'>
-                    {file.type === 'folder' ? 'Folder' : file.fileType || 'File'}
-                  </span>
-                </TableCell>
+                  <TableCell>
+                    <span className='font-medium text-gray-600 text-sm'>
+                      {file.type === 'folder' ? '-' : formatFileSize(file.size)}
+                    </span>
+                  </TableCell>
 
-                <TableCell>
-                  <span className='text-sm'>
-                    {file.type === 'folder' ? '-' : formatFileSize(file.size)}
-                  </span>
-                </TableCell>
+                  <TableCell>
+                    <span className='text-muted-foreground text-sm'>
+                      {formatDate(file.updatedAt)}
+                    </span>
+                  </TableCell>
 
-                <TableCell>
-                  <span className='text-muted-foreground text-sm'>
-                    {formatDate(file.updatedAt)}
-                  </span>
-                </TableCell>
-
-                <TableCell>
-                  <div className='flex gap-1'>
-                    {file.type === 'file' && (
-                      <Button
-                        variant='ghost'
-                        size='sm'
-                        className='p-0 w-8 h-8'
-                        onClick={(e) => {
-                          e.stopPropagation()
-                          onFilePreview(file)
-                        }}
-                      >
-                        <Eye className='w-4 h-4' />
-                      </Button>
-                    )}
-                    <FileContextMenu
-                      file={file}
-                      onPreview={onFilePreview}
-                      onRename={onFileRename}
-                      onDelete={onFileDelete}
-                      onFolderOpen={onFolderClick}
-                      className='p-0 w-8 h-8'
-                    />
-                  </div>
-                </TableCell>
-              </TableRow>
-            )
-          })}
-        </TableBody>
-      </Table>
+                  <TableCell>
+                    <div className='flex justify-end gap-2'>
+                      {file.type === 'file' && (
+                        <Button
+                          variant='ghost'
+                          size='sm'
+                          className='hover:bg-primary/10 opacity-0 group-hover:opacity-100 shadow-sm hover:shadow-md p-0 rounded-lg w-9 h-9 hover:scale-110 transition-all duration-200'
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            onFilePreview(file)
+                          }}
+                        >
+                          <Eye className='w-4 h-4 text-primary' />
+                        </Button>
+                      )}
+                      <FileContextMenu
+                        file={file}
+                        onPreview={onFilePreview}
+                        onRename={onFileRename}
+                        onDelete={onFileDelete}
+                        onFolderOpen={onFolderClick}
+                        className='hover:bg-primary/10 opacity-0 group-hover:opacity-100 shadow-sm hover:shadow-md p-0 rounded-lg w-9 h-9 hover:scale-110 transition-all duration-200'
+                      />
+                    </div>
+                  </TableCell>
+                </TableRow>
+              )
+            })}
+          </TableBody>
+        </Table>
+      </div>
     </div>
   )
 }

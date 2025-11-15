@@ -1,5 +1,6 @@
 'use client'
 
+import CustomImage from '@/components/common/CustomImage'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import {
@@ -19,7 +20,6 @@ import {
   FileVideo,
   X
 } from 'lucide-react'
-import Image from 'next/image'
 import { FileItem } from './FileManagerComponent'
 
 interface FilePreviewModalProps {
@@ -84,32 +84,27 @@ export function FilePreviewModal({ open, onClose, file }: FilePreviewModalProps)
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent className='flex flex-col max-w-4xl max-h-[90vh]'>
         <DialogHeader className='pb-4'>
-          <div className='flex justify-between items-start'>
-            <div className='flex-1 min-w-0'>
-              <DialogTitle className='flex items-center gap-2 text-xl'>
-                <Icon className='w-6 h-6' />
-                <span className='truncate'>{file.name}</span>
-              </DialogTitle>
-              <DialogDescription className='mt-2'>File preview and details</DialogDescription>
-            </div>
-            <Button variant='ghost' size='sm' onClick={onClose}>
-              <X className='w-4 h-4' />
-            </Button>
+          <div className='flex-1 min-w-0'>
+            <DialogTitle className='flex items-center gap-2 text-xl'>
+              <Icon className='w-6 h-6' />
+              <span className='truncate'>{file.name}</span>
+            </DialogTitle>
+            <DialogDescription className='mt-2'>File preview and details</DialogDescription>
           </div>
         </DialogHeader>
 
-        <div className='flex flex-1 gap-6 overflow-hidden'>
+        <div className='flex flex-col flex-1 gap-6 overflow-y-auto'>
           {/* Preview Area */}
           <div className='flex flex-col flex-1'>
             <div className='flex flex-1 justify-center items-center bg-muted/30 border-2 border-muted border-dashed rounded-lg min-h-96'>
               {file.fileType === 'image' && (file.url || file.thumbnail) ? (
-                <div className='relative w-full max-w-full h-full max-h-full'>
-                  <Image
+                <div className='relative w-full max-w-full h-full max-h-full aspect-video'>
+                  <CustomImage
                     src={file.url || file.thumbnail!}
                     alt={file.name}
                     fill
                     className='rounded-lg object-contain'
-                    sizes='(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 70vw'
+                  // sizes='(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 70vw'
                   />
                 </div>
               ) : file.mime?.startsWith('video/') && file.url ? (
