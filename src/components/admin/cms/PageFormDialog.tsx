@@ -133,7 +133,7 @@ export function PageFormDialog({ open, onOpenChange, page, onSuccess }: PageForm
                 toast.success('Page created successfully')
                 onOpenChange(false)
                 // Redirect to page builder editor
-                router.push(`/admin/page-builder/${response.data.id}`)
+                router.push(`/admin/pages/${response.data.id}`)
             }
         } catch (error: any) {
             console.error('Failed to save page:', error)

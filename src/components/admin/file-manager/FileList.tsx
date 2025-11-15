@@ -46,6 +46,17 @@ export function FileList({
     return `${(bytes / Math.pow(1024, i)).toFixed(1)} ${sizes[i]}`
   }
 
+  const formatDate = (dateString?: string) => {
+    if (!dateString) return 'Unknown'
+    try {
+      const date = new Date(dateString)
+      if (isNaN(date.getTime())) return 'Unknown'
+      return formatDistanceToNow(date, { addSuffix: true })
+    } catch {
+      return 'Unknown'
+    }
+  }
+
   const handleClick = (file: FileItem) => {
     if (file.type === 'folder') {
       onFolderClick(file)
@@ -68,13 +79,13 @@ export function FileList({
           </TableRow>
         </TableHeader>
         <TableBody>
-          {files.map((file) => {
+          {files.map((file, index) => {
             const Icon = getFileIcon(file)
             const selected = isSelected(file)
 
             return (
               <TableRow
-                key={file.fileId}
+                key={index}
                 className={cn(
                   'hover:bg-muted/50 transition-colors cursor-pointer',
                   selected && 'bg-primary/5 border-l-2 border-l-primary'
@@ -135,7 +146,7 @@ export function FileList({
 
                 <TableCell>
                   <span className='text-muted-foreground text-sm'>
-                    {formatDistanceToNow(new Date(file.updatedAt), { addSuffix: true })}
+                    {formatDate(file.updatedAt)}
                   </span>
                 </TableCell>
 

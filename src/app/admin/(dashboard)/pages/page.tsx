@@ -45,7 +45,7 @@ function PageList() {
 
   const handleEdit = (page: PageLayout) => {
     // Navigate to builder page
-    router.push(`/admin/page-builder/${page.slug}`)
+    router.push(`/admin/pages/${page.slug}`)
   }
 
   const handleDelete = async (id: string) => {

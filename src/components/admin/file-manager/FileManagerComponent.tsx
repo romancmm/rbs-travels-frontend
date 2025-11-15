@@ -92,11 +92,11 @@ export function FileManagerComponent({
   // Path breadcrumbs
   const pathSegments = useMemo(() => {
     if (currentPath === '/') return [{ name: 'Root', path: '/' }]
-    const segments = currentPath.split('/').filter(Boolean)
+    const segments = currentPath?.split('/').filter(Boolean)
     const breadcrumbs = [{ name: 'Root', path: '/' }]
 
     let currentSegmentPath = ''
-    segments.forEach((segment) => {
+    segments?.forEach((segment) => {
       currentSegmentPath += `/${segment}`
       breadcrumbs.push({
         name: segment,
@@ -270,7 +270,7 @@ export function FileManagerComponent({
         <div className='flex items-center gap-1 text-sm'>
           <Home className='w-4 h-4' />
           {pathSegments.map((segment, index) => (
-            <div key={segment.path} className='flex items-center'>
+            <div key={index} className='flex items-center'>
               {index > 0 && <ChevronRight className='w-4 h-4 text-muted-foreground' />}
               <button
                 onClick={() => handleBreadcrumbClick(segment.path)}

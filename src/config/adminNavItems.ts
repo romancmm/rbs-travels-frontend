@@ -56,7 +56,7 @@ export const navItems: NavItem[] = [
   // Page Builder
   {
     title: 'Page Builder',
-    href: '/admin/page-builder',
+    href: '/admin/pages',
     icon: LayoutTemplate
   },
 

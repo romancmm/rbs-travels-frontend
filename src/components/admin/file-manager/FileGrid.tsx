@@ -1,11 +1,11 @@
 'use client'
 
+import CustomImage from '@/components/common/CustomImage'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
 import { formatDistanceToNow } from 'date-fns'
 import { Eye } from 'lucide-react'
-import Image from 'next/image'
 import { FileContextMenu } from './FileContextMenu'
 import { FileItem } from './FileManagerComponent'
 
@@ -39,6 +39,17 @@ export function FileGrid({
     return `${(bytes / Math.pow(1024, i)).toFixed(1)} ${sizes[i]}`
   }
 
+  const formatDate = (dateString?: string) => {
+    if (!dateString) return 'Unknown'
+    try {
+      const date = new Date(dateString)
+      if (isNaN(date.getTime())) return 'Unknown'
+      return formatDistanceToNow(date, { addSuffix: true })
+    } catch {
+      return 'Unknown'
+    }
+  }
+
   const handleClick = (file: FileItem) => {
     if (file.type === 'folder') {
       onFolderClick(file)
@@ -47,16 +58,18 @@ export function FileGrid({
     }
   }
 
+  console.log('Rendering FileGrid with files:', files);
+
   return (
     <div className='p-4'>
       <div className='gap-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8'>
-        {files.map((file) => {
+        {files.map((file, index) => {
           const Icon = getFileIcon(file)
           const selected = isSelected(file)
 
           return (
             <Card
-              key={file.fileId}
+              key={index}
               className={cn(
                 'group relative hover:shadow-md transition-all duration-200 cursor-pointer',
                 'aspect-square flex flex-col overflow-hidden',
@@ -70,12 +83,12 @@ export function FileGrid({
               }}
             >
               {/* File Preview */}
-              <div className='flex flex-1 justify-center items-center bg-muted/30 p-4'>
+              <div className='relative flex flex-col flex-1 justify-center items-center'>
                 {file.type === 'folder' ? (
-                  <Icon className='w-12 h-12 text-primary' />
+                  <Icon className='w-8 h-8 text-primary' />
                 ) : file.fileType === 'image' && file.thumbnail ? (
-                  <div className='relative w-full h-full'>
-                    <Image
+                  <div className='relative w-full h-full aspect-video'>
+                    <CustomImage
                       src={file.thumbnail}
                       alt={file.name}
                       fill
@@ -84,23 +97,23 @@ export function FileGrid({
                     />
                   </div>
                 ) : (
-                  <Icon className='w-12 h-12 text-muted-foreground' />
+                  <Icon className='w-8 h-8 text-muted-foreground' />
                 )}
               </div>
 
               {/* File Info */}
-              <div className='bg-background p-2 border-t'>
+              <div className='bg-background px-2 py-0.5 border-t text-center'>
                 <div className='font-medium text-xs truncate' title={file.name}>
                   {file.name}
                 </div>
-                <div className='flex justify-between items-center mt-1 text-muted-foreground text-xs'>
+                {/* <div className='flex justify-between items-center mt-1 text-muted-foreground text-xs'>
                   <span>{file.type === 'folder' ? 'Folder' : formatFileSize(file.size)}</span>
-                  <span>{formatDistanceToNow(new Date(file.updatedAt), { addSuffix: true })}</span>
-                </div>
+                  <span>{formatDate(file.updatedAt)}</span>
+                </div> */}
               </div>
 
               {/* Actions Menu */}
-              <div className='top-2 right-2 absolute flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity'>
+              <div className='top-1 right-1 absolute flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity'>
                 {file.type === 'file' && (
                   <Button
                     variant='ghost'

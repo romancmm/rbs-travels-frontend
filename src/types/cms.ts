@@ -6,7 +6,7 @@
 
 // ==================== MENU SYSTEM ====================
 
-export type MenuItemType = 'custom-link' | 'category-blogs' | 'custom-page' | 'article'
+export type MenuItemType = 'custom-link' | 'category-blogs' | 'custom-page' | 'article' | 'gallery'
 
 export type MenuPosition = 'header' | 'footer' | 'sidebar' | 'custom'
 
