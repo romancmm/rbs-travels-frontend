@@ -1,0 +1,15 @@
+services:
+  uhq-frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - '3000:3000'
+    volumes:
+      - ./.next:/app/.next:rw
+      - ./public:/app/public:ro
+    env_file:
+      - .env.production
+    environment:
+      - NODE_ENV=production
+    restart: unless-stopped
