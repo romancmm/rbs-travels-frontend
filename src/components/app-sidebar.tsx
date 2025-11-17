@@ -6,7 +6,6 @@ import { usePathname } from 'next/navigation'
 import * as React from 'react'
 
 import { NavMain } from '@/components/nav-main'
-import { NavProjects } from '@/components/nav-projects'
 import { NavUser } from '@/components/nav-user'
 import { usePermissions } from '@/components/providers/PermissionProvider'
 import { TeamSwitcher } from '@/components/team-switcher'
@@ -66,7 +65,7 @@ const buildAdminData = () => {
   try {
     const raw = Cookies.get('user')
     if (raw) cookieUser = JSON.parse(raw)
-  } catch {}
+  } catch { }
 
   const user = {
     name:
@@ -106,7 +105,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={navMain ?? []} />
-        <NavProjects projects={data.projects} />
+        {/* <NavProjects projects={data.projects} /> */}
       </SidebarContent>
       <SidebarFooter>
         <NavUser user={data.user} />

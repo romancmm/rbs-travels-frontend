@@ -7,37 +7,25 @@ import { BlogLoadingSkeleton } from '@/components/common/Skeleton'
 import { Typography } from '@/components/common/typography'
 import { TrendingUp } from 'lucide-react'
 import { motion } from 'motion/react'
+import { use } from 'react'
 import BlogCard from './BlogCard'
 
-interface BlogPost {
-  id: number
-  title: string
-  excerpt: string
-  image: string
-  date: string
-  category: string
-  author: string
-  readTime: string
-}
-
-interface BlogData {
-  title: string
-  subtitle: string
-  posts: BlogPost[]
-}
-
 interface BlogProps {
-  data?: BlogData
+  data?: any
   isLoading?: boolean
   className?: string
 }
 
 const Blog = ({ data, isLoading = false, className }: BlogProps) => {
+  const res: any = use(data)
+  const blogData = res?.data?.items
+  console.log('Blog data:', res);
+
   if (isLoading) {
     return <BlogLoadingSkeleton />
   }
 
-  if (!data || !data.posts?.length) {
+  if (!blogData || !blogData?.length) {
     return (
       <Section variant='xl' className={className}>
         <Container>
@@ -73,7 +61,7 @@ const Blog = ({ data, isLoading = false, className }: BlogProps) => {
                 variant='subtitle1'
                 className='font-semibold text-primary uppercase tracking-wide'
               >
-                {data.subtitle}
+                Blogs
               </Typography>
             </div>
 
@@ -83,7 +71,8 @@ const Blog = ({ data, isLoading = false, className }: BlogProps) => {
               weight='bold'
               className='mx-auto max-w-3xl text-foreground leading-tight'
             >
-              {data.title}
+              Latest Travel Stories & Tips
+
             </Typography>
 
             <motion.div
@@ -97,7 +86,7 @@ const Blog = ({ data, isLoading = false, className }: BlogProps) => {
 
         {/* Blog Grid */}
         <div className='gap-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 mb-12'>
-          {data.posts.slice(0, 3)?.map((post, index) => (
+          {blogData.slice(0, 3)?.map((post: any, index: number) => (
             <BlogCard key={post.id} post={post} index={index} />
           ))}
         </div>

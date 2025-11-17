@@ -91,7 +91,7 @@ export function ActionsDropdown<T = any>({
 
       return (
         <DropdownMenuItem key={item.label} className={finalClassName} asChild disabled={isDisabled}>
-          <CustomLink href={href} className='flex items-center gap-2 text-muted'>
+          <CustomLink href={href} className='flex items-center gap-2 hover:bg-gray-50!'>
             {Icon && <Icon size={16} />}
             {item.label}
           </CustomLink>
@@ -105,7 +105,7 @@ export function ActionsDropdown<T = any>({
 
       return (
         <DropdownMenuItem key={item.label} className={finalClassName} asChild disabled={isDisabled}>
-          <CustomLink href={href} className='flex items-center gap-2 text-muted'>
+          <CustomLink href={href} className='flex items-center gap-2 hover:bg-gray-50!'>
             {Icon && <Icon size={16} />}
             {item.label}
           </CustomLink>

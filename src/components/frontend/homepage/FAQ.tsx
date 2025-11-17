@@ -44,7 +44,7 @@ const FAQ = ({ data, className }: FAQProps) => {
               variant='subtitle1'
               className='mb-3 font-semibold text-primary uppercase tracking-wide'
             >
-              {faqData.subtitle}
+              {faqData?.subtitle}
             </Typography>
             <Typography
               variant='h2'
@@ -52,25 +52,25 @@ const FAQ = ({ data, className }: FAQProps) => {
               weight='bold'
               className='text-foreground leading-tight'
             >
-              {faqData.title}
+              {faqData?.title}
             </Typography>
           </motion.div>
         </div>
 
         {/* FAQ Grid */}
-        <div className='mx-auto max-w-4xl'>
+        <div className='mx-auto pb-10 max-w-4xl'>
           <Accordion type='single' collapsible>
             {faqData?.faqs?.map((faq: any, index: number) => (
               <AccordionItem
                 key={index}
                 value={`item-${index}`}
-                className='mb-4 border border-border rounded-xl w-full'
+                className='mb-4 border border-border last:border-b rounded-xl w-full'
               >
                 <AccordionTrigger className='flex justify-between items-center p-2 lg:p-4 rounded-none font-medium lg:text-xl text-left transition-colors cursor-pointer'>
-                  {faq.question}
+                  {faq?.question}
                 </AccordionTrigger>
                 <AccordionContent className='p-4 lg:p-6 border-t border-t-border text-sm lg:text-lg'>
-                  {faq.answer}
+                  {faq?.answer}
                 </AccordionContent>
               </AccordionItem>
             ))}
