@@ -13,7 +13,12 @@ import MobileNav from './MobileNav'
 
 export default function MainHeader({ data }: { data: any }) {
   const [hoveredItem, setHoveredItem] = useState<number | null>(null)
+  const [isMoreHovered, setIsMoreHovered] = useState(false)
   const { siteConfig } = useSiteConfig()
+
+  const publishedItems = data?.filter((i: any) => i.isPublished) ?? []
+  const visibleItems = publishedItems.length > 5 ? publishedItems.slice(0, 4) : publishedItems
+  const moreItems = publishedItems.length > 5 ? publishedItems.slice(4) : []
 
   return (
     <div className={cn(containerVariants())}>
@@ -22,79 +27,132 @@ export default function MainHeader({ data }: { data: any }) {
         <SiteLogo />
 
         {/* Main Navigation (dynamic) */}
-        {data?.filter((i: any) => i.isPublished).length > 0 && (
+        {publishedItems.length > 0 && (
           <nav className='hidden xl:flex items-center gap-4 ml-10'>
-            {data
-              .filter((i: any) => i.isPublished)
-              .map((item: any, index: number) => {
-                const publishedChildren = item.children?.filter((c: any) => c.isPublished) ?? []
+            {visibleItems.map((item: any, index: number) => {
+              const publishedChildren = item.children?.filter((c: any) => c.isPublished) ?? []
 
-                return (
-                  <div
-                    key={item.id ?? index}
-                    className='relative'
-                    onMouseEnter={() => setHoveredItem(index)}
-                    onMouseLeave={() => setHoveredItem(null)}
+              return (
+                <div
+                  key={item.id ?? index}
+                  className='relative'
+                  onMouseEnter={() => setHoveredItem(index)}
+                  onMouseLeave={() => setHoveredItem(null)}
+                >
+                  <CustomLink
+                    href={
+                      item?.type === 'custom-link'
+                        ? item.link
+                        : item?.type === 'gallery'
+                          ? `/gallery/${item.link || item.slug}`
+                          : item?.type === 'custom-page'
+                            ? `/page/${item.pageId}`
+                            : `/page/${item.slug}`
+                    }
+                    className='group flex items-center gap-1 hover:bg-white/10 px-3 py-2 rounded-lg transition-all duration-300'
                   >
-                    <CustomLink
-                      href={
-                        item?.type === 'custom-link'
-                          ? item.link
-                          : item?.type === 'gallery'
-                            ? `/gallery/${item.link || item.slug}`
-                            : item?.type === 'custom-page'
-                              ? `/page/${item.pageId}`
-                              : `/page/${item.slug}`
-                      }
-                      className='group flex items-center gap-1 hover:bg-white/10 px-3 py-2 rounded-lg transition-all duration-300'
+                    <Typography
+                      variant='body1'
+                      weight='medium'
+                      className='text-header-color group-hover:text-header-color/90 transition-colors duration-300'
                     >
-                      <Typography
-                        variant='body1'
-                        weight='medium'
-                        className='text-header-color group-hover:text-header-color/90 transition-colors duration-300'
-                      >
-                        {item.title}
-                      </Typography>
-                      {publishedChildren.length > 0 && (
-                        <ChevronDown
-                          className={`w-4 h-4 transition-transform duration-300 ${hoveredItem === index ? 'rotate-180' : ''
-                            }`}
-                        />
-                      )}
-                    </CustomLink>
+                      {item.title}
+                    </Typography>
+                    {publishedChildren.length > 0 && (
+                      <ChevronDown
+                        className={`w-4 h-4 transition-transform duration-300 ${hoveredItem === index ? 'rotate-180' : ''
+                          }`}
+                      />
+                    )}
+                  </CustomLink>
 
-                    {/* Dropdown Menu for Services */}
-                    {publishedChildren.length > 0 && hoveredItem === index && (
-                      <div className='top-full left-0 z-50 absolute bg-white slide-in-from-top-2 shadow-xl border border-gray-100 rounded-xl w-56 animate-in duration-200'>
-                        {publishedChildren.map((child: any, childIndex: number) => (
+                  {/* Dropdown Menu for Services */}
+                  {publishedChildren.length > 0 && hoveredItem === index && (
+                    <div className='top-full left-0 z-50 absolute bg-white slide-in-from-top-2 shadow-xl border border-gray-100 rounded-xl w-56 animate-in duration-200'>
+                      {publishedChildren.map((child: any, childIndex: number) => (
+                        <CustomLink
+                          key={child.id ?? childIndex}
+                          href={
+                            child?.type === 'custom-link'
+                              ? child.link
+                              : child?.type === 'gallery'
+                                ? `/gallery/${child.link || child.slug}`
+                                : child?.type === 'custom-page'
+                                  ? `/page/${child.pageId}`
+                                  : `/page/${child.slug}`
+                          }
+                          className='block hover:bg-primary/10 px-4 py-3 text-header-color hover:text-primary transition-colors duration-200'
+                        >
+                          <Typography variant='body2' weight='medium'>
+                            {child.title}
+                          </Typography>
+                        </CustomLink>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )
+            })}
+
+            {/* More Dropdown */}
+            {moreItems.length > 0 && (
+              <div
+                className='relative'
+                onMouseEnter={() => setIsMoreHovered(true)}
+                onMouseLeave={() => setIsMoreHovered(false)}
+              >
+                <button className='group flex items-center gap-1 hover:bg-white/10 px-3 py-2 rounded-lg transition-all duration-300'>
+                  <Typography
+                    variant='body1'
+                    weight='medium'
+                    className='text-header-color group-hover:text-header-color/90 transition-colors duration-300'
+                  >
+                    More
+                  </Typography>
+                  <ChevronDown
+                    className={`w-4 h-4 transition-transform duration-300 ${isMoreHovered ? 'rotate-180' : ''
+                      }`}
+                  />
+                </button>
+
+                {isMoreHovered && (
+                  <div className='top-full left-0 z-50 absolute bg-white slide-in-from-top-2 shadow-xl border border-gray-100 rounded-xl w-56 animate-in duration-200'>
+                    {moreItems.map((item: any, itemIndex: number) => {
+                      const publishedChildren = item.children?.filter((c: any) => c.isPublished) ?? []
+
+                      return (
+                        <div key={item.id ?? itemIndex}>
                           <CustomLink
-                            key={child.id ?? childIndex}
                             href={
-                              child?.type === 'custom-link'
-                                ? child.link
-                                : child?.type === 'gallery'
-                                  ? `/gallery/${child.link || child.slug}`
-                                  : child?.type === 'custom-page'
-                                    ? `/page/${child.pageId}`
-                                    : `/page/${child.slug}`
+                              item?.type === 'custom-link'
+                                ? item.link
+                                : item?.type === 'gallery'
+                                  ? `/gallery/${item.link || item.slug}`
+                                  : item?.type === 'custom-page'
+                                    ? `/page/${item.pageId}`
+                                    : `/page/${item.slug}`
                             }
-                            className='block hover:bg-primary/10 px-4 py-3 text-header-color hover:text-primary transition-colors duration-200'
+                            className='flex justify-between items-center hover:bg-primary/10 px-4 py-3 text-header-color hover:text-primary transition-colors duration-200'
                           >
                             <Typography variant='body2' weight='medium'>
-                              {child.title}
+                              {item.title}
                             </Typography>
+                            {publishedChildren.length > 0 && (
+                              <ChevronDown className='w-3 h-3 -rotate-90' />
+                            )}
                           </CustomLink>
-                        ))}
-                      </div>
-                    )}
+                        </div>
+                      )
+                    })}
                   </div>
-                )
-              })}
+                )}
+              </div>
+            )}
           </nav>
         )}
 
         {/* Contact & CTA Section */}
-        {siteConfig && <div className='hidden lg:flex items-center gap-4'>
+        {siteConfig && <div className='hidden xl:flex items-center gap-4'>
           {/* Phone Number */}
           <div className='flex items-center gap-2 text-header-color/90 hover:text-header-color transition-colors'>
             <div className='flex justify-center items-center bg-primary/20 rounded-lg w-10 h-10'>
