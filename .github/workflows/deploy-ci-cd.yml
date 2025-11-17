@@ -1,0 +1,73 @@
+name: Build and Deploy to VPS with Docker
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup bun
+        uses: oven-sh/setup-bun@v2
+
+      - name: Install dependencies
+        run: bun install
+
+      - name: Build application
+        run: bun run build
+
+      - name: Create deployment archive
+        run: |
+          FILES_TO_INCLUDE=".next public package.json .env.production bun.lock next.config.ts Dockerfile docker-compose.yml .dockerignore"
+
+          # Create cache directory structure to avoid runtime errors
+          mkdir -p .next/cache .next/trace 2>/dev/null || true
+
+          tar -czf deployment.tar.gz \
+            --exclude='.next/cache/*' \
+            --exclude='.next/trace/*' \
+            $FILES_TO_INCLUDE
+
+      - name: Upload to VPS
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USER }}
+          key: ${{ secrets.SSH_KEY }}
+          port: ${{ '22' }}
+          source: 'deployment.tar.gz'
+          target: '/tmp/'
+          timeout: 60s
+          command_timeout: 10m
+
+      - name: Deploy with Docker on VPS
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USER }}
+          key: ${{ secrets.SSH_KEY }}
+          port: ${{  '22' }}
+          timeout: 60s
+          command_timeout: 10m
+          debug: true
+          script: |
+            cd apps/rbs-travels-frontend || exit 1
+            docker compose down || true
+            tar -xzf /tmp/deployment.tar.gz || exit 1
+
+            if [ ! -d ".next" ]; then
+              exit 1
+            fi
+
+            # Ensure cache directories exist with proper permissions
+            mkdir -p .next/cache .next/trace 2>/dev/null || true
+            chown -R 1001:1001 .next public 2>/dev/null || true
+            docker compose up --build -d || exit 1
+            rm /tmp/deployment.tar.gz || true
+            ls -dt .next.backup.* 2>/dev/null | tail -n +4 | sudo xargs rm -rf || true
+            docker image prune -f || true
