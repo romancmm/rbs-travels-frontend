@@ -23,7 +23,9 @@ const SiteConfiguration = ({ settingsKey, initialValues, refetch }: TProps) => {
   const {
     handleSubmit,
     control,
-    formState: { errors, isSubmitting }
+    formState: { errors, isSubmitting },
+    watch,
+    setValue
   } = useForm<SiteSettings>({
     resolver: zodResolver(siteSettingsSchema) as any,
     defaultValues: {
@@ -36,6 +38,8 @@ const SiteConfiguration = ({ settingsKey, initialValues, refetch }: TProps) => {
       addresses: initialValues?.addresses || [],
       website: initialValues?.website || '',
       shortDescription: initialValues?.shortDescription || '',
+      workingHours: initialValues?.workingHours || '',
+      promoText: initialValues?.promoText || [],
       logo: {
         default: initialValues?.logo?.default || '',
         dark: initialValues?.logo?.dark || ''
@@ -94,6 +98,7 @@ const SiteConfiguration = ({ settingsKey, initialValues, refetch }: TProps) => {
                 <CustomInput
                   label='Site Name'
                   placeholder='Enter site name'
+                  showCharCount
                   error={errors.name?.message}
                   {...field}
                   value={field.value ?? ''}
@@ -124,6 +129,7 @@ const SiteConfiguration = ({ settingsKey, initialValues, refetch }: TProps) => {
                   label='Phone'
                   type='tel'
                   placeholder='+1 (555) 123-4567'
+                  maxLength={20}
                   error={errors.phone?.message}
                   {...field}
                   value={field.value ?? ''}
@@ -139,6 +145,7 @@ const SiteConfiguration = ({ settingsKey, initialValues, refetch }: TProps) => {
                   label='Hotline'
                   type='tel'
                   placeholder='+1 (555) 000-0000'
+                  maxLength={20}
                   error={errors.hotline?.message}
                   {...field}
                   value={field.value ?? ''}
@@ -161,6 +168,21 @@ const SiteConfiguration = ({ settingsKey, initialValues, refetch }: TProps) => {
               )}
             />
 
+            <Controller
+              control={control}
+              name='workingHours'
+              render={({ field }) => (
+                <CustomInput
+                  label='Working Hours'
+                  placeholder='e.g., Mon-Fri: 9:00 AM - 6:00 PM'
+                  showCharCount
+                  error={errors.workingHours?.message}
+                  {...field}
+                  value={field.value ?? ''}
+                />
+              )}
+            />
+
             <div className='lg:col-span-2'>
               <Controller
                 control={control}
@@ -171,6 +193,8 @@ const SiteConfiguration = ({ settingsKey, initialValues, refetch }: TProps) => {
                     type='textarea'
                     rows={2}
                     placeholder='Enter full address'
+                    maxLength={250}
+                    showCharCount
                     error={errors.address?.message}
                     {...field}
                     value={field.value ?? ''}
@@ -189,6 +213,8 @@ const SiteConfiguration = ({ settingsKey, initialValues, refetch }: TProps) => {
                     type='textarea'
                     rows={3}
                     placeholder='Brief description of the site'
+                    maxLength={500}
+                    showCharCount
                     error={errors.shortDescription?.message}
                     {...field}
                     value={field.value ?? ''}
@@ -197,6 +223,75 @@ const SiteConfiguration = ({ settingsKey, initialValues, refetch }: TProps) => {
               />
             </div>
           </div>
+        </CardContent>
+      </Card>
+
+      {/* Promo Text */}
+      <Card>
+        <CardHeader>
+          <div className='flex justify-between items-center'>
+            <CardTitle>Promotional Text</CardTitle>
+            {(watch('promoText')?.length || 0) < 5 && (
+              <Button
+                type='button'
+                variant='outline'
+                size='sm'
+                onClick={() => {
+                  const current = watch('promoText') || []
+                  setValue('promoText', [...current, ''])
+                }}
+              >
+                <Plus className='mr-2 w-4 h-4' />
+                Add Promo Text
+              </Button>
+            )}
+          </div>
+        </CardHeader>
+        <CardContent>
+          <Controller
+            control={control}
+            name='promoText'
+            render={({ field }) => {
+              const promoTexts = field.value || []
+
+              return promoTexts.length > 0 ? (
+                <div className='space-y-4'>
+                  {promoTexts.map((text, index) => (
+                    <div key={index} className='flex items-start gap-2'>
+                      <div className='flex-1'>
+                        <CustomInput
+                          placeholder='Enter promotional text'
+                          maxLength={80}
+                          showCharCount
+                          value={text || ''}
+                          onChange={(e) => {
+                            const newPromoTexts = [...promoTexts]
+                            newPromoTexts[index] = e.target.value
+                            field.onChange(newPromoTexts)
+                          }}
+                        />
+                      </div>
+                      <Button
+                        type='button'
+                        variant='destructive'
+                        size='icon'
+                        onClick={() => {
+                          const newPromoTexts = promoTexts.filter((_, i) => i !== index)
+                          field.onChange(newPromoTexts)
+                        }}
+                      >
+                        <Trash2 className='w-4 h-4' />
+                      </Button>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className='py-8 text-gray-500 text-center'>
+                  <p>No promotional text added yet. Click &quot;Add Promo Text&quot; to create one.</p>
+                </div>
+              )
+            }}
+          />
         </CardContent>
       </Card>
 
@@ -248,6 +343,8 @@ const SiteConfiguration = ({ settingsKey, initialValues, refetch }: TProps) => {
                           <CustomInput
                             label='Title'
                             placeholder='e.g., Head Office, Branch Office'
+                            maxLength={35}
+                            showCharCount
                             error={errors.addresses?.[index]?.title?.message}
                             {...field}
                             value={field.value ?? ''}
@@ -265,6 +362,8 @@ const SiteConfiguration = ({ settingsKey, initialValues, refetch }: TProps) => {
                             type='textarea'
                             rows={2}
                             placeholder='Enter full address'
+                            maxLength={250}
+                            showCharCount
                             error={errors.addresses?.[index]?.address?.message}
                             {...field}
                             value={field.value ?? ''}
@@ -280,6 +379,7 @@ const SiteConfiguration = ({ settingsKey, initialValues, refetch }: TProps) => {
                           label='Phone'
                           type='tel'
                           placeholder='+1 (555) 123-4567'
+                          maxLength={20}
                           error={errors.addresses?.[index]?.phone?.message}
                           {...field}
                           value={field.value ?? ''}
@@ -328,6 +428,8 @@ const SiteConfiguration = ({ settingsKey, initialValues, refetch }: TProps) => {
                     label='Copyright Text'
                     type='textarea'
                     placeholder='Enter copyright text'
+                    maxLength={200}
+                    showCharCount
                     error={errors.footer?.copyright?.message}
                     {...field}
                     value={field.value ?? ''}
@@ -343,6 +445,7 @@ const SiteConfiguration = ({ settingsKey, initialValues, refetch }: TProps) => {
                 <CustomInput
                   label='Developed by'
                   placeholder='Enter company name'
+                  showCharCount
                   error={errors.footer?.credit?.companyName?.message}
                   {...field}
                   value={field.value ?? ''}

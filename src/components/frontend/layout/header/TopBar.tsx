@@ -2,13 +2,27 @@
 
 import { Container } from '@/components/common/container'
 import CustomLink from '@/components/common/CustomLink'
-import { Typography } from '@/components/common/typography'
-import { siteConfig } from '@/data/siteConfig'
+import { useSiteConfig } from '@/components/providers/store-provider'
+import { AnimatePresence, motion } from 'framer-motion'
 import { Clock, Mail, Phone, X } from 'lucide-react'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 export default function TopBar() {
   const [isVisible, setIsVisible] = useState(true)
+  const [currentIndex, setCurrentIndex] = useState(0)
+  const { siteConfig } = useSiteConfig()
+
+  const promoTexts = siteConfig?.promoText || []
+
+  useEffect(() => {
+    if (promoTexts.length <= 1) return
+
+    const interval = setInterval(() => {
+      setCurrentIndex((prev) => (prev + 1) % promoTexts.length)
+    }, 4000) // Change text every 4 seconds
+
+    return () => clearInterval(interval)
+  }, [promoTexts.length])
 
   if (!isVisible) return null
 
@@ -21,35 +35,60 @@ export default function TopBar() {
             <div className='flex items-center gap-2'>
               <Phone className='w-3 h-3' />
               <CustomLink
-                href={`tel:${siteConfig.phone}`}
+                href={`tel:${siteConfig?.phone}`}
                 className='hover:text-primary-foreground/80 transition-colors'
               >
-                {siteConfig.phone}
+                {siteConfig?.phone}
               </CustomLink>
             </div>
             <div className='flex items-center gap-2'>
               <Mail className='w-3 h-3' />
               <CustomLink
-                href={`mailto:${siteConfig.email}`}
+                href={`mailto:${siteConfig?.email}`}
                 className='hover:text-primary-foreground/80 transition-colors'
               >
-                {siteConfig.email}
+                {siteConfig?.email}
               </CustomLink>
             </div>
             <div className='flex items-center gap-2'>
               <Clock className='w-3 h-3' />
-              <span>Mon - Fri: 9:00 AM - 6:00 PM</span>
+              <span>{siteConfig?.workingHours}</span>
             </div>
           </div>
 
-          {/* Center - Announcement */}
-          <div className='flex flex-1 sm:justify-end'>
-            <Typography variant='body2' align={'right'} className='font-medium'>
-              ✈️ Special Offer: Get 20% off on international flights!
-              {/* <CustomLink href='/page/offers' className='ml-2 underline hover:no-underline'>
-                Book Now
-              </CustomLink> */}
-            </Typography>
+          {/* Center - Animated Announcement */}
+          <div className='flex flex-1 justify-center md:justify-end items-center h-6 overflow-hidden'>
+            {promoTexts.length > 0 && (
+              <AnimatePresence mode='wait'>
+                <motion.div
+                  key={currentIndex}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  transition={{
+                    duration: 0.5,
+                    ease: 'easeInOut'
+                  }}
+                  className='absolute flex flex-wrap gap-x-1 max-sm:px-3'
+                >
+                  {promoTexts[currentIndex]?.split(' ').map((word, wordIndex) => (
+                    <motion.span
+                      key={`${currentIndex}-${wordIndex}`}
+                      initial={{ opacity: 0, filter: 'blur(10px)' }}
+                      animate={{ opacity: 1, filter: 'blur(0px)' }}
+                      transition={{
+                        duration: 0.6,
+                        delay: wordIndex * 0.1,
+                        ease: 'easeOut'
+                      }}
+                      className='lg:font-medium text-xs md:text-sm whitespace-nowrap'
+                    >
+                      {word}
+                    </motion.span>
+                  ))}
+                </motion.div>
+              </AnimatePresence>
+            )}
           </div>
 
           {/* Right side - Close button */}

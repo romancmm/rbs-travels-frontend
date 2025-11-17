@@ -4,7 +4,8 @@ import CustomLink from '@/components/common/CustomLink'
 import SiteLogo from '@/components/common/SiteLogo'
 import { containerVariants } from '@/components/common/container'
 import { Typography } from '@/components/common/typography'
-import { siteConfig } from '@/data/siteConfig'
+// import { siteConfig } from '@/data/siteConfig'
+import { useSiteConfig } from '@/components/providers/store-provider'
 import { cn } from '@/lib/utils'
 import { ChevronDown, Phone } from 'lucide-react'
 import { useState } from 'react'
@@ -12,6 +13,7 @@ import MobileNav from './MobileNav'
 
 export default function MainHeader({ data }: { data: any }) {
   const [hoveredItem, setHoveredItem] = useState<number | null>(null)
+  const { siteConfig } = useSiteConfig()
 
   return (
     <div className={cn(containerVariants())}>
@@ -92,7 +94,7 @@ export default function MainHeader({ data }: { data: any }) {
         )}
 
         {/* Contact & CTA Section */}
-        <div className='hidden lg:flex items-center gap-4'>
+        {siteConfig && <div className='hidden lg:flex items-center gap-4'>
           {/* Phone Number */}
           <div className='flex items-center gap-2 text-header-color/90 hover:text-header-color transition-colors'>
             <div className='flex justify-center items-center bg-primary/20 rounded-lg w-10 h-10'>
@@ -112,7 +114,7 @@ export default function MainHeader({ data }: { data: any }) {
               </Typography>
             </div>
           </div>
-        </div>
+        </div>}
 
         {/* Mobile Navigation */}
         <MobileNav items={data} />
