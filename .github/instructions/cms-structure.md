@@ -43,7 +43,7 @@ Each menu item will have a `type` field specifying its behavior.
 {
   _id: ObjectId,
   name: string,                 // e.g. "Header Menu"
-  slug: string,                 // e.g. "header-menu"
+  slug: string,                 // e.g. "main-menu"
   items: [
     {
       _id: ObjectId,

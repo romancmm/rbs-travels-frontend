@@ -92,6 +92,8 @@ export const siteSettingsSchema = z.object({
   phone: optionalStr(),
   hotline: optionalStr(),
   address: optionalStr(),
+  workingHours: optionalStr(),
+  promoText: z.array(optionalStr()).optional(),
   addresses: z.array(addressItemSchema).optional(),
   website: relaxedUrl(),
   shortDescription: optionalStr(),

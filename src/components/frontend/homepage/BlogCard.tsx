@@ -3,23 +3,13 @@
 import CustomImage from '@/components/common/CustomImage'
 import { Typography } from '@/components/common/typography'
 import { cn } from '@/lib/utils'
+import { format } from 'date-fns'
 import { Calendar, Tag } from 'lucide-react'
 import { motion } from 'motion/react'
 import { useState } from 'react'
 
-interface BlogPost {
-  id: number
-  title: string
-  excerpt: string
-  image: string
-  date: string
-  category: string
-  author: string
-  readTime: string
-}
-
 interface BlogCardProps {
-  post: BlogPost
+  post: any
   index: number
   className?: string
 }
@@ -47,9 +37,9 @@ const BlogCard = ({ post, index, className }: BlogCardProps) => {
         <motion.div
           animate={{ scale: isHovered ? 1.05 : 1 }}
           transition={{ duration: 0.5, ease: 'easeOut' }}
-          className='w-full aspect-[16/10]'
+          className='w-full aspect-16/10'
         >
-          <CustomImage src={post.image} alt={post.title} fill className='object-cover' />
+          <CustomImage src={post.thumbnail} alt={post.title} fill className='object-cover' />
         </motion.div>
 
         {/* Category Badge */}
@@ -64,7 +54,7 @@ const BlogCard = ({ post, index, className }: BlogCardProps) => {
             )}
           >
             <Tag className='w-3 h-3' />
-            {post.category}
+            {post.category?.name}
           </motion.div>
         </div>
 
@@ -78,7 +68,7 @@ const BlogCard = ({ post, index, className }: BlogCardProps) => {
         <div className='flex items-center gap-4 text-sm'>
           <div className='flex items-center gap-1.5'>
             <Calendar className='w-4 h-4' />
-            <span>{post.date}</span>
+            <span>{format(new Date(post.createdAt), 'MMM dd, yyyy')}</span>
           </div>
           <div className='flex items-center gap-1.5'>
             <span>•</span>

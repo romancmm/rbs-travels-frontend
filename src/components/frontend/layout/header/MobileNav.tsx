@@ -2,14 +2,15 @@
 
 import CustomLink from '@/components/common/CustomLink'
 import { Typography } from '@/components/common/typography'
+import { useSiteConfig } from '@/components/providers/store-provider'
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet'
-import { siteConfig } from '@/data/siteConfig'
 import { ChevronRight, Mail, MapPin, Menu, PhoneCall, X } from 'lucide-react'
 import { useState } from 'react'
 
 export default function MobileNav({ items }: { items: any[] }) {
   const [isOpen, setIsOpen] = useState(false)
   const [expandedItem, setExpandedItem] = useState<number | null>(null)
+  const { siteConfig } = useSiteConfig()
 
   const toggleExpanded = (index: number) => {
     setExpandedItem(expandedItem === index ? null : index)
@@ -40,7 +41,7 @@ export default function MobileNav({ items }: { items: any[] }) {
           </button>
         </SheetHeader>
 
-        <div className='flex flex-col h-full'>
+        <div className='flex flex-col h-full overflow-y-auto'>
           {/* Navigation Links */}
           {items?.length > 0 && (
             <nav className='flex-1 space-y-2 p-6'>
@@ -56,10 +57,12 @@ export default function MobileNav({ items }: { items: any[] }) {
                         <Typography variant='body1' weight='medium'>
                           {item.title}
                         </Typography>
-                        <ChevronRight
-                          className={`w-4 h-4 transition-transform duration-200 ${expandedItem === index ? 'rotate-90' : ''
-                            }`}
-                        />
+                        {item.children?.length > 0 &&
+                          <ChevronRight
+                            className={`w-4 h-4 transition-transform duration-200 ${expandedItem === index ? 'rotate-90' : ''
+                              }`}
+                          />
+                        }
                       </button>
 
                       {/* Submenu */}
@@ -125,7 +128,7 @@ export default function MobileNav({ items }: { items: any[] }) {
                     <PhoneCall className='w-4 h-4 text-primary' />
                   </div>
                   <CustomLink
-                    href={`tel:${siteConfig.phone}`}
+                    href={`tel:${siteConfig?.phone}`}
                     className='text-slate-300 hover:text-white transition-colors'
                   >
                     <Typography variant='body2'>{siteConfig?.phone}</Typography>
@@ -137,7 +140,7 @@ export default function MobileNav({ items }: { items: any[] }) {
                     <Mail className='w-4 h-4 text-primary' />
                   </div>
                   <CustomLink
-                    href={`mailto:${siteConfig.email}`}
+                    href={`mailto:${siteConfig?.email}`}
                     className='text-slate-300 hover:text-white transition-colors'
                   >
                     <Typography variant='body2'>{siteConfig?.email}</Typography>
