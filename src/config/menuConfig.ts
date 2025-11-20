@@ -1,7 +1,8 @@
 import { adminLogout } from '@/action/auth'
-import { showError } from '@/lib/errMsg'
-import { LogOut, Mail, Settings, Shield, User, type LucideIcon } from 'lucide-react'
-import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime'
+import { LogOut, Settings, Shield, User, type LucideIcon } from 'lucide-react'
+
+// Modal types
+export type ModalType = 'profile' | 'settings' | 'security' | null
 
 // Base menu item interface
 export interface BaseMenuItem {
@@ -13,6 +14,7 @@ export interface BaseMenuItem {
   disabled?: boolean
   href?: string
   target?: '_blank' | '_self'
+  modal?: ModalType
 }
 
 // Extended menu item with danger state and divider
@@ -24,32 +26,36 @@ export interface MenuItem extends BaseMenuItem {
 
 // User profile menu configuration factory
 export const createUserProfileMenuConfig = (
-  clearAdminInfo: () => void,
-  router: AppRouterInstance
+  // router: AppRouterInstance,
+  openModal?: (modalType: ModalType) => void,
+  onLogoutRequest?: () => void
 ): MenuItem[] => [
   {
     key: 'profile',
     label: 'Profile',
     icon: User,
-    href: '/admin/profile' // Navigation item - uses CustomLink
+    modal: 'profile',
+    onClick: openModal ? () => openModal('profile') : undefined
   },
   {
     key: 'settings',
     label: 'Settings',
     icon: Settings,
-    href: '/admin/settings' // Navigation item - uses CustomLink
+    modal: 'settings',
+    onClick: openModal ? () => openModal('settings') : undefined
   },
   {
     key: 'messages',
     label: 'Messages',
-    icon: Mail,
-    href: '/admin/messages' // Navigation item - uses CustomLink
+    icon: Settings,
+    href: '/admin/messages'
   },
   {
     key: 'security',
-    label: 'Security',
+    label: 'Change Password',
     icon: Shield,
-    href: '/admin/security' // Navigation item - uses CustomLink
+    modal: 'security',
+    onClick: openModal ? () => openModal('security') : undefined
   },
   {
     key: 'logout',
@@ -57,23 +63,37 @@ export const createUserProfileMenuConfig = (
     icon: LogOut,
     danger: true,
     divider: true,
-    onClick: async () => {
-      // Clear client-side state first
-      clearAdminInfo()
-
-      // Call server action for logout
-      try {
-        await adminLogout()
-        // Use Next.js router for navigation (no page reload)
-        router.push('/admin/login')
-      } catch {
-        showError('Logout failed. Please try again.')
-        // Redirect anyway for security using Next.js router
-        router.push('/admin/login')
-      }
-    }
+    onClick: onLogoutRequest
+      ? () => onLogoutRequest()
+      : async () => {
+          // Call server action for logout
+          try {
+            await adminLogout()
+            // Use Next.js router for navigation (no page reload)
+            // router.push('/admin/login')
+          } catch (error) {
+            console.error('Logout failed:', error)
+            // Redirect anyway for security using Next.js router
+            // router.push('/admin/login')
+          }
+        }
   }
 ]
+
+// Notification actions configuration
+export const notificationActionsConfig = {
+  markAllRead: {
+    key: 'mark-all-read',
+    label: 'Mark all read',
+    action: 'markAllAsRead'
+  },
+  viewAll: {
+    key: 'view-all',
+    label: 'View all notifications',
+    action: 'viewAllNotifications',
+    href: '/admin/notifications'
+  }
+} as const
 
 // Header configuration
 export const headerConfig = {
@@ -89,12 +109,6 @@ export const headerConfig = {
   }
 } as const
 
-// Notification actions config used by SiteHeader
-export const notificationActionsConfig = {
-  markAllRead: { label: 'Mark all as read' },
-  viewAll: { label: 'View all' }
-} as const
-
 // Menu item types for better organization
 export type MenuItemType = 'primary' | 'secondary' | 'danger'
 
@@ -106,53 +120,3 @@ export interface TypedMenuItem extends MenuItem {
     variant?: 'default' | 'secondary' | 'destructive' | 'outline'
   }
 }
-
-// Alternative structured menu configuration with types
-export const structuredUserMenu: TypedMenuItem[] = [
-  {
-    key: 'account-section',
-    label: 'Account',
-    type: 'primary',
-    children: [
-      {
-        key: 'profile',
-        label: 'Profile',
-        icon: User,
-        href: '/admin/profile'
-      },
-      {
-        key: 'settings',
-        label: 'Settings',
-        icon: Settings,
-        href: '/admin/settings'
-      }
-    ]
-  },
-  {
-    key: 'communication-section',
-    label: 'Communication',
-    type: 'secondary',
-    children: [
-      {
-        key: 'messages',
-        label: 'Messages',
-        icon: Mail,
-        href: '/admin/messages'
-      },
-      {
-        key: 'security',
-        label: 'Security',
-        icon: Shield,
-        href: '/admin/security'
-      }
-    ]
-  },
-  {
-    key: 'logout',
-    label: 'Log out',
-    icon: LogOut,
-    type: 'danger',
-    divider: true,
-    onClick: () => console.log('Logging out...')
-  }
-]

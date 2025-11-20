@@ -1,7 +1,7 @@
 'use client'
 
 import Cookies from 'js-cookie'
-import { AudioWaveform, GalleryVerticalEnd, Map, Settings2 } from 'lucide-react'
+import { GalleryVerticalEnd, Map, Settings2 } from 'lucide-react'
 import { usePathname } from 'next/navigation'
 import * as React from 'react'
 
@@ -18,7 +18,6 @@ import {
   SidebarRail
 } from '@/components/ui/sidebar'
 import { navItems as adminNavItems } from '@/config/adminNavItems'
-import { NavProjects } from './nav-projects'
 
 // Map admin config to NavMain items
 const mapNavItems = (
@@ -62,10 +61,9 @@ const mapNavItems = (
 
 // Admin-centric data builder (user from cookie)
 const buildAdminData = () => {
-  // Read user from cookie named 'user'
   let cookieUser: any = null
   try {
-    const raw = Cookies.get('user')
+    const raw = Cookies.get('adminInfo')
     if (raw) cookieUser = JSON.parse(raw)
   } catch {}
 
@@ -73,7 +71,7 @@ const buildAdminData = () => {
     name:
       cookieUser?.firstName && cookieUser?.lastName
         ? `${cookieUser.firstName} ${cookieUser.lastName}`
-        : cookieUser?.name || 'Admin',
+        : cookieUser?.name || 'Guest Admin',
     email: cookieUser?.email || 'admin@example.com',
     avatar: cookieUser?.avatar || '/avatars/shadcn.jpg'
   }
@@ -84,12 +82,7 @@ const buildAdminData = () => {
     { name: 'System Status', url: '/admin/status', icon: Map }
   ]
 
-  const teams = [
-    { name: 'RBS Travels!', logo: GalleryVerticalEnd, plan: 'Admin' },
-    { name: 'Operations', logo: AudioWaveform, plan: 'Internal' }
-  ]
-
-  return { user, projects, teams }
+  return { user, projects }
 }
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
@@ -97,6 +90,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { hasPermission, loading } = usePermissions()
   const { siteConfig } = useSiteConfig()
   const data = React.useMemo(() => buildAdminData(), [])
+
   const navMain = React.useMemo(
     () => mapNavItems(adminNavItems, pathname, hasPermission, loading),
     [pathname, hasPermission, loading]
@@ -113,7 +107,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={navMain ?? []} />
-        <NavProjects projects={data.projects} />
+        {/* <NavProjects projects={data.projects} /> */}
       </SidebarContent>
       <SidebarFooter>
         <NavUser user={data.user} />

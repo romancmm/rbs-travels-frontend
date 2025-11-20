@@ -5,7 +5,7 @@ export const buildSiteMetadata = (data: SiteSettings | null): Metadata => {
   const siteName = data?.seo?.metaName || data?.name || '~ NODE CMS'
   const siteTitle = data?.seo?.metaTitle || data?.name || '~ NODE CMS'
   const siteDescription = data?.seo?.metaDescription || data?.shortDescription || ''
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://uhqaccounts.com'
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://rbstravelsbd.com'
   const baseApiUrl = process.env.NEXT_PUBLIC_BASE_API || ''
 
   // Construct full URLs for images
