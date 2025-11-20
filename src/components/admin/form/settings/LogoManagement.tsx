@@ -10,7 +10,7 @@ import { SiteSettings, siteSettingsSchema } from '@/lib/validations/schemas/site
 import requests from '@/services/network/http'
 import { SITE_CONFIG } from '@/types/cache-keys'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Image as ImageIcon, Moon, Sparkles, Sun, Upload } from 'lucide-react'
+import { Image as ImageIcon, Moon, Sparkles, Sun } from 'lucide-react'
 import { Controller, useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 
@@ -54,20 +54,6 @@ const LogoManagement = ({ settingsKey, initialValues, refetch }: TProps) => {
 
   return (
     <form onSubmit={onSubmit} className='space-y-8'>
-      {/* Form Header */}
-      <div className='relative'>
-        <div className='flex items-center gap-3'>
-          <div className='bg-primary/10 p-2 rounded-lg'>
-            <Upload className='w-5 h-5 text-primary' />
-          </div>
-          <div>
-            <h2 className='font-bold text-foreground text-xl'>Upload Media Assets</h2>
-            <p className='text-muted-foreground text-sm'>Update your site logos and favicon</p>
-          </div>
-        </div>
-        <div className='-bottom-2 left-0 absolute bg-linear-to-r from-primary to-primary/0 rounded-full w-20 h-1' />
-      </div>
-
       <div className='gap-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3'>
         {/* Default Logo Card */}
         <Card className='group relative hover:shadow-2xl border-2 hover:border-blue-500/30 overflow-hidden transition-all duration-500'>

@@ -71,43 +71,26 @@ const ImageCard = ({ value, name }: { value: string; name: string }) => {
 
 // MediaBlock for logo and favicon rendering
 const MediaBlock = ({ siteConfig }: { siteConfig: SiteSettings }) => (
-  <div className='space-y-6'>
-    {/* Section Header */}
-    <div className='relative'>
-      <div className='flex items-center gap-3'>
-        <div className='bg-primary/10 p-2 rounded-lg'>
-          <ImageIcon className='w-5 h-5 text-primary' />
-        </div>
-        <div>
-          <h2 className='font-bold text-foreground text-xl'>Current Media Assets</h2>
-          <p className='text-muted-foreground text-sm'>Your uploaded logos and favicon</p>
-        </div>
-      </div>
-      <div className='-bottom-2 left-0 absolute bg-linear-to-r from-primary to-primary/0 rounded-full w-20 h-1' />
-    </div>
+  <div className='gap-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3'>
+    {(['logo', 'favicon'] as const).flatMap((key) => {
+      const value = siteConfig[key]
 
-    {/* Cards Grid */}
-    <div className='gap-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3'>
-      {(['logo', 'favicon'] as const).flatMap((key) => {
-        const value = siteConfig[key]
+      if (key === 'logo' && typeof value === 'object' && value !== null) {
+        return Object.entries(value).map(([variant, url], idx) => (
+          <ImageCard
+            value={url as string}
+            name={`${key} ${variant}`}
+            key={`${key}-${variant}-${idx}`}
+          />
+        ))
+      }
 
-        if (key === 'logo' && typeof value === 'object' && value !== null) {
-          return Object.entries(value).map(([variant, url], idx) => (
-            <ImageCard
-              value={url as string}
-              name={`${key} ${variant}`}
-              key={`${key}-${variant}-${idx}`}
-            />
-          ))
-        }
+      if (key === 'favicon' && typeof value === 'string') {
+        return <ImageCard key={key} value={value} name={key} />
+      }
 
-        if (key === 'favicon' && typeof value === 'string') {
-          return <ImageCard key={key} value={value} name={key} />
-        }
-
-        return []
-      })}
-    </div>
+      return []
+    })}
   </div>
 )
 
@@ -171,41 +154,42 @@ export default function SiteConfigPage() {
 
         <CardContent className='relative'>
           <ul className='space-y-2 text-foreground/90 text-sm'>
-            <li className='flex items-start gap-3 bg-white/50 hover:bg-white/80 p-3 rounded-lg transition-colors duration-300'>
-              <span className='flex justify-center items-center bg-blue-500 mt-0.5 rounded-full w-6 h-6 font-bold text-white text-xs shrink-0'>1</span>
-              <span>
-                <strong className='text-foreground'>Logo variants:</strong> Upload different logo versions (light, dark, etc.)
-                for optimal display across various themes and backgrounds.
-              </span>
-            </li>
-            <li className='flex items-start gap-3 bg-white/50 hover:bg-white/80 p-3 rounded-lg transition-colors duration-300'>
-              <span className='flex justify-center items-center bg-purple-500 mt-0.5 rounded-full w-6 h-6 font-bold text-white text-xs shrink-0'>2</span>
-              <span>
-                <strong className='text-foreground'>Favicon:</strong> Recommended size is 32x32 or 16x16 pixels. Use PNG, ICO,
-                or SVG format for best browser compatibility.
-              </span>
-            </li>
-            <li className='flex items-start gap-3 bg-white/50 hover:bg-white/80 p-3 rounded-lg transition-colors duration-300'>
-              <span className='flex justify-center items-center bg-emerald-500 mt-0.5 rounded-full w-6 h-6 font-bold text-white text-xs shrink-0'>3</span>
-              <span>
-                <strong className='text-foreground'>File formats:</strong> PNG with transparent background is recommended for
-                logos. JPG, SVG, and WebP are also supported.
-              </span>
-            </li>
-            <li className='flex items-start gap-3 bg-white/50 hover:bg-white/80 p-3 rounded-lg transition-colors duration-300'>
-              <span className='flex justify-center items-center bg-amber-500 mt-0.5 rounded-full w-6 h-6 font-bold text-white text-xs shrink-0'>4</span>
-              <span>
-                <strong className='text-foreground'>Image quality:</strong> Use high-resolution images to ensure crisp display
-                on retina and high-DPI screens.
-              </span>
-            </li>
-            <li className='flex items-start gap-3 bg-white/50 hover:bg-white/80 p-3 rounded-lg transition-colors duration-300'>
-              <span className='flex justify-center items-center bg-rose-500 mt-0.5 rounded-full w-6 h-6 font-bold text-white text-xs shrink-0'>5</span>
-              <span>
-                <strong className='text-foreground'>Cache clearing:</strong> After updating logos, you may need to clear your
-                browser cache or perform a hard refresh (Ctrl+F5) to see changes.
-              </span>
-            </li>
+            {[
+              {
+                color: 'bg-blue-500',
+                title: 'Logo variants:',
+                description: 'Upload different logo versions (light, dark, etc.) for optimal display across various themes and backgrounds.'
+              },
+              {
+                color: 'bg-purple-500',
+                title: 'Favicon:',
+                description: 'Recommended size is 32x32 or 16x16 pixels. Use PNG, ICO, or SVG format for best browser compatibility.'
+              },
+              {
+                color: 'bg-emerald-500',
+                title: 'File formats:',
+                description: 'PNG with transparent background is recommended for logos. JPG, SVG, and WebP are also supported.'
+              },
+              {
+                color: 'bg-amber-500',
+                title: 'Image quality:',
+                description: 'Use high-resolution images to ensure crisp display on retina and high-DPI screens.'
+              },
+              {
+                color: 'bg-rose-500',
+                title: 'Cache clearing:',
+                description: 'After updating logos, you may need to clear your browser cache or perform a hard refresh (Ctrl+F5) to see changes.'
+              }
+            ].map((note, index) => (
+              <li key={index} className='flex items-center gap-3 bg-white/50 hover:bg-white/80 p-3 rounded-lg transition-colors duration-300'>
+                <span className={cn('flex justify-center items-center', note.color, 'mt-0.5 rounded-full w-6 h-6 font-bold text-white text-xs shrink-0')}>{index + 1}</span>
+                <span>
+                  <strong className='text-foreground'>{note.title}</strong> {note.description}
+                </span>
+              </li>
+            )
+            )}
+
           </ul>
         </CardContent>
       </Card>
