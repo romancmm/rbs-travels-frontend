@@ -7,9 +7,7 @@ import CustomLink from './CustomLink'
 export default function SiteLogo({ className }: { className?: string }) {
   const { siteConfig } = useSiteConfig()
 
-  const logoSrc = siteConfig?.logo?.default
-    ? siteConfig.logo.default
-    : '/logo.svg'
+  const logoSrc = siteConfig?.logo?.default ? siteConfig.logo.default : '/logo.svg'
 
   return (
     <CustomLink href={'/'}>
@@ -18,7 +16,7 @@ export default function SiteLogo({ className }: { className?: string }) {
           src={logoSrc}
           width={250}
           height={75}
-          alt={'RBS Travels Logo'}
+          alt={'NODE CMS'}
           className={cn('object-contain', className)}
           priority
         />

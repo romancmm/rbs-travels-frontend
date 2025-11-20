@@ -1,8 +1,8 @@
-# RBS Travels Frontend - GitHub Copilot Instructions
+# NODE CMS Frontend - GitHub Copilot Instructions
 
 ## Project Overview
 
-This is a **Next.js 15 application** for "RBS Travels" using **React 19**, **TypeScript**, **Tailwind CSS**, and **shadcn/ui components**, featuring a **User Frontend** and a separate **Admin Panel**.
+This is a **Next.js 15 application** for "NODE CMS" using **React 19**, **TypeScript**, **Tailwind CSS**, and **shadcn/ui components**, featuring a **User Frontend** and a separate **Admin Panel**.
 
 ---
 

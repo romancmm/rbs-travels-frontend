@@ -34,11 +34,14 @@ const socialLinksSchema = z.object({
 
 // === SEO ===
 const seoSchema = z.object({
+  metaName: optionalStr(),
   metaTitle: optionalStr(),
   metaDescription: optionalStr(),
+  siteAuthor: optionalStr(),
+  ogImage: optionalStr(),
+  canonicalUrl: optionalStr(),
   metaKeywords: z.array(z.string()).optional()
 })
-
 // === Header Navigation Item ===
 const headerNavigationItemSchema = z.object({
   title: optionalStr(),

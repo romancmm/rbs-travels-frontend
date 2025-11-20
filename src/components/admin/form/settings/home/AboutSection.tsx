@@ -66,15 +66,15 @@ const AboutSection = ({ settingsKey, initialValues, refetch }: TProps) => {
     name: 'about.stats'
   })
 
-  console.log('initialValues :>> ', initialValues);
-
   const onSubmit = handleSubmit(async (data) => {
     try {
-      const res = await requests[initialValues ? 'put' : 'post'](`/admin/setting/settings${initialValues ? `/key/${settingsKey}` : ''}`,
+      const res = await requests[initialValues ? 'put' : 'post'](
+        `/admin/setting/settings${initialValues ? `/key/${settingsKey}` : ''}`,
         {
           key: settingsKey,
           value: data
-        })
+        }
+      )
       if (res?.success) {
         await revalidateTags(SITE_CONFIG)
         toast.success('Settings updated successfully!')
@@ -164,7 +164,6 @@ const AboutSection = ({ settingsKey, initialValues, refetch }: TProps) => {
                 )}
               />
             </div>
-
 
             <div className=''>
               <label className='font-medium text-sm'>Image</label>

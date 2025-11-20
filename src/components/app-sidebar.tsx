@@ -8,7 +8,8 @@ import * as React from 'react'
 import { NavMain } from '@/components/nav-main'
 import { NavUser } from '@/components/nav-user'
 import { usePermissions } from '@/components/providers/PermissionProvider'
-import { TeamSwitcher } from '@/components/team-switcher'
+import { useSiteConfig } from '@/components/providers/store-provider'
+import { SiteSwitcher } from '@/components/team-switcher'
 import {
   Sidebar,
   SidebarContent,
@@ -17,6 +18,7 @@ import {
   SidebarRail
 } from '@/components/ui/sidebar'
 import { navItems as adminNavItems } from '@/config/adminNavItems'
+import { NavProjects } from './nav-projects'
 
 // Map admin config to NavMain items
 const mapNavItems = (
@@ -65,7 +67,7 @@ const buildAdminData = () => {
   try {
     const raw = Cookies.get('user')
     if (raw) cookieUser = JSON.parse(raw)
-  } catch { }
+  } catch {}
 
   const user = {
     name:
@@ -83,7 +85,7 @@ const buildAdminData = () => {
   ]
 
   const teams = [
-    { name: 'RBS Travels', logo: GalleryVerticalEnd, plan: 'Admin' },
+    { name: 'RBS Travels!', logo: GalleryVerticalEnd, plan: 'Admin' },
     { name: 'Operations', logo: AudioWaveform, plan: 'Internal' }
   ]
 
@@ -93,19 +95,25 @@ const buildAdminData = () => {
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const pathname = usePathname()
   const { hasPermission, loading } = usePermissions()
+  const { siteConfig } = useSiteConfig()
   const data = React.useMemo(() => buildAdminData(), [])
   const navMain = React.useMemo(
     () => mapNavItems(adminNavItems, pathname, hasPermission, loading),
     [pathname, hasPermission, loading]
   )
+
   return (
     <Sidebar collapsible='icon' {...props}>
       <SidebarHeader>
-        <TeamSwitcher teams={data.teams} />
+        <SiteSwitcher
+          siteName={siteConfig?.name || 'CMS Admin'}
+          faviconUrl={siteConfig?.favicon || undefined}
+          fallbackIcon={GalleryVerticalEnd}
+        />
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={navMain ?? []} />
-        {/* <NavProjects projects={data.projects} /> */}
+        <NavProjects projects={data.projects} />
       </SidebarContent>
       <SidebarFooter>
         <NavUser user={data.user} />

@@ -44,7 +44,15 @@ const SiteConfiguration = ({ settingsKey, initialValues, refetch }: TProps) => {
         default: initialValues?.logo?.default || '',
         dark: initialValues?.logo?.dark || ''
       },
-      // seo: initialValues?.seo || {},
+      seo: {
+        metaName: initialValues?.seo?.metaName || '',
+        metaTitle: initialValues?.seo?.metaTitle || '',
+        metaDescription: initialValues?.seo?.metaDescription || '',
+        siteAuthor: initialValues?.seo?.siteAuthor || '',
+        ogImage: initialValues?.seo?.ogImage || '',
+        canonicalUrl: initialValues?.seo?.canonicalUrl || '',
+        metaKeywords: initialValues?.seo?.metaKeywords || []
+      },
       footer: {
         copyright: initialValues?.footer?.copyright || '',
         credit: {
@@ -66,13 +74,15 @@ const SiteConfiguration = ({ settingsKey, initialValues, refetch }: TProps) => {
     name: 'addresses'
   })
 
-
   const onSubmit = handleSubmit(async (data) => {
     try {
-      const res = await requests[initialValues ? 'put' : 'post'](`/admin/setting/settings/${initialValues ? `key/${settingsKey}` : ''}`, {
-        key: settingsKey,
-        value: data
-      })
+      const res = await requests[initialValues ? 'put' : 'post'](
+        `/admin/setting/settings/${initialValues ? `key/${settingsKey}` : ''}`,
+        {
+          key: settingsKey,
+          value: data
+        }
+      )
       if (res?.success) {
         await revalidateTags(SITE_CONFIG)
         toast.success('Settings updated successfully!')
@@ -287,7 +297,9 @@ const SiteConfiguration = ({ settingsKey, initialValues, refetch }: TProps) => {
                 </div>
               ) : (
                 <div className='py-8 text-gray-500 text-center'>
-                  <p>No promotional text added yet. Click &quot;Add Promo Text&quot; to create one.</p>
+                  <p>
+                    No promotional text added yet. Click &quot;Add Promo Text&quot; to create one.
+                  </p>
                 </div>
               )
             }}
@@ -300,29 +312,31 @@ const SiteConfiguration = ({ settingsKey, initialValues, refetch }: TProps) => {
         <CardHeader>
           <div className='flex justify-between items-center'>
             <CardTitle>Addresses</CardTitle>
-            {addressFields.length < 2 && <Button
-              type='button'
-              variant='outline'
-              size='sm'
-              onClick={() =>
-                appendAddress({
-                  title: '',
-                  address: '',
-                  phone: '',
-                  email: ''
-                })
-              }
-            >
-              <Plus className='mr-2 w-4 h-4' />
-              Add Address
-            </Button>}
+            {addressFields.length < 2 && (
+              <Button
+                type='button'
+                variant='outline'
+                size='sm'
+                onClick={() =>
+                  appendAddress({
+                    title: '',
+                    address: '',
+                    phone: '',
+                    email: ''
+                  })
+                }
+              >
+                <Plus className='mr-2 w-4 h-4' />
+                Add Address
+              </Button>
+            )}
           </div>
         </CardHeader>
         <CardContent>
           {addressFields.length > 0 ? (
-            <div className='space-y-6'>
+            <div className='flex flex-wrap *:flex-[1_1_calc(50%-1.5rem)] gap-6 space-y-6'>
               {addressFields.map((field, index) => (
-                <div key={field.id} className='relative bg-gray-50 p-4 border rounded-lg'>
+                <div key={field.id} className='relative bg-gray-50/60 p-4 border rounded-lg h-full'>
                   <div className='flex justify-between items-center mb-4'>
                     <h4 className='font-medium'>Address {index + 1}</h4>
                     <Button
@@ -484,19 +498,40 @@ const SiteConfiguration = ({ settingsKey, initialValues, refetch }: TProps) => {
         </CardContent>
       </Card>
 
-      {/* <Card title='SEO'>
+      <Card title='SEO'>
         <CardHeader>
           <CardTitle>SEO</CardTitle>
         </CardHeader>
 
         <CardContent>
-          <div className='flex flex-col gap-4'>
+          <div className='gap-4 grid grid-cols-1 lg:grid-cols-2'>
+            <Controller
+              control={control}
+              name='seo.metaName'
+              render={({ field }) => (
+                <CustomInput
+                  label='Meta Name'
+                  placeholder='Enter meta name'
+                  showCharCount
+                  error={
+                    typeof errors.seo?.metaName?.message === 'string'
+                      ? errors.seo.metaName.message
+                      : undefined
+                  }
+                  {...field}
+                  value={field.value ?? ''}
+                />
+              )}
+            />
+
             <Controller
               control={control}
               name='seo.metaTitle'
               render={({ field }) => (
                 <CustomInput
                   label='Meta Title'
+                  placeholder='Enter meta title'
+                  showCharCount
                   error={
                     typeof errors.seo?.metaTitle?.message === 'string'
                       ? errors.seo.metaTitle.message
@@ -508,21 +543,42 @@ const SiteConfiguration = ({ settingsKey, initialValues, refetch }: TProps) => {
               )}
             />
 
+            <div className='lg:col-span-2'>
+              <Controller
+                control={control}
+                name='seo.metaDescription'
+                render={({ field }) => (
+                  <CustomInput
+                    label='Meta Description'
+                    type='textarea'
+                    rows={4}
+                    placeholder='Meta description...'
+                    maxLength={160}
+                    showCharCount={true}
+                    helperText='Max 160 characters recommended for SEO'
+                    error={
+                      typeof errors.seo?.metaDescription?.message === 'string'
+                        ? errors.seo.metaDescription.message
+                        : undefined
+                    }
+                    {...field}
+                    value={field.value ?? ''}
+                  />
+                )}
+              />
+            </div>
+
             <Controller
               control={control}
-              name='seo.metaDescription'
+              name='seo.siteAuthor'
               render={({ field }) => (
                 <CustomInput
-                  label='Meta Description'
-                  type='textarea'
-                  rows={4}
-                  placeholder='Meta description...'
-                  maxLength={160}
-                  showCharCount={true}
-                  helperText='Max 160 characters allowed'
+                  label='Site Author'
+                  placeholder='Enter author name'
+                  showCharCount
                   error={
-                    typeof errors.seo?.metaDescription?.message === 'string'
-                      ? errors.seo.metaDescription.message
+                    typeof errors.seo?.siteAuthor?.message === 'string'
+                      ? errors.seo.siteAuthor.message
                       : undefined
                   }
                   {...field}
@@ -533,33 +589,133 @@ const SiteConfiguration = ({ settingsKey, initialValues, refetch }: TProps) => {
 
             <Controller
               control={control}
-              name='seo.metaKeywords'
+              name='seo.canonicalUrl'
               render={({ field }) => (
                 <CustomInput
-                  label='Meta Keywords'
-                  type='textarea'
-                  rows={3}
-                  placeholder='Enter keywords separated by commas'
-                  helperText='Separate keywords with commas'
+                  label='Canonical URL'
+                  type='url'
+                  placeholder='https://example.com'
                   error={
-                    typeof errors.seo?.metaKeywords?.message === 'string'
-                      ? errors.seo.metaKeywords.message
+                    typeof errors.seo?.canonicalUrl?.message === 'string'
+                      ? errors.seo.canonicalUrl.message
                       : undefined
                   }
-                  value={Array.isArray(field.value) ? field.value.join(', ') : ''}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-                    const keywords = e.target.value
-                      .split(',')
-                      .map((k) => k.trim())
-                      .filter(Boolean)
-                    field.onChange(keywords)
-                  }}
+                  {...field}
+                  value={field.value ?? ''}
                 />
               )}
             />
+
+            <div className='lg:col-span-2'>
+              <Controller
+                control={control}
+                name='seo.ogImage'
+                render={({ field }) => (
+                  <CustomInput
+                    label='OG Image URL'
+                    type='url'
+                    placeholder='https://example.com/og-image.jpg'
+                    helperText='Image for social media sharing (Open Graph)'
+                    error={
+                      typeof errors.seo?.ogImage?.message === 'string'
+                        ? errors.seo.ogImage.message
+                        : undefined
+                    }
+                    {...field}
+                    value={field.value ?? ''}
+                  />
+                )}
+              />
+            </div>
+
+            <div className='lg:col-span-2'>
+              <Controller
+                control={control}
+                name='seo.metaKeywords'
+                render={({ field }) => {
+                  const keywords = Array.isArray(field.value) ? field.value : []
+
+                  return (
+                    <div className='space-y-3'>
+                      <div>
+                        <label className='block mb-2 font-medium text-sm'>Meta Keywords</label>
+                        <div className='flex gap-2'>
+                          <CustomInput
+                            placeholder='Enter keyword and press Enter'
+                            onKeyDown={(
+                              e: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>
+                            ) => {
+                              if (e.key === 'Enter') {
+                                e.preventDefault()
+                                const input = e.currentTarget
+                                const value = input.value.trim()
+
+                                if (value && !keywords.includes(value)) {
+                                  field.onChange([...keywords, value])
+                                  input.value = ''
+                                }
+                              }
+                            }}
+                          />
+                          <Button
+                            type='button'
+                            variant='outline'
+                            onClick={(e) => {
+                              const input =
+                                e.currentTarget.previousElementSibling?.querySelector('input')
+                              const value = input?.value.trim()
+
+                              if (value && !keywords.includes(value)) {
+                                field.onChange([...keywords, value])
+                                if (input) input.value = ''
+                              }
+                            }}
+                          >
+                            <Plus className='w-4 h-4' />
+                          </Button>
+                        </div>
+                        <p className='mt-1 text-muted-foreground text-xs'>
+                          Press Enter or click + to add keywords
+                        </p>
+                      </div>
+
+                      {keywords.length > 0 && (
+                        <div className='flex flex-wrap gap-2 bg-muted/50 p-3 rounded-lg'>
+                          {keywords.map((keyword, index) => (
+                            <div
+                              key={index}
+                              className='group flex items-center gap-1 bg-primary/10 hover:bg-primary/20 px-3 py-1.5 rounded-full text-primary text-sm transition-colors'
+                            >
+                              <span>{keyword}</span>
+                              <button
+                                type='button'
+                                onClick={() => {
+                                  field.onChange(keywords.filter((_, i) => i !== index))
+                                }}
+                                className='opacity-60 hover:opacity-100 transition-opacity'
+                              >
+                                <Trash2 className='w-3 h-3' />
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+
+                      {errors.seo?.metaKeywords?.message && (
+                        <p className='text-destructive text-sm'>
+                          {typeof errors.seo.metaKeywords.message === 'string'
+                            ? errors.seo.metaKeywords.message
+                            : ''}
+                        </p>
+                      )}
+                    </div>
+                  )
+                }}
+              />
+            </div>
           </div>
         </CardContent>
-      </Card> */}
+      </Card>
 
       <Button type='submit'>
         {isSubmitting ? 'Submitting...' : initialValues ? 'Update Settings' : 'Save Settings'}

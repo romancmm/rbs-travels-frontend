@@ -1,6 +1,6 @@
 # CMS Dashboard Components
 
-Interactive and animated dashboard components for the RBS Travels CMS admin panel.
+Interactive and animated dashboard components for the NODE CMS admin panel.
 
 ## Components Overview
 

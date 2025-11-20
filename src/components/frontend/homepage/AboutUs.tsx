@@ -21,8 +21,8 @@ const AboutUs = ({ data }: { data?: AboutType }) => {
               subtitle={data.subTitle}
               title={data?.title ?? ''}
               description={data.desc}
-              variant="default"
-              alignment="left"
+              variant='default'
+              alignment='left'
             />
 
             {/* Enhanced Facilities Grid */}
@@ -130,19 +130,23 @@ const AboutUs = ({ data }: { data?: AboutType }) => {
                     }}
                   >
                     {/* Hover gradient overlay */}
-                    <div className={cn(
-                      'absolute inset-0 bg-linear-to-br opacity-0 group-hover:opacity-100 transition-opacity duration-500',
-                      colorScheme.overlay
-                    )} />
+                    <div
+                      className={cn(
+                        'absolute inset-0 bg-linear-to-br opacity-0 group-hover:opacity-100 transition-opacity duration-500',
+                        colorScheme.overlay
+                      )}
+                    />
 
                     <div className='relative flex md:flex-row flex-col items-center gap-4'>
                       {/* Enhanced icon container with gradient */}
-                      <div className={cn(
-                        'flex justify-center items-center rounded-2xl w-16 lg:w-14 h-16 lg:h-14 transition-all duration-500',
-                        'group-hover:scale-110 group-hover:rotate-6 shadow-xl',
-                        colorScheme.iconBg,
-                        colorScheme.iconShadow
-                      )}>
+                      <div
+                        className={cn(
+                          'flex justify-center items-center rounded-2xl w-16 lg:w-14 h-16 lg:h-14 transition-all duration-500',
+                          'group-hover:scale-110 group-hover:rotate-6 shadow-xl',
+                          colorScheme.iconBg,
+                          colorScheme.iconShadow
+                        )}
+                      >
                         <LucideIcon className='w-6 lg:w-8 h-6 lg:h-8 text-white group-hover:scale-110 transition-transform duration-500' />
                       </div>
 
@@ -176,7 +180,7 @@ const AboutUs = ({ data }: { data?: AboutType }) => {
                   src={data.image}
                   height={425}
                   width={530}
-                  alt='About RBS Travels - Company overview'
+                  alt='About'
                   className='group-hover:scale-105 transition-transform duration-700'
                 />
                 {/* Image overlay gradient */}
@@ -185,7 +189,7 @@ const AboutUs = ({ data }: { data?: AboutType }) => {
             </div>
 
             {/* Enhanced Experience Badge */}
-            {data?.experience &&
+            {data?.experience && (
               <div
                 className={cn(
                   'hidden -right-6 -bottom-6 absolute md:flex items-center gap-5 bg-linear-to-br from-primary via-primary to-primary/90',
@@ -200,18 +204,26 @@ const AboutUs = ({ data }: { data?: AboutType }) => {
                 <div className='absolute inset-0 bg-linear-to-tr from-white/10 to-transparent rounded-2xl' />
 
                 <div className='relative pr-5 border-white/30 border-r'>
-                  <Typography variant='h3' weight='bold' className='drop-shadow-lg text-white leading-none'>
+                  <Typography
+                    variant='h3'
+                    weight='bold'
+                    className='drop-shadow-lg text-white leading-none'
+                  >
                     {data?.experience?.years}
                   </Typography>
                   <div className='bg-white/20 mt-1 rounded-full w-12 h-1' />
                 </div>
                 <div className='relative'>
-                  <Typography variant='h6' weight='semibold' className='drop-shadow-md text-white leading-tight'>
+                  <Typography
+                    variant='h6'
+                    weight='semibold'
+                    className='drop-shadow-md text-white leading-tight'
+                  >
                     {data?.experience?.text}
                   </Typography>
                 </div>
               </div>
-            }
+            )}
           </div>
         </div>
       </Container>
