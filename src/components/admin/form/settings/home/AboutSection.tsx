@@ -389,10 +389,10 @@ const AboutSection = ({ settingsKey, initialValues, refetch }: TProps) => {
               {facilitiesFields.length < 4 && <AddItemButton label="Add Facility" onClick={() => appendFacility({ title: '', desc: '', icon: '' })} />}
             </div>
 
-            <div className='space-y-2 lg:col-span-2'>
+            {/* <div className='space-y-2 lg:col-span-2'>
               <div className='flex justify-between items-center gap-4 w-full'>
                 <label className='font-semibold text-lg'>Statistics</label>
-                {/* Stats Icon Type Selector */}
+                {/* Stats Icon Type Selector 
                 <Controller
                   control={control}
                   name='about.statsIconType'
@@ -504,6 +504,123 @@ const AboutSection = ({ settingsKey, initialValues, refetch }: TProps) => {
               )}
 
               {facilitiesFields.length < 4 && <AddItemButton label="Add Facility" onClick={() => appendFacility({ title: '', desc: '', icon: '' })} />}
+            </div> */}
+
+            <div className='space-y-2 lg:col-span-2'>
+              <div className='flex justify-between items-center gap-4 w-full'>
+                <label className='font-semibold text-lg'>Statistics</label>
+                {/* Stats Icon Type Selector */}
+                <Controller
+                  control={control}
+                  name='about.statsIconType'
+                  render={({ field }) => (
+                    <div className='inline-flex items-center gap-1.5 bg-muted/40 p-1.5 rounded-lg'>
+                      <Button
+                        type='button'
+                        variant={field.value === 'icon' ? 'default' : 'ghost'}
+                        size='icon'
+                        onClick={() => handleStatsIconTypeChange('icon')}
+                        className='size-8!'
+                      >
+                        <Sparkles className='w-4 h-4' />
+                      </Button>
+                      <Button
+                        type='button'
+                        variant={field.value === 'image' ? 'default' : 'ghost'}
+                        size='icon'
+                        onClick={() => handleStatsIconTypeChange('image')}
+                        className='size-8!'
+                      >
+                        <ImageIcon className='w-4 h-4' />
+                      </Button>
+                    </div>
+                  )}
+                />
+              </div>
+
+              {statisticsFields.length === 0 ? (
+                <div className='p-4 border-2 border-dashed rounded-lg text-center'>
+                  No statistics added yet. Click &quot;Add Statistic&quot; to get started.
+                </div>
+              ) : (
+                <div className='flex flex-wrap *:flex-[1_1_calc(50%-16px)] gap-4'>
+                  {statisticsFields.map((field, index) => (
+                    <div
+                      key={field.id}
+                      className='flex-1 space-y-3 p-4 border rounded-lg min-w-full sm:min-w-[45%] lg:min-w-[30%]'
+                    >
+                      <div className='flex justify-between items-center'>
+                        <h4 className='font-medium text-sm'>Statistic {index + 1}</h4>
+                        <Button
+                          type='button'
+                          variant='outline'
+                          size='sm'
+                          onClick={() => removeStatistic(index)}
+                          className='hover:bg-red-50 hover:text-red-700'
+                        >
+                          <Trash2 className='w-4 h-4' />
+                        </Button>
+                      </div>
+
+                      <div className='space-y-3'>
+                        <Controller
+                          control={control}
+                          name={`about.stats.${index}.value`}
+                          render={({ field }) => (
+                            <CustomInput
+                              label='Value'
+                              placeholder='e.g., 1.6k+, 50+'
+                              error={errors.about?.stats?.[index]?.value?.message}
+                              {...field}
+                              value={field.value ?? ''}
+                            />
+                          )}
+                        />
+
+                        <Controller
+                          control={control}
+                          name={`about.stats.${index}.label`}
+                          render={({ field }) => (
+                            <CustomInput
+                              label='Label'
+                              placeholder='e.g., Happy Travelers'
+                              error={errors.about?.stats?.[index]?.label?.message}
+                              {...field}
+                              value={field.value ?? ''}
+                            />
+                          )}
+                        />
+
+                        <Controller
+                          control={control}
+                          name={`about.stats.${index}.icon`}
+                          render={({ field }) => (
+                            <div className='space-y-2'>
+                              <label className='font-medium text-sm'>
+                                {statsIconType === 'image' ? 'Image' : 'Icon'} (optional)
+                              </label>
+                              {statsIconType === 'image' ? (
+                                <FileUploader
+                                  value={field.value as string}
+                                  onChangeAction={(val: string | string[]) => field.onChange(val)}
+                                  size='small'
+                                />
+                              ) : (
+                                <IconPickerModal
+                                  value={field.value as string}
+                                  onChange={(val) => field.onChange(val)}
+                                />
+                              )}
+                            </div>
+                          )}
+                        />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {statisticsFields.length < 4 && <AddItemButton label="Add Statistic" onClick={() => appendStatistic({ value: '', label: '', icon: '' })} />}
             </div>
           </div>
         </CardContent>
