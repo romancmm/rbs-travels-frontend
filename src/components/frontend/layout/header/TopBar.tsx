@@ -32,7 +32,7 @@ export default function TopBar() {
         <div className='flex justify-between items-center gap-4'>
           {/* Left side - Contact info */}
           <div className='hidden md:flex items-center gap-6 text-sm'>
-            <div className='flex items-center gap-2'>
+            <div className='flex items-center gap-1.5'>
               <Phone className='w-3 h-3' />
               <CustomLink
                 href={`tel:${siteConfig?.phone}`}
@@ -41,7 +41,7 @@ export default function TopBar() {
                 {siteConfig?.phone}
               </CustomLink>
             </div>
-            <div className='flex items-center gap-2'>
+            <div className='flex items-center gap-1.5'>
               <Mail className='w-3 h-3' />
               <CustomLink
                 href={`mailto:${siteConfig?.email}`}
@@ -50,7 +50,7 @@ export default function TopBar() {
                 {siteConfig?.email}
               </CustomLink>
             </div>
-            <div className='flex items-center gap-2'>
+            <div className='flex items-center gap-1.5'>
               <Clock className='w-3 h-3' />
               <span>{siteConfig?.workingHours}</span>
             </div>
