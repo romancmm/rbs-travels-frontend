@@ -25,23 +25,16 @@ const Stats = ({ data, isLoading = false, className }: StatsProps) => {
         ) : (
           <div
             className={cn(
-              'gap-3 lg:gap-6 grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4',
-              'py-6 lg:py-8 px-4 lg:px-6 rounded-3xl w-full relative overflow-hidden',
-              'bg-linear-to-br from-primary/8 via-primary/12 to-primary/8',
-              'border-2 border-primary/20 shadow-2xl shadow-primary/10',
-              'backdrop-blur-sm',
+              'relative w-full overflow-hidden',
+              'bg-card border border-border rounded-2xl',
+              'shadow-lg',
               'animate-in fade-in slide-in-from-bottom-4 duration-700'
             )}
             role='region'
             aria-label='Company statistics'
           >
-            {/* Decorative gradient overlays */}
-            <div className='absolute inset-0 bg-linear-to-tr from-white/40 via-transparent to-white/20 pointer-events-none' />
-            <div className='-top-20 -right-20 absolute bg-primary/15 blur-3xl rounded-full w-40 h-40 pointer-events-none' />
-            <div className='-bottom-20 -left-20 absolute bg-primary/15 blur-3xl rounded-full w-40 h-40 pointer-events-none' />
-
-            {/* Content with z-index */}
-            <div className='z-10 relative gap-3 lg:gap-6 grid grid-cols-2 lg:grid-cols-4 col-span-2 lg:col-span-4'>
+            {/* Stats grid - horizontal bar layout */}
+            <div className='grid grid-cols-2 lg:grid-cols-4 divide-x divide-border'>
               {data.map((item, index) => (
                 <StatItem
                   key={`stat-${index}-${item.label}`}

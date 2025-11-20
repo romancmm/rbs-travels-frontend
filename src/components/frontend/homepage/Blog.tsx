@@ -19,7 +19,6 @@ interface BlogProps {
 const Blog = ({ data, isLoading = false, className }: BlogProps) => {
   const res: any = use(data)
   const blogData = res?.data?.items
-  console.log('Blog data:', res);
 
   if (isLoading) {
     return <BlogLoadingSkeleton />
@@ -72,7 +71,6 @@ const Blog = ({ data, isLoading = false, className }: BlogProps) => {
               className='mx-auto max-w-3xl text-foreground leading-tight'
             >
               Latest Travel Stories & Tips
-
             </Typography>
 
             <motion.div
@@ -174,7 +172,7 @@ const Blog = ({ data, isLoading = false, className }: BlogProps) => {
         />
       </motion.button> */}
       </Container>
-    </Section >
+    </Section>
   )
 }
 
