@@ -1,6 +1,7 @@
 'use client'
 
 import { revalidateTags } from '@/action/data'
+import { AddItemButton } from '@/components/admin/common/AddItemButton'
 import IconPickerModal from '@/components/admin/common/IconPickerModal'
 import CustomInput from '@/components/common/CustomInput'
 import { Button } from '@/components/ui/button'
@@ -13,7 +14,7 @@ import {
 import requests from '@/services/network/http'
 import { SITE_CONFIG } from '@/types/cache-keys'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Plus, Trash2 } from 'lucide-react'
+import { Trash2 } from 'lucide-react'
 import { Controller, useFieldArray, useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 
@@ -122,19 +123,7 @@ const WhoWeAreSection = ({ settingsKey, initialValues, refetch }: TProps) => {
 
             {/* Features Section */}
             <div className='space-y-2 lg:col-span-2'>
-              <div className='flex justify-between items-center'>
-                <label className='font-semibold text-lg'>Features</label>
-                <Button
-                  type='button'
-                  variant='outline'
-                  size='sm'
-                  onClick={() => appendFeature({ title: '', desc: '', icon: '' })}
-                  className='flex items-center gap-2'
-                >
-                  <Plus className='w-4 h-4' />
-                  Add Feature
-                </Button>
-              </div>
+              <label className='font-semibold text-lg'>Features</label>
 
               {featuresFields.length === 0 ? (
                 <div className='p-4 border-2 border-dashed rounded-lg text-center'>
@@ -205,6 +194,14 @@ const WhoWeAreSection = ({ settingsKey, initialValues, refetch }: TProps) => {
                     </div>
                   ))}
                 </div>
+              )}
+
+              {featuresFields.length < 10 && (
+                <AddItemButton
+                  onClick={() => appendFeature({ title: '', desc: '', icon: '' })}
+                  label='Add Feature'
+                  className='mt-4'
+                />
               )}
             </div>
           </div>

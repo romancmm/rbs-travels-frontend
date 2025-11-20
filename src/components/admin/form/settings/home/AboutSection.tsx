@@ -1,6 +1,7 @@
 'use client'
 
 import { revalidateTags } from '@/action/data'
+import { AddItemButton } from '@/components/admin/common/AddItemButton'
 import IconPickerModal from '@/components/admin/common/IconPickerModal'
 import CustomInput from '@/components/common/CustomInput'
 import FileUploader from '@/components/common/FileUploader'
@@ -14,7 +15,7 @@ import {
 import requests from '@/services/network/http'
 import { SITE_CONFIG } from '@/types/cache-keys'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Plus, Trash2 } from 'lucide-react'
+import { Trash2 } from 'lucide-react'
 import { Controller, useFieldArray, useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 
@@ -181,19 +182,7 @@ const AboutSection = ({ settingsKey, initialValues, refetch }: TProps) => {
 
             {/* Facilities Section */}
             <div className='space-y-2 lg:col-span-2'>
-              <div className='flex justify-between items-center'>
-                <label className='font-semibold text-lg'>Facilities</label>
-                <Button
-                  type='button'
-                  variant='outline'
-                  size='sm'
-                  onClick={() => appendFacility({ title: '', desc: '', icon: '' })}
-                  className='flex items-center gap-2'
-                >
-                  <Plus className='w-4 h-4' />
-                  Add Facility
-                </Button>
-              </div>
+              <label className='font-semibold text-lg'>Facilities</label>
 
               {facilitiesFields.length === 0 ? (
                 <div className='p-4 border-2 border-dashed rounded-lg text-center'>
@@ -265,22 +254,12 @@ const AboutSection = ({ settingsKey, initialValues, refetch }: TProps) => {
                   ))}
                 </div>
               )}
+
+              {facilitiesFields.length < 4 && <AddItemButton label="Add Facility" onClick={() => appendFacility({ title: '', desc: '', icon: '' })} />}
             </div>
 
             <div className='space-y-2 lg:col-span-2'>
-              <div className='flex justify-between items-center'>
-                <label className='font-semibold text-lg'>Statistics</label>
-                <Button
-                  type='button'
-                  variant='outline'
-                  size='sm'
-                  onClick={() => appendStatistic({ value: '', label: '', icon: '' })}
-                  className='flex items-center gap-2'
-                >
-                  <Plus className='w-4 h-4' />
-                  Add Statistic
-                </Button>
-              </div>
+              <label className='font-semibold text-lg'>Statistics</label>
 
               {statisticsFields.length === 0 ? (
                 <div className='p-4 border-2 border-dashed rounded-lg text-center'>
@@ -353,6 +332,9 @@ const AboutSection = ({ settingsKey, initialValues, refetch }: TProps) => {
                   ))}
                 </div>
               )}
+
+              {facilitiesFields.length < 4 && <AddItemButton label="Add Facility" onClick={() => appendFacility({ title: '', desc: '', icon: '' })} />}
+
             </div>
           </div>
         </CardContent>

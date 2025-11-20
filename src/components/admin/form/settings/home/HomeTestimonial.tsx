@@ -1,6 +1,7 @@
 'use client'
 
 import { revalidateTags } from '@/action/data'
+import { AddItemButton } from '@/components/admin/common/AddItemButton'
 import CustomInput from '@/components/common/CustomInput'
 import FileUploader from '@/components/common/FileUploader'
 import { Button } from '@/components/ui/button'
@@ -109,40 +110,18 @@ const HomeTestimonial = ({ settingsKey, initialValues, refetch }: TProps) => {
       {/* Testimonials List Card */}
       <Card className='border-l-4 border-l-accent'>
         <CardHeader>
-          <div className='flex justify-between items-center'>
-            <div>
-              <CardTitle className='flex items-center gap-2'>
-                <User className='w-5 h-5 text-accent' />
-                Customer Testimonials
-              </CardTitle>
-              <CardDescription>
-                Add and manage customer reviews and testimonials
-                {testimonialsFields.length > 0 && (
-                  <span className='ml-2 font-medium text-primary'>
-                    ({testimonialsFields.length} {testimonialsFields.length === 1 ? 'testimonial' : 'testimonials'})
-                  </span>
-                )}
-              </CardDescription>
-            </div>
-            <Button
-              type='button'
-              variant='default'
-              size='sm'
-              onClick={() =>
-                appendTestimonial({
-                  name: '',
-                  avatar: '',
-                  rating: 5,
-                  review: '',
-                  designation: ''
-                })
-              }
-              className='flex items-center gap-2 shrink-0'
-            >
-              <Plus className='w-4 h-4' />
-              Add Testimonial
-            </Button>
-          </div>
+          <CardTitle className='flex items-center gap-2'>
+            <User className='w-5 h-5' />
+            Customer Testimonials
+          </CardTitle>
+          <CardDescription>
+            Add and manage customer reviews and testimonials
+            {testimonialsFields.length > 0 && (
+              <span className='ml-2 font-medium text-primary'>
+                ({testimonialsFields.length} {testimonialsFields.length === 1 ? 'testimonial' : 'testimonials'})
+              </span>
+            )}
+          </CardDescription>
         </CardHeader>
         <CardContent>
           {testimonialsFields.length === 0 ? (
@@ -179,35 +158,26 @@ const HomeTestimonial = ({ settingsKey, initialValues, refetch }: TProps) => {
               {testimonialsFields.map((field, index) => (
                 <Card
                   key={field.id}
-                  className='relative border-2 hover:border-primary/50 overflow-hidden transition-all duration-200'
+                  className='hover:shadow-lg overflow-hidden transition-all duration-200'
                 >
-                  {/* Gradient accent */}
-                  <div className='top-0 absolute inset-x-0 bg-linear-to-r from-primary/10 via-accent/10 to-transparent h-1' />
-
-                  <CardContent className='pt-6'>
-                    <div className='flex justify-between items-start gap-4 mb-6'>
-                      <div className='flex items-center gap-3'>
-                        <div className='flex justify-center items-center bg-primary/10 rounded-full w-10 h-10'>
-                          <span className='font-bold text-primary text-sm'>#{index + 1}</span>
-                        </div>
-                        <div>
-                          <h4 className='font-semibold text-base'>Testimonial {index + 1}</h4>
-                          <p className='text-muted-foreground text-xs'>
-                            Customer review and rating
-                          </p>
-                        </div>
-                      </div>
-                      <Button
-                        type='button'
-                        variant='ghost'
-                        size='icon'
-                        onClick={() => removeTestimonial(index)}
-                        className='hover:bg-red-50 hover:text-red-600 shrink-0'
-                      >
-                        <Trash2 className='w-4 h-4' />
-                      </Button>
-                    </div>
-
+                  <CardHeader className='flex justify-between items-center border-b'>
+                    <CardTitle className='flex flex-col'>
+                      <h4 className='font-semibold text-base'>Testimonial {index + 1}</h4>
+                      <p className='font-medium text-muted-foreground text-xs'>
+                        Customer review and rating
+                      </p>
+                    </CardTitle>
+                    <Button
+                      type='button'
+                      variant='ghost'
+                      size='icon'
+                      onClick={() => removeTestimonial(index)}
+                      className='hover:bg-red-50 hover:text-red-600 shrink-0'
+                    >
+                      <Trash2 className='w-4 h-4' />
+                    </Button>
+                  </CardHeader>
+                  <CardContent>
                     <div className='gap-4 grid grid-cols-1 md:grid-cols-2'>
                       {/* Name */}
                       <Controller
@@ -286,8 +256,8 @@ const HomeTestimonial = ({ settingsKey, initialValues, refetch }: TProps) => {
                                 <Star
                                   key={i}
                                   className={`w-4 h-4 ${i < (field.value || 0)
-                                      ? 'text-yellow-400 fill-yellow-400'
-                                      : 'text-gray-300'
+                                    ? 'text-yellow-400 fill-yellow-400'
+                                    : 'text-gray-300'
                                     }`}
                                 />
                               ))}
@@ -326,6 +296,17 @@ const HomeTestimonial = ({ settingsKey, initialValues, refetch }: TProps) => {
                   </CardContent>
                 </Card>
               ))}
+
+              {testimonialsFields.length < 10 &&
+                <AddItemButton
+                  onClick={() => appendTestimonial({
+                    name: '',
+                    avatar: '',
+                    rating: 5,
+                    review: '',
+                    designation: ''
+                  })} />
+              }
             </div>
           )}
         </CardContent>

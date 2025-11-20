@@ -1,6 +1,7 @@
 'use client'
 
 import { revalidateTags } from '@/action/data'
+import { AddItemButton } from '@/components/admin/common/AddItemButton'
 import CustomInput from '@/components/common/CustomInput'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -236,16 +237,13 @@ const FaqForm = ({ settingsKey, initialValues, refetch }: TProps) => {
           />
         ))}
 
-        <Button
-          type='button'
-          variant='outline'
-          onClick={() => appendGroup({ name: '', faqs: [{ question: '', answer: '' }] })}
-          disabled={groupFields.length >= 10}
-          className='flex items-center gap-2'
-        >
-          <Plus className='w-4 h-4' />
-          Add FAQ Group
-        </Button>
+        {groupFields.length < 10 &&
+          <AddItemButton
+            onClick={() => appendGroup({ name: '', faqs: [{ question: '', answer: '' }] })}
+            disabled={groupFields.length >= 10}
+            label='Add FAQ Group'
+          />
+        }
       </div>
 
       <Button type='submit' disabled={isSubmitting} className='w-full'>
