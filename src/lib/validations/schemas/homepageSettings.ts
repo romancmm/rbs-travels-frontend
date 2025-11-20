@@ -72,7 +72,9 @@ export const bannerSectionSchema = z.array(
 const aboutSectionSchema = titleSubtitleDescSchema.extend({
   image: optionalString,
   experience: experienceSchema.optional(),
+  facilitiesIconType: z.enum(['icon', 'image']).default('icon'),
   facilities: z.array(facilityItemSchema).default([]),
+  statsIconType: z.enum(['icon', 'image']).default('icon'),
   stats: z.array(statItemSchema).default([])
 })
 

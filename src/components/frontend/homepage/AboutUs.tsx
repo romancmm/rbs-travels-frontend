@@ -1,11 +1,11 @@
 import { Container } from '@/components/common/container'
 import CustomImage from '@/components/common/CustomImage'
+import { IconOrImage } from '@/components/common/IconOrImage'
 import { Section } from '@/components/common/section'
 import { SectionHeading } from '@/components/common/SectionHeading'
 import { Typography } from '@/components/common/typography'
 import { cn } from '@/lib/utils'
 import { AboutType } from '@/lib/validations/schemas/homepageSettings'
-import * as LucideIcons from 'lucide-react'
 
 const AboutUs = ({ data }: { data?: AboutType }) => {
   if (!data) return null
@@ -106,11 +106,6 @@ const AboutUs = ({ data }: { data?: AboutType }) => {
 
                 const colorScheme = colorVariants[index % colorVariants.length]
 
-                // Check if icon is a Lucide icon name
-                const iconName = facility.icon
-                const LucideIcon = iconName && (LucideIcons as any)[iconName]
-                // const isLucideIcon = !!LucideIcon && typeof LucideIcon === 'function'
-
                 return (
                   <div
                     key={`facility-${index}-${facility.title}`}
@@ -147,7 +142,14 @@ const AboutUs = ({ data }: { data?: AboutType }) => {
                           colorScheme.iconShadow
                         )}
                       >
-                        <LucideIcon className='w-6 lg:w-8 h-6 lg:h-8 text-white group-hover:scale-110 transition-transform duration-500' />
+                        <IconOrImage
+                          icon={facility.icon}
+                          alt={facility.title}
+                          size='sm'
+                          color='white'
+                          iconClassName='group-hover:scale-110 transition-transform duration-500'
+                          strokeWidth={1.2}
+                        />
                       </div>
 
                       {/* Enhanced typography */}
@@ -193,10 +195,10 @@ const AboutUs = ({ data }: { data?: AboutType }) => {
               <div
                 className={cn(
                   'hidden -right-6 -bottom-6 absolute md:flex items-center gap-5 bg-linear-to-br from-primary via-primary to-primary/90',
-                  'shadow-2xl shadow-primary/30 p-4 rounded-2xl',
+                  'shadow-2xl shadow-primary/30 p-3.5 rounded-2xl',
                   'text-white transform transition-all duration-500 hover:scale-110 hover:shadow-3xl hover:shadow-primary/40',
                   'animate-in fade-in slide-in-from-bottom-4 duration-600',
-                  'max-w-72 w-fit backdrop-blur-md border-4 border-transparent ring-2 ring-primary/50 ring-offset-2 ring-offset-white/10'
+                  'max-w-72 w-fit backdrop-blur-md border-[6px] border-transparent ring-2 ring-primary/50 ring-offset-2 ring-offset-white/10'
                 )}
                 style={{ animationDelay: '800ms', animationFillMode: 'both' }}
               >

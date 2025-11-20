@@ -1,14 +1,13 @@
 import AnimatedCounter from '@/components/common/AnimatedCounter'
+import { IconOrImage } from '@/components/common/IconOrImage'
 import { Typography } from '@/components/common/typography'
 import { cn } from '@/lib/utils'
 import { StatItemProps } from '@/types/stats'
-import * as LucideIcons from 'lucide-react'
 
 /**
  * Individual stat item component with icon, value, and label
  */
 const StatItem = ({ value, label, icon, className, index = 0 }: StatItemProps) => {
-  const LucideIcon = icon && (LucideIcons as any)[icon]
   return (
     <div
       className={cn(
@@ -24,10 +23,12 @@ const StatItem = ({ value, label, icon, className, index = 0 }: StatItemProps) =
       {/* Icon Container */}
       <div className='shrink-0'>
         <div className='relative flex justify-center items-center bg-primary/5 group-hover:bg-primary/10 rounded-xl w-14 lg:w-16 h-14 lg:h-16 transition-colors duration-300'>
-          <LucideIcon
-            className='w-7 lg:w-8 h-7 lg:h-8 text-gray-800'
-            strokeWidth={2}
-            aria-hidden='true'
+          <IconOrImage
+            icon={icon}
+            alt={label}
+            size='lg'
+            className='text-gray-800'
+            strokeWidth={1.2}
           />
         </div>
       </div>
