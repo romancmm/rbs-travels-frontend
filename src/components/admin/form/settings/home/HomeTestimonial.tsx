@@ -71,7 +71,7 @@ const HomeTestimonial = ({ settingsKey, initialValues, refetch }: TProps) => {
       <Card className='border-l-4 border-l-primary'>
         <CardHeader>
           <CardTitle className='flex items-center gap-2'>
-            <MessageSquareQuote className='w-5 h-5 text-primary' />
+            <MessageSquareQuote className='w-5 h-5' />
             Section Information
           </CardTitle>
           <CardDescription>Configure the testimonials section title and subtitle</CardDescription>
@@ -99,6 +99,22 @@ const HomeTestimonial = ({ settingsKey, initialValues, refetch }: TProps) => {
                 label='Subtitle'
                 placeholder='e.g., Client Testimonials'
                 error={errors.subtitle?.message}
+                {...field}
+                value={field.value ?? ''}
+              />
+            )}
+          />
+
+          <Controller
+            control={control}
+            name='desc'
+            render={({ field }) => (
+              <CustomInput
+                label='Description'
+                type='textarea'
+                rows={3}
+                placeholder='e.g., Hear from our satisfied customers about their experiences.'
+                error={errors.desc?.message}
                 {...field}
                 value={field.value ?? ''}
               />

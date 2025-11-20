@@ -113,20 +113,20 @@ const TopCountriesSection = ({ settingsKey, initialValues, refetch }: TProps) =>
               ) : (
                 <div className='flex flex-wrap *:flex-[1_1_calc(50%-16px)] gap-4'>
                   {destinationsFields.map((field, index) => (
-                    <Card key={field.id}>
-                      <CardHeader>
-                        <CardTitle className='flex justify-between items-center mb-4'>
-                          <span>Destination {index + 1}</span>
-                          <Button
-                            type='button'
-                            variant='outline'
-                            size='icon'
-                            onClick={() => removeDestination(index)}
-                            className='hover:bg-red-50 hover:text-red-700'
-                          >
-                            <Trash2 className='w-4 h-4' />
-                          </Button>
+                    <Card key={field.id} className='hover:shadow-lg'>
+                      <CardHeader className='flex justify-between items-center border-b'>
+                        <CardTitle className='flex justify-between items-center'>
+                          Destination {index + 1}
                         </CardTitle>
+                        <Button
+                          type='button'
+                          variant='outline'
+                          size='icon'
+                          onClick={() => removeDestination(index)}
+                          className='hover:bg-red-50 hover:text-red-700'
+                        >
+                          <Trash2 className='w-4 h-4' />
+                        </Button>
                       </CardHeader>
                       <CardContent>
                         <div className='gap-4 grid grid-cols-1 md:grid-cols-2'>

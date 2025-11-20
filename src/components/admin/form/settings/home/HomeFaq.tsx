@@ -68,7 +68,7 @@ const HomeFaqForm = ({ settingsKey, initialValues, refetch }: TProps) => {
       <Card className='border-l-4 border-l-primary'>
         <CardHeader>
           <CardTitle className='flex items-center gap-2'>
-            <MessageCircle className='w-5 h-5 text-primary' />
+            <MessageCircle className='w-5 h-5' />
             Section Information
           </CardTitle>
           <CardDescription>Configure the FAQ section title, subtitle, and description</CardDescription>
@@ -126,7 +126,7 @@ const HomeFaqForm = ({ settingsKey, initialValues, refetch }: TProps) => {
           <div className='flex justify-between items-center'>
             <div>
               <CardTitle className='flex items-center gap-2'>
-                <HelpCircle className='w-5 h-5 text-accent' />
+                <HelpCircle className='w-5 h-5' />
                 FAQ Items
               </CardTitle>
               <CardDescription>
