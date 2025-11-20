@@ -37,11 +37,11 @@ const Stats = ({ data, isLoading = false, className }: StatsProps) => {
           >
             {/* Decorative gradient overlays */}
             <div className='absolute inset-0 bg-linear-to-tr from-white/40 via-transparent to-white/20 pointer-events-none' />
-            <div className='absolute -top-20 -right-20 bg-primary/15 blur-3xl rounded-full w-40 h-40 pointer-events-none' />
-            <div className='absolute -bottom-20 -left-20 bg-primary/15 blur-3xl rounded-full w-40 h-40 pointer-events-none' />
-            
+            <div className='-top-20 -right-20 absolute bg-primary/15 blur-3xl rounded-full w-40 h-40 pointer-events-none' />
+            <div className='-bottom-20 -left-20 absolute bg-primary/15 blur-3xl rounded-full w-40 h-40 pointer-events-none' />
+
             {/* Content with z-index */}
-            <div className='relative z-10 col-span-2 lg:col-span-4 gap-3 lg:gap-6 grid grid-cols-2 lg:grid-cols-4'>
+            <div className='z-10 relative gap-3 lg:gap-6 grid grid-cols-2 lg:grid-cols-4 col-span-2 lg:col-span-4'>
               {data.map((item, index) => (
                 <StatItem
                   key={`stat-${index}-${item.label}`}
