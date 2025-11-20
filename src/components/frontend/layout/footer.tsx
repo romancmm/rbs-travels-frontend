@@ -5,6 +5,7 @@ import CustomLink from '@/components/common/CustomLink'
 import SocialLinks from '@/components/common/SocialLinks'
 import { Typography } from '@/components/common/typography'
 import { useSiteConfig } from '@/components/providers/store-provider'
+import { cn } from '@/lib/utils'
 import { ArrowRight, Mail, Phone } from 'lucide-react'
 import { use } from 'react'
 
@@ -84,63 +85,65 @@ export default function Footer({ data }: { data: any }) {
               ))}
 
               {/* 3️⃣ Contact Information */}
-              <div className='space-y-6'>
+              <div className={cn('space-y-6', { 'lg:col-span-2': footerNav?.data?.items?.length < 4 })}>
                 <Typography variant='h6' weight='semibold' className='text-white'>
                   Get in Touch
                 </Typography>
 
-                {siteConfig?.addresses?.map((office, index) => (
-                  <div key={index} className='space-y-3'>
-                    {office.title && (
-                      <Typography
-                        variant='body1'
-                        weight='semibold'
-                        className='text-primary uppercase tracking-wide'
-                      >
-                        {office.title}
-                      </Typography>
-                    )}
-
-                    {/* Address */}
-                    {office.address && (
-                      <div className='flex items-start gap-3 text-slate-300 hover:text-white transition-colors'>
-                        <Typography variant='body2' className='leading-relaxed'>
-                          {office.address}
+                <div className={cn("flex gap-8", { 'flex-col sm:flex-row sm:gap-12': (siteConfig?.addresses?.length ?? 0) > 1, 'flex-col': (siteConfig?.addresses?.length ?? 0) <= 1 })}>
+                  {siteConfig?.addresses?.map((office, index) => (
+                    <div key={index} className='space-y-3'>
+                      {office.title && (
+                        <Typography
+                          variant='body1'
+                          weight='semibold'
+                          className='text-primary uppercase tracking-wide'
+                        >
+                          {office.title}
                         </Typography>
-                      </div>
-                    )}
+                      )}
 
-                    {/* Phone */}
-                    {office.phone && (
-                      <div className='flex items-center gap-3 text-slate-300 hover:text-white transition-colors'>
-                        <div className='flex justify-center items-center bg-primary/20 rounded-lg w-8 h-8 shrink-0'>
-                          <Phone className='w-4 h-4' />
+                      {/* Address */}
+                      {office.address && (
+                        <div className='flex items-start gap-3 text-slate-300 hover:text-white transition-colors'>
+                          <Typography variant='body2' className='leading-relaxed'>
+                            {office.address}
+                          </Typography>
                         </div>
-                        <CustomLink
-                          href={`tel:${office.phone.replace(/\s+/g, '')}`}
-                          className='hover:text-primary transition-colors'
-                        >
-                          <Typography variant='body2'>{office.phone}</Typography>
-                        </CustomLink>
-                      </div>
-                    )}
+                      )}
 
-                    {/* Email */}
-                    {office.email && (
-                      <div className='flex items-center gap-3 text-slate-300 hover:text-white transition-colors'>
-                        <div className='flex justify-center items-center bg-primary/20 rounded-lg w-8 h-8 shrink-0'>
-                          <Mail className='w-4 h-4' />
+                      {/* Phone */}
+                      {office.phone && (
+                        <div className='flex items-center gap-3 text-slate-300 hover:text-white transition-colors'>
+                          <div className='flex justify-center items-center bg-primary/20 rounded-lg w-8 h-8 shrink-0'>
+                            <Phone className='w-4 h-4' />
+                          </div>
+                          <CustomLink
+                            href={`tel:${office.phone.replace(/\s+/g, '')}`}
+                            className='hover:text-primary transition-colors'
+                          >
+                            <Typography variant='body2'>{office.phone}</Typography>
+                          </CustomLink>
                         </div>
-                        <CustomLink
-                          href={`mailto:${office.email}`}
-                          className='hover:text-primary transition-colors'
-                        >
-                          <Typography variant='body2'>{office.email}</Typography>
-                        </CustomLink>
-                      </div>
-                    )}
-                  </div>
-                ))}
+                      )}
+
+                      {/* Email */}
+                      {office.email && (
+                        <div className='flex items-center gap-3 text-slate-300 hover:text-white transition-colors'>
+                          <div className='flex justify-center items-center bg-primary/20 rounded-lg w-8 h-8 shrink-0'>
+                            <Mail className='w-4 h-4' />
+                          </div>
+                          <CustomLink
+                            href={`mailto:${office.email}`}
+                            className='hover:text-primary transition-colors'
+                          >
+                            <Typography variant='body2'>{office.email}</Typography>
+                          </CustomLink>
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
           </Container>

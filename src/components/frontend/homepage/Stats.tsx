@@ -26,21 +26,32 @@ const Stats = ({ data, isLoading = false, className }: StatsProps) => {
           <div
             className={cn(
               'gap-3 lg:gap-6 grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4',
-              'py-2 lg:py-4 border rounded-2xl border-border/50 w-full',
-              'bg-linear-to-r from-background via-accent/5 to-background'
+              'py-6 lg:py-8 px-4 lg:px-6 rounded-3xl w-full relative overflow-hidden',
+              'bg-linear-to-br from-primary/8 via-primary/12 to-primary/8',
+              'border-2 border-primary/20 shadow-2xl shadow-primary/10',
+              'backdrop-blur-sm',
+              'animate-in fade-in slide-in-from-bottom-4 duration-700'
             )}
             role='region'
             aria-label='Company statistics'
           >
-            {data.map((item, index) => (
-              <StatItem
-                key={`stat-${index}-${item.label}`}
-                value={item.value}
-                label={item.label}
-                icon={item.icon}
-                index={index}
-              />
-            ))}
+            {/* Decorative gradient overlays */}
+            <div className='absolute inset-0 bg-linear-to-tr from-white/40 via-transparent to-white/20 pointer-events-none' />
+            <div className='absolute -top-20 -right-20 bg-primary/15 blur-3xl rounded-full w-40 h-40 pointer-events-none' />
+            <div className='absolute -bottom-20 -left-20 bg-primary/15 blur-3xl rounded-full w-40 h-40 pointer-events-none' />
+            
+            {/* Content with z-index */}
+            <div className='relative z-10 col-span-2 lg:col-span-4 gap-3 lg:gap-6 grid grid-cols-2 lg:grid-cols-4'>
+              {data.map((item, index) => (
+                <StatItem
+                  key={`stat-${index}-${item.label}`}
+                  value={item.value}
+                  label={item.label}
+                  icon={item.icon}
+                  index={index}
+                />
+              ))}
+            </div>
           </div>
         )}
       </Container>

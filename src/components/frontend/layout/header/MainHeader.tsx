@@ -178,7 +178,6 @@ export default function MainHeader({ data }: { data: any }) {
             })}
 
             {/* More Dropdown */}
-            {/* More Dropdown */}
             {moreItems.length > 0 && (
               <div
                 ref={(el) => { parentRefs.current['more-menu'] = el }}
