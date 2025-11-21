@@ -1,5 +1,5 @@
 export const siteConfig = {
-  name: 'RBS TRAVELS',
+  name: 'NODE CMS',
   description:
     'Your trusted travel agency for air tickets, holiday packages, and visa assistance worldwide.',
   logo: {
@@ -9,14 +9,12 @@ export const siteConfig = {
   hotline: '+88 01335144891',
   phone: '+88 01335144891',
   email: 'rbstravels2025@gmail.com',
-  address:
-    'Room No:1203, 11th Floor, Shah Ali Plaza, Mirpur-10, Dhaka-1216',
+  address: 'Room No:1203, 11th Floor, Shah Ali Plaza, Mirpur-10, Dhaka-1216',
   contact: {
     offices: [
       {
         country: 'Head Office',
-        address:
-          'Room No:1203, 11th Floor, Shah Ali Plaza, Mirpur-10, Dhaka-1216',
+        address: 'Room No:1203, 11th Floor, Shah Ali Plaza, Mirpur-10, Dhaka-1216',
         phone: '+88 01335144891',
         email: 'rbstravels2025@gmail.com'
       },
@@ -104,6 +102,6 @@ export const siteConfig = {
     }
   ],
   footer: {
-    copyright: '© RBS TRAVELS | All rights reserved.'
+    copyright: '© NODE CMS | All rights reserved.'
   }
 }

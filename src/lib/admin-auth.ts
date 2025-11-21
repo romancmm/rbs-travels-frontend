@@ -103,7 +103,7 @@ export const persistAdminSession = async (session: NormalizedAdminAuth) => {
 
   // Store user info in cookie (readable by client UI)
   cookieStore.set(
-    'user',
+    'adminInfo',
     JSON.stringify({
       name: user?.name,
       email: user?.email,
@@ -139,6 +139,7 @@ export const persistAdminSession = async (session: NormalizedAdminAuth) => {
 
 export const clearAdminSession = async () => {
   const cookieStore = await cookies()
+  cookieStore.delete('adminInfo')
   cookieStore.delete('adminToken')
   cookieStore.delete('permissions')
   cookieStore.delete('userRole')

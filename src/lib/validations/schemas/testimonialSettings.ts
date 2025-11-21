@@ -13,6 +13,7 @@ const testimonial = z.object({
 export const testimonialSettingsSchema = z.object({
   title: z.string().optional(),
   subtitle: z.string().optional(),
+  desc: z.string().optional(),
   testimonials: z.array(testimonial).default([])
 })
 

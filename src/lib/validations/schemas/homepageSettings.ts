@@ -38,14 +38,14 @@ const destinationItemSchema = z.object({
   visaType: optionalString
 })
 
-const testimonialItemSchema = z.object({
-  name: optionalString,
-  designation: optionalString,
-  avatar: optionalString,
-  rating: z.number().min(1).max(5).optional(),
-  review: optionalString,
-  date: optionalString
-})
+// const testimonialItemSchema = z.object({
+//   name: optionalString,
+//   designation: optionalString,
+//   avatar: optionalString,
+//   rating: z.number().min(1).max(5).optional(),
+//   review: optionalString,
+//   date: optionalString
+// })
 
 // === Complex Component Schemas ===
 export const bannerSectionSchema = z.array(
@@ -63,20 +63,23 @@ export const bannerSectionSchema = z.array(
   })
 )
 
-const testimonialsSectionSchema = z.object({
-  title: optionalString,
-  subtitle: optionalString,
-  testimonials: z.array(testimonialItemSchema).default([])
-})
+// const testimonialsSectionSchema = z.object({
+//   title: optionalString,
+//   subtitle: optionalString,
+//   testimonials: z.array(testimonialItemSchema).default([])
+// })
 
 const aboutSectionSchema = titleSubtitleDescSchema.extend({
   image: optionalString,
   experience: experienceSchema.optional(),
+  facilitiesIconType: z.enum(['icon', 'image']).default('icon'),
   facilities: z.array(facilityItemSchema).default([]),
+  statsIconType: z.enum(['icon', 'image']).default('icon'),
   stats: z.array(statItemSchema).default([])
 })
 
 const whoWeAreSectionSchema = titleSubtitleDescSchema.extend({
+  iconType: z.enum(['icon', 'image']).default('icon'),
   features: z.array(facilityItemSchema).default([])
 })
 
@@ -118,13 +121,13 @@ export type BannerType = z.infer<typeof bannerSectionSchema>
 export type WhoWeAreType = z.infer<typeof whoWeAreSectionSchema>
 export type AboutType = z.infer<typeof aboutSectionSchema>
 export type TopCountriesType = z.infer<typeof topCountriesSectionSchema>
-export type TestimonialsType = z.infer<typeof testimonialsSectionSchema>
+// export type TestimonialsType = z.infer<typeof testimonialsSectionSchema>
 
 // Utility types for form components
 export type FacilityItem = z.infer<typeof facilityItemSchema>
 export type StatItem = z.infer<typeof statItemSchema>
 export type DestinationItem = z.infer<typeof destinationItemSchema>
-export type TestimonialItem = z.infer<typeof testimonialItemSchema>
+// export type TestimonialItem = z.infer<typeof testimonialItemSchema>
 
 // === Schema Validation Helpers ===
 export const validateHomepageSettings = (data: unknown) => {

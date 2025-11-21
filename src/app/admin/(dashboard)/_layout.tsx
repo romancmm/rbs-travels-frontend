@@ -2,7 +2,6 @@
 
 import { AppSidebar } from '@/components/admin/layout/app-sidebar'
 import BreadCrumbs from '@/components/admin/layout/BreadCrumbs'
-import { SiteHeader } from '@/components/admin/layout/site-header'
 import { PermissionProvider } from '@/components/providers/PermissionProvider'
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar'
 
@@ -13,7 +12,7 @@ type TProps = {
 export default function DashboardLayout({ children }: TProps) {
   return (
     <PermissionProvider>
-      <SiteHeader />
+      {/* <SiteHeader /> */}
       <div className='relative flex-1'>
         <SidebarProvider
           className='[&_[data-slot=sidebar-container]]:!top-[64px]'

@@ -1,14 +1,15 @@
 'use client'
 
 import Cookies from 'js-cookie'
-import { AudioWaveform, GalleryVerticalEnd, Map, Settings2 } from 'lucide-react'
+import { GalleryVerticalEnd, Map, Settings2 } from 'lucide-react'
 import { usePathname } from 'next/navigation'
 import * as React from 'react'
 
 import { NavMain } from '@/components/nav-main'
 import { NavUser } from '@/components/nav-user'
 import { usePermissions } from '@/components/providers/PermissionProvider'
-import { TeamSwitcher } from '@/components/team-switcher'
+import { useSiteConfig } from '@/components/providers/store-provider'
+import { SiteSwitcher } from '@/components/team-switcher'
 import {
   Sidebar,
   SidebarContent,
@@ -60,18 +61,17 @@ const mapNavItems = (
 
 // Admin-centric data builder (user from cookie)
 const buildAdminData = () => {
-  // Read user from cookie named 'user'
   let cookieUser: any = null
   try {
-    const raw = Cookies.get('user')
+    const raw = Cookies.get('adminInfo')
     if (raw) cookieUser = JSON.parse(raw)
-  } catch { }
+  } catch {}
 
   const user = {
     name:
       cookieUser?.firstName && cookieUser?.lastName
         ? `${cookieUser.firstName} ${cookieUser.lastName}`
-        : cookieUser?.name || 'Admin',
+        : cookieUser?.name || 'Guest Admin',
     email: cookieUser?.email || 'admin@example.com',
     avatar: cookieUser?.avatar || '/avatars/shadcn.jpg'
   }
@@ -82,26 +82,28 @@ const buildAdminData = () => {
     { name: 'System Status', url: '/admin/status', icon: Map }
   ]
 
-  const teams = [
-    { name: 'RBS Travels', logo: GalleryVerticalEnd, plan: 'Admin' },
-    { name: 'Operations', logo: AudioWaveform, plan: 'Internal' }
-  ]
-
-  return { user, projects, teams }
+  return { user, projects }
 }
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const pathname = usePathname()
   const { hasPermission, loading } = usePermissions()
+  const { siteConfig } = useSiteConfig()
   const data = React.useMemo(() => buildAdminData(), [])
+
   const navMain = React.useMemo(
     () => mapNavItems(adminNavItems, pathname, hasPermission, loading),
     [pathname, hasPermission, loading]
   )
+
   return (
     <Sidebar collapsible='icon' {...props}>
       <SidebarHeader>
-        <TeamSwitcher teams={data.teams} />
+        <SiteSwitcher
+          siteName={siteConfig?.name || 'CMS Admin'}
+          faviconUrl={siteConfig?.favicon || undefined}
+          fallbackIcon={GalleryVerticalEnd}
+        />
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={navMain ?? []} />

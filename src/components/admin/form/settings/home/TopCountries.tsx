@@ -1,10 +1,11 @@
 'use client'
 
 import { revalidateTags } from '@/action/data'
+import { AddItemButton } from '@/components/admin/common/AddItemButton'
 import CustomInput from '@/components/common/CustomInput'
 import FileUploader from '@/components/common/FileUploader'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent } from '@/components/ui/card'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { showError } from '@/lib/errMsg'
 import {
   type HomepageSettings,
@@ -13,7 +14,7 @@ import {
 import requests from '@/services/network/http'
 import { SITE_CONFIG } from '@/types/cache-keys'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Plus, Trash2 } from 'lucide-react'
+import { Trash2 } from 'lucide-react'
 import { Controller, useFieldArray, useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 
@@ -103,52 +104,31 @@ const TopCountriesSection = ({ settingsKey, initialValues, refetch }: TProps) =>
 
             {/* Destinations Section */}
             <div className='space-y-2 lg:col-span-2'>
-              <div className='flex justify-between items-center'>
-                <label className='font-semibold text-lg'>Destinations</label>
-                <Button
-                  type='button'
-                  variant='outline'
-                  size='sm'
-                  onClick={() =>
-                    appendDestination({
-                      name: '',
-                      image: '',
-                      workers: '',
-                      description: '',
-                      topSectors: [],
-                      averageSalary: '',
-                      visaType: ''
-                    })
-                  }
-                  className='flex items-center gap-2'
-                >
-                  <Plus className='w-4 h-4' />
-                  Add Destination
-                </Button>
-              </div>
+              <label className='font-semibold text-lg'>Destinations</label>
 
               {destinationsFields.length === 0 ? (
                 <div className='p-4 border-2 border-dashed rounded-lg text-center'>
                   No destinations added yet. Click &quot;Add Destination&quot; to get started.
                 </div>
               ) : (
-                <div className='space-y-6'>
+                <div className='flex flex-wrap *:flex-[1_1_calc(50%-16px)] gap-4'>
                   {destinationsFields.map((field, index) => (
-                    <Card key={field.id} className='border-2'>
-                      <CardContent className='pt-6'>
-                        <div className='flex justify-between items-center mb-4'>
-                          <h4 className='font-semibold text-base'>Destination {index + 1}</h4>
-                          <Button
-                            type='button'
-                            variant='outline'
-                            size='icon'
-                            onClick={() => removeDestination(index)}
-                            className='hover:bg-red-50 hover:text-red-700'
-                          >
-                            <Trash2 className='w-4 h-4' />
-                          </Button>
-                        </div>
-
+                    <Card key={field.id} className='hover:shadow-lg'>
+                      <CardHeader className='flex justify-between items-center border-b'>
+                        <CardTitle className='flex justify-between items-center'>
+                          Destination {index + 1}
+                        </CardTitle>
+                        <Button
+                          type='button'
+                          variant='outline'
+                          size='icon'
+                          onClick={() => removeDestination(index)}
+                          className='hover:bg-red-50 hover:text-red-700'
+                        >
+                          <Trash2 className='w-4 h-4' />
+                        </Button>
+                      </CardHeader>
+                      <CardContent>
                         <div className='gap-4 grid grid-cols-1 md:grid-cols-2'>
                           <Controller
                             control={control}
@@ -247,6 +227,24 @@ const TopCountriesSection = ({ settingsKey, initialValues, refetch }: TProps) =>
                     </Card>
                   ))}
                 </div>
+              )}
+
+              {destinationsFields.length < 10 && (
+                <AddItemButton
+                  onClick={() =>
+                    appendDestination({
+                      name: '',
+                      image: '',
+                      workers: '',
+                      description: '',
+                      topSectors: [],
+                      averageSalary: '',
+                      visaType: ''
+                    })
+                  }
+                  label='Add Destination'
+                  className='mt-4'
+                />
               )}
             </div>
           </div>

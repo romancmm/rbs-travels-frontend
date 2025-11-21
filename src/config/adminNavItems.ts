@@ -141,10 +141,10 @@ export const navItems: NavItem[] = [
         title: 'Top Countries',
         href: '/admin/homepage-settings/top-countries'
       },
-      {
-        title: 'News & Events',
-        href: '/admin/homepage-settings/news-and-events'
-      },
+      // {
+      //   title: 'News & Events',
+      //   href: '/admin/homepage-settings/news-and-events'
+      // },
       {
         title: 'Testimonials',
         href: '/admin/homepage-settings/testimonials'

@@ -1,7 +1,7 @@
 /**
- * RBS Travels Frontend - Global Type Definitions
+ * NODE CMS Frontend - Global Type Definitions
  *
- * This file contains all the type definitions for the RBS Travels application.
+ * This file contains all the type definitions for the NODE CMS application.
  * It serves as the central type registry for the entire frontend application.
  */
 

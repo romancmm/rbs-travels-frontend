@@ -58,39 +58,50 @@ export default function Footer({ data }: { data: any }) {
               </div>
 
               {/* 2️⃣ Navigation Links */}
-              {footerNav?.data?.items?.slice(0, 2)?.map((nav: any, index: number) => (
-                <div key={index} className='space-y-5'>
-                  <Typography variant='h6' weight='semibold' className='text-white'>
-                    {nav.title}
-                  </Typography>
-                  <ul className='space-y-3'>
-                    {nav.children?.map((child: any, idx: number) => (
-                      <li key={idx}>
-                        <CustomLink
-                          href={child.href ?? '#'}
-                          className='group flex items-center text-slate-300 hover:text-primary transition-colors duration-300'
-                        >
-                          <ArrowRight className='opacity-0 group-hover:opacity-100 mr-2 w-3 h-3 transition-all -translate-x-2 group-hover:translate-x-0 duration-300' />
-                          <Typography
-                            variant='body2'
-                            className='transition-transform group-hover:translate-x-1 duration-300'
+              {footerNav?.data?.items?.length > 0 &&
+                footerNav?.data?.items?.slice(0, 2)?.map((nav: any, index: number) => (
+                  <div key={index} className='space-y-5'>
+                    <Typography variant='h6' weight='semibold' className='text-white'>
+                      {nav.title}
+                    </Typography>
+                    <ul className='space-y-3'>
+                      {nav.children?.map((child: any, idx: number) => (
+                        <li key={idx}>
+                          <CustomLink
+                            href={child.href ?? '#'}
+                            className='group flex items-center text-slate-300 hover:text-primary transition-colors duration-300'
                           >
-                            {child.title}
-                          </Typography>
-                        </CustomLink>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              ))}
+                            <ArrowRight className='opacity-0 group-hover:opacity-100 mr-2 w-3 h-3 transition-all -translate-x-2 group-hover:translate-x-0 duration-300' />
+                            <Typography
+                              variant='body2'
+                              className='transition-transform group-hover:translate-x-1 duration-300'
+                            >
+                              {child.title}
+                            </Typography>
+                          </CustomLink>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                ))}
 
               {/* 3️⃣ Contact Information */}
-              <div className={cn('space-y-6', { 'lg:col-span-2': footerNav?.data?.items?.length < 4 })}>
+              <div
+                className={cn('space-y-6 col-span-2', {
+                  'lg: col-span-2': footerNav?.data?.items?.length < 4
+                })}
+              >
                 <Typography variant='h6' weight='semibold' className='text-white'>
                   Get in Touch
                 </Typography>
 
-                <div className={cn("flex gap-8", { 'flex-col sm:flex-row sm:gap-12': (siteConfig?.addresses?.length ?? 0) > 1, 'flex-col': (siteConfig?.addresses?.length ?? 0) <= 1 })}>
+                <div
+                  className={cn('flex flex-wrap gap-8 w-full', {
+                    'flex-col sm:flex-row sm:gap-12 *:lg:max-w-[calc(50%-3rem)]':
+                      (siteConfig?.addresses?.length ?? 0) > 1,
+                    'flex-col': (siteConfig?.addresses?.length ?? 0) <= 1
+                  })}
+                >
                   {siteConfig?.addresses?.map((office, index) => (
                     <div key={index} className='space-y-3'>
                       {office.title && (

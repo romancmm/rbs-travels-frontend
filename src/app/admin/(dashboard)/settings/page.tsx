@@ -90,16 +90,10 @@ export default function SiteConfigPage() {
         Array.from({ length: 2 }).map((_, idx) => <Skeleton className='my-8' key={idx} />)
       ) : siteConfig ? (
         <div className='space-y-10!'>
-          <div className='flex lg:flex-row flex-col gap-3 lg:gap-6'>
-            {(siteConfig?.theme as any)?.color && (
-              <KeyValueList data={(siteConfig?.theme as any).color} />
-            )}
-          </div>
-
           <RenderData
             title='Site Info'
             data={siteConfig}
-            excludedFields={['logo', 'favicon', 'seo', 'header', 'footer', 'addresses']}
+            excludedFields={['logo', 'favicon', 'seo', 'header', 'footer', 'addresses', 'theme']}
           />
 
           {/* Addresses Card View */}
@@ -111,8 +105,8 @@ export default function SiteConfigPage() {
               <CardContent>
                 <div className='gap-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3'>
                   {siteConfig.addresses.map((address, index) => (
-                    <Card key={index} className='bg-gray-50 border-gray-200'>
-                      <CardHeader className='pb-3'>
+                    <Card key={index} className='bg-gray-50/50 border-gray-200'>
+                      <CardHeader>
                         <CardTitle className='flex items-center gap-2 text-base'>
                           <Badge variant='secondary' className='text-xs'>
                             #{index + 1}
@@ -120,27 +114,27 @@ export default function SiteConfigPage() {
                           {address.title || `Address ${index + 1}`}
                         </CardTitle>
                       </CardHeader>
-                      <CardContent className='space-y-3 text-sm'>
+                      <CardContent className='space-y-2 text-sm'>
                         {address.address && (
                           <div>
                             <div className='mb-1 font-medium text-gray-600 text-xs uppercase'>
-                              Address
+                              Address:
                             </div>
                             <div className='text-gray-900'>{address.address}</div>
                           </div>
                         )}
                         {address.phone && (
-                          <div>
-                            <div className='mb-1 font-medium text-gray-600 text-xs uppercase'>
-                              Phone
+                          <div className='flex items-center gap-2'>
+                            <div className='font-medium text-gray-600 text-xs uppercase'>
+                              Phone:
                             </div>
                             <div className='text-gray-900'>{address.phone}</div>
                           </div>
                         )}
                         {address.email && (
-                          <div>
-                            <div className='mb-1 font-medium text-gray-600 text-xs uppercase'>
-                              Email
+                          <div className='flex items-center gap-2'>
+                            <div className='font-medium text-gray-600 text-xs uppercase'>
+                              Email:
                             </div>
                             <div className='text-gray-900'>{address.email}</div>
                           </div>
