@@ -22,8 +22,8 @@ const colorClasses = {
         hover: 'group-hover:bg-primary/20'
     },
     accent: {
-        gradient: 'from-accent/20 to-accent/5',
-        icon: 'bg-accent/10 text-accent',
+        gradient: 'from-accent/80 to-accent/40',
+        icon: 'bg-accent/80 text-accent',
         hover: 'group-hover:bg-accent/20'
     },
     success: {
@@ -60,6 +60,7 @@ export default function QuickActionCard({
                 <Card className='group relative hover:shadow-xl border-2 hover:border-primary/50 h-full overflow-hidden transition-all duration-300 cursor-pointer'>
                     <div className={cn('absolute inset-0 bg-linear-to-br opacity-50', colors.gradient)} />
                     <CardContent className='relative'>
+                        <ArrowRight className='top-6 right-4 absolute opacity-0 group-hover:opacity-100 w-4 h-4 transition-all -translate-x-2 group-hover:translate-x-0 duration-300' />
                         <div className='space-y-4'>
                             <div
                                 className={cn(
@@ -73,7 +74,6 @@ export default function QuickActionCard({
                             <div className='space-y-2'>
                                 <h3 className='flex items-center gap-2 font-semibold text-lg'>
                                     {title}
-                                    <ArrowRight className='opacity-0 group-hover:opacity-100 w-4 h-4 transition-all -translate-x-2 group-hover:translate-x-0 duration-300' />
                                 </h3>
                                 <p className='text-muted-foreground text-sm leading-relaxed'>{description}</p>
                             </div>

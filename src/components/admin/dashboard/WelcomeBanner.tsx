@@ -1,7 +1,7 @@
 'use client'
 
 import { Card, CardContent } from '@/components/ui/card'
-import { FileText, Sparkles, TrendingUp, Users } from 'lucide-react'
+import { Sparkles } from 'lucide-react'
 import { motion } from 'motion/react'
 
 type WelcomeBannerProps = {
@@ -19,7 +19,7 @@ export default function WelcomeBanner({ userName = 'Admin' }: WelcomeBannerProps
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
         >
-            <Card className='relative shadow-lg border-2 overflow-hidden'>
+            <Card className='relative shadow-lg overflow-hidden'>
                 <div className='absolute inset-0 bg-linear-to-r from-primary/10 via-accent/5 to-transparent' />
                 <CardContent className='relative pt-8 pb-8'>
                     <div className='flex lg:flex-row flex-col justify-between items-start lg:items-center gap-6'>
@@ -40,7 +40,7 @@ export default function WelcomeBanner({ userName = 'Admin' }: WelcomeBannerProps
                             </p>
                         </div>
 
-                        <div className='flex flex-wrap gap-4'>
+                        {/* <div className='flex flex-wrap gap-4'>
                             <motion.div
                                 whileHover={{ scale: 1.05 }}
                                 className='flex items-center gap-2 bg-primary/10 px-4 py-2 rounded-lg'
@@ -58,7 +58,7 @@ export default function WelcomeBanner({ userName = 'Admin' }: WelcomeBannerProps
                             >
                                 <Users className='w-5 h-5 text-accent' />
                                 <div>
-                                    <p className='font-bold text-sm'>1,234</p>
+                                    <p className='font-bold text-sm'>100</p>
                                     <p className='text-muted-foreground text-xs'>Users</p>
                                 </div>
                             </motion.div>
@@ -69,11 +69,11 @@ export default function WelcomeBanner({ userName = 'Admin' }: WelcomeBannerProps
                             >
                                 <FileText className='w-5 h-5 text-green-600' />
                                 <div>
-                                    <p className='font-bold text-sm'>89</p>
+                                    <p className='font-bold text-sm'>08</p>
                                     <p className='text-muted-foreground text-xs'>Pages</p>
                                 </div>
                             </motion.div>
-                        </div>
+                        </div> */}
                     </div>
                 </CardContent>
             </Card>
