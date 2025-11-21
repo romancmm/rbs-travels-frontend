@@ -243,7 +243,7 @@ export function ImageLightbox({ images, initialIndex = 0, open, onClose }: Image
                                     setZoom(1)
                                 }}
                                 className={cn(
-                                    'relative flex-shrink-0 rounded-lg w-16 h-16 overflow-hidden transition-all duration-200',
+                                    'relative rounded-lg w-16 h-16 overflow-hidden transition-all duration-200 shrink-0',
                                     currentIndex === index
                                         ? 'ring-2 ring-white scale-110'
                                         : 'opacity-50 hover:opacity-100'

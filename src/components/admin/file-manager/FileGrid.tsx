@@ -3,7 +3,6 @@
 import CustomImage from '@/components/common/CustomImage'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
-import { formatDistanceToNow } from 'date-fns'
 import { Eye } from 'lucide-react'
 import { FileContextMenu } from './FileContextMenu'
 import { FileItem } from './FileManagerComponent'
@@ -38,17 +37,6 @@ export function FileGrid({
     return `${(bytes / Math.pow(1024, i)).toFixed(1)} ${sizes[i]}`
   }
 
-  const formatDate = (dateString?: string) => {
-    if (!dateString) return 'Unknown'
-    try {
-      const date = new Date(dateString)
-      if (isNaN(date.getTime())) return 'Unknown'
-      return formatDistanceToNow(date, { addSuffix: true })
-    } catch {
-      return 'Unknown'
-    }
-  }
-
   const handleClick = (file: FileItem) => {
     if (file.type === 'folder') {
       onFolderClick(file)
@@ -59,7 +47,7 @@ export function FileGrid({
 
   return (
     <div className='bg-gray-50/30 p-6'>
-      <div className='gap-6 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 2xl:grid-cols-8 xl:grid-cols-6'>
+      <div className='gap-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 2xl:grid-cols-8 xl:grid-cols-6'>
         {files.map((file, index) => {
           const Icon = getFileIcon(file)
           const selected = isSelected(file)
@@ -82,10 +70,10 @@ export function FileGrid({
               }}
             >
               {/* File Preview */}
-              <div className='relative flex flex-col flex-1 justify-center items-center bg-gradient-to-br from-gray-50 via-gray-50/50 to-white px-4'>
+              <div className='relative flex flex-col flex-1 justify-center items-center bg-linear-to-br from-gray-50 via-gray-50/50 to-white px-4'>
                 {file.type === 'folder' ? (
                   <div className='flex flex-col justify-center items-center'>
-                    <div className='flex justify-center items-center bg-gradient-to-br from-primary/10 group-hover:from-primary/20 to-primary/5 group-hover:to-primary/10 shadow-sm mb-2 rounded-3xl w-20 h-20 transition-all duration-300'>
+                    <div className='flex justify-center items-center bg-linear-to-br from-primary/10 group-hover:from-primary/20 to-primary/5 group-hover:to-primary/10 shadow-sm mb-2 rounded-3xl w-20 h-20 transition-all duration-300'>
                       <Icon className='drop-shadow-sm w-9 h-9 text-primary' />
                     </div>
                   </div>
@@ -98,11 +86,11 @@ export function FileGrid({
                       className='rounded-xl h-full object-cover group-hover:scale-110 transition-transform duration-500'
                     // sizes='(max-width: 768px) 50vw, (max-width: 1200px) 25vw, 12.5vw'
                     />
-                    <div className='absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300' />
+                    <div className='absolute inset-0 bg-linear-to-t from-black/30 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300' />
                   </div>
                 ) : (
                   <div className='flex flex-col justify-center items-center'>
-                    <div className='flex justify-center items-center bg-gradient-to-br from-gray-100 group-hover:from-gray-200 to-gray-200/80 group-hover:to-gray-300/80 shadow-sm mb-2 rounded-3xl w-20 h-20 transition-all duration-300'>
+                    <div className='flex justify-center items-center bg-linear-to-br from-gray-100 group-hover:from-gray-200 to-gray-200/80 group-hover:to-gray-300/80 shadow-sm mb-2 rounded-3xl w-20 h-20 transition-all duration-300'>
                       <Icon className='w-9 h-9 text-gray-600' />
                     </div>
                   </div>
@@ -110,16 +98,16 @@ export function FileGrid({
               </div>
 
               {/* File Info */}
-              <div className='bg-white/95 backdrop-blur-sm px-4 py-3 border-gray-100 border-t'>
+              <div className='bg-white/95 backdrop-blur-sm px-4 py-2 border-gray-100 border-t'>
                 <div className='font-semibold text-gray-800 group-hover:text-primary text-xs truncate transition-colors duration-200' title={file.name}>
                   {file.name}
                 </div>
-                <div className='flex justify-between items-center gap-2 mt-1.5'>
+                <div className='flex justify-between items-center gap-2 mt-1'>
                   <span className='font-medium text-[11px] text-muted-foreground truncate'>
                     {file.type === 'folder' ? 'Folder' : formatFileSize(file.size)}
                   </span>
                   {file.type === 'file' && file.mime && (
-                    <span className='flex-shrink-0 bg-primary/10 px-1.5 py-0.5 rounded font-semibold text-[10px] text-primary'>
+                    <span className='bg-primary/10 px-1.5 py-0.5 rounded font-semibold text-[10px] text-primary shrink-0'>
                       {file.mime.split('/')[1]?.toUpperCase() || 'FILE'}
                     </span>
                   )}

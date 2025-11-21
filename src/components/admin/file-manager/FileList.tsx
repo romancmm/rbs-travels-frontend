@@ -70,7 +70,7 @@ export function FileList({
       <div className='bg-white shadow-md border border-gray-200/80 rounded-2xl overflow-hidden'>
         <Table>
           <TableHeader>
-            <TableRow className='bg-gradient-to-r from-gray-50 hover:from-gray-50 to-gray-50/50 hover:to-gray-50/50 border-gray-100 border-b-2'>
+            <TableRow className='bg-linear-to-r from-gray-50 hover:from-gray-50 to-gray-50/50 hover:to-gray-50/50 border-gray-100 border-b-2'>
               <TableHead className='w-12 font-bold text-gray-600'></TableHead>
               <TableHead className='font-bold text-gray-700'>Name</TableHead>
               <TableHead className='w-32 font-bold text-gray-700'>Type</TableHead>
@@ -89,7 +89,7 @@ export function FileList({
                   key={index}
                   className={cn(
                     'group hover:bg-primary/5 hover:shadow-sm border-gray-100/50 border-b transition-all duration-200 cursor-pointer',
-                    selected && 'bg-gradient-to-r from-primary/10 to-primary/5 border-l-4 border-l-primary shadow-md ring-1 ring-primary/20'
+                    selected && 'bg-linear-to-r from-primary/10 to-primary/5 border-l-4 border-l-primary shadow-md ring-1 ring-primary/20'
                   )}
                   onClick={() => handleClick(file)}
                   onDoubleClick={() => {
@@ -101,7 +101,7 @@ export function FileList({
                   <TableCell>
                     <div className='relative flex justify-center items-center w-11 h-11'>
                       {file.type === 'folder' ? (
-                        <div className='flex justify-center items-center bg-gradient-to-br from-primary/10 group-hover:from-primary/20 to-primary/5 group-hover:to-primary/10 shadow-sm rounded-xl w-full h-full transition-all duration-200'>
+                        <div className='flex justify-center items-center bg-linear-to-br from-primary/10 group-hover:from-primary/20 to-primary/5 group-hover:to-primary/10 shadow-sm rounded-xl w-full h-full transition-all duration-200'>
                           <Icon className='drop-shadow-sm w-5 h-5 text-primary' />
                         </div>
                       ) : file.fileType === 'image' && file.thumbnail ? (
@@ -115,7 +115,7 @@ export function FileList({
                           />
                         </div>
                       ) : (
-                        <div className='flex justify-center items-center bg-gradient-to-br from-gray-100 group-hover:from-gray-200 to-gray-200/80 group-hover:to-gray-300/80 shadow-sm rounded-xl w-full h-full transition-all duration-200'>
+                        <div className='flex justify-center items-center bg-linear-to-br from-gray-100 group-hover:from-gray-200 to-gray-200/80 group-hover:to-gray-300/80 shadow-sm rounded-xl w-full h-full transition-all duration-200'>
                           <Icon className='w-5 h-5 text-gray-600' />
                         </div>
                       )}
@@ -140,7 +140,7 @@ export function FileList({
                   </TableCell>
 
                   <TableCell>
-                    <span className='inline-flex items-center gap-1.5 bg-gradient-to-r from-gray-100 group-hover:from-primary/10 to-gray-50 group-hover:to-primary/5 shadow-sm px-3 py-1.5 rounded-lg font-semibold text-gray-700 text-xs capitalize transition-all duration-200'>
+                    <span className='inline-flex items-center gap-1.5 bg-linear-to-r from-gray-100 group-hover:from-primary/10 to-gray-50 group-hover:to-primary/5 shadow-sm px-3 py-1.5 rounded-lg font-semibold text-gray-700 text-xs capitalize transition-all duration-200'>
                       {file.type === 'folder' ? (
                         <>
                           <Icon className='w-3.5 h-3.5' />
