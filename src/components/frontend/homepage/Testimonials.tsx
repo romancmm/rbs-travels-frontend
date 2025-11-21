@@ -116,7 +116,7 @@ const CarouselContainer = ({ testimonials }: { testimonials: TestimonialsType['t
         }}
       >
         <CarouselContent className="-ml-4 sm:-ml-6 pt-6 pb-6">
-          {testimonials?.map((testimonial, index) => {
+          {testimonials?.map((testimonial: any, index: number) => {
             return (
               <CarouselItem
                 key={index}

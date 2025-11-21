@@ -7,8 +7,7 @@ import {
   ListTodo,
   LucideIcon,
   Settings,
-  ShieldAlert,
-  TrendingUp
+  ShieldAlert
 } from 'lucide-react'
 
 type NavItem = {
@@ -68,24 +67,24 @@ export const navItems: NavItem[] = [
   },
 
   // SEO Settings
-  {
-    title: 'SEO Settings',
-    href: '',
-    icon: TrendingUp,
-    permission: { resource: 'seo', action: 'index' },
-    children: [
-      {
-        title: 'Page Meta',
-        href: '/admin/seo/page-meta',
-        permission: { resource: 'seo', action: 'index' }
-      },
-      {
-        title: 'Analytics Scripts',
-        href: '/admin/seo/analytics-scripts',
-        permission: { resource: 'seo', action: 'index' }
-      }
-    ]
-  },
+  // {
+  //   title: 'SEO Settings',
+  //   href: '',
+  //   icon: TrendingUp,
+  //   permission: { resource: 'seo', action: 'index' },
+  //   children: [
+  //     {
+  //       title: 'Page Meta',
+  //       href: '/admin/seo/page-meta',
+  //       permission: { resource: 'seo', action: 'index' }
+  //     },
+  //     {
+  //       title: 'Analytics Scripts',
+  //       href: '/admin/seo/analytics-scripts',
+  //       permission: { resource: 'seo', action: 'index' }
+  //     }
+  //   ]
+  // },
 
   // Site Settings
   {
