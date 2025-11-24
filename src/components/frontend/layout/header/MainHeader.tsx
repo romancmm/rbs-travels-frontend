@@ -72,11 +72,7 @@ export default function MainHeader({ data }: { data: any }) {
                   <CustomLink
                     href={
                       item.url ||
-                      (item.type === 'custom' || item.type === 'external'
-                        ? item.url
-                        : item.reference
-                        ? `/page/${item.reference}`
-                        : `/page?type=${item.type}`)
+                      (item.reference ? `/page/${item.reference}` : `/page?type=${item.type}`)
                     }
                     className='group flex items-center gap-1 hover:bg-white/10 px-3 py-2 rounded-lg transition-all duration-300'
                   >
@@ -123,9 +119,7 @@ export default function MainHeader({ data }: { data: any }) {
                               <CustomLink
                                 href={
                                   child.url ||
-                                  (child.type === 'custom' || child.type === 'external'
-                                    ? child.url
-                                    : child.reference
+                                  (child.reference
                                     ? `/page/${child.reference}`
                                     : `/page?type=${child.type}`)
                                 }
@@ -159,10 +153,7 @@ export default function MainHeader({ data }: { data: any }) {
                                           key={grandChild.id ?? grandChildIndex}
                                           href={
                                             grandChild.url ||
-                                            (grandChild.type === 'custom' ||
-                                            grandChild.type === 'external'
-                                              ? grandChild.url
-                                              : grandChild.reference
+                                            (grandChild.reference
                                               ? `/page/${grandChild.reference}`
                                               : `/page?type=${grandChild.type}`)
                                           }
@@ -242,9 +233,7 @@ export default function MainHeader({ data }: { data: any }) {
                             <CustomLink
                               href={
                                 item.url ||
-                                (item.type === 'custom' || item.type === 'external'
-                                  ? item.url
-                                  : item.reference
+                                (item.reference
                                   ? `/page/${item.reference}`
                                   : `/page?type=${item.type}`)
                               }
@@ -291,9 +280,7 @@ export default function MainHeader({ data }: { data: any }) {
                                         <CustomLink
                                           href={
                                             child.url ||
-                                            (child.type === 'custom' || child.type === 'external'
-                                              ? child.url
-                                              : child.reference
+                                            (child.reference
                                               ? `/page/${child.reference}`
                                               : `/page?type=${child.type}`)
                                           }
@@ -329,10 +316,7 @@ export default function MainHeader({ data }: { data: any }) {
                                                       key={grandChild.id ?? grandChildIndex}
                                                       href={
                                                         grandChild.url ||
-                                                        (grandChild.type === 'custom' ||
-                                                        grandChild.type === 'external'
-                                                          ? grandChild.url
-                                                          : grandChild.reference
+                                                        (grandChild.reference
                                                           ? `/page/${grandChild.reference}`
                                                           : `/page?type=${grandChild.type}`)
                                                       }

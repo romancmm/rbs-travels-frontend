@@ -74,9 +74,7 @@ export default function MobileNav({ items }: { items: any[] }) {
                               key={childIndex}
                               href={
                                 child.url ||
-                                (child.type === 'custom' || child.type === 'external'
-                                  ? child.url
-                                  : child.reference
+                                (child.reference
                                   ? `/page/${child.reference}`
                                   : `/page?type=${child.type}`)
                               }
@@ -94,11 +92,7 @@ export default function MobileNav({ items }: { items: any[] }) {
                     <CustomLink
                       href={
                         item.url ||
-                        (item.type === 'custom' || item.type === 'external'
-                          ? item.url
-                          : item.reference
-                          ? `/page/${item.reference}`
-                          : `/page?type=${item.type}`)
+                        (item.reference ? `/page/${item.reference}` : `/page?type=${item.type}`)
                       }
                       onClick={() => setIsOpen(false)}
                       className='block hover:bg-white/10 px-4 py-3 rounded-lg text-white transition-colors'

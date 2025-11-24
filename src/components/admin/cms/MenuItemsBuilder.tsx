@@ -195,7 +195,7 @@ export function MenuItemsBuilder({
 
   const getMenuItemSubtext = (item: MenuItem) => {
     if (item.url) return item.url
-    if (item.referenceId) return `ID: ${item.referenceId.substring(0, 8)}...`
+    if (item.reference) return `ID: ${item.reference.substring(0, 8)}...`
     return 'No link'
   }
 
