@@ -92,8 +92,7 @@ export default function DynamicPage() {
               {section.description && (<Typography variant='body1' className='max-w-2xl text-lg'>{section.description}</Typography>)} 
     </div >
         </Container >
-      </Section > */
-      }
+      </Section > */}
 
       <div className='space-y-6'>
         {page?.content ? (

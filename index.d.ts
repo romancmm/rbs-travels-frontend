@@ -148,6 +148,7 @@ declare global {
     | 'paymentTerms'
     | 'privacyPolicy'
     | 'termsUse'
+
   // ================================
   // GLOBAL AUTH & USER TYPES
   // ================================
@@ -463,7 +464,7 @@ declare global {
   interface Blog extends BaseEntity {
     title: string
     slug: string
-    excerpt: string
+    excerpt?: string | null
     content: string
     thumbnail?: string | null
     gallery: string[]
@@ -476,6 +477,54 @@ declare global {
     // Relations
     category?: BlogCategory
     author?: User
+    readTime?: number
+  }
+
+  interface PackageCategory extends BaseEntity {
+    name: string
+    slug: string
+    // Relations
+    packages?: Package[]
+  }
+
+  interface Package extends BaseEntity {
+    title: string
+    slug: string
+    excerpt?: string | null
+    content: string
+    thumbnail?: string | null
+    gallery: string[]
+    tags: string[]
+    views: number
+    isPublished: boolean
+    publishedAt?: Date | null
+    categoryId: number
+    seo?: Record<string, any> | null
+    // Package-specific fields
+    destination?: string | null
+    price?: {
+      amount: number
+      currency?: string
+      discountedPrice?: number
+    } | null
+    duration?: {
+      days: number
+      nights: number
+    } | null
+    maxGroupSize?: number | null
+    rating?: number | null
+    reviewCount?: number | null
+    highlights?: string[]
+    inclusions?: string[]
+    exclusions?: string[]
+    itinerary?: Array<{
+      day: number
+      title: string
+      description: string
+    }>
+    availability?: string | null
+    // Relations
+    category?: PackageCategory
   }
 
   // ================================
@@ -1115,6 +1164,7 @@ export interface BlogCategory extends BaseEntity {
 export interface Blog extends BaseEntity {
   title: string
   slug: string
+  excerpt?: string | null
   content: string
   source?: string | null
   thumbnail?: string | null
@@ -1127,6 +1177,55 @@ export interface Blog extends BaseEntity {
   seo?: Record<string, any> | null
   // Relations
   category?: BlogCategory
+  author?: User
+  readTime?: number
+}
+
+export interface PackageCategory extends BaseEntity {
+  name: string
+  slug: string
+  // Relations
+  packages?: Package[]
+}
+
+export interface Package extends BaseEntity {
+  title: string
+  slug: string
+  excerpt?: string | null
+  content: string
+  thumbnail?: string | null
+  gallery: string[]
+  tags: string[]
+  views: number
+  isPublished: boolean
+  publishedAt?: Date | null
+  categoryId: number
+  seo?: Record<string, any> | null
+  // Package-specific fields
+  destination?: string | null
+  price?: {
+    amount: number
+    currency?: string
+    discountedPrice?: number
+  } | null
+  duration?: {
+    days: number
+    nights: number
+  } | null
+  maxGroupSize?: number | null
+  rating?: number | null
+  reviewCount?: number | null
+  highlights?: string[]
+  inclusions?: string[]
+  exclusions?: string[]
+  itinerary?: Array<{
+    day: number
+    title: string
+    description: string
+  }>
+  availability?: string | null
+  // Relations
+  category?: PackageCategory
 }
 
 // ================================
@@ -1393,6 +1492,8 @@ export type {
   Order,
   OrderFilters,
   OrderItem,
+  Package,
+  PackageCategory,
   PaginatedResponse,
   PaginationMeta,
   Payment,

@@ -8,7 +8,7 @@ import { Typography } from '@/components/common/typography'
 import { TrendingUp } from 'lucide-react'
 import { motion } from 'motion/react'
 import { use } from 'react'
-import BlogCard from './BlogCard'
+import BlogCard from '../../card/BlogCard'
 
 interface BlogProps {
   data?: any
