@@ -26,7 +26,7 @@ export interface MenuItem {
   title: string
   slug: string
   type: MenuItemType
-  referenceId?: string | null // UUID for entity types (page, post, category, service, project)
+  reference?: string | null // Slug for entity types (page, post, category, service, product, package, gallery)
   url?: string | null // URL for custom/external types
   icon?: string | null
   iconType?: 'icon' | 'image' // Lucide icon name or image URL
@@ -63,7 +63,7 @@ export interface CreateMenuItemInput {
   title: string
   slug?: string
   type: MenuItemType
-  referenceId?: string | null
+  reference?: string | null
   url?: string | null
   icon?: string | null
   iconType?: 'icon' | 'image'
@@ -119,10 +119,10 @@ export function hasChildren(item: MenuItem): boolean {
  * Validate menu item based on type
  */
 export function validateMenuItem(item: CreateMenuItemInput | UpdateMenuItemInput): string | null {
-  // Entity types require referenceId
+  // Entity types require reference (slug)
   if (isEntityMenuItemType(item.type)) {
-    if (!item.referenceId) {
-      return `Reference ID is required for ${item.type} type`
+    if (!item.reference) {
+      return `Reference (slug) is required for ${item.type} type`
     }
   }
 
@@ -196,24 +196,17 @@ export function getMenuItemUrl(item: MenuItem): string {
 
   // Fallback for entity types without URL
   if (isEntityMenuItem(item)) {
-    const typeMap: Record<string, string> = {
-      page: '/page',
-      post: '/page/blogs',
-      category: '/blog/posts',
-      service: '/services',
-      product: '/products',
-      package: '/packages',
-      gallery: '/gallery'
-    }
-    const basePath = typeMap[item.type] || '#'
+    // All content types now use /page/{slug} route
+    // reference contains the slug for the entity
+    const slug = item.reference || item.slug || '#'
 
-    // If referenceId is null, return base path (for "All" option)
-    if (!item.referenceId) {
-      return basePath
+    // If reference is null (for "All" option), return listing page
+    if (!item.reference) {
+      // For listing pages, use query param to indicate type
+      return `/page?type=${item.type}`
     }
 
-    // For specific items, append the ID
-    return `${basePath}/${item.referenceId}`
+    return `/page/${slug}`
   }
 
   return '#'

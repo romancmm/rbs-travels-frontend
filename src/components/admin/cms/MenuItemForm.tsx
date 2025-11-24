@@ -30,37 +30,37 @@ const MENU_TYPE_CONFIG: Record<
   },
   post: {
     adminEndpoint: '/admin/blog/posts',
-    frontendBase: '/page/blogs',
+    frontendBase: '/page',
     label: 'Blog Post',
     supportsAll: true
   },
   category: {
     adminEndpoint: '/admin/blog/categories',
-    frontendBase: '/blog/posts',
+    frontendBase: '/page',
     label: 'Blog Category',
     supportsAll: true
   },
   service: {
     adminEndpoint: '/admin/services',
-    frontendBase: '/services',
+    frontendBase: '/page',
     label: 'Service',
     supportsAll: true
   },
   product: {
     adminEndpoint: '/admin/products',
-    frontendBase: '/products',
+    frontendBase: '/page',
     label: 'Product',
     supportsAll: true
   },
   package: {
     adminEndpoint: '/admin/packages',
-    frontendBase: '/packages',
+    frontendBase: '/page',
     label: 'Package',
     supportsAll: true
   },
   gallery: {
     adminEndpoint: '/admin/gallery',
-    frontendBase: '/gallery',
+    frontendBase: '/page',
     label: 'Gallery',
     supportsAll: true
   }
@@ -81,7 +81,7 @@ const MenuItemSchema = z
       'custom',
       'external'
     ]),
-    referenceId: z.union([z.string(), z.null()]).optional(),
+    reference: z.union([z.string(), z.null()]).optional(),
     url: z.union([z.string(), z.null()]).optional(),
     target: z.enum(['_self', '_blank']),
     icon: z.union([z.string(), z.null()]).optional(),
@@ -93,21 +93,21 @@ const MenuItemSchema = z
   })
   .refine(
     (data) => {
-      // Entity types require referenceId (except when "All" is selected - null is valid)
+      // Entity types require reference (except when "All" is selected - null is valid)
       const entityTypes = ['page', 'post', 'category', 'service', 'product', 'package', 'gallery']
       if (entityTypes.includes(data.type)) {
-        // For page type, referenceId is required
+        // For page type, reference is required
         if (data.type === 'page') {
-          return !!data.referenceId
+          return !!data.reference
         }
-        // For other types, null (All) or a valid ID is acceptable
-        return data.referenceId !== undefined
+        // For other types, null (All) or a valid slug is acceptable
+        return data.reference !== undefined
       }
       return true
     },
     {
-      message: 'Reference ID is required',
-      path: ['referenceId']
+      message: 'Reference (slug) is required',
+      path: ['reference']
     }
   )
   .refine(
@@ -171,7 +171,7 @@ export default function MenuItemForm({ item, onSave, onCancel }: MenuItemEditorP
     defaultValues: {
       title: item?.title || '',
       type: (item?.type || 'custom') as MenuItemFormType['type'],
-      referenceId: item?.referenceId || '',
+      reference: item?.reference || '',
       url: item?.url || '',
       target: (item?.target as '_self' | '_blank') || '_self',
       icon: item?.icon || '',
@@ -215,11 +215,11 @@ export default function MenuItemForm({ item, onSave, onCancel }: MenuItemEditorP
 
     // Add appropriate field based on type
     if (isEntityType) {
-      payload.referenceId = data.referenceId || null
+      payload.reference = data.reference || null
       payload.url = null
     } else if (isLinkType) {
       payload.url = data.url || undefined
-      payload.referenceId = null
+      payload.reference = null
     }
 
     onSave(payload)
@@ -294,7 +294,7 @@ export default function MenuItemForm({ item, onSave, onCancel }: MenuItemEditorP
                 {isEntityType && (
                   <Controller
                     control={control}
-                    name='referenceId'
+                    name='reference'
                     render={({ field }) => (
                       <div className='space-y-2'>
                         <CustomSelect
@@ -305,7 +305,7 @@ export default function MenuItemForm({ item, onSave, onCancel }: MenuItemEditorP
                           options={(data) => {
                             const items =
                               data?.data?.items?.map((item: any) => ({
-                                value: item.id,
+                                value: item.slug,
                                 label: item.title || item.name
                               })) || []
 
@@ -320,9 +320,9 @@ export default function MenuItemForm({ item, onSave, onCancel }: MenuItemEditorP
                             field.onChange(value === 'null' ? null : value)
                           }}
                         />
-                        {errors.referenceId && (
+                        {errors.reference && (
                           <p className='text-red-600 text-sm'>
-                            {errors.referenceId.message as string}
+                            {errors.reference.message as string}
                           </p>
                         )}
                       </div>

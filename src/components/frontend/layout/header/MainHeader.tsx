@@ -62,20 +62,21 @@ export default function MainHeader({ data }: { data: any }) {
               return (
                 <div
                   key={item.id ?? index}
-                  ref={(el) => { parentRefs.current[`level1-${index}`] = el }}
+                  ref={(el) => {
+                    parentRefs.current[`level1-${index}`] = el
+                  }}
                   className='relative'
                   onMouseEnter={() => setHoveredItem(index)}
                   onMouseLeave={() => setHoveredItem(null)}
                 >
                   <CustomLink
                     href={
-                      item?.type === 'custom-link'
-                        ? item.link
-                        : item?.type === 'gallery'
-                          ? `/gallery/${item.link || item.slug}`
-                          : item?.type === 'custom-page'
-                            ? `/page/${item.pageId}`
-                            : `/page/${item.slug}`
+                      item.url ||
+                      (item.type === 'custom' || item.type === 'external'
+                        ? item.url
+                        : item.reference
+                        ? `/page/${item.reference}`
+                        : `/page?type=${item.type}`)
                     }
                     className='group flex items-center gap-1 hover:bg-white/10 px-3 py-2 rounded-lg transition-all duration-300'
                   >
@@ -88,8 +89,9 @@ export default function MainHeader({ data }: { data: any }) {
                     </Typography>
                     {publishedChildren.length > 0 && (
                       <ChevronDown
-                        className={`w-4 h-4 transition-transform duration-300 ${hoveredItem === index ? 'rotate-180' : ''
-                          }`}
+                        className={`w-4 h-4 transition-transform duration-300 ${
+                          hoveredItem === index ? 'rotate-180' : ''
+                        }`}
                       />
                     )}
                   </CustomLink>
@@ -104,30 +106,36 @@ export default function MainHeader({ data }: { data: any }) {
                     >
                       <div className='py-2'>
                         {publishedChildren.map((child: any, childIndex: number) => {
-                          const childPublishedChildren = child.children?.filter((c: any) => c.isPublished) ?? []
+                          const childPublishedChildren =
+                            child.children?.filter((c: any) => c.isPublished) ?? []
                           const childKey = `${item.id}-${child.id ?? childIndex}`
 
                           return (
                             <div
                               key={child.id ?? childIndex}
-                              ref={(el) => { parentRefs.current[childKey] = el }}
+                              ref={(el) => {
+                                parentRefs.current[childKey] = el
+                              }}
                               className='relative'
                               onMouseEnter={() => setHoveredChild(childKey)}
                               onMouseLeave={() => setHoveredChild(null)}
                             >
                               <CustomLink
                                 href={
-                                  child?.type === 'custom-link'
-                                    ? child.link
-                                    : child?.type === 'gallery'
-                                      ? `/gallery/${child.link || child.slug}`
-                                      : child?.type === 'custom-page'
-                                        ? `/page/${child.pageId}`
-                                        : `/page/${child.slug}`
+                                  child.url ||
+                                  (child.type === 'custom' || child.type === 'external'
+                                    ? child.url
+                                    : child.reference
+                                    ? `/page/${child.reference}`
+                                    : `/page?type=${child.type}`)
                                 }
                                 className='group flex justify-between items-center hover:bg-linear-to-r hover:from-primary/10 hover:to-primary/5 mx-2 px-4 py-3 rounded-xl text-header-color hover:text-primary transition-all duration-200'
                               >
-                                <Typography variant='body2' weight='medium' className='transition-transform group-hover:translate-x-1 duration-200'>
+                                <Typography
+                                  variant='body2'
+                                  weight='medium'
+                                  className='transition-transform group-hover:translate-x-1 duration-200'
+                                >
                                   {child.title}
                                 </Typography>
                                 {childPublishedChildren.length > 0 && (
@@ -145,25 +153,31 @@ export default function MainHeader({ data }: { data: any }) {
                                   )}
                                 >
                                   <div className='py-2'>
-                                    {childPublishedChildren.map((grandChild: any, grandChildIndex: number) => (
-                                      <CustomLink
-                                        key={grandChild.id ?? grandChildIndex}
-                                        href={
-                                          grandChild?.type === 'custom-link'
-                                            ? grandChild.link
-                                            : grandChild?.type === 'gallery'
-                                              ? `/gallery/${grandChild.link || grandChild.slug}`
-                                              : grandChild?.type === 'custom-page'
-                                                ? `/page/${grandChild.pageId}`
-                                                : `/page/${grandChild.slug}`
-                                        }
-                                        className='group flex items-center hover:bg-linear-to-r hover:from-primary/10 hover:to-primary/5 mx-2 px-4 py-3 rounded-xl text-header-color hover:text-primary transition-all duration-200'
-                                      >
-                                        <Typography variant='body2' weight='medium' className='transition-transform group-hover:translate-x-1 duration-200'>
-                                          {grandChild.title}
-                                        </Typography>
-                                      </CustomLink>
-                                    ))}
+                                    {childPublishedChildren.map(
+                                      (grandChild: any, grandChildIndex: number) => (
+                                        <CustomLink
+                                          key={grandChild.id ?? grandChildIndex}
+                                          href={
+                                            grandChild.url ||
+                                            (grandChild.type === 'custom' ||
+                                            grandChild.type === 'external'
+                                              ? grandChild.url
+                                              : grandChild.reference
+                                              ? `/page/${grandChild.reference}`
+                                              : `/page?type=${grandChild.type}`)
+                                          }
+                                          className='group flex items-center hover:bg-linear-to-r hover:from-primary/10 hover:to-primary/5 mx-2 px-4 py-3 rounded-xl text-header-color hover:text-primary transition-all duration-200'
+                                        >
+                                          <Typography
+                                            variant='body2'
+                                            weight='medium'
+                                            className='transition-transform group-hover:translate-x-1 duration-200'
+                                          >
+                                            {grandChild.title}
+                                          </Typography>
+                                        </CustomLink>
+                                      )
+                                    )}
                                   </div>
                                 </div>
                               )}
@@ -180,11 +194,15 @@ export default function MainHeader({ data }: { data: any }) {
             {/* More Dropdown */}
             {moreItems.length > 0 && (
               <div
-                ref={(el) => { parentRefs.current['more-menu'] = el }}
+                ref={(el) => {
+                  parentRefs.current['more-menu'] = el
+                }}
                 className='relative'
                 onMouseEnter={() => setIsMoreHovered(true)}
                 onMouseLeave={() => setIsMoreHovered(false)}
-              > <button className='group flex items-center gap-1 hover:bg-white/10 px-3 py-2 rounded-lg transition-all duration-300'>
+              >
+                {' '}
+                <button className='group flex items-center gap-1 hover:bg-white/10 px-3 py-2 rounded-lg transition-all duration-300'>
                   <Typography
                     variant='body1'
                     weight='medium'
@@ -193,11 +211,11 @@ export default function MainHeader({ data }: { data: any }) {
                     More
                   </Typography>
                   <ChevronDown
-                    className={`w-4 h-4 transition-transform duration-300 ${isMoreHovered ? 'rotate-180' : ''
-                      }`}
+                    className={`w-4 h-4 transition-transform duration-300 ${
+                      isMoreHovered ? 'rotate-180' : ''
+                    }`}
                   />
                 </button>
-
                 {isMoreHovered && (
                   <div
                     className={cn(
@@ -207,30 +225,36 @@ export default function MainHeader({ data }: { data: any }) {
                   >
                     <div className='py-2'>
                       {moreItems.map((item: any, itemIndex: number) => {
-                        const publishedChildren = item.children?.filter((c: any) => c.isPublished) ?? []
+                        const publishedChildren =
+                          item.children?.filter((c: any) => c.isPublished) ?? []
                         const moreItemKey = `more-${item.id ?? itemIndex}`
 
                         return (
                           <div
                             key={item.id ?? itemIndex}
-                            ref={(el) => { parentRefs.current[moreItemKey] = el }}
+                            ref={(el) => {
+                              parentRefs.current[moreItemKey] = el
+                            }}
                             className='relative'
                             onMouseEnter={() => setHoveredChild(moreItemKey)}
                             onMouseLeave={() => setHoveredChild(null)}
                           >
                             <CustomLink
                               href={
-                                item?.type === 'custom-link'
-                                  ? item.link
-                                  : item?.type === 'gallery'
-                                    ? `/gallery/${item.link || item.slug}`
-                                    : item?.type === 'custom-page'
-                                      ? `/page/${item.pageId}`
-                                      : `/page/${item.slug}`
+                                item.url ||
+                                (item.type === 'custom' || item.type === 'external'
+                                  ? item.url
+                                  : item.reference
+                                  ? `/page/${item.reference}`
+                                  : `/page?type=${item.type}`)
                               }
                               className='group flex justify-between items-center hover:bg-linear-to-r hover:from-primary/10 hover:to-primary/5 mx-2 px-4 py-3 rounded-xl text-header-color hover:text-primary transition-all duration-200'
                             >
-                              <Typography variant='body2' weight='medium' className='transition-transform group-hover:translate-x-1 duration-200'>
+                              <Typography
+                                variant='body2'
+                                weight='medium'
+                                className='transition-transform group-hover:translate-x-1 duration-200'
+                              >
                                 {item.title}
                               </Typography>
                               {publishedChildren.length > 0 && (
@@ -250,30 +274,36 @@ export default function MainHeader({ data }: { data: any }) {
                               >
                                 <div className='py-2'>
                                   {publishedChildren.map((child: any, childIndex: number) => {
-                                    const childPublishedChildren = child.children?.filter((c: any) => c.isPublished) ?? []
+                                    const childPublishedChildren =
+                                      child.children?.filter((c: any) => c.isPublished) ?? []
                                     const nestedKey = `${moreItemKey}-${child.id ?? childIndex}`
 
                                     return (
                                       <div
                                         key={child.id ?? childIndex}
-                                        ref={(el) => { parentRefs.current[nestedKey] = el }}
+                                        ref={(el) => {
+                                          parentRefs.current[nestedKey] = el
+                                        }}
                                         className='relative'
                                         onMouseEnter={() => setHoveredChild(nestedKey)}
                                         onMouseLeave={() => setHoveredChild(null)}
                                       >
                                         <CustomLink
                                           href={
-                                            child?.type === 'custom-link'
-                                              ? child.link
-                                              : child?.type === 'gallery'
-                                                ? `/gallery/${child.link || child.slug}`
-                                                : child?.type === 'custom-page'
-                                                  ? `/page/${child.pageId}`
-                                                  : `/page/${child.slug}`
+                                            child.url ||
+                                            (child.type === 'custom' || child.type === 'external'
+                                              ? child.url
+                                              : child.reference
+                                              ? `/page/${child.reference}`
+                                              : `/page?type=${child.type}`)
                                           }
                                           className='group flex justify-between items-center hover:bg-linear-to-r hover:from-primary/10 hover:to-primary/5 mx-2 px-4 py-3 rounded-xl text-header-color hover:text-primary transition-all duration-200'
                                         >
-                                          <Typography variant='body2' weight='medium' className='transition-transform group-hover:translate-x-1 duration-200'>
+                                          <Typography
+                                            variant='body2'
+                                            weight='medium'
+                                            className='transition-transform group-hover:translate-x-1 duration-200'
+                                          >
                                             {child.title}
                                           </Typography>
                                           {childPublishedChildren.length > 0 && (
@@ -282,38 +312,45 @@ export default function MainHeader({ data }: { data: any }) {
                                         </CustomLink>
 
                                         {/* Third Level Dropdown */}
-                                        {childPublishedChildren.length > 0 && hoveredChild === nestedKey && (
-                                          <div
-                                            className={cn(
-                                              'top-0 z-50 absolute bg-white shadow-2xl backdrop-blur-sm border border-gray-200/50 rounded-2xl w-64 animate-in duration-300 fade-in-0',
-                                              getDropdownPosition(nestedKey, true) === 'right'
-                                                ? 'right-full mr-2 slide-in-from-right-2'
-                                                : 'left-full ml-2 slide-in-from-left-2'
-                                            )}
-                                          >
-                                            <div className='py-2'>
-                                              {childPublishedChildren.map((grandChild: any, grandChildIndex: number) => (
-                                                <CustomLink
-                                                  key={grandChild.id ?? grandChildIndex}
-                                                  href={
-                                                    grandChild?.type === 'custom-link'
-                                                      ? grandChild.link
-                                                      : grandChild?.type === 'gallery'
-                                                        ? `/gallery/${grandChild.link || grandChild.slug}`
-                                                        : grandChild?.type === 'custom-page'
-                                                          ? `/page/${grandChild.pageId}`
-                                                          : `/page/${grandChild.slug}`
-                                                  }
-                                                  className='group flex items-center hover:bg-linear-to-r hover:from-primary/10 hover:to-primary/5 mx-2 px-4 py-3 rounded-xl text-header-color hover:text-primary transition-all duration-200'
-                                                >
-                                                  <Typography variant='body2' weight='medium' className='transition-transform group-hover:translate-x-1 duration-200'>
-                                                    {grandChild.title}
-                                                  </Typography>
-                                                </CustomLink>
-                                              ))}
+                                        {childPublishedChildren.length > 0 &&
+                                          hoveredChild === nestedKey && (
+                                            <div
+                                              className={cn(
+                                                'top-0 z-50 absolute bg-white shadow-2xl backdrop-blur-sm border border-gray-200/50 rounded-2xl w-64 animate-in duration-300 fade-in-0',
+                                                getDropdownPosition(nestedKey, true) === 'right'
+                                                  ? 'right-full mr-2 slide-in-from-right-2'
+                                                  : 'left-full ml-2 slide-in-from-left-2'
+                                              )}
+                                            >
+                                              <div className='py-2'>
+                                                {childPublishedChildren.map(
+                                                  (grandChild: any, grandChildIndex: number) => (
+                                                    <CustomLink
+                                                      key={grandChild.id ?? grandChildIndex}
+                                                      href={
+                                                        grandChild.url ||
+                                                        (grandChild.type === 'custom' ||
+                                                        grandChild.type === 'external'
+                                                          ? grandChild.url
+                                                          : grandChild.reference
+                                                          ? `/page/${grandChild.reference}`
+                                                          : `/page?type=${grandChild.type}`)
+                                                      }
+                                                      className='group flex items-center hover:bg-linear-to-r hover:from-primary/10 hover:to-primary/5 mx-2 px-4 py-3 rounded-xl text-header-color hover:text-primary transition-all duration-200'
+                                                    >
+                                                      <Typography
+                                                        variant='body2'
+                                                        weight='medium'
+                                                        className='transition-transform group-hover:translate-x-1 duration-200'
+                                                      >
+                                                        {grandChild.title}
+                                                      </Typography>
+                                                    </CustomLink>
+                                                  )
+                                                )}
+                                              </div>
                                             </div>
-                                          </div>
-                                        )}
+                                          )}
                                       </div>
                                     )
                                   })}
@@ -332,27 +369,29 @@ export default function MainHeader({ data }: { data: any }) {
         )}
 
         {/* Contact & CTA Section */}
-        {siteConfig && <div className='hidden xl:flex items-center gap-4'>
-          {/* Phone Number */}
-          <div className='flex items-center gap-2 text-header-color/90 hover:text-header-color transition-colors'>
-            <div className='flex justify-center items-center bg-primary/20 rounded-lg w-10 h-10'>
-              <Phone className='w-5 h-5' />
-            </div>
-            <div className='text-sm'>
-              <Typography variant='caption' className='text-header-color/70'>
-                Call us
-              </Typography>
+        {siteConfig && (
+          <div className='hidden xl:flex items-center gap-4'>
+            {/* Phone Number */}
+            <div className='flex items-center gap-2 text-header-color/90 hover:text-header-color transition-colors'>
+              <div className='flex justify-center items-center bg-primary/20 rounded-lg w-10 h-10'>
+                <Phone className='w-5 h-5' />
+              </div>
+              <div className='text-sm'>
+                <Typography variant='caption' className='text-header-color/70'>
+                  Call us
+                </Typography>
 
-              <Typography
-                href={`tel:${siteConfig.hotline?.replace(' ', '')}`}
-                variant='body2'
-                weight='semibold'
-              >
-                {siteConfig.hotline?.replace('+88', '')}
-              </Typography>
+                <Typography
+                  href={`tel:${siteConfig.hotline?.replace(' ', '')}`}
+                  variant='body2'
+                  weight='semibold'
+                >
+                  {siteConfig.hotline?.replace('+88', '')}
+                </Typography>
+              </div>
             </div>
           </div>
-        </div>}
+        )}
 
         {/* Mobile Navigation */}
         <MobileNav items={data} />

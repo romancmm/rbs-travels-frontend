@@ -3,20 +3,38 @@ import { Container } from '@/components/common/container'
 import { Section } from '@/components/common/section'
 import ContentRenderer from '@/components/frontend/content-renderers/ContentRenderer'
 import { Skeleton } from '@/components/ui/skeleton'
-import { CONTENT_TYPE_CONFIG, type ContentType } from '@/config/contentTypes'
+import { buildContentUrl, CONTENT_TYPE_CONFIG, type ContentType } from '@/config/contentTypes'
 import useAsync from '@/hooks/useAsync'
-import { notFound, useParams } from 'next/navigation'
+import { notFound } from 'next/navigation'
 
-export default function DynamicPage() {
-  const params = useParams()
-  const slug = params.slug as string
+interface UnifiedContentPageProps {
+  contentType: ContentType
+  slug?: string | null
+  categoryId?: string | null
+}
 
-  // Unified endpoint that returns content with type information
-  const { data, loading } = useAsync<{
-    data: any
-    type?: ContentType
-  }>(() => `/pages/${slug}`, true)
-  console.log('data', data)
+/**
+ * Unified content page component that handles all content types
+ * Supports both listing and detail pages based on configuration
+ */
+export default function UnifiedContentPage({
+  contentType,
+  slug,
+  categoryId
+}: UnifiedContentPageProps) {
+  const config = CONTENT_TYPE_CONFIG[contentType]
+  const isListing = !slug
+
+  // Build API URL
+  const apiUrl = buildContentUrl(contentType, {
+    id: slug,
+    categoryId,
+    isListing
+  })
+
+  const { data, loading } = useAsync<{ data: any }>(() => apiUrl, true)
+  console.log('[[data]]', data, slug, apiUrl, contentType)
+
   if (loading) {
     return (
       <>
@@ -56,21 +74,31 @@ export default function DynamicPage() {
     )
   }
 
+  // Handle not found
   if (!data?.data) {
     notFound()
   }
 
   const content = data.data
-  const contentType = (data.type || content.type || 'page') as ContentType
-  const config = CONTENT_TYPE_CONFIG[contentType]
-
-  if (!config) {
-    notFound()
+  console.log('content', content)
+  // For listing pages, render appropriate list component
+  if (isListing && config.hasListing) {
+    return (
+      <div className='p-8 text-gray-600 text-center'>
+        Listing page for {contentType} - To be implemented with {config.listingRenderer}
+        <pre className='mt-4 text-sm text-left'>{JSON.stringify(content, null, 2)}</pre>
+      </div>
+    )
   }
 
-  return (
-    <div className='space-y-6'>
-      <ContentRenderer data={content} config={config} />
-    </div>
-  )
+  // For detail pages, render using ContentRenderer
+  if (!isListing && config.hasDetail) {
+    return (
+      <div className='space-y-6'>
+        <ContentRenderer data={content} config={config} />
+      </div>
+    )
+  }
+
+  return notFound()
 }
