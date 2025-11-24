@@ -219,7 +219,7 @@ export const buildBlogMetadata = (data: Blog): Metadata => ({
   description: data?.excerpt,
   openGraph: {
     title: data?.title,
-    description: data?.excerpt,
+    description: data?.excerpt ?? '',
     type: 'article',
     url: `${process.env.NEXT_PUBLIC_APP_URL}/blogs?slug=${data?.slug}`,
     images: data?.thumbnail ? [{ url: data?.thumbnail }] : []

@@ -25,7 +25,8 @@ import { Switch } from '@/components/ui/switch'
 import { useConfirmationModal } from '@/hooks/useConfirmationModal'
 import { cn } from '@/lib/utils'
 import { menuService } from '@/services/api/cms.service'
-import type { MenuItem, MenuItemType } from '@/types/cms'
+import type { MenuItem, MenuItemType } from '@/types/menu.types'
+import { MENU_ITEM_TYPE_LABELS } from '@/types/menu.types'
 import MenuItemForm from './MenuItemForm'
 
 interface MenuItemsBuilderProps {
@@ -36,7 +37,13 @@ interface MenuItemsBuilderProps {
   setIsSheetOpen?: (open: boolean) => void
 }
 
-export function MenuItemsBuilder({ items, groupId, refetch, isSheetOpen: externalIsSheetOpen, setIsSheetOpen: externalSetIsSheetOpen }: MenuItemsBuilderProps) {
+export function MenuItemsBuilder({
+  items,
+  groupId,
+  refetch,
+  isSheetOpen: externalIsSheetOpen,
+  setIsSheetOpen: externalSetIsSheetOpen
+}: MenuItemsBuilderProps) {
   const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set())
 
   // editor drawer state
@@ -169,22 +176,34 @@ export function MenuItemsBuilder({ items, groupId, refetch, isSheetOpen: externa
 
   const getMenuItemIcon = (type: MenuItemType) => {
     switch (type) {
-      case 'custom-link':
-        return <LinkIcon className='w-4 h-4' />
-      case 'custom-page':
+      case 'page':
         return <FileText className='w-4 h-4' />
-      case 'category-blogs':
+      case 'post':
+        return <FileText className='w-4 h-4' />
+      case 'category':
         return <FolderOpen className='w-4 h-4' />
-      case 'article':
+      case 'service':
         return <FileText className='w-4 h-4' />
+      case 'project':
+        return <FileText className='w-4 h-4' />
+      case 'custom':
+        return <LinkIcon className='w-4 h-4' />
+      case 'external':
+        return <ExternalLink className='w-4 h-4' />
       default:
         return <LinkIcon className='w-4 h-4' />
     }
   }
 
+  const getMenuItemSubtext = (item: MenuItem) => {
+    if (item.url) return item.url
+    if (item.referenceId) return `ID: ${item.referenceId.substring(0, 8)}...`
+    return 'No link'
+  }
+
   const renderMenuItem = (item: MenuItem, level: number = 0) => {
     const isExpanded = expandedItems.has(item.id)
-    const hasChildren = item.children?.length > 0
+    const hasChildren = (item.children?.length ?? 0) > 0
 
     return (
       <div key={item.id} className='space-y-1'>
@@ -219,13 +238,11 @@ export function MenuItemsBuilder({ items, groupId, refetch, isSheetOpen: externa
               <div className='flex items-center gap-2'>
                 <span className='font-medium'>{item.title}</span>
                 <Badge variant='secondary' className='text-xs'>
-                  {item.type.replace('-', ' ')}
+                  {MENU_ITEM_TYPE_LABELS[item.type]}
                 </Badge>
                 {item.target === '_blank' && <ExternalLink className='w-3 h-3' />}
               </div>
-              <p className='text-muted-foreground text-xs'>
-                {item.link || item.pageId || item.categoryId || item.articleId}
-              </p>
+              <p className='text-muted-foreground text-xs'>{getMenuItemSubtext(item)}</p>
             </div>
           </div>
 
@@ -277,7 +294,7 @@ export function MenuItemsBuilder({ items, groupId, refetch, isSheetOpen: externa
         {/* Children */}
         {hasChildren && isExpanded && (
           <div className='space-y-1'>
-            {item.children.map((child) => renderMenuItem(child, level + 1))}
+            {item.children?.map((child) => renderMenuItem(child, level + 1))}
           </div>
         )}
       </div>
@@ -291,12 +308,12 @@ export function MenuItemsBuilder({ items, groupId, refetch, isSheetOpen: externa
 
       {/* Edit Sheet */}
       <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
-        <SheetContent>
+        <SheetContent className='lg:min-w-lg'>
           <SheetHeader>
             <SheetTitle>{editingItem ? 'Edit Menu Item' : 'Add Menu Item'}</SheetTitle>
             <SheetClose />
           </SheetHeader>
-          <div className="px-4 pb-8 overflow-y-auto">
+          <div className='px-4 pb-8 overflow-y-auto'>
             <MenuItemForm
               item={editingItem}
               onSave={handleFormSave}
@@ -309,7 +326,6 @@ export function MenuItemsBuilder({ items, groupId, refetch, isSheetOpen: externa
           </div>
         </SheetContent>
       </Sheet>
-
 
       {localItems?.length === 0 ? (
         <div className='flex flex-col justify-center items-center p-12 border border-dashed rounded-lg text-center'>

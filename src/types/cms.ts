@@ -5,74 +5,23 @@
  */
 
 // ==================== MENU SYSTEM ====================
+// Import from new refactored menu types
+export type {
+  CreateMenuItemInput as CreateMenuItemPayload,
+  CreateMenuInput as CreateMenuPayload,
+  Menu,
+  MenuItem,
+  MenuItemType,
+  MenuPosition,
+  UpdateMenuItemInput as UpdateMenuItemPayload,
+  UpdateMenuInput as UpdateMenuPayload
+} from './menu.types'
+export type { RefactoredMenuItem }
 
-export type MenuItemType = 'custom-link' | 'category-blogs' | 'custom-page' | 'article' | 'gallery'
+// Re-export for backward compatibility
+import type { MenuItem as RefactoredMenuItem } from './menu.types'
 
-export type MenuPosition = 'header' | 'footer' | 'sidebar' | 'custom'
-
-export interface MenuItem {
-  id: string
-  menuId?: string // Foreign key to Menu
-  title: string
-  type: MenuItemType
-  link?: string // For custom-link
-  categoryId?: string // For category-blogs (FK)
-  pageId?: string // For custom-page (FK to PageBuilder)
-  articleId?: string // For article (FK to Post)
-  icon?: string
-  target?: '_self' | '_blank'
-  cssClass?: string // Custom CSS class for styling
-  parentId?: string | null // For relational structure
-  order: number
-  isPublished?: boolean // Published status
-  meta?: Record<string, any> // Additional metadata
-  children: MenuItem[] // Nested children for tree structure (from cache or transformed)
-  createdAt?: string
-  updatedAt?: string
-}
-
-export interface Menu {
-  id: string
-  name: string
-  slug: string
-  position: MenuPosition
-  items: MenuItem[] // Can come from itemsCache (public) or relations (admin)
-  itemsCache?: MenuItem[] // JSON cache for public API
-  isPublished: boolean
-  version?: number // Version tracking
-  cacheKey?: string // Cache invalidation key
-  createdAt: string
-  updatedAt: string
-}
-
-export interface CreateMenuPayload {
-  name: string
-  slug: string
-  position?: MenuPosition
-  isPublished?: boolean
-}
-
-export interface UpdateMenuPayload extends Partial<CreateMenuPayload> {
-  items?: MenuItem[] // Allow updating menu items (for hybrid approach)
-}
-
-export interface CreateMenuItemPayload {
-  title: string
-  type: MenuItemType
-  link?: string
-  categoryId?: string
-  pageId?: string
-  articleId?: string
-  icon?: string
-  target?: '_self' | '_blank'
-  cssClass?: string
-  parentId?: string | null
-  order: number
-  isPublished?: boolean
-  meta?: Record<string, any>
-}
-
-export type UpdateMenuItemPayload = Partial<CreateMenuItemPayload>
+// Menu-related types now imported from menu.types.ts above
 
 // ==================== PAGE BUILDER SYSTEM ====================
 
