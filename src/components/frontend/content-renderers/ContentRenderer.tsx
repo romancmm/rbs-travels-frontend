@@ -1,7 +1,7 @@
 import PackageDetailRenderer from '@/components/frontend/details/PackageDetailRenderer'
 import PageBuilderRenderer from '@/components/frontend/page-builder/Renderer'
 import type { ContentTypeConfig } from '@/config/contentTypes'
-import BlogDetailRenderer from './BlogDetailRenderer'
+import ArticleDetailRenderer from './ArticleDetailRenderer'
 import GalleryDetailRenderer from './GalleryDetailRenderer'
 import ProductDetailRenderer from './ProductDetailRenderer'
 import ServiceDetailRenderer from './ServiceDetailRenderer'
@@ -20,7 +20,7 @@ export default function ContentRenderer({ data, config }: ContentRendererProps) 
       return data.content ? <PageBuilderRenderer content={data.content} /> : null
 
     case 'blog':
-      return <BlogDetailRenderer data={data} />
+      return <ArticleDetailRenderer data={data} />
 
     case 'service':
       return <ServiceDetailRenderer data={data} />

@@ -4,6 +4,7 @@ import CustomLink from '@/components/common/CustomLink'
 import { Typography } from '@/components/common/typography'
 import { useSiteConfig } from '@/components/providers/store-provider'
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet'
+import { getMenuItemUrl } from '@/types/menu.types'
 import { ChevronRight, Mail, MapPin, Menu, PhoneCall, X } from 'lucide-react'
 import { useState } from 'react'
 
@@ -59,9 +60,8 @@ export default function MobileNav({ items }: { items: any[] }) {
                         </Typography>
                         {item.children?.length > 0 && (
                           <ChevronRight
-                            className={`w-4 h-4 transition-transform duration-200 ${
-                              expandedItem === index ? 'rotate-90' : ''
-                            }`}
+                            className={`w-4 h-4 transition-transform duration-200 ${expandedItem === index ? 'rotate-90' : ''
+                              }`}
                           />
                         )}
                       </button>
@@ -72,12 +72,7 @@ export default function MobileNav({ items }: { items: any[] }) {
                           {item.children.map((child: any, childIndex: number) => (
                             <CustomLink
                               key={childIndex}
-                              href={
-                                child.url ||
-                                (child.reference
-                                  ? `/page/${child.reference}`
-                                  : `/page?type=${child.type}`)
-                              }
+                              href={getMenuItemUrl(child)}
                               onClick={() => setIsOpen(false)}
                               className='block hover:bg-white/10 px-3 py-2 rounded-lg text-slate-300 hover:text-white transition-colors'
                             >
@@ -90,10 +85,7 @@ export default function MobileNav({ items }: { items: any[] }) {
                   ) : (
                     // Regular navigation item
                     <CustomLink
-                      href={
-                        item.url ||
-                        (item.reference ? `/page/${item.reference}` : `/page?type=${item.type}`)
-                      }
+                      href={getMenuItemUrl(item)}
                       onClick={() => setIsOpen(false)}
                       className='block hover:bg-white/10 px-4 py-3 rounded-lg text-white transition-colors'
                     >

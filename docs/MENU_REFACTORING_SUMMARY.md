@@ -64,7 +64,7 @@
 ```
 ✓ Services: custom → /services
 ✓ Projects: custom → /projects
-✓ Blog: custom → /blog
+✓ Article: custom → /blog
 ✓ About: custom → /about
 ✓ Contact: custom → /contact
 ✓ Privacy Policy: custom → /privacy-policy

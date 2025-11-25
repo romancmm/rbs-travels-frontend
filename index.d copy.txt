@@ -191,14 +191,14 @@ declare global {
   // GLOBAL CONTENT TYPES
   // ================================
 
-  interface BlogCategory extends BaseEntity {
+  interface ArticleCategory extends BaseEntity {
     name: string
     slug: string
     // Relations
-    blogs?: Blog[]
+    blogs?: Article[]
   }
 
-  interface Blog extends BaseEntity {
+  interface Article extends BaseEntity {
     title: string
     slug: string
     excerpt: string
@@ -212,7 +212,7 @@ declare global {
     categoryId: number
     seo?: Record<string, any> | null
     // Relations
-    category?: BlogCategory
+    category?: ArticleCategory
     author?: User
   }
 
@@ -283,7 +283,7 @@ declare global {
     dateTo?: Date
   }
 
-  interface BlogFilters extends BaseQuery {
+  interface ArticleFilters extends BaseQuery {
     categoryId?: number
     isPublished?: boolean
     tags?: string[]
@@ -428,14 +428,14 @@ declare global {
   // CONTENT TYPES
   // ================================
 
-  export interface BlogCategory extends BaseEntity {
+  export interface ArticleCategory extends BaseEntity {
     name: string
     slug: string
     // Relations
-    blogs?: Blog[]
+    blogs?: Article[]
   }
 
-  export interface Blog extends BaseEntity {
+  export interface Article extends BaseEntity {
     title: string
     slug: string
     content: string
@@ -449,7 +449,7 @@ declare global {
     categoryId: number
     seo?: Record<string, any> | null
     // Relations
-    category?: BlogCategory
+    category?: ArticleCategory
   }
 
   export interface Notification extends BaseEntity {
@@ -507,7 +507,7 @@ declare global {
     dateTo?: Date
   }
 
-  export interface BlogFilters extends BaseQuery {
+  export interface ArticleFilters extends BaseQuery {
     categoryId?: number
     isPublished?: boolean
     tags?: string[]
@@ -568,9 +568,9 @@ declare global {
     ApiResponse,
     BaseEntity,
     BaseQuery,
-    Blog,
-    BlogCategory,
-    BlogFilters,
+    Article,
+    ArticleCategory,
+    ArticleFilters,
     Category,
     Notification,
     PaginatedResponse,

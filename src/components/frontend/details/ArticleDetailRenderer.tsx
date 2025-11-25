@@ -10,12 +10,12 @@ import { Badge } from '@/components/ui/badge'
 import { Card, CardContent } from '@/components/ui/card'
 import { Calendar, Clock } from 'lucide-react'
 
-type BlogDetailProps = {
-  data: Blog
-  relatedPosts?: Blog[]
+type ArticleDetailProps = {
+  data: Article
+  relatedPosts?: Article[]
 }
 
-export default function BlogDetailRenderer({ data, relatedPosts = [] }: BlogDetailProps) {
+export default function ArticleDetailRenderer({ data, relatedPosts = [] }: ArticleDetailProps) {
   const currentUrl = typeof window !== 'undefined' ? window.location.href : ''
   return (
     <Section variant='xl'>
@@ -67,7 +67,7 @@ export default function BlogDetailRenderer({ data, relatedPosts = [] }: BlogDeta
               </div>
             )}
 
-            {/* Blog Content */}
+            {/* Article Content */}
             <div className='space-y-6 prose-img:rounded-lg max-w-none prose-headings:font-bold prose-a:text-primary prose-p:text-gray-700 prose lg:prose-xl'>
               {data.content && <div dangerouslySetInnerHTML={{ __html: data.content }} />}
             </div>

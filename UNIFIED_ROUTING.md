@@ -19,7 +19,7 @@ The content type is automatically detected from the API response, not from the U
 | Type    | Item       | URL                | API Response                     |
 | ------- | ---------- | ------------------ | -------------------------------- |
 | Page    | About      | `/page/about`      | `{data: {...}, type: 'page'}`    |
-| Blog    | My Post    | `/page/my-post`    | `{data: {...}, type: 'post'}`    |
+| Article | My Post    | `/page/my-post`    | `{data: {...}, type: 'post'}`    |
 | Service | Web Design | `/page/web-design` | `{data: {...}, type: 'service'}` |
 | Product | Product 1  | `/page/product-1`  | `{data: {...}, type: 'product'}` |
 | Package | Bali Tour  | `/page/bali-tour`  | `{data: {...}, type: 'package'}` |
@@ -32,7 +32,7 @@ src/
 │   └── contentTypes.ts              # Config for all types
 ├── components/frontend/content-renderers/
 │   ├── ContentRenderer.tsx          # Routes to correct renderer
-│   ├── BlogDetailRenderer.tsx
+│   ├── ArticleDetailRenderer.tsx
 │   ├── ServiceDetailRenderer.tsx
 │   ├── ProductDetailRenderer.tsx
 │   ├── GalleryDetailRenderer.tsx
@@ -160,7 +160,7 @@ All content now at `/page/{slug}`:
 
 ```bash
 /page/about         # Page
-/page/my-blog      # Blog post
+/page/my-blog      # Article post
 /page/web-design   # Service
 /page/product-1    # Product
 /page/bali-tour    # Package

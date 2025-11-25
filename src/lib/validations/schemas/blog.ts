@@ -1,32 +1,32 @@
 import { z } from 'zod'
 
 /**
- * Blog Validation Schemas
+ * Article Validation Schemas
  *
- * This file contains all Zod validation schemas for Blog operations:
- * - BlogSeoSchema: SEO fields validation
- * - CreateBlogSchema: For creating new blog posts
- * - UpdateBlogSchema: For updating existing blog posts (includes ID)
+ * This file contains all Zod validation schemas for Article operations:
+ * - ArticleSeoSchema: SEO fields validation
+ * - CreateArticleSchema: For creating new blog posts
+ * - UpdateArticleSchema: For updating existing blog posts (includes ID)
  */
 
 // SEO schema for blog posts
 
-export const BlogCategorySchema = z.object({
+export const ArticleCategorySchema = z.object({
   name: z.string().min(1, 'Name is required').max(100, 'Name must be less than 100 characters'),
   slug: z.string().optional() // Auto-generated from name
 })
 
 // Create category schema (only name is required)
-export const CreateBlogCategorySchema = z.object({
+export const CreateArticleCategorySchema = z.object({
   name: z.string().min(1, 'Name is required').max(100, 'Name must be less than 100 characters')
 })
 
 // Update category schema
-export const UpdateBlogCategorySchema = CreateBlogCategorySchema.partial().extend({
+export const UpdateArticleCategorySchema = CreateArticleCategorySchema.partial().extend({
   id: z.number()
 })
 
-export const BlogSeoSchema = z.object({
+export const ArticleSeoSchema = z.object({
   title: z
     .string()
     .min(1, 'SEO title is required')
@@ -39,7 +39,7 @@ export const BlogSeoSchema = z.object({
 })
 
 // Create blog schema
-export const CreateBlogSchema = z.object({
+export const CreateArticleSchema = z.object({
   title: z.string().min(1, 'Title is required').max(200, 'Title must be less than 200 characters'),
   slug: z.string().min(1, 'Slug is required').max(200, 'Slug must be less than 200 characters'),
   categoryId: z.string().min(1, 'Category is required').optional(),
@@ -52,18 +52,18 @@ export const CreateBlogSchema = z.object({
   gallery: z.array(z.string()),
   tags: z.array(z.string()),
   isPublished: z.boolean(),
-  seo: BlogSeoSchema
+  seo: ArticleSeoSchema
 })
 
 // Update blog schema (same as create but with optional fields for partial updates)
-export const UpdateBlogSchema = CreateBlogSchema.partial().extend({
+export const UpdateArticleSchema = CreateArticleSchema.partial().extend({
   id: z.number()
 })
 
 // Type exports
-export type BlogCategoryType = z.infer<typeof BlogCategorySchema>
-export type CreateBlogCategoryType = z.infer<typeof CreateBlogCategorySchema>
-export type UpdateBlogCategoryType = z.infer<typeof UpdateBlogCategorySchema>
-export type CreateBlogType = z.infer<typeof CreateBlogSchema>
-export type UpdateBlogType = z.infer<typeof UpdateBlogSchema>
-export type BlogSeoType = z.infer<typeof BlogSeoSchema>
+export type ArticleCategoryType = z.infer<typeof ArticleCategorySchema>
+export type CreateArticleCategoryType = z.infer<typeof CreateArticleCategorySchema>
+export type UpdateArticleCategoryType = z.infer<typeof UpdateArticleCategorySchema>
+export type CreateArticleType = z.infer<typeof CreateArticleSchema>
+export type UpdateArticleType = z.infer<typeof UpdateArticleSchema>
+export type ArticleSeoType = z.infer<typeof ArticleSeoSchema>

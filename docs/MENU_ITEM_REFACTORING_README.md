@@ -86,15 +86,15 @@ POST /admin/menu/{menuId}/items
 
 ## Menu Item Types
 
-| Type       | Description          | Use Case               |
-| ---------- | -------------------- | ---------------------- |
-| `page`     | Links to a Page      | About, Contact pages   |
-| `post`     | Links to a Blog Post | Latest article         |
-| `category` | Links to a Category  | Blog categories        |
-| `service`  | Links to a Service   | Service offerings      |
-| `project`  | Links to a Project   | Portfolio items        |
-| `custom`   | Custom internal link | Dashboard, Admin       |
-| `external` | External website     | Social media, Partners |
+| Type       | Description             | Use Case               |
+| ---------- | ----------------------- | ---------------------- |
+| `page`     | Links to a Page         | About, Contact pages   |
+| `post`     | Links to a Article Post | Latest article         |
+| `category` | Links to a Category     | Article categories     |
+| `service`  | Links to a Service      | Service offerings      |
+| `project`  | Links to a Project      | Portfolio items        |
+| `custom`   | Custom internal link    | Dashboard, Admin       |
+| `external` | External website        | Social media, Partners |
 
 ## TypeScript Support
 

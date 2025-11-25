@@ -454,14 +454,14 @@ declare global {
   // GLOBAL CONTENT TYPES
   // ================================
 
-  interface BlogCategory extends BaseEntity {
+  interface ArticleCategory extends BaseEntity {
     name: string
     slug: string
     // Relations
-    blogs?: Blog[]
+    blogs?: Article[]
   }
 
-  interface Blog extends BaseEntity {
+  interface Article extends BaseEntity {
     title: string
     slug: string
     excerpt?: string | null
@@ -475,7 +475,7 @@ declare global {
     categoryId: number
     seo?: Record<string, any> | null
     // Relations
-    category?: BlogCategory
+    category?: ArticleCategory
     author?: User
     readTime?: number
   }
@@ -641,7 +641,7 @@ declare global {
     dateTo?: Date
   }
 
-  interface BlogFilters extends BaseQuery {
+  interface ArticleFilters extends BaseQuery {
     categoryId?: number
     isPublished?: boolean
     tags?: string[]
@@ -1154,14 +1154,14 @@ export interface CouponUsage {
 // CONTENT TYPES
 // ================================
 
-export interface BlogCategory extends BaseEntity {
+export interface ArticleCategory extends BaseEntity {
   name: string
   slug: string
   // Relations
-  blogs?: Blog[]
+  blogs?: Article[]
 }
 
-export interface Blog extends BaseEntity {
+export interface Article extends BaseEntity {
   title: string
   slug: string
   excerpt?: string | null
@@ -1176,7 +1176,7 @@ export interface Blog extends BaseEntity {
   categoryId: number
   seo?: Record<string, any> | null
   // Relations
-  category?: BlogCategory
+  category?: ArticleCategory
   author?: User
   readTime?: number
 }
@@ -1342,7 +1342,7 @@ export interface OrderFilters extends BaseQuery {
   dateTo?: Date
 }
 
-export interface BlogFilters extends BaseQuery {
+export interface ArticleFilters extends BaseQuery {
   categoryId?: number
   isPublished?: boolean
   tags?: string[]
@@ -1474,12 +1474,12 @@ export interface FileUploadResponse extends ApiResponse<UploadedFile[]> {
 export type {
   Account,
   ApiResponse,
+  Article,
+  ArticleCategory,
+  ArticleFilters,
   AuditLog,
   BaseEntity,
   BaseQuery,
-  Blog,
-  BlogCategory,
-  BlogFilters,
   CartItem,
   Category,
   CheckoutData,

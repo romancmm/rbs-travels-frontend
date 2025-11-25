@@ -19,51 +19,35 @@ const MENU_TYPE_CONFIG: Record<
     adminEndpoint: string
     frontendBase: string
     label: string
-    supportsAll: boolean
+    supportsMultiple?: boolean // For category-articles type
   }
 > = {
+  'category-articles': {
+    adminEndpoint: '/admin/articles/categories',
+    frontendBase: '/articles',
+    label: 'Article Categories',
+    supportsMultiple: true
+  },
+  'single-article': {
+    adminEndpoint: '/admin/articles/posts',
+    frontendBase: '/articles',
+    label: 'Article'
+  },
   page: {
     adminEndpoint: '/admin/pages',
-    frontendBase: '/page',
-    label: 'Page',
-    supportsAll: false
+    frontendBase: '/',
+    label: 'Page'
   },
-  post: {
-    adminEndpoint: '/admin/blog/posts',
-    frontendBase: '/page',
-    label: 'Blog Post',
-    supportsAll: true
-  },
-  category: {
-    adminEndpoint: '/admin/blog/categories',
-    frontendBase: '/page',
-    label: 'Blog Category',
-    supportsAll: true
-  },
-  service: {
-    adminEndpoint: '/admin/services',
-    frontendBase: '/page',
-    label: 'Service',
-    supportsAll: true
-  },
-  product: {
-    adminEndpoint: '/admin/products',
-    frontendBase: '/page',
-    label: 'Product',
-    supportsAll: true
-  },
-  package: {
-    adminEndpoint: '/admin/packages',
-    frontendBase: '/page',
-    label: 'Package',
-    supportsAll: true
-  },
-  gallery: {
-    adminEndpoint: '/admin/gallery',
-    frontendBase: '/page',
-    label: 'Gallery',
-    supportsAll: true
-  }
+  // service: {
+  //   adminEndpoint: '/admin/services',
+  //   frontendBase: '/services',
+  //   label: 'Service'
+  // },
+  // project: {
+  //   adminEndpoint: '/admin/projects',
+  //   frontendBase: '/projects',
+  //   label: 'Project'
+  // }
 }
 
 // Menu Item Editor Component — Refactored Structure
@@ -71,17 +55,16 @@ const MenuItemSchema = z
   .object({
     title: z.string().min(1, 'Title is required'),
     type: z.enum([
+      'category-articles',
+      'single-article',
       'page',
-      'post',
-      'category',
-      'service',
-      'product',
-      'package',
-      'gallery',
       'custom-link',
       'external-link'
     ]),
-    reference: z.union([z.string(), z.null()]).optional(),
+    reference: z
+      .union([z.string(), z.array(z.string())])
+      .nullable()
+      .optional(),
     url: z.union([z.string(), z.null()]).optional(),
     target: z.enum(['_self', '_blank']),
     icon: z.union([z.string(), z.null()]).optional(),
@@ -91,51 +74,49 @@ const MenuItemSchema = z
     isPublished: z.boolean().optional(),
     meta: z.record(z.string(), z.any()).optional()
   })
-  .refine(
-    (data) => {
-      // Entity types require reference (except when "All" is selected - null is valid)
-      const entityTypes = ['page', 'post', 'category', 'service', 'product', 'package', 'gallery']
-      if (entityTypes.includes(data.type)) {
-        // For page type, reference is required
-        if (data.type === 'page') {
-          return !!data.reference
+  .superRefine((data, ctx) => {
+    // Category-articles requires array of references
+    if (data.type === 'category-articles') {
+      if (!Array.isArray(data.reference) || data.reference.length === 0) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'At least one category is required for category-articles type',
+          path: ['reference']
+        })
+      }
+    }
+
+    // Entity types require single string reference
+    if (['single-article', 'page'].includes(data.type)) {
+      if (!data.reference || typeof data.reference !== 'string') {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: `Reference (slug) is required for ${data.type} type`,
+          path: ['reference']
+        })
+      }
+    }
+
+    // Link types require URL
+    if (['custom-link', 'external-link'].includes(data.type)) {
+      if (!data.url || data.url === null) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: `URL is required for ${data.type} type`,
+          path: ['url']
+        })
+      } else if (data.type === 'external-link') {
+        // Validate external links must start with http:// or https://
+        if (!data.url.startsWith('http://') && !data.url.startsWith('https://')) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: 'External links must start with http:// or https://',
+            path: ['url']
+          })
         }
-        // For other types, null (All) or a valid slug is acceptable
-        return data.reference !== undefined
       }
-      return true
-    },
-    {
-      message: 'Reference (slug) is required',
-      path: ['reference']
     }
-  )
-  .refine(
-    (data) => {
-      // Link types require url
-      if (['custom-link', 'external-link'].includes(data.type)) {
-        return !!data.url
-      }
-      return true
-    },
-    {
-      message: 'URL is required for link types',
-      path: ['url']
-    }
-  )
-  .refine(
-    (data) => {
-      // External links must start with http:// or https://
-      if (data.type === 'external-link' && data.url) {
-        return data.url.startsWith('http://') || data.url.startsWith('https://')
-      }
-      return true
-    },
-    {
-      message: 'External URLs must start with http:// or https://',
-      path: ['url']
-    }
-  )
+  })
 
 type MenuItemFormType = z.infer<typeof MenuItemSchema>
 
@@ -170,8 +151,8 @@ export default function MenuItemForm({ item, onSave, onCancel }: MenuItemEditorP
     resolver: zodResolver(MenuItemSchema),
     defaultValues: {
       title: item?.title || '',
-      type: (item?.type || 'custom') as MenuItemFormType['type'],
-      reference: item?.reference || '',
+      type: (item?.type || 'custom-link') as MenuItemFormType['type'],
+      reference: item?.reference || (item?.type === 'category-articles' ? [] : ''),
       url: item?.url || '',
       target: (item?.target as '_self' | '_blank') || '_self',
       icon: item?.icon || '',
@@ -185,20 +166,12 @@ export default function MenuItemForm({ item, onSave, onCancel }: MenuItemEditorP
   const watchType = watch('type')
   const watchIconType = watch('iconType')
 
-  const isEntityType = [
-    'page',
-    'post',
-    'category',
-    'service',
-    'product',
-    'package',
-    'gallery'
-  ].includes(watchType)
+  const isCategoryArticles = watchType === 'category-articles'
+  const isEntityType = ['single-article', 'page'].includes(watchType)
   const isLinkType = ['custom-link', 'external-link'].includes(watchType)
 
   // Get configuration for current type
   const typeConfig = MENU_TYPE_CONFIG[watchType]
-  const supportsAll = typeConfig?.supportsAll ?? false
 
   const onSubmit = (data: MenuItemFormType) => {
     const payload: Partial<MenuItem> = {
@@ -214,8 +187,13 @@ export default function MenuItemForm({ item, onSave, onCancel }: MenuItemEditorP
     }
 
     // Add appropriate field based on type
-    if (isEntityType) {
-      payload.reference = data.reference || null
+    if (isCategoryArticles) {
+      // reference should be an array for category-articles
+      payload.reference = Array.isArray(data.reference) ? data.reference : []
+      payload.url = null
+    } else if (isEntityType) {
+      // reference should be a string for entity types
+      payload.reference = typeof data.reference === 'string' ? data.reference : null
       payload.url = null
     } else if (isLinkType) {
       payload.url = data.url || undefined
@@ -262,13 +240,9 @@ export default function MenuItemForm({ item, onSave, onCancel }: MenuItemEditorP
                     onValueChange={field.onChange}
                     required
                     options={[
+                      { value: 'category-articles', label: MENU_ITEM_TYPE_LABELS['category-articles'] },
+                      { value: 'single-article', label: MENU_ITEM_TYPE_LABELS['single-article'] },
                       { value: 'page', label: MENU_ITEM_TYPE_LABELS.page },
-                      { value: 'post', label: MENU_ITEM_TYPE_LABELS.post },
-                      // { value: 'category', label: MENU_ITEM_TYPE_LABELS.category },
-                      // { value: 'service', label: MENU_ITEM_TYPE_LABELS.service },
-                      // { value: 'product', label: MENU_ITEM_TYPE_LABELS.product },
-                      // { value: 'package', label: MENU_ITEM_TYPE_LABELS.package },
-                      // { value: 'gallery', label: MENU_ITEM_TYPE_LABELS.gallery },
                       { value: 'custom-link', label: MENU_ITEM_TYPE_LABELS['custom-link'] },
                       { value: 'external-link', label: MENU_ITEM_TYPE_LABELS['external-link'] }
                     ]}
@@ -279,17 +253,57 @@ export default function MenuItemForm({ item, onSave, onCancel }: MenuItemEditorP
           </Card>
 
           {/* Link/Reference Card */}
-          {(isEntityType || isLinkType) && (
+          {(isCategoryArticles || isEntityType || isLinkType) && (
             <Card>
               <CardHeader>
-                <CardTitle>{isEntityType ? 'Select Content' : 'URL Configuration'}</CardTitle>
+                <CardTitle>
+                  {isCategoryArticles ? 'Select Categories' : isEntityType ? 'Select Content' : 'URL Configuration'}
+                </CardTitle>
                 <CardDescription>
-                  {isEntityType
-                    ? `Choose the ${watchType} to link to`
-                    : 'Enter the destination URL'}
+                  {isCategoryArticles
+                    ? 'Choose one or more categories for the article listing'
+                    : isEntityType
+                      ? `Choose the ${watchType} to link to`
+                      : 'Enter the destination URL'}
                 </CardDescription>
               </CardHeader>
               <CardContent className='space-y-4'>
+                {/* Category-articles type - Show multi-select */}
+                {isCategoryArticles && (
+                  <Controller
+                    control={control}
+                    name='reference'
+                    render={({ field }) => (
+                      <div className='space-y-2'>
+                        <CustomSelect
+                          label='Select Categories'
+                          placeholder='Choose categories...'
+                          value={Array.isArray(field.value) ? field.value : []}
+                          url={typeConfig?.adminEndpoint || '/admin/articles/categories'}
+                          options={(data) => {
+                            return (
+                              data?.data?.items?.map((item: any) => ({
+                                value: item.slug,
+                                label: item.title || item.name
+                              })) || []
+                            )
+                          }}
+                          onChange={(value) => {
+                            // CustomSelect already handles toggle logic, just update the field
+                            field.onChange(value)
+                          }}
+                          multiple
+                        />
+                        {errors.reference && (
+                          <p className='text-red-600 text-sm'>
+                            {errors.reference.message as string}
+                          </p>
+                        )}
+                      </div>
+                    )}
+                  />
+                )}
+
                 {/* Entity types - Show reference selector */}
                 {isEntityType && (
                   <Controller
@@ -309,10 +323,6 @@ export default function MenuItemForm({ item, onSave, onCancel }: MenuItemEditorP
                                 label: item.title || item.name
                               })) || []
 
-                            // Add "All" option for types that support it
-                            if (supportsAll) {
-                              return [{ value: null, label: 'All' }, ...items]
-                            }
                             return items
                           }}
                           onChange={(value) => {

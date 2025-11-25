@@ -105,9 +105,9 @@ const FAQLoadingSkeleton = ({ count = 8 }: { count?: number }) => {
 }
 
 /**
- * Blog loading skeleton
+ * Article loading skeleton
  */
-const BlogLoadingSkeleton = ({ count = 6 }: { count?: number }) => {
+const ArticleLoadingSkeleton = ({ count = 6 }: { count?: number }) => {
   return (
     <div className='space-y-16'>
       {/* Header skeleton */}
@@ -117,7 +117,7 @@ const BlogLoadingSkeleton = ({ count = 6 }: { count?: number }) => {
         <Skeleton className='mx-auto rounded-full w-20 h-1' />
       </div>
 
-      {/* Blog grid skeleton */}
+      {/* Article grid skeleton */}
       <div className='gap-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3'>
         {Array.from({ length: count }).map((_, index) => (
           <div key={index} className='border border-border/20 rounded-3xl overflow-hidden'>
@@ -253,10 +253,11 @@ const TestimonialsLoadingSkeleton = ({ count = 3 }: { count?: number }) => {
 }
 
 export {
-  BlogLoadingSkeleton,
+  ArticleLoadingSkeleton,
   FAQLoadingSkeleton,
   Skeleton,
   StatsLoadingSkeleton,
   TestimonialsLoadingSkeleton,
   WhoWeAreLoadingSkeleton
 }
+

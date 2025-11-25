@@ -3,11 +3,11 @@ import CustomImage from '@/components/common/CustomImage'
 import { Section } from '@/components/common/section'
 import { Typography } from '@/components/common/typography'
 
-interface BlogDetailRendererProps {
+interface ArticleDetailRendererProps {
   data: any
 }
 
-export default function BlogDetailRenderer({ data }: BlogDetailRendererProps) {
+export default function ArticleDetailRenderer({ data }: ArticleDetailRendererProps) {
   return (
     <>
       {/* Hero Section */}

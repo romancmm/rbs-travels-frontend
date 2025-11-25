@@ -214,7 +214,7 @@ export const buildStructuredData = (data: SiteSettings | null) => {
   }
 }
 
-export const buildBlogMetadata = (data: Blog): Metadata => ({
+export const buildArticleMetadata = (data: Article): Metadata => ({
   title: data?.title,
   description: data?.excerpt,
   openGraph: {

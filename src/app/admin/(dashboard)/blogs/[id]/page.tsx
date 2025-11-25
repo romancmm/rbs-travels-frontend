@@ -1,6 +1,6 @@
 'use client'
 
-import BlogDetail from '@/components/admin/table/blogs/BlogDetail'
+import ArticleDetail from '@/components/admin/table/articles/ArticleDetail'
 import CustomLink from '@/components/common/CustomLink'
 import PageHeader from '@/components/common/PageHeader'
 import { buttonVariants } from '@/components/ui/button'
@@ -9,9 +9,9 @@ import { cn } from '@/lib/utils'
 import { Pencil } from 'lucide-react'
 import { useParams } from 'next/navigation'
 
-export default function BlogDetailsPage() {
+export default function ArticleDetailsPage() {
   const params = useParams()
-  const { data } = useAsync<{ data: Blog }>(`/admin/blog/posts/${params.id}`)
+  const { data } = useAsync<{ data: Article }>(`/admin/articles/posts/${params.id}`)
 
   if (!data?.data) {
     return <div>Loading...</div>
@@ -32,7 +32,7 @@ export default function BlogDetailsPage() {
         }
       />
 
-      <BlogDetail data={data.data} />
+      <ArticleDetail data={data.data} />
     </div>
   )
 }

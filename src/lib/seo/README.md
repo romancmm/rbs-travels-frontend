@@ -125,6 +125,6 @@ See `src/examples/metadata-usage.tsx` for comprehensive usage examples including
 
 - Site-wide metadata
 - Page-specific metadata
-- Blog post metadata
+- Article post metadata
 - Dynamic route metadata
 - App Router integration patterns

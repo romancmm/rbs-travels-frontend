@@ -5,7 +5,7 @@
 | Type       | Description          | Requires `referenceId` | Requires `url` | Example            |
 | ---------- | -------------------- | :--------------------: | :------------: | ------------------ |
 | `page`     | Page link            |           ✅           |       ❌       | About Us page      |
-| `post`     | Article/Blog post    |           ✅           |       ❌       | Blog article       |
+| `post`     | Article/Article post |           ✅           |       ❌       | Article article    |
 | `category` | Category page        |           ✅           |       ❌       | Travel category    |
 | `service`  | Service page         |           ✅           |       ❌       | Web Development    |
 | `project`  | Project page         |           ✅           |       ❌       | Portfolio item     |
@@ -201,7 +201,7 @@ POST /admin/menu/{menuId}/reorder
 
 ```json
 {
-  "title": "Travel Blog",
+  "title": "Travel Article",
   "type": "category",
   "referenceId": "travel-category-uuid",
   "cssClass": "highlight"

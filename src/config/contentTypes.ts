@@ -41,11 +41,11 @@ export const CONTENT_TYPE_CONFIG: Record<ContentType, ContentTypeConfig> = {
     }
   },
   post: {
-    apiEndpoint: '/blog/posts',
+    apiEndpoint: '/article/posts',
     baseRoute: '/page',
     hasDetail: true,
     hasListing: true,
-    listingEndpoint: '/blog/posts',
+    listingEndpoint: '/article/posts',
     detailRenderer: 'blog',
     listingRenderer: 'blog-list',
     seoFields: {
@@ -55,11 +55,11 @@ export const CONTENT_TYPE_CONFIG: Record<ContentType, ContentTypeConfig> = {
     }
   },
   category: {
-    apiEndpoint: '/blog/categories',
+    apiEndpoint: '/articles/categories',
     baseRoute: '/page',
     hasDetail: false,
     hasListing: true,
-    listingEndpoint: '/blog/posts',
+    listingEndpoint: '/article/posts',
     detailRenderer: 'blog',
     listingRenderer: 'blog-list',
     seoFields: {
@@ -129,7 +129,7 @@ export const CONTENT_TYPE_CONFIG: Record<ContentType, ContentTypeConfig> = {
  * Get content type from route path
  */
 export function getContentTypeFromPath(path: string): ContentType | null {
-  if (path.startsWith('/page/blogs') || path.startsWith('/blog/posts')) return 'post'
+  if (path.startsWith('/page/blogs') || path.startsWith('/article/posts')) return 'post'
   if (path.startsWith('/services')) return 'service'
   if (path.startsWith('/products')) return 'product'
   if (path.startsWith('/packages')) return 'package'

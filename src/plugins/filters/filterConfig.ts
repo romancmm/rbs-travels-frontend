@@ -67,7 +67,7 @@ export const filterConfigs = {
       name: 'categorySlug',
       label: 'Category',
       placeholder: 'Filter by category',
-      url: '/admin/blog/categories?page=1&limit=12',
+      url: '/admin/articles/categories?page=1&limit=12',
       options: (data: { data: { items: Category[] } }) =>
         data?.data?.items?.map((item: Category) => ({ label: item?.name, value: item?.slug }))
     }

@@ -109,11 +109,11 @@ model MenuItem {
 
 ```json
 {
-  "title": "Travel Blog",
+  "title": "Travel Article",
   "slug": "travel-blog",
   "type": "category",
   "referenceId": "uuid-of-category",
-  "url": "/blog/category/travel",
+  "url": "/articles/category/travel",
   "target": "_self"
 }
 ```

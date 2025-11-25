@@ -25,9 +25,9 @@ export const navItems: NavItem[] = [
     icon: LayoutDashboard
   },
 
-  // Blogs & Content
+  // Articles & Content
   {
-    title: 'Blog & Content',
+    title: 'Article & Content',
     href: '',
     icon: FileText,
     // permission: { resource: 'blogs', action: 'index' },

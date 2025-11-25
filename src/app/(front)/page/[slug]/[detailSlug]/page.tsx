@@ -2,7 +2,7 @@
 
 import { Container } from '@/components/common/container'
 import { Section } from '@/components/common/section'
-import BlogDetailRenderer from '@/components/frontend/details/BlogDetailRenderer'
+import ArticleDetailRenderer from '@/components/frontend/details/ArticleDetailRenderer'
 import PackageDetailRenderer from '@/components/frontend/details/PackageDetailRenderer'
 import { Skeleton } from '@/components/ui/skeleton'
 import useAsync from '@/hooks/useAsync'
@@ -19,7 +19,7 @@ export default function DetailPage() {
 
     switch (parentSlug) {
       case 'blogs':
-        return `/blog/posts/slug/${detailSlug}`
+        return `/articles/posts/slug/${detailSlug}`
       case 'packages':
         return `/packages/slug/${detailSlug}`
       case 'products':
@@ -34,7 +34,7 @@ export default function DetailPage() {
   // Fetch related posts for blogs
   const getRelatedEndpoint = () => {
     if (parentSlug === 'blogs' && data?.data?.categoryId) {
-      return `/blog/posts?categoryId=${data.data.categoryId}&limit=3&exclude=${data.data.id}`
+      return `/article/posts?categoryId=${data.data.categoryId}&limit=3&exclude=${data.data.id}`
     }
     return null
   }
@@ -99,7 +99,7 @@ export default function DetailPage() {
   const renderDetailContent = () => {
     switch (parentSlug) {
       case 'blogs':
-        return <BlogDetailRenderer data={detail} relatedPosts={relatedData?.data || []} />
+        return <ArticleDetailRenderer data={detail} relatedPosts={relatedData?.data || []} />
       case 'packages':
         return <PackageDetailRenderer data={detail} />
       default:

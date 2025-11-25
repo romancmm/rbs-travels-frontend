@@ -94,7 +94,7 @@ Component {
    - Card
 
 4. **Dynamic Components**
-   - Blog Posts List
+   - Article Posts List
    - Categories
    - Contact Form
    - Newsletter

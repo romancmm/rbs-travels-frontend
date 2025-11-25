@@ -28,7 +28,7 @@ interface MenuItem {
   menuId: string
   title: string
   slug: string
-  type: 'page' | 'post' | 'category' | 'service' | 'project' | 'custom-link' | 'external-link'
+  type: 'page' | 'post' | 'category' | 'custom-link' | 'external-link'
   reference?: string | null // Slug of referenced entity
   url?: string | null // URL for custom/external links
   icon?: string

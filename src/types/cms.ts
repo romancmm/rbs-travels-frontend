@@ -51,7 +51,7 @@ export type ComponentType =
   | 'contact-form' // Contact form
   | 'newsletter' // Email subscription
   | 'social-icons' // Social media links
-  | 'blog-grid' // Blog post grid
+  | 'blog-grid' // Article post grid
   | 'service-card' // Service showcase
   | 'project-card' // Project showcase
 
@@ -385,10 +385,10 @@ export const COMPONENT_REGISTRY: ComponentDefinition[] = [
   },
   {
     type: 'blog-grid',
-    label: 'Blog Grid',
+    label: 'Article Grid',
     icon: 'FileText',
     category: 'dynamic',
-    description: 'Blog post grid',
+    description: 'Article post grid',
     defaultProps: { limit: 6, columns: 3, showExcerpt: true, showImage: true },
     requiresApi: true
   },

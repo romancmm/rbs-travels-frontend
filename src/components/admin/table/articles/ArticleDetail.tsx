@@ -7,12 +7,12 @@ import { Separator } from '@/components/ui/separator'
 import parse from 'html-react-parser'
 import { Calendar, Eye, Globe, Share2, Tag, User } from 'lucide-react'
 
-// Blog interface
-interface BlogDetailViewProps {
-  data: Blog
+// Article interface
+interface ArticleDetailViewProps {
+  data: Article
 }
 
-const BlogDetail = ({ data }: BlogDetailViewProps) => {
+const ArticleDetail = ({ data }: ArticleDetailViewProps) => {
   if (!data) {
     return <div className='text-muted-foreground text-center'>No data available</div>
   }
@@ -70,7 +70,7 @@ const BlogDetail = ({ data }: BlogDetailViewProps) => {
             />
           )}
 
-          {/* Blog Content */}
+          {/* Article Content */}
           <Card>
             <CardHeader>
               <CardTitle>Content</CardTitle>
@@ -249,7 +249,7 @@ const BlogDetail = ({ data }: BlogDetailViewProps) => {
                 <p className='mt-1 font-mono text-muted-foreground text-sm'>/{data?.slug}</p>
               </div>
               <div>
-                <span className='font-medium text-sm'>Blog ID:</span>
+                <span className='font-medium text-sm'>Article ID:</span>
                 <p className='mt-1 text-muted-foreground text-sm'>#{data?.id}</p>
               </div>
             </CardContent>
@@ -260,4 +260,4 @@ const BlogDetail = ({ data }: BlogDetailViewProps) => {
   )
 }
 
-export default BlogDetail
+export default ArticleDetail

@@ -359,10 +359,10 @@ const fetchMenu = async (position: string) => {
     },
     {
       "id": "...",
-      "title": "Blog",
+      "title": "Article",
       "type": "post",
       "reference": "latest-news",  // ✅ Slug
-      "url": "/blog/latest-news",
+      "url": "/articles/latest-news",
       "target": "_self",
       "children": []
     }

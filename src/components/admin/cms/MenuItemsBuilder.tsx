@@ -178,12 +178,10 @@ export function MenuItemsBuilder({
     switch (type) {
       case 'page':
         return <FileText className='w-4 h-4' />
-      case 'post':
+      case 'single-article':
         return <FileText className='w-4 h-4' />
-      case 'category':
+      case 'category-articles':
         return <FolderOpen className='w-4 h-4' />
-      case 'service':
-        return <FileText className='w-4 h-4' />
       case 'custom-link':
         return <LinkIcon className='w-4 h-4' />
       case 'external-link':
@@ -195,7 +193,12 @@ export function MenuItemsBuilder({
 
   const getMenuItemSubtext = (item: MenuItem) => {
     if (item.url) return item.url
-    if (item.reference) return `ID: ${item.reference.substring(0, 8)}...`
+    if (item.type === 'category-articles' && Array.isArray(item.reference)) {
+      return `${item.reference.length} ${item.reference.length === 1 ? 'category' : 'categories'}`
+    }
+    if (item.reference && typeof item.reference === 'string') {
+      return `Slug: ${item.reference.substring(0, 20)}${item.reference.length > 20 ? '...' : ''}`
+    }
     return 'No link'
   }
 

@@ -1,20 +1,20 @@
 'use client'
 
-import BlogForm from '@/components/admin/form/Blog'
+import ArticleForm from '@/components/admin/form/Article'
 import PageHeader from '@/components/common/PageHeader'
 
-function BlogCreateContent() {
+function ArticleCreateContent() {
   return (
     <div className='w-full max-w-full'>
       {/* Header */}
-      <PageHeader title='Create New Blog Post' subTitle='Write and publish a new blog post' />
+      <PageHeader title='Create New Article Post' subTitle='Write and publish a new blog post' />
 
       {/* Form */}
-      <BlogForm />
+      <ArticleForm />
     </div>
   )
 }
 
-export default function BlogCreatePage() {
-  return <BlogCreateContent />
+export default function ArticleCreatePage() {
+  return <ArticleCreateContent />
 }

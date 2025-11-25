@@ -78,7 +78,7 @@ model MenuItem {
 }
 ```
 
-### 4. Link to Blog Post
+### 4. Link to Article Post
 
 ```typescript
 {
@@ -120,7 +120,7 @@ export enum MenuItemType {
   LINK = 'link', // Internal link
   EXTERNAL = 'external-link', // External URL
   PAGE = 'page', // Page reference
-  POST = 'post', // Blog post reference
+  POST = 'post', // Article post reference
   CATEGORY = 'category', // Category reference
   SERVICE = 'service', // Service reference
   PROJECT = 'project', // Project reference
@@ -224,7 +224,7 @@ export class MenuItemService {
 
       case 'Post':
         const post = await prisma.post.findUnique({ where: { id } })
-        return `/blog/${post?.slug}`
+        return `/articles/${post?.slug}`
 
       case 'Category':
         const category = await prisma.category.findUnique({ where: { id } })

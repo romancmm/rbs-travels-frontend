@@ -1,11 +1,14 @@
 'use client'
 
+import { Eye, Pencil, Trash2 } from 'lucide-react'
+import { useState } from 'react'
+
 import { ActionsDropdown } from '@/components/admin/common/ActionsDropdown'
+import CustomImage from '@/components/common/CustomImage'
+import { Badge } from '@/components/ui/badge'
 import { useConfirmationModal } from '@/hooks/useConfirmationModal'
 import { showError } from '@/lib/errMsg'
 import requests from '@/services/network/http'
-import { Pencil, Trash2 } from 'lucide-react'
-import { useState } from 'react'
 import { toast } from 'sonner'
 
 // Custom table column type
@@ -17,15 +20,15 @@ export interface TableColumn<T = any> {
   className?: string
 }
 
-// Blog action types
-export type BlogActionType = 'edit' | 'delete'
+// Article action types
+export type ArticleActionType = 'view' | 'edit' | 'delete'
 
 const ActionsCell = ({ data, mutate }: { data: any; mutate?: () => void }) => {
   // Define action configurations for confirmation modals
   const actionConfigs = {
     delete: {
-      title: 'Delete Category',
-      description: 'Are you sure you want to delete this category? This action cannot be undone.',
+      title: 'Delete Article Post',
+      description: 'Are you sure you want to delete this blog post? This action cannot be undone.',
       confirmText: 'Delete',
       variant: 'destructive' as const,
       icon: Trash2,
@@ -33,8 +36,8 @@ const ActionsCell = ({ data, mutate }: { data: any; mutate?: () => void }) => {
       inputConfig: undefined,
       onClick: async (data: any) => {
         try {
-          await requests.delete(`/admin/blog/categories/${data?.id}`)
-          toast.success('Category deleted successfully')
+          await requests.delete(`/admin/articles/${data?.id}`)
+          toast.success('Article post deleted successfully')
           mutate?.()
         } catch (error) {
           showError(error)
@@ -63,13 +66,15 @@ const ActionsCell = ({ data, mutate }: { data: any; mutate?: () => void }) => {
   const actions = [
     {
       type: 'action' as const,
+      label: 'View',
+      icon: Eye,
+      href: `/admin/blogs/${data.id}`
+    },
+    {
+      type: 'action' as const,
       label: 'Edit',
       icon: Pencil,
-      onClick: () => {
-        if (mutate) {
-          ;(mutate as any).editCategory?.(data)
-        }
-      }
+      href: `/admin/blogs/${data.id}/edit/`
     },
     {
       type: 'action' as const,
@@ -95,18 +100,60 @@ const ActionsCell = ({ data, mutate }: { data: any; mutate?: () => void }) => {
   )
 }
 
-// Blog columns function that accepts mutate callback
-export const blogCategoryColumns = (mutate?: () => void): TableColumn<any>[] => {
+// Article columns function that accepts mutate callback
+export const blogColumns = (mutate?: () => void): TableColumn<any>[] => {
   return [
     {
-      key: 'name',
-      header: 'Name',
+      key: 'thumbnail',
+      header: 'Thumbnail',
+      render: (value) =>
+        value ? (
+          <div className='relative bg-gray-100 rounded-md w-12 h-12 overflow-hidden'>
+            <CustomImage src={value} alt='Thumbnail' fill className='w-full h-full object-cover' />
+          </div>
+        ) : (
+          <span className='text-muted-foreground'>-</span>
+        ),
+      width: 'w-20'
+    },
+    {
+      key: 'title',
+      header: 'Title',
+      render: (value, data) => (
+        <div className='max-w-xs'>
+          <div className='font-medium truncate'>{value}</div>
+          <div className='text-muted-foreground text-xs truncate'>/{data.slug}</div>
+        </div>
+      ),
       width: 'w-64'
     },
     {
-      key: 'slug',
-      header: 'Slug',
+      key: 'categoryId',
+      header: 'Category',
+      render: (value, data) => data?.category?.name || `Category ${value}`,
       width: 'w-28'
+    },
+    {
+      key: 'isPublished',
+      header: 'Status',
+      render: (value) => (
+        <Badge variant={value ? 'default' : 'secondary'}>{value ? 'Published' : 'Draft'}</Badge>
+      ),
+      width: 'w-24'
+    },
+    {
+      key: 'seo',
+      header: 'SEO',
+      render: (value) => (
+        <div className='text-xs'>
+          {value?.title ? (
+            <div className='text-green-600'>✓ Optimized</div>
+          ) : (
+            <div className='text-orange-600'>Basic</div>
+          )}
+        </div>
+      ),
+      width: 'w-20'
     },
     {
       key: 'createdAt',
@@ -124,4 +171,4 @@ export const blogCategoryColumns = (mutate?: () => void): TableColumn<any>[] => 
 }
 
 // Export the default columns for backward compatibility
-export const defaultBlogColumns = blogCategoryColumns()
+export const defaultArticleColumns = blogColumns()

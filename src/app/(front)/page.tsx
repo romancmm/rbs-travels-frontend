@@ -12,7 +12,7 @@ export default async function HomePage() {
   const homeData = await getHomepageData()
   const homeFaqs = fetchOnServer('/settings/home_faq_settings', 300)
   const homepageTestimonials = fetchOnServer('/settings/home_testimonial_settings', 300)
-  const featuredBlog = fetchOnServer('/blog/posts', 300)
+  const featuredArticle = fetchOnServer('/article/posts', 300)
   // const featuredCategories = fetchOnServer('/categories?isFeatured=true', 300)
 
   return (
@@ -23,7 +23,7 @@ export default async function HomePage() {
       <WhoWeAre data={homeData?.whoWeAre} />
       <TopDestinations data={homeData?.topCountries} />
       <Testimonials data={homepageTestimonials} />
-      <Blog data={featuredBlog} />
+      <Blog data={featuredArticle} />
       <FAQ data={homeFaqs} />
     </>
   )

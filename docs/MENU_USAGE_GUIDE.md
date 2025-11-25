@@ -152,7 +152,7 @@ interface MenuItem {
     },
     {
       "id": "2",
-      "title": "Blog",
+      "title": "Article",
       "type": "category",
       "referenceId": "blog-category-id",
       "order": 1,
