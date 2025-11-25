@@ -72,7 +72,7 @@ model MenuItem {
 {
   "title": "Google",
   "slug": "google",
-  "type": "external",
+  "type": "external-link",
   "referenceId": null,
   "url": "https://google.com",
   "target": "_blank"
@@ -85,7 +85,7 @@ model MenuItem {
 {
   "title": "Dashboard",
   "slug": "dashboard",
-  "type": "custom",
+  "type": "custom-link",
   "referenceId": null,
   "url": "/dashboard",
   "target": "_self"
@@ -124,7 +124,7 @@ model MenuItem {
 {
   "title": "Services",
   "slug": "services-menu",
-  "type": "custom",
+  "type": "custom-link",
   "referenceId": null,
   "url": null,
   "target": "_self",
@@ -248,10 +248,10 @@ function renderMenuItem(item: MenuItem) {
       // Internal link - use Next.js Link or React Router
       return <Link href={item.url}>{item.title}</Link>
 
-    case 'external':
+    case 'external-link':
       // External link - open in new tab
       return (
-        <a href={item.url} target={item.target} rel="noopener noreferrer">
+        <a href={item.url} target={item.target} rel='noopener noreferrer'>
           {item.title}
         </a>
       )
@@ -290,7 +290,7 @@ export const MenuItemTypeEnum = z.enum([
   'project',
   'product', // NEW
   'custom',
-  'external',
+  'external-link'
 ])
 ```
 
@@ -300,7 +300,7 @@ export const MenuItemTypeEnum = z.enum([
 if (data.type === 'product' && !data.referenceId) {
   ctx.addIssue({
     message: 'Reference ID is required for product type',
-    path: ['referenceId'],
+    path: ['referenceId']
   })
 }
 ```

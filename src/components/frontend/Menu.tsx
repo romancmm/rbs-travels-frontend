@@ -94,7 +94,7 @@ function MenuItemLink({
   showIcons = false
 }: MenuItemLinkProps) {
   const url = getMenuItemUrl(item)
-  const isExternal = item.type === 'external'
+  const isExternal = item.type === 'external-link'
 
   const content = (
     <>
@@ -225,7 +225,7 @@ function MobileMenuItem({
 }: MobileMenuItemProps) {
   const children = hasChildren(item) ? item.children! : []
   const url = getMenuItemUrl(item)
-  const isExternal = item.type === 'external'
+  const isExternal = item.type === 'external-link'
 
   const content = (
     <>
@@ -272,7 +272,7 @@ function MobileMenuItem({
               key={child.id}
               item={child}
               isExpanded={false}
-              onToggle={() => {}}
+              onToggle={() => { }}
               showIcons={showIcons}
               level={level + 1}
             />

@@ -113,7 +113,7 @@ interface MenuItem {
 
 ```typescript
 interface MenuItem {
-  type: 'page' | 'post' | 'category' | 'service' | 'project' | 'custom' | 'external'
+  type: 'page' | 'post' | 'category' | 'service' | 'project' | 'custom' | 'external-link'
   referenceId?: string // For entity types
   url?: string // For link types
 }
@@ -129,11 +129,11 @@ interface MenuItem {
 
 2. **Link types**: Copy URL to `url` field
 
-   - `link` → `url` (type: 'custom' or 'external')
+   - `link` → `url` (type: 'custom' or 'external-link')
 
 3. **Type updates**:
    - 'article' → 'post'
-   - 'link' → Determine if 'custom' (internal) or 'external'
+   - 'link' → Determine if 'custom' (internal) or 'external-link'
 
 ## Example Menu Structure
 
@@ -169,14 +169,14 @@ interface MenuItem {
     {
       "id": "3",
       "title": "Contact",
-      "type": "custom",
+      "type": "custom-link",
       "url": "/contact",
       "order": 2
     },
     {
       "id": "4",
       "title": "GitHub",
-      "type": "external",
+      "type": "external-link",
       "url": "https://github.com/example",
       "target": "_blank",
       "order": 3

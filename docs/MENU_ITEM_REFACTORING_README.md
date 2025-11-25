@@ -23,7 +23,7 @@ enterprise-grade approach used by major CMS platforms like WordPress, Drupal, an
 
 ```typescript
 {
-  type: 'page' | 'post' | 'category' | 'service' | 'project' | 'custom' | 'external'
+  type: 'page' | 'post' | 'category' | 'service' | 'project' | 'custom' | 'external-link'
   referenceId?: string  // UUID for entity references
   url?: string          // URL for custom/external links
   // ✅ Clear, single-purpose fields
@@ -58,7 +58,7 @@ POST /admin/menu/{menuId}/items
 POST /admin/menu/{menuId}/items
 {
   "title": "Google",
-  "type": "external",
+  "type": "external-link",
   "url": "https://google.com",
   "target": "_blank"
 }
@@ -70,7 +70,7 @@ POST /admin/menu/{menuId}/items
 POST /admin/menu/{menuId}/items
 {
   "title": "Dashboard",
-  "type": "custom",
+  "type": "custom-link",
   "url": "/dashboard"
 }
 ```
@@ -107,7 +107,7 @@ const item: CreateMenuItemInput = {
   title: 'Services',
   type: 'custom',
   url: '/services',
-  order: 1,
+  order: 1
 }
 ```
 
@@ -131,9 +131,9 @@ Example React component:
 import type { MenuItem } from '@/types/menu.types'
 
 function MenuLink({ item }: { item: MenuItem }) {
-  if (item.type === 'external') {
+  if (item.type === 'external-link') {
     return (
-      <a href={item.url} target={item.target} rel="noopener">
+      <a href={item.url} target={item.target} rel='noopener'>
         {item.title}
       </a>
     )

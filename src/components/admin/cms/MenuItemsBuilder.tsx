@@ -184,9 +184,9 @@ export function MenuItemsBuilder({
         return <FolderOpen className='w-4 h-4' />
       case 'service':
         return <FileText className='w-4 h-4' />
-      case 'custom':
+      case 'custom-link':
         return <LinkIcon className='w-4 h-4' />
-      case 'external':
+      case 'external-link':
         return <ExternalLink className='w-4 h-4' />
       default:
         return <LinkIcon className='w-4 h-4' />

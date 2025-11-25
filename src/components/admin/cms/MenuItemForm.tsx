@@ -78,8 +78,8 @@ const MenuItemSchema = z
       'product',
       'package',
       'gallery',
-      'custom',
-      'external'
+      'custom-link',
+      'external-link'
     ]),
     reference: z.union([z.string(), z.null()]).optional(),
     url: z.union([z.string(), z.null()]).optional(),
@@ -113,7 +113,7 @@ const MenuItemSchema = z
   .refine(
     (data) => {
       // Link types require url
-      if (['custom', 'external'].includes(data.type)) {
+      if (['custom-link', 'external-link'].includes(data.type)) {
         return !!data.url
       }
       return true
@@ -126,7 +126,7 @@ const MenuItemSchema = z
   .refine(
     (data) => {
       // External links must start with http:// or https://
-      if (data.type === 'external' && data.url) {
+      if (data.type === 'external-link' && data.url) {
         return data.url.startsWith('http://') || data.url.startsWith('https://')
       }
       return true
@@ -194,7 +194,7 @@ export default function MenuItemForm({ item, onSave, onCancel }: MenuItemEditorP
     'package',
     'gallery'
   ].includes(watchType)
-  const isLinkType = ['custom', 'external'].includes(watchType)
+  const isLinkType = ['custom-link', 'external-link'].includes(watchType)
 
   // Get configuration for current type
   const typeConfig = MENU_TYPE_CONFIG[watchType]
@@ -264,13 +264,13 @@ export default function MenuItemForm({ item, onSave, onCancel }: MenuItemEditorP
                     options={[
                       { value: 'page', label: MENU_ITEM_TYPE_LABELS.page },
                       { value: 'post', label: MENU_ITEM_TYPE_LABELS.post },
-                      { value: 'category', label: MENU_ITEM_TYPE_LABELS.category },
-                      { value: 'service', label: MENU_ITEM_TYPE_LABELS.service },
-                      { value: 'product', label: MENU_ITEM_TYPE_LABELS.product },
-                      { value: 'package', label: MENU_ITEM_TYPE_LABELS.package },
-                      { value: 'gallery', label: MENU_ITEM_TYPE_LABELS.gallery },
-                      { value: 'custom', label: MENU_ITEM_TYPE_LABELS.custom },
-                      { value: 'external', label: MENU_ITEM_TYPE_LABELS.external }
+                      // { value: 'category', label: MENU_ITEM_TYPE_LABELS.category },
+                      // { value: 'service', label: MENU_ITEM_TYPE_LABELS.service },
+                      // { value: 'product', label: MENU_ITEM_TYPE_LABELS.product },
+                      // { value: 'package', label: MENU_ITEM_TYPE_LABELS.package },
+                      // { value: 'gallery', label: MENU_ITEM_TYPE_LABELS.gallery },
+                      { value: 'custom-link', label: MENU_ITEM_TYPE_LABELS['custom-link'] },
+                      { value: 'external-link', label: MENU_ITEM_TYPE_LABELS['external-link'] }
                     ]}
                   />
                 )}
@@ -339,12 +339,12 @@ export default function MenuItemForm({ item, onSave, onCancel }: MenuItemEditorP
                       <CustomInput
                         label='URL'
                         placeholder={
-                          watchType === 'external' ? 'https://example.com' : '/about or /contact'
+                          watchType === 'external-link' ? 'https://example.com' : '/about or /contact'
                         }
                         error={errors.url?.message}
                         required
                         helperText={
-                          watchType === 'external'
+                          watchType === 'external-link'
                             ? 'Must start with http:// or https://'
                             : 'Internal path starting with /'
                         }

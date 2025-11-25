@@ -34,7 +34,7 @@ POST /admin/menu/{menuId}/items
 ```json
 {
   "title": "Google",
-  "type": "external",
+  "type": "external-link",
   "url": "https://google.com",
   "target": "_blank",
   "order": 2
@@ -46,7 +46,7 @@ POST /admin/menu/{menuId}/items
 ```json
 {
   "title": "Dashboard",
-  "type": "custom",
+  "type": "custom-link",
   "url": "/dashboard",
   "order": 3
 }
@@ -119,7 +119,7 @@ POST /admin/menu/{menuId}/reorder
 ```json
 {
   "title": "Services",
-  "type": "custom",
+  "type": "custom-link",
   "url": null,
   "children": [
     {
@@ -175,7 +175,7 @@ POST /admin/menu/{menuId}/reorder
 ```json
 {
   "title": "Company",
-  "type": "custom",
+  "type": "custom-link",
   "url": null,
   "children": [
     { "title": "About", "type": "page", "referenceId": "..." },
@@ -190,7 +190,7 @@ POST /admin/menu/{menuId}/reorder
 ```json
 {
   "title": "Facebook",
-  "type": "external",
+  "type": "external-link",
   "url": "https://facebook.com/company",
   "icon": "fab fa-facebook",
   "target": "_blank"

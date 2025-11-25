@@ -13,8 +13,8 @@ export type MenuItemType =
   | 'product'
   | 'package'
   | 'gallery'
-  | 'custom'
-  | 'external'
+  | 'custom-link'
+  | 'external-link'
 
 export type MenuPosition = 'header' | 'footer' | 'sidebar' | 'custom'
 
@@ -103,7 +103,7 @@ export function isEntityMenuItem(item: MenuItem): boolean {
  * Check if menu item is a link type
  */
 export function isLinkMenuItem(item: MenuItem): boolean {
-  return ['custom', 'external'].includes(item.type)
+  return ['custom-link', 'external-link'].includes(item.type)
 }
 
 /**
@@ -133,7 +133,7 @@ export function validateMenuItem(item: CreateMenuItemInput | UpdateMenuItemInput
     }
 
     // External links must start with http:// or https://
-    if (item.type === 'external' && item.url) {
+    if (item.type === 'external-link' && item.url) {
       if (!item.url.startsWith('http://') && !item.url.startsWith('https://')) {
         return 'External URLs must start with http:// or https://'
       }
@@ -150,7 +150,7 @@ function isEntityMenuItemType(type?: MenuItemType): boolean {
 }
 
 function isLinkMenuItemType(type?: MenuItemType): boolean {
-  return type ? ['custom', 'external'].includes(type) : false
+  return type ? ['custom-link', 'external-link'].includes(type) : false
 }
 
 // ==================== UTILITY FUNCTIONS ====================
@@ -248,8 +248,8 @@ export const MENU_ITEM_TYPE_LABELS: Record<MenuItemType, string> = {
   product: 'Product',
   package: 'Package',
   gallery: 'Gallery',
-  custom: 'Custom Link',
-  external: 'External Link'
+  'custom-link': 'Custom Link',
+  'external-link': 'External Link'
 }
 
 export const MENU_ITEM_TYPE_DESCRIPTIONS: Record<MenuItemType, string> = {
@@ -260,6 +260,6 @@ export const MENU_ITEM_TYPE_DESCRIPTIONS: Record<MenuItemType, string> = {
   product: 'Link to a product',
   package: 'Link to a package',
   gallery: 'Link to a gallery',
-  custom: 'Custom internal link',
-  external: 'External website link'
+  'custom-link': 'Custom internal link',
+  'external-link': 'External website link'
 }

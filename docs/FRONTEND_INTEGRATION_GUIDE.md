@@ -9,6 +9,7 @@ This guide provides step-by-step instructions for updating your frontend applica
 ## 🎯 What Changed
 
 ### Old Structure (DEPRECATED)
+
 ```typescript
 interface MenuItem {
   categoryId?: string
@@ -19,11 +20,12 @@ interface MenuItem {
 ```
 
 ### New Structure (CURRENT)
+
 ```typescript
 interface MenuItem {
-  type: 'page' | 'post' | 'category' | 'service' | 'project' | 'custom' | 'external'
-  referenceId?: string  // For entity types
-  url?: string          // For custom/external links
+  type: 'page' | 'post' | 'category' | 'service' | 'project' | 'custom' | 'external-link'
+  referenceId?: string // For entity types
+  url?: string // For custom/external links
 }
 ```
 
@@ -36,14 +38,14 @@ interface MenuItem {
 **Location:** `admin/src/types/menu.types.ts`
 
 ```typescript
-export type MenuItemType = 
+export type MenuItemType =
   | 'page'
   | 'post'
   | 'category'
   | 'service'
   | 'project'
   | 'custom'
-  | 'external'
+  | 'external-link'
 
 export interface MenuItem {
   id: string
@@ -84,6 +86,7 @@ export interface CreateMenuItemInput {
 **Component:** `MenuItemForm.tsx` / `MenuItemFormModal.tsx`
 
 #### Remove Old Fields
+
 ```tsx
 // ❌ REMOVE THESE FIELDS
 <Select name="categoryId" />
@@ -93,6 +96,7 @@ export interface CreateMenuItemInput {
 ```
 
 #### Add New Fields
+
 ```tsx
 import { useState } from 'react'
 import type { MenuItemType } from '@/types/menu.types'
@@ -100,7 +104,7 @@ import type { MenuItemType } from '@/types/menu.types'
 // Type selector
 const [selectedType, setSelectedType] = useState<MenuItemType>('custom')
 
-<Select 
+<Select
   label="Menu Item Type"
   value={selectedType}
   onChange={(e) => setSelectedType(e.target.value as MenuItemType)}
@@ -110,8 +114,8 @@ const [selectedType, setSelectedType] = useState<MenuItemType>('custom')
   <option value="category">Category</option>
   <option value="service">Service</option>
   <option value="project">Project</option>
-  <option value="custom">Custom Link</option>
-  <option value="external">External Link</option>
+  <option value="custom-link">Custom Link</option>
+  <option value="external-link">External Link</option>
 </Select>
 
 {/* Conditional fields based on type */}
@@ -131,12 +135,12 @@ const [selectedType, setSelectedType] = useState<MenuItemType>('custom')
   </Select>
 )}
 
-{['custom', 'external'].includes(selectedType) && (
+{['custom', 'external-link'].includes(selectedType) && (
   <Input
     label="URL"
     name="url"
     type="text"
-    placeholder={selectedType === 'external' ? 'https://example.com' : '/custom-path'}
+    placeholder={selectedType === 'external-link' ? 'https://example.com' : '/custom-path'}
     required
   />
 )}
@@ -182,7 +186,7 @@ const handleSubmit = async (data: FormData) => {
     cssClass: data.cssClass || undefined,
     parentId: data.parentId || null,
     order: data.order || 0,
-    isPublished: data.isPublished ?? true,
+    isPublished: data.isPublished ?? true
   }
 
   // Add referenceId for entity types
@@ -191,7 +195,7 @@ const handleSubmit = async (data: FormData) => {
   }
 
   // Add url for custom/external types
-  if (['custom', 'external'].includes(selectedType)) {
+  if (['custom', 'external-link'].includes(selectedType)) {
     payload.url = data.url
   }
 
@@ -203,7 +207,7 @@ const handleSubmit = async (data: FormData) => {
     })
 
     const result = await response.json()
-    
+
     if (result.success) {
       toast.success('Menu item created successfully')
       router.refresh()
@@ -222,7 +226,7 @@ const handleSubmit = async (data: FormData) => {
 // Fetch entities based on selected type
 const fetchEntities = async (type: MenuItemType) => {
   let endpoint = ''
-  
+
   switch (type) {
     case 'page':
       endpoint = '/admin/pages'
@@ -295,40 +299,36 @@ const MenuItemDisplay: React.FC<MenuItemDisplayProps> = ({ item }) => {
   }
 
   return (
-    <div className="menu-item">
-      <div className="menu-item-header">
-        <span className="icon">{item.icon || getTypeIcon(item.type)}</span>
+    <div className='menu-item'>
+      <div className='menu-item-header'>
+        <span className='icon'>{item.icon || getTypeIcon(item.type)}</span>
         <h4>{item.title}</h4>
-        <Badge color={getTypeBadgeColor(item.type)}>
-          {item.type}
-        </Badge>
-        {!item.isPublished && <Badge color="gray">Draft</Badge>}
+        <Badge color={getTypeBadgeColor(item.type)}>{item.type}</Badge>
+        {!item.isPublished && <Badge color='gray'>Draft</Badge>}
       </div>
-      
-      <div className="menu-item-details">
+
+      <div className='menu-item-details'>
         <div>
           <strong>Slug:</strong> {item.slug}
         </div>
-        
+
         {item.referenceId && (
           <div>
             <strong>Reference ID:</strong> {item.referenceId}
           </div>
         )}
-        
+
         {item.url && (
           <div>
             <strong>URL:</strong> {item.url}
-            {item.type === 'external' && (
-              <ExternalLinkIcon className="ml-1" />
-            )}
+            {item.type === 'external-link' && <ExternalLinkIcon className='ml-1' />}
           </div>
         )}
-        
+
         <div>
           <strong>Target:</strong> {item.target}
         </div>
-        
+
         {item.cssClass && (
           <div>
             <strong>CSS Class:</strong> <code>{item.cssClass}</code>
@@ -352,10 +352,14 @@ const MenuTreeEditor: React.FC<{ items: MenuItem[] }> = ({ items }) => {
 
     const reorderedItems = items.map((item, index) => ({
       id: item.id,
-      order: index === result.source.index ? result.destination.index : 
-             index < result.source.index && index >= result.destination.index ? item.order + 1 :
-             index > result.source.index && index <= result.destination.index ? item.order - 1 :
-             item.order,
+      order:
+        index === result.source.index
+          ? result.destination.index
+          : index < result.source.index && index >= result.destination.index
+          ? item.order + 1
+          : index > result.source.index && index <= result.destination.index
+          ? item.order - 1
+          : item.order,
       parentId: item.parentId
     }))
 
@@ -369,7 +373,7 @@ const MenuTreeEditor: React.FC<{ items: MenuItem[] }> = ({ items }) => {
 
   return (
     <DragDropContext onDragEnd={handleDragEnd}>
-      <Droppable droppableId="menu-items">
+      <Droppable droppableId='menu-items'>
         {(provided) => (
           <div {...provided.droppableProps} ref={provided.innerRef}>
             {items.map((item, index) => (
@@ -406,9 +410,9 @@ export async function getMenu(slug: string): Promise<Menu | null> {
   const response = await fetch(`${API_URL}/menus/${slug}`, {
     next: { revalidate: 3600 } // Cache for 1 hour
   })
-  
+
   if (!response.ok) return null
-  
+
   const data = await response.json()
   return data.data
 }
@@ -429,8 +433,8 @@ interface MenuProps {
 export const Menu: React.FC<MenuProps> = ({ items, className }) => {
   return (
     <nav className={className}>
-      <ul className="menu">
-        {items.map(item => (
+      <ul className='menu'>
+        {items.map((item) => (
           <MenuItemLink key={item.id} item={item} />
         ))}
       </ul>
@@ -444,10 +448,10 @@ const MenuItemLink: React.FC<{ item: MenuItem }> = ({ item }) => {
   return (
     <li className={`menu-item ${item.cssClass || ''}`}>
       {renderMenuLink(item)}
-      
+
       {hasChildren && (
-        <ul className="submenu">
-          {item.children!.map(child => (
+        <ul className='submenu'>
+          {item.children!.map((child) => (
             <MenuItemLink key={child.id} item={child} />
           ))}
         </ul>
@@ -459,19 +463,19 @@ const MenuItemLink: React.FC<{ item: MenuItem }> = ({ item }) => {
 function renderMenuLink(item: MenuItem) {
   const content = (
     <>
-      {item.icon && <span className="menu-icon">{item.icon}</span>}
-      <span className="menu-title">{item.title}</span>
+      {item.icon && <span className='menu-icon'>{item.icon}</span>}
+      <span className='menu-title'>{item.title}</span>
     </>
   )
 
   // External links
-  if (item.type === 'external') {
+  if (item.type === 'external-link') {
     return (
-      <a 
-        href={item.url || '#'} 
+      <a
+        href={item.url || '#'}
         target={item.target}
-        rel="noopener noreferrer"
-        className="menu-link"
+        rel='noopener noreferrer'
+        className='menu-link'
       >
         {content}
       </a>
@@ -480,11 +484,7 @@ function renderMenuLink(item: MenuItem) {
 
   // Internal links (all other types)
   return (
-    <Link 
-      href={item.url || '#'} 
-      className="menu-link"
-      target={item.target}
-    >
+    <Link href={item.url || '#'} className='menu-link' target={item.target}>
       {content}
     </Link>
   )
@@ -503,7 +503,7 @@ export const MobileMenu: React.FC<{ items: MenuItem[] }> = ({ items }) => {
   const [openSubmenus, setOpenSubmenus] = useState<Set<string>>(new Set())
 
   const toggleSubmenu = (itemId: string) => {
-    setOpenSubmenus(prev => {
+    setOpenSubmenus((prev) => {
       const next = new Set(prev)
       if (next.has(itemId)) {
         next.delete(itemId)
@@ -516,19 +516,19 @@ export const MobileMenu: React.FC<{ items: MenuItem[] }> = ({ items }) => {
 
   return (
     <>
-      <button 
-        className="mobile-menu-toggle"
+      <button
+        className='mobile-menu-toggle'
         onClick={() => setIsOpen(!isOpen)}
-        aria-label="Toggle menu"
+        aria-label='Toggle menu'
       >
         {isOpen ? '✕' : '☰'}
       </button>
 
       <div className={`mobile-menu ${isOpen ? 'open' : ''}`}>
         <ul>
-          {items.map(item => (
-            <MobileMenuItem 
-              key={item.id} 
+          {items.map((item) => (
+            <MobileMenuItem
+              key={item.id}
               item={item}
               isOpen={openSubmenus.has(item.id)}
               onToggle={() => toggleSubmenu(item.id)}
@@ -548,30 +548,21 @@ const MobileMenuItem: React.FC<{
   const hasChildren = item.children && item.children.length > 0
 
   return (
-    <li className="mobile-menu-item">
-      <div className="mobile-menu-item-header">
+    <li className='mobile-menu-item'>
+      <div className='mobile-menu-item-header'>
         {renderMenuLink(item)}
-        
+
         {hasChildren && (
-          <button 
-            onClick={onToggle}
-            className="submenu-toggle"
-            aria-label="Toggle submenu"
-          >
+          <button onClick={onToggle} className='submenu-toggle' aria-label='Toggle submenu'>
             {isOpen ? '−' : '+'}
           </button>
         )}
       </div>
 
       {hasChildren && isOpen && (
-        <ul className="mobile-submenu">
-          {item.children!.map(child => (
-            <MobileMenuItem
-              key={child.id}
-              item={child}
-              isOpen={false}
-              onToggle={() => {}}
-            />
+        <ul className='mobile-submenu'>
+          {item.children!.map((child) => (
+            <MobileMenuItem key={child.id} item={child} isOpen={false} onToggle={() => {}} />
           ))}
         </ul>
       )}
@@ -586,9 +577,9 @@ const MobileMenuItem: React.FC<{
 // components/AccessibleMenu.tsx
 export const AccessibleMenu: React.FC<{ items: MenuItem[] }> = ({ items }) => {
   return (
-    <nav aria-label="Main navigation">
-      <ul role="menubar" className="menu">
-        {items.map(item => (
+    <nav aria-label='Main navigation'>
+      <ul role='menubar' className='menu'>
+        {items.map((item) => (
           <AccessibleMenuItem key={item.id} item={item} />
         ))}
       </ul>
@@ -601,26 +592,26 @@ const AccessibleMenuItem: React.FC<{ item: MenuItem }> = ({ item }) => {
   const [isOpen, setIsOpen] = useState(false)
 
   return (
-    <li role="none">
+    <li role='none'>
       {hasChildren ? (
         <>
           <button
-            role="menuitem"
-            aria-haspopup="true"
+            role='menuitem'
+            aria-haspopup='true'
             aria-expanded={isOpen}
             onClick={() => setIsOpen(!isOpen)}
-            className="menu-link"
+            className='menu-link'
           >
-            {item.icon && <span aria-hidden="true">{item.icon}</span>}
+            {item.icon && <span aria-hidden='true'>{item.icon}</span>}
             {item.title}
-            <span aria-hidden="true" className="dropdown-icon">
+            <span aria-hidden='true' className='dropdown-icon'>
               {isOpen ? '▲' : '▼'}
             </span>
           </button>
-          
+
           {isOpen && (
-            <ul role="menu" className="submenu">
-              {item.children!.map(child => (
+            <ul role='menu' className='submenu'>
+              {item.children!.map((child) => (
                 <AccessibleMenuItem key={child.id} item={child} />
               ))}
             </ul>
@@ -628,17 +619,15 @@ const AccessibleMenuItem: React.FC<{ item: MenuItem }> = ({ item }) => {
         </>
       ) : (
         <a
-          role="menuitem"
+          role='menuitem'
           href={item.url || '#'}
           target={item.target}
-          rel={item.type === 'external' ? 'noopener noreferrer' : undefined}
-          className="menu-link"
+          rel={item.type === 'external-link' ? 'noopener noreferrer' : undefined}
+          className='menu-link'
         >
-          {item.icon && <span aria-hidden="true">{item.icon}</span>}
+          {item.icon && <span aria-hidden='true'>{item.icon}</span>}
           {item.title}
-          {item.type === 'external' && (
-            <span className="sr-only"> (opens in new tab)</span>
-          )}
+          {item.type === 'external-link' && <span className='sr-only'> (opens in new tab)</span>}
         </a>
       )}
     </li>
@@ -708,8 +697,8 @@ const AccessibleMenuItem: React.FC<{ item: MenuItem }> = ({ item }) => {
 }
 
 /* External link indicator */
-a[target="_blank"]::after {
-  content: " ↗";
+a[target='_blank']::after {
+  content: ' ↗';
   font-size: 0.75em;
   vertical-align: super;
 }
@@ -767,6 +756,7 @@ a[target="_blank"]::after {
 ## ✅ Testing Checklist
 
 ### Admin Dashboard
+
 - [ ] Can create menu items with all 7 types
 - [ ] Entity selector loads correct entities based on type
 - [ ] URL field appears for custom/external types
@@ -780,6 +770,7 @@ a[target="_blank"]::after {
 - [ ] Can manually set slug
 
 ### Public Website
+
 - [ ] Menu renders correctly
 - [ ] Internal links work (page, post, category, service, project)
 - [ ] External links open in correct target
@@ -795,15 +786,20 @@ a[target="_blank"]::after {
 ## 🐛 Common Issues & Solutions
 
 ### Issue 1: "Reference ID is required" error
+
 **Solution:** Make sure the type is selected before showing the entity selector, and ensure `referenceId` is included in the payload for entity types.
 
 ### Issue 2: Validation fails on form submit
+
 **Solution:** Check that you're sending the correct field based on type:
+
 - Entity types → `referenceId`
 - Custom/External → `url`
 
 ### Issue 3: Menu not updating after changes
+
 **Solution:** Clear cache or trigger revalidation:
+
 ```typescript
 router.refresh() // Next.js
 // or
@@ -811,6 +807,7 @@ mutate('/api/menus/main-menu') // SWR
 ```
 
 ### Issue 4: External links open in same tab
+
 **Solution:** Ensure `target` is set to `_blank` for external links in the form.
 
 ---
