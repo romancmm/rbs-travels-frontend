@@ -1,3 +1,4 @@
+import { fetchOnServer } from '@/action/data'
 import BlogCard from '@/components/card/BlogCard'
 import { Container } from '@/components/common/container'
 import { Typography } from '@/components/common/typography'
@@ -5,59 +6,47 @@ import { Layers } from 'lucide-react'
 
 // Fetch articles by category slugs
 async function getArticlesByCategories(categorySlugs: string[]) {
-    try {
-        const categoryParam = categorySlugs.join(',')
-        const res = await fetch(
-            `${process.env.NEXT_PUBLIC_APP_ROOT_API}/articles/posts?categories=${categoryParam}`,
-            {
-                next: { revalidate: 60 } // Revalidate every 60 seconds
-            }
-        )
+    // Construct query string with multiple categorySlugs parameters
+    const queryParams = categorySlugs.map(slug => `categorySlugs=${slug}`).join('&')
 
-        if (!res.ok) {
-            return { items: [], total: 0 }
-        }
+    const { data, error } = await fetchOnServer(
+        `/articles/posts?${queryParams}`,
+        300 // Revalidate every 300 seconds
+    )
 
-        const data = await res.json()
-        return {
-            items: data?.data?.items || [],
-            total: data?.data?.total || 0
-        }
-    } catch (error) {
-        console.error('Error fetching articles:', error)
+    if (error || !data) {
         return { items: [], total: 0 }
+    }
+
+    return {
+        items: data?.items || [],
+        total: data?.total || 0
     }
 }
 
 // Fetch category names for display
 async function getCategoryNames(categorySlugs: string[]) {
-    try {
-        const categoryParam = categorySlugs.join(',')
-        const res = await fetch(
-            `${process.env.NEXT_PUBLIC_APP_ROOT_API}/articles/categories?slugs=${categoryParam}`,
-            {
-                next: { revalidate: 60 }
-            }
-        )
+    const categoryParam = categorySlugs.join(',')
+    const { data, error } = await fetchOnServer(
+        `/articles/categories?slugs=${categoryParam}`,
+        300
+    )
 
-        if (!res.ok) {
-            return []
-        }
-
-        const data = await res.json()
-        return data?.data?.items || []
-    } catch (error) {
-        console.error('Error fetching categories:', error)
+    if (error || !data) {
         return []
     }
+
+    return data?.items || []
 }
 
 export default async function CategoryArticlesPage({
     params
 }: {
-    params: { slugs: string[] }
+    params: Promise<{ slugs: string[] }>
 }) {
-    const categorySlugs = params.slugs
+    const { slugs } = await params
+    const categorySlugs = slugs ?? []
+
     const [articlesData, categories] = await Promise.all([
         getArticlesByCategories(categorySlugs),
         getCategoryNames(categorySlugs)
