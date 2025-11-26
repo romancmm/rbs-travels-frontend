@@ -1,0 +1,109 @@
+import BlogCard from '@/components/card/BlogCard'
+import { Container } from '@/components/common/container'
+import { Typography } from '@/components/common/typography'
+import { Layers } from 'lucide-react'
+
+// Fetch articles by category slugs
+async function getArticlesByCategories(categorySlugs: string[]) {
+    try {
+        const categoryParam = categorySlugs.join(',')
+        const res = await fetch(
+            `${process.env.NEXT_PUBLIC_APP_ROOT_API}/articles/posts?categories=${categoryParam}`,
+            {
+                next: { revalidate: 60 } // Revalidate every 60 seconds
+            }
+        )
+
+        if (!res.ok) {
+            return { items: [], total: 0 }
+        }
+
+        const data = await res.json()
+        return {
+            items: data?.data?.items || [],
+            total: data?.data?.total || 0
+        }
+    } catch (error) {
+        console.error('Error fetching articles:', error)
+        return { items: [], total: 0 }
+    }
+}
+
+// Fetch category names for display
+async function getCategoryNames(categorySlugs: string[]) {
+    try {
+        const categoryParam = categorySlugs.join(',')
+        const res = await fetch(
+            `${process.env.NEXT_PUBLIC_APP_ROOT_API}/articles/categories?slugs=${categoryParam}`,
+            {
+                next: { revalidate: 60 }
+            }
+        )
+
+        if (!res.ok) {
+            return []
+        }
+
+        const data = await res.json()
+        return data?.data?.items || []
+    } catch (error) {
+        console.error('Error fetching categories:', error)
+        return []
+    }
+}
+
+export default async function CategoryArticlesPage({
+    params
+}: {
+    params: { slugs: string[] }
+}) {
+    const categorySlugs = params.slugs
+    const [articlesData, categories] = await Promise.all([
+        getArticlesByCategories(categorySlugs),
+        getCategoryNames(categorySlugs)
+    ])
+
+    const categoryNames = categories.map((cat: any) => cat.name || cat.title).join(', ')
+
+    return (
+        <div className='bg-background py-12 md:py-20'>
+            <Container>
+                {/* Header Section */}
+                <div className='mb-12 text-center'>
+                    <div className='inline-flex items-center gap-2 bg-primary/10 mb-4 px-4 py-2 rounded-full font-semibold text-primary text-sm'>
+                        <Layers className='w-4 h-4' />
+                        {categorySlugs.length > 1 ? 'Multiple Categories' : 'Category'}
+                    </div>
+
+                    <Typography variant='h2' weight='bold' className='mb-4'>
+                        {categoryNames || 'Articles'}
+                    </Typography>
+
+                    <Typography variant='body1' className='text-muted-foreground'>
+                        {articlesData.total > 0
+                            ? `${articlesData.total} article${articlesData.total === 1 ? '' : 's'} found`
+                            : 'No articles found'}
+                    </Typography>
+                </div>
+
+                {/* Articles Grid */}
+                {articlesData.items.length > 0 ? (
+                    <div className='gap-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3'>
+                        {articlesData.items.map((article: any, index: number) => (
+                            <BlogCard key={article.id || index} post={article} index={index} />
+                        ))}
+                    </div>
+                ) : (
+                    <div className='bg-muted/50 py-20 rounded-2xl text-center'>
+                        <Typography variant='h5' className='mb-2 text-muted-foreground'>
+                            No Articles Found
+                        </Typography>
+                        <Typography variant='body2' className='text-muted-foreground'>
+                            There are no articles in this category yet.
+                        </Typography>
+                    </div>
+                )}
+            </Container>
+        </div>
+    )
+}

@@ -3,7 +3,7 @@
 import { Suspense } from 'react'
 
 import { CustomTable } from '@/components/admin/common/data-table'
-import { blogColumns } from '@/components/admin/table/blogs/blogs-columns'
+import { blogColumns } from '@/components/admin/table/articles/article-columns'
 import PageHeader from '@/components/common/PageHeader'
 import { Pagination } from '@/components/common/Pagination'
 import useAsync from '@/hooks/useAsync'
@@ -12,22 +12,22 @@ import { FilterForm } from '@/plugins/filters/FilterForm'
 import { blogsFilterSchema } from '@/plugins/filters/schema/adminDataFilterSchema'
 import { usePageFilters } from '@/plugins/filters/usePageFilters'
 
-function BlogList() {
+function ArticleList() {
   // const { page, limit } = useFilter(10)
   const { filters, setFilters, resetFilters, queryString } = usePageFilters(blogsFilterSchema)
 
   const { data, loading, mutate } = useAsync<{
     data: {
-      items: Blog[]
+      items: Article[]
       pagination: PaginationMeta
     }
-  }>(() => '/admin/blog/posts' + (queryString ? `?${queryString}` : ``))
+  }>(() => '/admin/articles/posts' + (queryString ? `?${queryString}` : ``))
 
   return (
     <div className='w-full max-w-full overflow-x-hidden'>
       {/* Header */}
       <PageHeader
-        title='Blog Posts'
+        title='Article Posts'
         subTitle='Manage blog posts and articles'
         extra={
           <FilterForm
@@ -55,10 +55,10 @@ function BlogList() {
   )
 }
 
-export default function BlogListPage() {
+export default function ArticleListPage() {
   return (
     <Suspense fallback={<div>Loading...</div>}>
-      <BlogList />
+      <ArticleList />
     </Suspense>
   )
 }

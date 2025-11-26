@@ -3,17 +3,17 @@
 import { Suspense, useState } from 'react'
 
 import { CustomTable } from '@/components/admin/common/data-table'
-import { BlogCategoryForm } from '@/components/admin/form/BlogCategory'
-import { blogCategoryColumns } from '@/components/admin/table/blogs/blog-categories-columns'
+import { ArticleCategoryForm } from '@/components/admin/form/ArticleCategory'
+import { blogCategoryColumns } from '@/components/admin/table/articles/article-categories-columns'
 import PageHeader from '@/components/common/PageHeader'
 import { Pagination } from '@/components/common/Pagination'
 import { AddButton } from '@/components/common/PermissionGate'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import useAsync from '@/hooks/useAsync'
 import { useFilter } from '@/hooks/useFilter'
-import { BlogCategoryType } from '@/lib/validations/schemas/blog'
+import { ArticleCategoryType } from '@/lib/validations/schemas/blog'
 
-interface BlogCategory extends BlogCategoryType {
+interface ArticleCategory extends ArticleCategoryType {
   id: number
   createdAt: string
 }
@@ -27,23 +27,23 @@ interface PaginationMeta {
   hasPrev: boolean
 }
 
-function BlogCategoryList() {
+function ArticleCategoryList() {
   const { page, limit } = useFilter(10)
   const [isModalOpen, setIsModalOpen] = useState(false)
-  const [editingCategory, setEditingCategory] = useState<BlogCategory | null>(null)
+  const [editingCategory, setEditingCategory] = useState<ArticleCategory | null>(null)
 
   const { data, loading, mutate } = useAsync<{
     data: {
-      items: BlogCategory[]
+      items: ArticleCategory[]
       pagination: PaginationMeta
     }
   }>(
-    () => 'admin/blog/categories' + (page ? `?page=${page}` : '') + (limit ? `&limit=${limit}` : '')
+    () => 'admin/articles/categories' + (page ? `?page=${page}` : '') + (limit ? `&limit=${limit}` : '')
   )
 
   // Enhanced mutate function that includes edit functionality
   const enhancedMutate = Object.assign(mutate, {
-    editCategory: (category: BlogCategory) => {
+    editCategory: (category: ArticleCategory) => {
       setEditingCategory(category)
       setIsModalOpen(true)
     }
@@ -68,7 +68,7 @@ function BlogCategoryList() {
     <div className='w-full max-w-full overflow-x-hidden'>
       {/* Header */}
       <PageHeader
-        title='Blog Categories'
+        title='Article Categories'
         subTitle='Manage blog categories'
         extra={
           <div className='flex sm:flex-row flex-col sm:justify-between sm:items-end gap-4 mb-6'>
@@ -97,7 +97,7 @@ function BlogCategoryList() {
           <DialogHeader>
             <DialogTitle>{editingCategory ? 'Edit Category' : 'Add New Category'}</DialogTitle>
           </DialogHeader>
-          <BlogCategoryForm
+          <ArticleCategoryForm
             initialData={
               editingCategory ? { id: editingCategory.id, name: editingCategory.name } : undefined
             }
@@ -110,10 +110,10 @@ function BlogCategoryList() {
   )
 }
 
-export default function BlogCategoryPage() {
+export default function ArticleCategoryPage() {
   return (
     <Suspense fallback={<div>Loading...</div>}>
-      <BlogCategoryList />
+      <ArticleCategoryList />
     </Suspense>
   )
 }

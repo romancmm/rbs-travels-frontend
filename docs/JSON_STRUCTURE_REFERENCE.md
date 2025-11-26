@@ -537,7 +537,7 @@ type ComponentType =
   | 'html' // Custom HTML with html string
 
   // Dynamic API Components (3)
-  | 'blog-grid' // Blog post grid (requires API)
+  | 'blog-grid' // Article post grid (requires API)
   | 'service-card' // Service showcase (requires API)
   | 'project-card' // Project showcase (requires API)
 ```

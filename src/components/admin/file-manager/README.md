@@ -23,7 +23,6 @@ Main file manager interface for standalone use.
 
 ```tsx
 import { FileManagerComponent } from '@/components/admin/file-manager'
-
 ;<FileManagerComponent
   mode='standalone' // or "modal"
   onFileSelect={(file) => console.log(file)}
@@ -198,7 +197,7 @@ export default function MediaPage() {
 }
 ```
 
-### Blog Post Creation
+### Article Post Creation
 
 ```tsx
 const [featuredImage, setFeaturedImage] = useState(null)

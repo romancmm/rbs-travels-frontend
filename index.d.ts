@@ -148,6 +148,7 @@ declare global {
     | 'paymentTerms'
     | 'privacyPolicy'
     | 'termsUse'
+
   // ================================
   // GLOBAL AUTH & USER TYPES
   // ================================
@@ -453,17 +454,17 @@ declare global {
   // GLOBAL CONTENT TYPES
   // ================================
 
-  interface BlogCategory extends BaseEntity {
+  interface ArticleCategory extends BaseEntity {
     name: string
     slug: string
     // Relations
-    blogs?: Blog[]
+    blogs?: Article[]
   }
 
-  interface Blog extends BaseEntity {
+  interface Article extends BaseEntity {
     title: string
     slug: string
-    excerpt: string
+    excerpt?: string | null
     content: string
     thumbnail?: string | null
     gallery: string[]
@@ -474,8 +475,56 @@ declare global {
     categoryId: number
     seo?: Record<string, any> | null
     // Relations
-    category?: BlogCategory
+    category?: ArticleCategory
     author?: User
+    readTime?: number
+  }
+
+  interface PackageCategory extends BaseEntity {
+    name: string
+    slug: string
+    // Relations
+    packages?: Package[]
+  }
+
+  interface Package extends BaseEntity {
+    title: string
+    slug: string
+    excerpt?: string | null
+    content: string
+    thumbnail?: string | null
+    gallery: string[]
+    tags: string[]
+    views: number
+    isPublished: boolean
+    publishedAt?: Date | null
+    categoryId: number
+    seo?: Record<string, any> | null
+    // Package-specific fields
+    destination?: string | null
+    price?: {
+      amount: number
+      currency?: string
+      discountedPrice?: number
+    } | null
+    duration?: {
+      days: number
+      nights: number
+    } | null
+    maxGroupSize?: number | null
+    rating?: number | null
+    reviewCount?: number | null
+    highlights?: string[]
+    inclusions?: string[]
+    exclusions?: string[]
+    itinerary?: Array<{
+      day: number
+      title: string
+      description: string
+    }>
+    availability?: string | null
+    // Relations
+    category?: PackageCategory
   }
 
   // ================================
@@ -592,7 +641,7 @@ declare global {
     dateTo?: Date
   }
 
-  interface BlogFilters extends BaseQuery {
+  interface ArticleFilters extends BaseQuery {
     categoryId?: number
     isPublished?: boolean
     tags?: string[]
@@ -1105,16 +1154,17 @@ export interface CouponUsage {
 // CONTENT TYPES
 // ================================
 
-export interface BlogCategory extends BaseEntity {
+export interface ArticleCategory extends BaseEntity {
   name: string
   slug: string
   // Relations
-  blogs?: Blog[]
+  blogs?: Article[]
 }
 
-export interface Blog extends BaseEntity {
+export interface Article extends BaseEntity {
   title: string
   slug: string
+  excerpt?: string | null
   content: string
   source?: string | null
   thumbnail?: string | null
@@ -1126,7 +1176,56 @@ export interface Blog extends BaseEntity {
   categoryId: number
   seo?: Record<string, any> | null
   // Relations
-  category?: BlogCategory
+  category?: ArticleCategory
+  author?: User
+  readTime?: number
+}
+
+export interface PackageCategory extends BaseEntity {
+  name: string
+  slug: string
+  // Relations
+  packages?: Package[]
+}
+
+export interface Package extends BaseEntity {
+  title: string
+  slug: string
+  excerpt?: string | null
+  content: string
+  thumbnail?: string | null
+  gallery: string[]
+  tags: string[]
+  views: number
+  isPublished: boolean
+  publishedAt?: Date | null
+  categoryId: number
+  seo?: Record<string, any> | null
+  // Package-specific fields
+  destination?: string | null
+  price?: {
+    amount: number
+    currency?: string
+    discountedPrice?: number
+  } | null
+  duration?: {
+    days: number
+    nights: number
+  } | null
+  maxGroupSize?: number | null
+  rating?: number | null
+  reviewCount?: number | null
+  highlights?: string[]
+  inclusions?: string[]
+  exclusions?: string[]
+  itinerary?: Array<{
+    day: number
+    title: string
+    description: string
+  }>
+  availability?: string | null
+  // Relations
+  category?: PackageCategory
 }
 
 // ================================
@@ -1243,7 +1342,7 @@ export interface OrderFilters extends BaseQuery {
   dateTo?: Date
 }
 
-export interface BlogFilters extends BaseQuery {
+export interface ArticleFilters extends BaseQuery {
   categoryId?: number
   isPublished?: boolean
   tags?: string[]
@@ -1375,12 +1474,12 @@ export interface FileUploadResponse extends ApiResponse<UploadedFile[]> {
 export type {
   Account,
   ApiResponse,
+  Article,
+  ArticleCategory,
+  ArticleFilters,
   AuditLog,
   BaseEntity,
   BaseQuery,
-  Blog,
-  BlogCategory,
-  BlogFilters,
   CartItem,
   Category,
   CheckoutData,
@@ -1393,6 +1492,8 @@ export type {
   Order,
   OrderFilters,
   OrderItem,
+  Package,
+  PackageCategory,
   PaginatedResponse,
   PaginationMeta,
   Payment,

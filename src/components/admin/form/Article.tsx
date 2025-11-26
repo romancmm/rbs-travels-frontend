@@ -6,7 +6,7 @@ import FileUploader from '@/components/common/FileUploader'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 import { showError } from '@/lib/errMsg'
-import { CreateBlogSchema, CreateBlogType } from '@/lib/validations/schemas/blog'
+import { CreateArticleSchema, CreateArticleType } from '@/lib/validations/schemas/blog'
 import requests from '@/services/network/http'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useRouter } from 'next/navigation'
@@ -19,7 +19,7 @@ type TProps = {
   initialData?: any
 }
 
-export default function BlogForm({ initialData }: TProps) {
+export default function ArticleForm({ initialData }: TProps) {
   const router = useRouter()
 
   const {
@@ -28,8 +28,8 @@ export default function BlogForm({ initialData }: TProps) {
     watch,
     setValue,
     formState: { errors }
-  } = useForm<CreateBlogType>({
-    resolver: zodResolver(CreateBlogSchema),
+  } = useForm<CreateArticleType>({
+    resolver: zodResolver(CreateArticleSchema),
     mode: 'onSubmit',
     defaultValues: {
       title: initialData?.title || '',
@@ -108,16 +108,16 @@ export default function BlogForm({ initialData }: TProps) {
     )
   }
 
-  const onSubmit: SubmitHandler<CreateBlogType> = async (data) => {
+  const onSubmit: SubmitHandler<CreateArticleType> = async (data) => {
     try {
       await requests[initialData?.id ? 'put' : 'post'](
-        `/admin/blog/posts` + (initialData?.id ? `/${initialData?.id}` : ``),
+        `/admin/articles/posts` + (initialData?.id ? `/${initialData?.id}` : ``),
         {
           ...data,
           ...(initialData?.id ? { id: initialData.id } : {})
         }
       )
-      toast.success('Blog post created successfully')
+      toast.success('Article post created successfully')
       router.push('/admin/blogs')
     } catch (error) {
       showError(error)
@@ -134,7 +134,7 @@ export default function BlogForm({ initialData }: TProps) {
               control={control}
               render={({ field }) => (
                 <CustomInput
-                  label='Blog Title'
+                  label='Article Title'
                   type='text'
                   placeholder='Enter blog title'
                   value={field.value}
@@ -150,7 +150,7 @@ export default function BlogForm({ initialData }: TProps) {
               control={control}
               render={({ field }) => (
                 <CustomInput
-                  label='Blog Slug'
+                  label='Article Slug'
                   type='text'
                   placeholder='blog-post-slug'
                   value={field.value}
@@ -165,19 +165,24 @@ export default function BlogForm({ initialData }: TProps) {
               name='categoryId'
               control={control}
               render={({ field }) => (
-                <CustomSelect
-                  label='Category'
-                  placeholder='Select Category'
-                  value={field.value?.toString() || ''}
-                  url='/admin/blog/categories'
-                  options={(data) =>
-                    data?.data?.items?.map((cat: any) => ({
-                      value: cat.id.toString(),
-                      label: cat.name
-                    }))
-                  }
-                  onChange={field.onChange}
-                />
+                <>
+                  <CustomSelect
+                    label='Category'
+                    placeholder='Select Category'
+                    value={field.value?.toString() || ''}
+                    url='/admin/articles/categories'
+                    options={(data) =>
+                      data?.data?.items?.map((cat: any) => ({
+                        value: cat.id.toString(),
+                        label: cat.name
+                      }))
+                    }
+                    onChange={field.onChange}
+                  />
+                  {errors.categoryId && (
+                    <span className='font-medium text-red-500 text-xs'>{errors.categoryId.message}</span>
+                  )}
+                </>
               )}
             />
 
@@ -346,7 +351,7 @@ export default function BlogForm({ initialData }: TProps) {
                 <CustomInput
                   type='switch'
                   name='isPublished'
-                  label={`Blog is ${field.value ? 'Published' : 'Draft'}`}
+                  label={`Article is ${field.value ? 'Published' : 'Draft'}`}
                   checked={field.value}
                   onCheckedChange={field.onChange}
                 />
@@ -365,7 +370,7 @@ export default function BlogForm({ initialData }: TProps) {
             Cancel
           </Button>
           <Button type='submit' className='lg:w-full max-w-52'>
-            {initialData ? 'Update' : 'Create'} Blog Post
+            {initialData ? 'Update' : 'Create'} Article Post
           </Button>
         </div>
       </form>

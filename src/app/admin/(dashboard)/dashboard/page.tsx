@@ -250,7 +250,7 @@ export default function DashboardPage() {
   //   { label: 'About Us', value: 8350 },
   //   { label: 'Services', value: 6240 },
   //   { label: 'Contact', value: 4180 },
-  //   { label: 'Blog', value: 3920 }
+  //   { label: 'Article', value: 3920 }
   // ]
 
   return (

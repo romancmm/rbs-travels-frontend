@@ -1,13 +1,13 @@
 'use client'
 
-import BlogForm from '@/components/admin/form/Blog'
+import ArticleForm from '@/components/admin/form/Article'
 import PageHeader from '@/components/common/PageHeader'
 import useAsync from '@/hooks/useAsync'
 import { useParams } from 'next/navigation'
 
-export default function BlogEditPage() {
+export default function ArticleEditPage() {
   const params = useParams()
-  const { data } = useAsync<{ data: Blog }>(`/admin/blog/posts/${params.id}`)
+  const { data } = useAsync<{ data: Article }>(`/admin/articles/posts/${params.id}`)
 
   if (!data?.data) {
     return <div>Loading...</div>
@@ -17,7 +17,7 @@ export default function BlogEditPage() {
     <div className='space-y-6'>
       <PageHeader title='Edit Post' subTitle='Update blog post information' />
 
-      <BlogForm initialData={data.data} />
+      <ArticleForm initialData={data.data} />
     </div>
   )
 }

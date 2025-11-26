@@ -3,25 +3,25 @@
 import { Container } from '@/components/common/container'
 import { EmptyState } from '@/components/common/EmptyState'
 import { Section } from '@/components/common/section'
-import { BlogLoadingSkeleton } from '@/components/common/Skeleton'
+import { ArticleLoadingSkeleton } from '@/components/common/Skeleton'
 import { Typography } from '@/components/common/typography'
 import { TrendingUp } from 'lucide-react'
 import { motion } from 'motion/react'
 import { use } from 'react'
-import BlogCard from './BlogCard'
+import BlogCard from '../../card/BlogCard'
 
-interface BlogProps {
+interface ArticleProps {
   data?: any
   isLoading?: boolean
   className?: string
 }
 
-const Blog = ({ data, isLoading = false, className }: BlogProps) => {
+const Article = ({ data, isLoading = false, className }: ArticleProps) => {
   const res: any = use(data)
   const blogData = res?.data?.items
 
   if (isLoading) {
-    return <BlogLoadingSkeleton />
+    return <ArticleLoadingSkeleton />
   }
 
   if (!blogData || !blogData?.length) {
@@ -29,7 +29,7 @@ const Blog = ({ data, isLoading = false, className }: BlogProps) => {
       <Section variant='xl' className={className}>
         <Container>
           <EmptyState
-            title='No Blog Posts Available'
+            title='No Article Posts Available'
             description='Stay tuned for exciting travel stories and tips coming soon!'
             imageSrc='/no-data.png'
           />
@@ -60,7 +60,7 @@ const Blog = ({ data, isLoading = false, className }: BlogProps) => {
                 variant='subtitle1'
                 className='font-semibold text-primary uppercase tracking-wide'
               >
-                Blogs
+                Articles
               </Typography>
             </div>
 
@@ -82,7 +82,7 @@ const Blog = ({ data, isLoading = false, className }: BlogProps) => {
           </motion.div>
         </div>
 
-        {/* Blog Grid */}
+        {/* Article Grid */}
         <div className='gap-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 mb-12'>
           {blogData.slice(0, 3)?.map((post: any, index: number) => (
             <BlogCard key={post.id} post={post} index={index} />
@@ -176,4 +176,4 @@ const Blog = ({ data, isLoading = false, className }: BlogProps) => {
   )
 }
 
-export default Blog
+export default Article

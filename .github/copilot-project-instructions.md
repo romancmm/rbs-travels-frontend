@@ -1,11 +1,10 @@
-
 ---
 
 ### ⚙️ Core Features
 
 1. **Headless CMS System**
    - Full drag & drop page builder (Elementor-style)
-   - Reusable dynamic blocks (Hero, Gallery, Text, BlogList, etc.)
+   - Reusable dynamic blocks (Hero, Gallery, Text, ArticleList, etc.)
    - Page data stored as JSON in MongoDB  
 
 2. **Multi-language**
@@ -20,7 +19,7 @@
 
 4. **Content Management**
    - Services CRUD  
-   - Blogs CRUD with WYSIWYG editor  
+   - Articles CRUD with WYSIWYG editor  
    - Dynamic Pages with builder  
    - Contact form (NodeMailer)  
    - Site settings (logo, contact info, meta data, etc.)
@@ -38,6 +37,7 @@
 ### 💾 MongoDB Collections
 
 **Collections:**
+
 - `users`
 - `pages`
 - `services`
@@ -47,6 +47,7 @@
 - `translations`
 
 **Example `pages` schema:**
+
 ```js
 {
   title: String,
@@ -61,3 +62,4 @@
   language: String, // 'en', 'bn', etc.
   createdBy: ObjectId,
 }
+```

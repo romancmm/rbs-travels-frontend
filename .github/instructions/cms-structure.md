@@ -33,7 +33,7 @@ Each menu item will have a `type` field specifying its behavior.
 | Type             | Description                           | Example Target                    |
 | ---------------- | ------------------------------------- | --------------------------------- |
 | `custom-link`    | Manual external/internal URL          | `/about` or `https://example.com` |
-| `category-blogs` | Auto-link to a category blog list     | `/blog/category/:slug`            |
+| `category-blogs` | Auto-link to a category blog list     | `/articles/category/:slug`        |
 | `custom-page`    | Link to a page built via page builder | `/page/:slug`                     |
 | `article`        | Link to a single article              | `/article/:slug`                  |
 
@@ -244,7 +244,7 @@ Each menu supports **multi-level (nested) items**.
   },
   {
     "id": 2,
-    "title": "Blog",
+    "title": "Article",
     "type": "category_blogs",
     "categoryId": "news",
     "children": [
@@ -270,7 +270,7 @@ Each menu supports **multi-level (nested) items**.
 ### Supported Menu Types
 
 - Custom Link → Direct external or internal URL.
-- Category Blogs → Dynamically fetch blog posts by category.
+- Category Articles → Dynamically fetch blog posts by category.
 - Custom Page → Render a page built using the page builder (dynamic layout).
 - Article → Render a single article/post by slug or ID.
 
@@ -330,7 +330,7 @@ Admin Features
 - Product List / Product Card
 - Service List
 - Testimonial List
-- Blog List / Featured Posts
+- Article List / Featured Posts
 
 ### Component Configuration
 

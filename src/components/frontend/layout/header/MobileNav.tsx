@@ -4,6 +4,7 @@ import CustomLink from '@/components/common/CustomLink'
 import { Typography } from '@/components/common/typography'
 import { useSiteConfig } from '@/components/providers/store-provider'
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet'
+import { getMenuItemUrl } from '@/types/menu.types'
 import { ChevronRight, Mail, MapPin, Menu, PhoneCall, X } from 'lucide-react'
 import { useState } from 'react'
 
@@ -57,12 +58,12 @@ export default function MobileNav({ items }: { items: any[] }) {
                         <Typography variant='body1' weight='medium'>
                           {item.title}
                         </Typography>
-                        {item.children?.length > 0 &&
+                        {item.children?.length > 0 && (
                           <ChevronRight
                             className={`w-4 h-4 transition-transform duration-200 ${expandedItem === index ? 'rotate-90' : ''
                               }`}
                           />
-                        }
+                        )}
                       </button>
 
                       {/* Submenu */}
@@ -71,15 +72,7 @@ export default function MobileNav({ items }: { items: any[] }) {
                           {item.children.map((child: any, childIndex: number) => (
                             <CustomLink
                               key={childIndex}
-                              href={
-                                child?.type === 'custom-link'
-                                  ? child.link
-                                  : child?.type === 'gallery'
-                                    ? `/gallery/${child.link || child.slug}`
-                                    : child?.type === 'custom-page'
-                                      ? `/page/${child.pageId}`
-                                      : child.href ?? `/page/${child.slug}`
-                              }
+                              href={getMenuItemUrl(child)}
                               onClick={() => setIsOpen(false)}
                               className='block hover:bg-white/10 px-3 py-2 rounded-lg text-slate-300 hover:text-white transition-colors'
                             >
@@ -92,15 +85,7 @@ export default function MobileNav({ items }: { items: any[] }) {
                   ) : (
                     // Regular navigation item
                     <CustomLink
-                      href={
-                        item?.type === 'custom-link'
-                          ? item.link
-                          : item?.type === 'gallery'
-                            ? `/gallery/${item.link || item.slug}`
-                            : item?.type === 'custom-page'
-                              ? `/page/${item.pageId}`
-                              : item.href ?? `/page/${item.slug}`
-                      }
+                      href={getMenuItemUrl(item)}
                       onClick={() => setIsOpen(false)}
                       className='block hover:bg-white/10 px-4 py-3 rounded-lg text-white transition-colors'
                     >
@@ -151,7 +136,7 @@ export default function MobileNav({ items }: { items: any[] }) {
                   <div className='flex justify-center items-center bg-primary/20 mt-0.5 rounded-lg w-8 h-8'>
                     <MapPin className='w-4 h-4 text-primary' />
                   </div>
-                  <div className="flex-1">
+                  <div className='flex-1'>
                     <Typography variant='body2' className='text-slate-300 leading-relaxed'>
                       {siteConfig?.address}
                     </Typography>

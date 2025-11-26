@@ -6,6 +6,7 @@ import SocialLinks from '@/components/common/SocialLinks'
 import { Typography } from '@/components/common/typography'
 import { useSiteConfig } from '@/components/providers/store-provider'
 import { cn } from '@/lib/utils'
+import { getMenuItemUrl } from '@/types/menu.types'
 import { ArrowRight, Mail, Phone } from 'lucide-react'
 import { use } from 'react'
 
@@ -68,7 +69,7 @@ export default function Footer({ data }: { data: any }) {
                       {nav.children?.map((child: any, idx: number) => (
                         <li key={idx}>
                           <CustomLink
-                            href={child.href ?? '#'}
+                            href={getMenuItemUrl(child)}
                             className='group flex items-center text-slate-300 hover:text-primary transition-colors duration-300'
                           >
                             <ArrowRight className='opacity-0 group-hover:opacity-100 mr-2 w-3 h-3 transition-all -translate-x-2 group-hover:translate-x-0 duration-300' />

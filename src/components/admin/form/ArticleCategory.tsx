@@ -12,22 +12,22 @@ import requests from '@/services/network/http'
 import { toast } from 'sonner'
 
 // Simple schema - only name is required, slug is auto-generated
-const BlogCategoryFormSchema = z.object({
+const ArticleCategoryFormSchema = z.object({
   name: z
     .string()
     .min(1, 'Category name is required')
     .max(100, 'Name must be less than 100 characters')
 })
 
-type BlogCategoryFormType = z.infer<typeof BlogCategoryFormSchema>
+type ArticleCategoryFormType = z.infer<typeof ArticleCategoryFormSchema>
 
-interface BlogCategoryFormProps {
+interface ArticleCategoryFormProps {
   initialData?: { id?: number; name: string }
   onSuccess?: () => void
   onCancel?: () => void
 }
 
-export function BlogCategoryForm({ initialData, onSuccess, onCancel }: BlogCategoryFormProps) {
+export function ArticleCategoryForm({ initialData, onSuccess, onCancel }: ArticleCategoryFormProps) {
   const {
     register,
     handleSubmit,
@@ -35,8 +35,8 @@ export function BlogCategoryForm({ initialData, onSuccess, onCancel }: BlogCateg
     reset,
     setValue,
     watch
-  } = useForm<BlogCategoryFormType>({
-    resolver: zodResolver(BlogCategoryFormSchema),
+  } = useForm<ArticleCategoryFormType>({
+    resolver: zodResolver(ArticleCategoryFormSchema),
     defaultValues: {
       name: initialData?.name || ''
     }
@@ -60,18 +60,18 @@ export function BlogCategoryForm({ initialData, onSuccess, onCancel }: BlogCateg
     }
   }, [initialData, setValue])
 
-  const onSubmit = async (data: BlogCategoryFormType) => {
+  const onSubmit = async (data: ArticleCategoryFormType) => {
     try {
       const slug = generateSlug(data.name)
       const payload = { ...data, slug }
 
       if (initialData?.id) {
         // Update existing category
-        await requests.put(`/admin/blog/categories/${initialData.id}`, payload)
+        await requests.put(`/admin/articles/categories/${initialData.id}`, payload)
         toast.success('Category updated successfully')
       } else {
         // Create new category
-        await requests.post('/admin/blog/categories', payload)
+        await requests.post('/admin/articles/categories', payload)
         toast.success('Category created successfully')
       }
 
@@ -110,8 +110,8 @@ export function BlogCategoryForm({ initialData, onSuccess, onCancel }: BlogCateg
               ? 'Updating...'
               : 'Creating...'
             : initialData?.id
-            ? 'Update Category'
-            : 'Create Category'}
+              ? 'Update Category'
+              : 'Create Category'}
         </Button>
         {onCancel && (
           <Button type='button' variant='outline' onClick={onCancel}>

@@ -35,7 +35,7 @@ export function SectionCards() {
       iconSize: { width: 30, height: 30 }
     },
     {
-      title: 'Total Blogs',
+      title: 'Total Articles',
       count: '2',
       icon: '/images/dashboard-icons/shared-post.png',
       iconSize: { width: 30, height: 30 }
