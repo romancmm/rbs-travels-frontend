@@ -9,6 +9,7 @@ import { useBuilderStore } from '@/lib/page-builder/builder-store'
 import { componentRegistry } from '@/lib/page-builder/component-registry'
 import { cn } from '@/lib/utils'
 import type { BaseComponent } from '@/types/page-builder'
+import { useDndContext } from '@dnd-kit/core'
 
 interface ComponentRendererProps {
     component: BaseComponent
@@ -32,6 +33,11 @@ export function ComponentRenderer({
 
     const isSelected = selectedId === component.id
     const isHovered = hoveredId === component.id
+
+    // Get drag context to show drop indicator
+    const { active, over } = useDndContext()
+    const isOverThisComponent = over?.id === component.id
+    const isDraggingNewComponent = active?.id && String(active.id).startsWith('new-')
 
     const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
         id: component.id,
@@ -75,6 +81,15 @@ export function ComponentRenderer({
                 hoverElement(null)
             }}
         >
+            {/* Drop Indicator - Shows when dragging new component over this component */}
+            {isOverThisComponent && isDraggingNewComponent && (
+                <div className='-top-2 right-0 left-0 z-50 absolute flex justify-center'>
+                    <div className='bg-blue-500 shadow-lg px-3 py-1 rounded-lg'>
+                        <span className='font-medium text-white text-xs'>Drop here to insert before</span>
+                    </div>
+                </div>
+            )}
+
             {/* Component Toolbar - Shows on hover/select */}
             <div
                 className={cn(
@@ -144,7 +159,7 @@ export function ComponentRenderer({
             </div>
 
             {/* Component Content Preview */}
-            <div className='bg-white p-4 rounded'>
+            <div className={cn('bg-white p-4 rounded', component.settings?.className)}>
                 {componentDef ? (
                     <ComponentPreview component={component} definition={componentDef} />
                 ) : (

@@ -9,6 +9,7 @@
 import type { ComponentType, DraggableType } from '@/types/page-builder'
 import {
     closestCenter,
+    CollisionDetection,
     DndContext,
     DragEndEvent,
     DragOverEvent,
@@ -16,6 +17,8 @@ import {
     DragStartEvent,
     KeyboardSensor,
     PointerSensor,
+    pointerWithin,
+    rectIntersection,
     useSensor,
     useSensors
 } from '@dnd-kit/core'
@@ -91,6 +94,28 @@ export function BuilderDndProvider({ children }: BuilderDndProviderProps) {
             coordinateGetter: sortableKeyboardCoordinates,
         })
     )
+
+    /**
+     * Custom collision detection
+     * Prioritizes components over columns for better drop targeting
+     */
+    const customCollisionDetection: CollisionDetection = (args) => {
+        // First, try pointer detection for precise targeting
+        const pointerCollisions = pointerWithin(args)
+
+        if (pointerCollisions.length > 0) {
+            return pointerCollisions
+        }
+
+        // Then try rectangle intersection
+        const intersectionCollisions = rectIntersection(args)
+        if (intersectionCollisions.length > 0) {
+            return intersectionCollisions
+        }
+
+        // Fall back to closest center
+        return closestCenter(args)
+    }
 
     /**
      * Handle drag start
@@ -169,13 +194,48 @@ export function BuilderDndProvider({ children }: BuilderDndProviderProps) {
             activeData.componentType &&
             activeId.startsWith('new-') // New component from sidebar
         ) {
-            console.log('[DnD] New component drag detected:', { activeData, overData })
-            if (overData?.type === 'column' && overData.columnId) {
+            console.log('[DnD] 🆕 New component drag detected:', { activeData, overData, overId })
+
+            // Case 1: Dropping onto an existing component (insert at that position)
+            if (overData?.type === 'component' && overData.columnId) {
+                const targetColumnId = overData.columnId
+
+                // Find the target component's index in its column
+                let targetIndex = 0
+                for (const section of content.sections) {
+                    for (const row of section.rows) {
+                        for (const column of row.columns) {
+                            if (column.id === targetColumnId) {
+                                targetIndex = column.components.findIndex((c) => c.id === overId)
+                                break
+                            }
+                        }
+                    }
+                }
+
                 const newComponent = componentRegistry.createInstance(
                     activeData.componentType,
                     generateId()
                 )
-                console.log('[DnD] ✅ Adding new component to column:', {
+
+                console.log('[DnD] ✅ Adding new component before existing component:', {
+                    componentType: activeData.componentType,
+                    columnId: targetColumnId,
+                    targetIndex,
+                    component: newComponent
+                })
+
+                addComponent(targetColumnId, newComponent, targetIndex)
+                setActiveDragData(null)
+                return
+            }
+            // Case 2: Dropping onto a column (append at the end)
+            else if (overData?.type === 'column' && overData.columnId) {
+                const newComponent = componentRegistry.createInstance(
+                    activeData.componentType,
+                    generateId()
+                )
+                console.log('[DnD] ✅ Adding new component to column (append):', {
                     componentType: activeData.componentType,
                     columnId: overData.columnId,
                     component: newComponent
@@ -183,8 +243,31 @@ export function BuilderDndProvider({ children }: BuilderDndProviderProps) {
                 addComponent(overData.columnId, newComponent)
                 setActiveDragData(null)
                 return
-            } else {
-                console.log('[DnD] ❌ Cannot add component - invalid drop zone:', { overData })
+            }
+            // Case 3: Check if overId matches pattern 'column-{id}' (for empty columns)
+            else if (typeof overId === 'string' && overId.startsWith('column-')) {
+                const columnId = overId.replace('column-', '')
+                const newComponent = componentRegistry.createInstance(
+                    activeData.componentType,
+                    generateId()
+                )
+                console.log('[DnD] ✅ Adding new component to empty column:', {
+                    componentType: activeData.componentType,
+                    columnId: columnId,
+                    overId: overId,
+                    component: newComponent
+                })
+                addComponent(columnId, newComponent)
+                setActiveDragData(null)
+                return
+            }
+            else {
+                console.log('[DnD] ❌ Cannot add component - invalid drop zone:', {
+                    overData,
+                    overType: overData?.type,
+                    hasColumnId: !!overData?.columnId,
+                    overId: overId
+                })
             }
         }
 
@@ -438,7 +521,7 @@ export function BuilderDndProvider({ children }: BuilderDndProviderProps) {
     return (
         <DndContext
             sensors={sensors}
-            collisionDetection={closestCenter}
+            collisionDetection={customCollisionDetection}
             onDragStart={handleDragStart}
             onDragOver={handleDragOver}
             onDragEnd={handleDragEnd}
@@ -448,14 +531,36 @@ export function BuilderDndProvider({ children }: BuilderDndProviderProps) {
             </DndContextValue.Provider>
 
             {/* Drag overlay for visual feedback */}
-            <DragOverlay>
+            <DragOverlay dropAnimation={null}>
                 {activeDragData ? (
-                    <div className='bg-primary/10 shadow-lg p-4 border-2 border-primary border-dashed rounded-lg cursor-grabbing'>
-                        <p className='font-medium text-sm'>
-                            {activeDragData.type === 'component' && activeDragData.componentType
-                                ? `${activeDragData.componentType} Component`
-                                : `${activeDragData.type}`}
-                        </p>
+                    <div className='bg-white shadow-2xl p-4 border-2 border-primary rounded-lg cursor-grabbing'>
+                        <div className='flex items-center gap-3'>
+                            {activeDragData.componentType && (
+                                <div className='bg-primary/10 p-2 rounded'>
+                                    <svg
+                                        width='20'
+                                        height='20'
+                                        viewBox='0 0 20 20'
+                                        fill='none'
+                                        className='text-primary'
+                                    >
+                                        <rect x='2' y='2' width='16' height='16' rx='2' stroke='currentColor' strokeWidth='2' />
+                                    </svg>
+                                </div>
+                            )}
+                            <div>
+                                <p className='font-semibold text-sm'>
+                                    {activeDragData.componentType
+                                        ? componentRegistry.get(activeDragData.componentType)?.label || activeDragData.componentType
+                                        : activeDragData.type}
+                                </p>
+                                {activeDragData.componentType && (
+                                    <p className='text-muted-foreground text-xs'>
+                                        Drop into a column
+                                    </p>
+                                )}
+                            </div>
+                        </div>
                     </div>
                 ) : null}
             </DragOverlay>

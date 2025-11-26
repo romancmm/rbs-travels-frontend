@@ -86,7 +86,8 @@ export function RowRenderer({ row, sectionId }: RowRendererProps) {
                 className={cn(
                     'relative bg-white px-6 py-16 border-2 border-dashed w-full min-h-20 transition-colors',
                     isSelected && 'border-green-400 bg-green-50/30',
-                    isHovered && !isSelected && 'border-green-200 bg-green-50/10'
+                    isHovered && !isSelected && 'border-green-200 bg-green-50/10',
+                    row.settings?.className
                 )}
             >
                 {/* Row Toolbar - Shows on hover/select */}

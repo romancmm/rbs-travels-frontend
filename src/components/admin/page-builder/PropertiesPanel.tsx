@@ -143,6 +143,19 @@ function SectionProperties({ section, onUpdate }: any) {
                 />
             </div>
 
+            {/* Custom Class Name */}
+            <div>
+                <Label>Custom Classes</Label>
+                <Input
+                    value={localSettings.className || ''}
+                    onChange={(e) => handleChange('className', e.target.value)}
+                    placeholder='custom-class another-class'
+                />
+                <p className='mt-1 text-muted-foreground text-xs'>
+                    Add custom Tailwind or CSS classes
+                </p>
+            </div>
+
             {/* Background */}
             <div className='space-y-3'>
                 <h3 className='font-medium text-sm'>Background</h3>
@@ -260,6 +273,19 @@ function RowProperties({ row, onUpdate }: any) {
                 <p className='mt-1 text-muted-foreground text-xs'>Configure row layout and spacing</p>
             </div>
 
+            {/* Custom Class Name */}
+            <div>
+                <Label>Custom Classes</Label>
+                <Input
+                    value={localSettings.className || ''}
+                    onChange={(e) => handleChange('className', e.target.value)}
+                    placeholder='custom-class another-class'
+                />
+                <p className='mt-1 text-muted-foreground text-xs'>
+                    Add custom Tailwind or CSS classes
+                </p>
+            </div>
+
             {/* Layout */}
             <div className='space-y-3'>
                 <h3 className='font-medium text-sm'>Layout</h3>
@@ -373,6 +399,19 @@ function ColumnProperties({ column, onUpdate }: any) {
             <div className='bg-purple-50 p-3 border border-purple-200 rounded-lg'>
                 <p className='font-medium text-sm'>Column ({column.width}/12)</p>
                 <p className='mt-1 text-muted-foreground text-xs'>Configure column layout and styling</p>
+            </div>
+
+            {/* Custom Class Name */}
+            <div>
+                <Label>Custom Classes</Label>
+                <Input
+                    value={localSettings.className || ''}
+                    onChange={(e) => handleChange('className', e.target.value)}
+                    placeholder='custom-class another-class'
+                />
+                <p className='mt-1 text-muted-foreground text-xs'>
+                    Add custom Tailwind or CSS classes
+                </p>
             </div>
 
             {/* Layout */}
@@ -511,6 +550,31 @@ function ComponentProperties({ component, onUpdate }: ComponentPropertiesProps) 
             <div className='bg-primary/5 p-3 border rounded-lg'>
                 <p className='font-medium text-sm'>{componentDef?.label || component.type}</p>
                 <p className='mt-1 text-muted-foreground text-xs'>{componentDef?.description}</p>
+            </div>
+
+            {/* Custom Class Name */}
+            <div>
+                <Label>Custom Classes</Label>
+                <Input
+                    value={component.settings?.className || ''}
+                    onChange={(e) => {
+                        const newSettings = {
+                            ...(component.settings || {}),
+                            className: e.target.value
+                        }
+                        console.log('[ComponentProperties] Updating className:', {
+                            componentId: component.id,
+                            oldSettings: component.settings,
+                            newSettings,
+                            className: e.target.value
+                        })
+                        onUpdate({ settings: newSettings })
+                    }}
+                    placeholder='custom-class another-class'
+                />
+                <p className='mt-1 text-muted-foreground text-xs'>
+                    Add custom Tailwind or CSS classes
+                </p>
             </div>
 
             {/* Component-specific properties */}
