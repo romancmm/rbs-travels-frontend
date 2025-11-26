@@ -24,19 +24,20 @@ async function getArticlesByCategories(categorySlugs: string[]) {
     }
 }
 
-// Fetch category names for display
-async function getCategoryNames(categorySlugs: string[]) {
-    const categoryParam = categorySlugs.join(',')
+// Fetch menu item details for display
+async function getMenuItemDetails(categorySlugs: string[]) {
+    // Use the first slug to get menu item details
+    const menuSlug = categorySlugs[0]
     const { data, error } = await fetchOnServer(
-        `/articles/categories?slugs=${categoryParam}`,
+        `/menu-items/${menuSlug}`,
         300
     )
 
     if (error || !data) {
-        return []
+        return null
     }
 
-    return data?.items || []
+    return data
 }
 
 export default async function CategoryArticlesPage({
@@ -47,12 +48,13 @@ export default async function CategoryArticlesPage({
     const { slugs } = await params
     const categorySlugs = slugs ?? []
 
-    const [articlesData, categories] = await Promise.all([
+    const [articlesData, menuItem] = await Promise.all([
         getArticlesByCategories(categorySlugs),
-        getCategoryNames(categorySlugs)
+        getMenuItemDetails(categorySlugs)
     ])
 
-    const categoryNames = categories.map((cat: any) => cat.name || cat.title).join(', ')
+    const pageTitle = menuItem?.title || menuItem?.name || 'Articles'
+    const pageDescription = menuItem?.description || menuItem?.excerpt
 
     return (
         <div className='bg-background py-12 md:py-20'>
@@ -65,10 +67,16 @@ export default async function CategoryArticlesPage({
                     </div>
 
                     <Typography variant='h2' weight='bold' className='mb-4'>
-                        {categoryNames || 'Articles'}
+                        {pageTitle}
                     </Typography>
 
-                    <Typography variant='body1' className='text-muted-foreground'>
+                    {pageDescription && (
+                        <Typography variant='body1' className='mb-4 text-muted-foreground'>
+                            {pageDescription}
+                        </Typography>
+                    )}
+
+                    <Typography variant='body2' className='text-muted-foreground'>
                         {articlesData.total > 0
                             ? `${articlesData.total} article${articlesData.total === 1 ? '' : 's'} found`
                             : 'No articles found'}

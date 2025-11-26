@@ -269,7 +269,7 @@ export default function TopDestinations({ data }: { data?: TopCountriesType }) {
             <CarouselContent className='-ml-6 pt-6 pb-10'>
               {data?.destinations.map((destination, index) => (
                 <CarouselItem
-                  key={destination.id}
+                  key={index}
                   className='pl-6 transition-all duration-500 basis-1/1 sm:basis-1/2 lg:basis-1/3 xl:basis-1/4'
                 >
                   <DestinationCard destination={destination} index={index} />

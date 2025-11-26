@@ -9,7 +9,7 @@ import { notFound } from 'next/navigation'
 
 export default async function ArticlePage({ params }: { params: { slug: string } }) {
     const articleData = await fetchOnServer(`/articles/posts/slug/${params.slug}`, 300)
-    console.log('Article Data:', articleData);
+
     if (!articleData?.data) {
         notFound()
     }
