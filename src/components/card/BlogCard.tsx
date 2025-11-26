@@ -80,7 +80,7 @@ const BlogCard = ({ post, index, className }: BlogCardProps) => {
         <Typography
           variant='h6'
           weight='semibold'
-          href={`/page/blogs/${post?.slug}`}
+          href={`/articles/${post?.slug}`}
           className={cn('line-clamp-2 transition-colors duration-300', 'group-hover:text-primary')}
         >
           {post.title}

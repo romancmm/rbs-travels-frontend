@@ -204,13 +204,8 @@ export function getMenuItemUrl(item: MenuItem): string {
   // Handle category-articles type (array of categories)
   if (item.type === 'category-articles' && Array.isArray(item.reference)) {
     if (item.reference.length > 0) {
-      if (item.reference.length === 1) {
-        // Single category: /articles/category/{slug}
-        return `/articles/category/${item.reference[0]}`
-      } else {
-        // Multiple categories: /articles?categories=tech,business
-        return `/articles?categories=${item.reference.join(',')}`
-      }
+      // Multiple categories: /articles/category/slug1/slug2
+      return `/articles/category/${item.reference.join('/')}`
     }
     // No categories: default article listing
     return '/articles'
@@ -218,12 +213,16 @@ export function getMenuItemUrl(item: MenuItem): string {
 
   // Handle single-article type
   if (item.type === 'single-article' && typeof item.reference === 'string') {
-    return `/articles/${item.reference}`
+    // Clean double-quoted strings (e.g., \"about\" -> about)
+    const cleanReference = item.reference.replace(/^"+|"+$/g, '')
+    return `/articles/${cleanReference}`
   }
 
   // Handle page type
   if (item.type === 'page' && typeof item.reference === 'string') {
-    return `/${item.reference}`
+    // Clean double-quoted strings (e.g., \"about\" -> about)
+    const cleanReference = item.reference.replace(/^"+|"+$/g, '')
+    return `/page/${cleanReference}`
   }
 
   return '#'
