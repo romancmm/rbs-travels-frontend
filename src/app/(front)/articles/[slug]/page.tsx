@@ -8,7 +8,7 @@ import { notFound } from 'next/navigation'
 
 
 export default async function ArticlePage({ params }: { params: { slug: string } }) {
-    const articleData = await fetchOnServer(`/articles/posts/slug/${params.slug}`, 300)
+    const articleData = await fetchOnServer(`/articles/posts/slug/${params?.slug}`, 300)
 
     if (!articleData?.data) {
         notFound()
@@ -66,7 +66,7 @@ export default async function ArticlePage({ params }: { params: { slug: string }
                 {/* Featured Image */}
                 {articleData?.data?.thumbnail && (
                     <div className='relative mx-auto mb-12 rounded-2xl max-w-5xl overflow-hidden'>
-                        <div className='relative w-full aspect-[16/9]'>
+                        <div className='relative w-full aspect-video'>
                             <CustomImage
                                 src={articleData?.data?.thumbnail}
                                 alt={articleData?.data?.title}
