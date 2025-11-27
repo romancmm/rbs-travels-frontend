@@ -85,10 +85,6 @@ export function ColumnRenderer({ column, sectionId, rowId }: ColumnRendererProps
                 isHovered && !isSelected && 'ring-2 ring-purple-300 ring-offset-2 border-purple-300',
                 isOver && 'ring-2 ring-blue-500 ring-offset-2 bg-blue-50/50 border-blue-400'
             )}
-            onClick={(e) => {
-                e.stopPropagation()
-                selectElement(column.id, 'column')
-            }}
             onMouseEnter={(e) => {
                 e.stopPropagation()
                 hoverElement(column.id, 'column')
@@ -109,8 +105,14 @@ export function ColumnRenderer({ column, sectionId, rowId }: ColumnRendererProps
                 {/* Column Toolbar - Shows on hover/select */}
                 <div
                     className={cn(
-                        '-top-9 right-0 left-0 z-30 absolute flex items-center gap-2 opacity-0 w-fit transition-opacity',
-                        (isHovered || isSelected) && 'opacity-100'
+                        // base: positioned off-screen / invisible and non-interactive
+                        'absolute left-0 right-0 top-6 z-0 flex items-center gap-2 w-fit transition-all duration-200 pointer-events-none opacity-0',
+
+                        // show on named group hover (Tailwind named group syntax)
+                        'group/column-hover:top-2 group/column-hover:opacity-100 group/column-hover:z-30 group/column-hover:pointer-events-auto',
+
+                        // also force visible / interactive when hovered/selected via state
+                        (isHovered || isSelected) && 'opacity-100 -top-9 z-30 pointer-events-auto'
                     )}
                 >
                     <div className='flex items-center gap-1 bg-white shadow-sm px-2 py-1 border rounded-md'>

@@ -13,6 +13,7 @@ import {
   Sheet,
   SheetContent,
   SheetDescription,
+  SheetFooter,
   SheetHeader,
   SheetTitle
 } from '@/components/ui/sheet'
@@ -21,9 +22,9 @@ import { useBuilderStore } from '@/lib/page-builder/builder-store'
 import { findElementById } from '@/lib/page-builder/builder-utils'
 import { componentRegistry } from '@/lib/page-builder/component-registry'
 import type { FlexConfig, GridConfig, VisualConfig } from '@/lib/page-builder/tailwind-generator'
-import { updateClassNameAspect } from '@/lib/page-builder/tailwind-generator'
+import { parseClassNameToConfig, updateClassNameAspect } from '@/lib/page-builder/tailwind-generator'
 import type { BaseComponent } from '@/types/page-builder'
-import { Settings, X } from 'lucide-react'
+import { Settings } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import {
   BackgroundControl,
@@ -43,13 +44,35 @@ export function PropertiesPanel() {
   const updateSection = useBuilderStore((state) => state.updateSection)
   const updateRow = useBuilderStore((state) => state.updateRow)
   const updateColumn = useBuilderStore((state) => state.updateColumn)
+  const savePage = useBuilderStore((state) => state.savePage)
+
+  const [hasChanges, setHasChanges] = useState(false)
+  const [isSaving, setIsSaving] = useState(false)
 
   const selectedElement = selectedId ? findElementById(content, selectedId) : null
 
   const handleOpenChange = (open: boolean) => {
     if (!open) {
       selectElement(null, null)
+      setHasChanges(false)
     }
+  }
+
+  const handleSave = async () => {
+    setIsSaving(true)
+    try {
+      await savePage()
+      setHasChanges(false)
+    } catch (error) {
+      console.error('Failed to save changes:', error)
+    } finally {
+      setIsSaving(false)
+      handleOpenChange(false)
+    }
+  }
+
+  const markAsChanged = () => {
+    setHasChanges(true)
   }
 
   const getTitle = () => {
@@ -71,27 +94,20 @@ export function PropertiesPanel() {
   return (
     <Sheet open={rightPanelOpen && !!selectedId} onOpenChange={handleOpenChange}>
       <SheetContent side='right' className='flex flex-col p-0 w-[400px] sm:w-[500px]'>
-        <SheetHeader className='space-y-2 px-6 pt-6'>
+        <SheetHeader className='space-y-2'>
           <div className='flex justify-between items-start'>
             <div className='flex items-center gap-2'>
               <Settings className='w-5 h-5 text-primary' />
               <SheetTitle>{getTitle()}</SheetTitle>
             </div>
-            <Button
-              variant='ghost'
-              size='icon'
-              className='w-6 h-6'
-              onClick={() => selectElement(null, null)}
-            >
-              <X className='w-4 h-4' />
-            </Button>
+
           </div>
           <SheetDescription>
             Use visual tools to configure styling with Tailwind CSS classes
           </SheetDescription>
         </SheetHeader>
 
-        <Separator />
+        {/* <Separator /> */}
 
         <div className='flex-1 px-6 overflow-y-auto'>
           {selectedElement && (
@@ -99,31 +115,56 @@ export function PropertiesPanel() {
               {selectedElement.type === 'section' && (
                 <SectionProperties
                   section={selectedElement.element}
-                  onUpdate={(updates) => updateSection(selectedId!, updates)}
+                  onUpdate={(updates) => {
+                    updateSection(selectedId!, updates)
+                    markAsChanged()
+                  }}
                 />
               )}
               {selectedElement.type === 'row' && (
                 <RowProperties
                   row={selectedElement.element}
-                  onUpdate={(updates) => updateRow(selectedId!, updates)}
+                  onUpdate={(updates) => {
+                    updateRow(selectedId!, updates)
+                    markAsChanged()
+                  }}
                 />
               )}
               {selectedElement.type === 'column' && (
                 <ColumnProperties
                   column={selectedElement.element}
-                  onUpdate={(updates) => updateColumn(selectedId!, updates)}
+                  onUpdate={(updates) => {
+                    updateColumn(selectedId!, updates)
+                    markAsChanged()
+                  }}
                 />
               )}
               {selectedElement.type === 'component' && (
                 <ComponentProperties
                   component={selectedElement.element}
-                  onUpdate={(updates) => updateComponent(selectedId!, updates)}
+                  onUpdate={(updates) => {
+                    updateComponent(selectedId!, updates)
+                    markAsChanged()
+                  }}
                 />
               )}
             </div>
           )}
         </div>
+
+        <SheetFooter>
+          <Button
+            variant={hasChanges ? 'default' : 'outline'}
+            size='sm'
+            className='h-8 text-xs'
+            onClick={handleSave}
+            disabled={!hasChanges || isSaving}
+          >
+            {isSaving ? 'Saving...' : hasChanges ? 'Save Changes' : 'Saved'}
+          </Button>
+        </SheetFooter>
       </SheetContent>
+
     </Sheet>
   )
 }
@@ -132,6 +173,7 @@ export function PropertiesPanel() {
 
 function SectionProperties({ section, onUpdate }: { section: any; onUpdate: (updates: any) => void }) {
   const [currentClassName, setCurrentClassName] = useState(section.settings?.className || '')
+  const parsedConfig = parseClassNameToConfig(currentClassName)
 
   useEffect(() => {
     setCurrentClassName(section.settings?.className || '')
@@ -153,8 +195,8 @@ function SectionProperties({ section, onUpdate }: { section: any; onUpdate: (upd
 
         <TabsContent value='layout' className='space-y-6 mt-6'>
           <SpacingControl
-            value={{}}
-            onChange={(config, className) => {
+            value={parsedConfig.spacing || {}}
+            onChange={(config, _className) => {
               const merged = updateClassNameAspect(currentClassName, { spacing: config })
               handleVisualChange(merged)
             }}
@@ -163,8 +205,10 @@ function SectionProperties({ section, onUpdate }: { section: any; onUpdate: (upd
           <Separator />
 
           <LayoutControl
-            type='block'
-            onChange={(type, config, className) => {
+            type={parsedConfig.layout?.type || 'block'}
+            flexValue={parsedConfig.layout?.flex}
+            gridValue={parsedConfig.layout?.grid}
+            onChange={(type, config, _className) => {
               const layoutConfig: Partial<VisualConfig> = {
                 layout: {
                   type,
@@ -180,8 +224,8 @@ function SectionProperties({ section, onUpdate }: { section: any; onUpdate: (upd
 
         <TabsContent value='style' className='space-y-6 mt-6'>
           <BackgroundControl
-            value={{}}
-            onChange={(config, className) => {
+            value={parsedConfig.background || {}}
+            onChange={(config, _className) => {
               const merged = updateClassNameAspect(currentClassName, { background: config })
               handleVisualChange(merged)
             }}
@@ -190,8 +234,8 @@ function SectionProperties({ section, onUpdate }: { section: any; onUpdate: (upd
           <Separator />
 
           <BorderControl
-            value={{}}
-            onChange={(config, className) => {
+            value={parsedConfig.border || {}}
+            onChange={(config, _className) => {
               const merged = updateClassNameAspect(currentClassName, { border: config })
               handleVisualChange(merged)
             }}
@@ -200,8 +244,8 @@ function SectionProperties({ section, onUpdate }: { section: any; onUpdate: (upd
           <Separator />
 
           <ShadowControl
-            value='none'
-            onChange={(preset, className) => {
+            value={parsedConfig.shadow || 'none'}
+            onChange={(preset, _className) => {
               const merged = updateClassNameAspect(currentClassName, { shadow: preset })
               handleVisualChange(merged)
             }}
@@ -238,6 +282,7 @@ function SectionProperties({ section, onUpdate }: { section: any; onUpdate: (upd
 
 function RowProperties({ row, onUpdate }: { row: any; onUpdate: (updates: any) => void }) {
   const [currentClassName, setCurrentClassName] = useState(row.settings?.className || '')
+  const parsedConfig = parseClassNameToConfig(currentClassName)
 
   useEffect(() => {
     setCurrentClassName(row.settings?.className || '')
@@ -259,8 +304,8 @@ function RowProperties({ row, onUpdate }: { row: any; onUpdate: (updates: any) =
 
         <TabsContent value='layout' className='space-y-6 mt-6'>
           <SpacingControl
-            value={{}}
-            onChange={(config, className) => {
+            value={parsedConfig.spacing || {}}
+            onChange={(config, _className) => {
               const merged = updateClassNameAspect(currentClassName, { spacing: config })
               handleVisualChange(merged)
             }}
@@ -269,9 +314,10 @@ function RowProperties({ row, onUpdate }: { row: any; onUpdate: (updates: any) =
           <Separator />
 
           <LayoutControl
-            type='flex'
-            flexValue={{ direction: 'row', gap: '4' }}
-            onChange={(type, config, className) => {
+            type={parsedConfig.layout?.type || 'flex'}
+            flexValue={parsedConfig.layout?.flex || { direction: 'row', gap: '4' }}
+            gridValue={parsedConfig.layout?.grid}
+            onChange={(type, config, _className) => {
               const layoutConfig: Partial<VisualConfig> = {
                 layout: {
                   type,
@@ -287,8 +333,8 @@ function RowProperties({ row, onUpdate }: { row: any; onUpdate: (updates: any) =
 
         <TabsContent value='style' className='space-y-6 mt-6'>
           <BackgroundControl
-            value={{}}
-            onChange={(config, className) => {
+            value={parsedConfig.background || {}}
+            onChange={(config, _className) => {
               const merged = updateClassNameAspect(currentClassName, { background: config })
               handleVisualChange(merged)
             }}
@@ -297,8 +343,8 @@ function RowProperties({ row, onUpdate }: { row: any; onUpdate: (updates: any) =
           <Separator />
 
           <BorderControl
-            value={{}}
-            onChange={(config, className) => {
+            value={parsedConfig.border || {}}
+            onChange={(config, _className) => {
               const merged = updateClassNameAspect(currentClassName, { border: config })
               handleVisualChange(merged)
             }}
@@ -307,8 +353,8 @@ function RowProperties({ row, onUpdate }: { row: any; onUpdate: (updates: any) =
           <Separator />
 
           <ShadowControl
-            value='none'
-            onChange={(preset, className) => {
+            value={parsedConfig.shadow || 'none'}
+            onChange={(preset, _className) => {
               const merged = updateClassNameAspect(currentClassName, { shadow: preset })
               handleVisualChange(merged)
             }}
@@ -345,6 +391,7 @@ function RowProperties({ row, onUpdate }: { row: any; onUpdate: (updates: any) =
 
 function ColumnProperties({ column, onUpdate }: { column: any; onUpdate: (updates: any) => void }) {
   const [currentClassName, setCurrentClassName] = useState(column.settings?.className || '')
+  const parsedConfig = parseClassNameToConfig(currentClassName)
 
   useEffect(() => {
     setCurrentClassName(column.settings?.className || '')
@@ -382,8 +429,8 @@ function ColumnProperties({ column, onUpdate }: { column: any; onUpdate: (update
           <Separator />
 
           <SpacingControl
-            value={{}}
-            onChange={(config, className) => {
+            value={parsedConfig.spacing || {}}
+            onChange={(config, _className) => {
               const merged = updateClassNameAspect(currentClassName, { spacing: config })
               handleVisualChange(merged)
             }}
@@ -392,9 +439,10 @@ function ColumnProperties({ column, onUpdate }: { column: any; onUpdate: (update
           <Separator />
 
           <LayoutControl
-            type='flex'
-            flexValue={{ direction: 'col', gap: '2' }}
-            onChange={(type, config, className) => {
+            type={parsedConfig.layout?.type || 'flex'}
+            flexValue={parsedConfig.layout?.flex || { direction: 'col', gap: '2' }}
+            gridValue={parsedConfig.layout?.grid}
+            onChange={(type, config, _className) => {
               const layoutConfig: Partial<VisualConfig> = {
                 layout: {
                   type,
@@ -410,8 +458,8 @@ function ColumnProperties({ column, onUpdate }: { column: any; onUpdate: (update
 
         <TabsContent value='style' className='space-y-6 mt-6'>
           <BackgroundControl
-            value={{}}
-            onChange={(config, className) => {
+            value={parsedConfig.background || {}}
+            onChange={(config, _className) => {
               const merged = updateClassNameAspect(currentClassName, { background: config })
               handleVisualChange(merged)
             }}
@@ -420,8 +468,8 @@ function ColumnProperties({ column, onUpdate }: { column: any; onUpdate: (update
           <Separator />
 
           <BorderControl
-            value={{}}
-            onChange={(config, className) => {
+            value={parsedConfig.border || {}}
+            onChange={(config, _className) => {
               const merged = updateClassNameAspect(currentClassName, { border: config })
               handleVisualChange(merged)
             }}
@@ -474,6 +522,7 @@ interface ComponentPropertiesProps {
 function ComponentProperties({ component, onUpdate }: ComponentPropertiesProps) {
   const componentDef = componentRegistry.get(component.type)
   const [currentClassName, setCurrentClassName] = useState(component.settings?.className || '')
+  const parsedConfig = parseClassNameToConfig(currentClassName)
   const [localProps, setLocalProps] = useState(component.props)
 
   useEffect(() => {
@@ -523,8 +572,8 @@ function ComponentProperties({ component, onUpdate }: ComponentPropertiesProps) 
 
         <TabsContent value='style' className='space-y-6 mt-6'>
           <SpacingControl
-            value={{}}
-            onChange={(config, className) => {
+            value={parsedConfig.spacing || {}}
+            onChange={(config, _className) => {
               const merged = updateClassNameAspect(currentClassName, { spacing: config })
               handleVisualChange(merged)
             }}
@@ -533,8 +582,8 @@ function ComponentProperties({ component, onUpdate }: ComponentPropertiesProps) 
           <Separator />
 
           <BackgroundControl
-            value={{}}
-            onChange={(config, className) => {
+            value={parsedConfig.background || {}}
+            onChange={(config, _className) => {
               const merged = updateClassNameAspect(currentClassName, { background: config })
               handleVisualChange(merged)
             }}
@@ -543,8 +592,8 @@ function ComponentProperties({ component, onUpdate }: ComponentPropertiesProps) 
           <Separator />
 
           <BorderControl
-            value={{}}
-            onChange={(config, className) => {
+            value={parsedConfig.border || {}}
+            onChange={(config, _className) => {
               const merged = updateClassNameAspect(currentClassName, { border: config })
               handleVisualChange(merged)
             }}
@@ -553,8 +602,8 @@ function ComponentProperties({ component, onUpdate }: ComponentPropertiesProps) 
           <Separator />
 
           <ShadowControl
-            value='none'
-            onChange={(preset, className) => {
+            value={parsedConfig.shadow || 'none'}
+            onChange={(preset, _className) => {
               const merged = updateClassNameAspect(currentClassName, { shadow: preset })
               handleVisualChange(merged)
             }}
