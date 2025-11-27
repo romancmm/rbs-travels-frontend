@@ -4,32 +4,6 @@ import { Container } from '@/components/common/container'
 import { Typography } from '@/components/common/typography'
 import { FileText } from 'lucide-react'
 
-// Fetch all articles or filtered by categories from query params
-async function getArticles(searchParams: { categories?: string }) {
-    try {
-        const categoriesParam = searchParams.categories ? `?categories=${searchParams.categories}` : ''
-        const res = await fetch(
-            `${process.env.NEXT_PUBLIC_APP_ROOT_API}/articles/posts${categoriesParam}`,
-            {
-                next: { revalidate: 60 } // Revalidate every 60 seconds
-            }
-        )
-
-        if (!res.ok) {
-            return { items: [], total: 0 }
-        }
-
-        const data = await res.json()
-        return {
-            items: data?.data?.items || [],
-            total: data?.data?.total || 0
-        }
-    } catch (error) {
-        console.error('Error fetching articles:', error)
-        return { items: [], total: 0 }
-    }
-}
-
 export default async function ArticlesPage({
     searchParams
 }: {
@@ -39,7 +13,6 @@ export default async function ArticlesPage({
     const categoriesParam = categories ? `?categories=${categories}` : ''
 
     const articlesData = await fetchOnServer(`/articles/posts${categoriesParam}`, 300)
-    console.log(articlesData)
     return (
         <div className='bg-background py-12 md:py-20'>
             <Container>

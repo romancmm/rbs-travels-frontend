@@ -776,19 +776,14 @@ export const createDefaultSection = (name: string = 'New Section'): Section => {
     name,
     order: 0,
     settings: {
-      padding: {
-        top: '60px',
-        bottom: '60px',
-        left: '0',
-        right: '0'
-      }
+      className: 'py-16'
     },
     rows: [
       {
         id: rowId,
         order: 0,
         settings: {
-          columnsGap: '30px'
+          className: 'gap-8'
         },
         columns: [
           {

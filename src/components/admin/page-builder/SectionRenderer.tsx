@@ -42,24 +42,6 @@ export function SectionRenderer({ section }: SectionRendererProps) {
 
     const rowIds = section.rows.map((row) => row.id)
 
-    // Build inline styles from section settings
-    const sectionStyles: React.CSSProperties = {
-        backgroundColor: section.settings?.background?.color || undefined,
-        backgroundImage: section.settings?.background?.image
-            ? `url(${section.settings.background.image})`
-            : undefined,
-        backgroundSize: section.settings?.background?.size || undefined,
-        backgroundPosition: section.settings?.background?.position || undefined,
-        backgroundRepeat: section.settings?.background?.repeat || undefined,
-        backgroundAttachment: section.settings?.background?.attachment || undefined,
-        paddingTop: section.settings?.padding?.top || undefined,
-        paddingRight: section.settings?.padding?.right || undefined,
-        paddingBottom: section.settings?.padding?.bottom || undefined,
-        paddingLeft: section.settings?.padding?.left || undefined,
-        marginTop: section.settings?.margin?.top || undefined,
-        marginBottom: section.settings?.margin?.bottom || undefined
-    }
-
     return (
         <div
             ref={setNodeRef}
@@ -73,20 +55,22 @@ export function SectionRenderer({ section }: SectionRendererProps) {
                 'ring-2 ring-blue-300 ring-offset-2 border-blue-300 bg-blue-50/10',
                 !isSelected && !isHovered && 'border-gray-300 bg-gray-50/30'
             )}
-            onClick={(e) => {
-                e.stopPropagation()
-                selectElement(section.id, 'section')
-            }}
             onMouseEnter={() => hoverElement(section.id, 'section')}
             onMouseLeave={() => hoverElement(null)}
         >
             {/* Section Content */}
-            <div style={sectionStyles} className={cn('relative p-4 w-full min-h-[100px]', section.settings?.className)}>
+            <div className={cn('relative p-4 w-full min-h-[100px]', section.settings?.className)}>
                 {/* Section Toolbar - Shows on hover/select */}
                 <div
                     className={cn(
-                        '-top-10 right-0 left-0 z-10 absolute flex items-center gap-2 opacity-0 w-fit transition-opacity',
-                        (isHovered || isSelected) && 'opacity-100'
+                        // base: positioned off-screen / invisible and non-interactive
+                        'absolute left-0 right-0 top-8 z-0 flex items-center gap-2 w-fit transition-all duration-200 pointer-events-none opacity-0',
+
+                        // show on named group hover (Tailwind named group syntax)
+                        'group/section-hover:top-4 group/section-hover:opacity-100 group/section-hover:z-10 group/section-hover:pointer-events-auto',
+
+                        // also force visible / interactive when hovered/selected via state
+                        (isHovered || isSelected) && 'opacity-100 -top-10 z-10 pointer-events-auto'
                     )}
                 >
                     <div className='flex items-center gap-1 bg-white shadow-sm px-2 py-1 border rounded-md'>

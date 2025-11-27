@@ -44,19 +44,6 @@ export function RowRenderer({ row, sectionId }: RowRendererProps) {
 
     const columnIds = row.columns.map((column) => column.id)
 
-    // Build inline styles from row settings
-    const rowStyles: React.CSSProperties = {
-        backgroundColor: row.settings?.background || undefined,
-        backgroundImage: row.settings?.backgroundImage || undefined,
-        paddingTop: row.settings?.padding?.top || undefined,
-        paddingRight: row.settings?.padding?.right || undefined,
-        paddingBottom: row.settings?.padding?.bottom || undefined,
-        paddingLeft: row.settings?.padding?.left || undefined,
-        marginTop: row.settings?.margin?.top || undefined,
-        marginBottom: row.settings?.margin?.bottom || undefined,
-        gap: row.settings?.columnsGap || undefined
-    }
-
     return (
         <div
             ref={setNodeRef}
@@ -67,10 +54,6 @@ export function RowRenderer({ row, sectionId }: RowRendererProps) {
                 isSelected && 'ring-2 ring-green-500 ring-offset-2',
                 isHovered && !isSelected && 'ring-2 ring-green-300 ring-offset-2'
             )}
-            onClick={(e) => {
-                e.stopPropagation()
-                selectElement(row.id, 'row')
-            }}
             onMouseEnter={(e) => {
                 e.stopPropagation()
                 hoverElement(row.id, 'row')
@@ -82,9 +65,8 @@ export function RowRenderer({ row, sectionId }: RowRendererProps) {
         >
             {/* Row Content */}
             <div
-                style={rowStyles}
                 className={cn(
-                    'relative bg-white px-6 py-16 border-2 border-dashed w-full min-h-20 transition-colors',
+                    'group/row relative bg-white px-6 py-16 border-2 border-dashed w-full min-h-20 transition-colors',
                     isSelected && 'border-green-400 bg-green-50/30',
                     isHovered && !isSelected && 'border-green-200 bg-green-50/10',
                     row.settings?.className
@@ -93,8 +75,14 @@ export function RowRenderer({ row, sectionId }: RowRendererProps) {
                 {/* Row Toolbar - Shows on hover/select */}
                 <div
                     className={cn(
-                        '-top-9 right-0 left-0 z-20 absolute flex items-center gap-2 opacity-0 w-fit transition-opacity',
-                        (isHovered || isSelected) && 'opacity-100'
+                        // base: positioned off-screen / invisible and non-interactive
+                        'absolute left-0 right-0 top-6 z-0 flex items-center gap-2 w-fit transition-all duration-200 pointer-events-none opacity-0',
+
+                        // show on named group hover (Tailwind named group syntax)
+                        'group/row-hover:top-2 group/row-hover:opacity-100 group/row-hover:z-20 group/row-hover:pointer-events-auto',
+
+                        // also force visible / interactive when hovered/selected via state
+                        (isHovered || isSelected) && 'opacity-100 -top-9 z-20 pointer-events-auto'
                     )}
                 >
                     <div className='flex items-center gap-1 bg-white shadow-sm px-2 py-1 border rounded-md'>
@@ -168,34 +156,20 @@ export function RowRenderer({ row, sectionId }: RowRendererProps) {
                                 const currentColumnCount = row.columns.length
                                 const newColumnCount = currentColumnCount + 1
 
-                                // Check if we can add more columns (max 12 columns)
                                 if (newColumnCount > 12) {
                                     console.warn('[RowRenderer] ❌ Cannot add column: maximum 12 columns reached')
                                     alert('Cannot add column: maximum 12 columns per row')
                                     return
                                 }
 
-                                // Calculate equal width for all columns after adding new one
                                 const equalWidth = Math.floor(12 / newColumnCount)
                                 const remainder = 12 % newColumnCount
 
-                                console.log('[RowRenderer] Width distribution:', {
-                                    currentColumns: currentColumnCount,
-                                    newColumns: newColumnCount,
-                                    equalWidth,
-                                    remainder
-                                })
-
-                                // Update all existing columns to have equal width
                                 row.columns.forEach((col, index) => {
                                     const newWidth = equalWidth + (index < remainder ? 1 : 0)
-                                    console.log(
-                                        `[RowRenderer] Updating column ${col.id} width: ${col.width} -> ${newWidth}`
-                                    )
                                     updateColumn(col.id, { width: newWidth })
                                 })
 
-                                // Create new column with equal width (plus 1 if there's remainder and it's one of the first columns)
                                 const newColumnWidth = equalWidth + (currentColumnCount < remainder ? 1 : 0)
 
                                 const newColumn: Column = {
@@ -205,14 +179,7 @@ export function RowRenderer({ row, sectionId }: RowRendererProps) {
                                     components: []
                                 }
 
-                                console.log('[RowRenderer] ✅ Creating new column:', {
-                                    rowId: row.id,
-                                    newColumn,
-                                    distribution: `${newColumnCount} columns = ${equalWidth} width each + ${remainder} columns get +1`
-                                })
-
                                 addColumn(row.id, newColumn)
-                                console.log('[RowRenderer] addColumn store action called!')
                             }}
                             title={
                                 row.columns.length >= 12
