@@ -274,14 +274,6 @@ function RowRenderer({ row }: { row: RowType }) {
 }
 
 function SectionRenderer({ section }: { section: SectionType }) {
-    const padding = section.settings?.padding || {}
-    const style: React.CSSProperties = {
-        paddingTop: padding.top ?? undefined,
-        paddingBottom: padding.bottom ?? undefined,
-        paddingLeft: padding.left ?? undefined,
-        paddingRight: padding.right ?? undefined
-    }
-
     const sectionSettings = (section as any).settings
     const sectionClassName = sectionSettings?.className || ''
     const visClass = getVisibilityClasses(sectionSettings)
@@ -292,11 +284,8 @@ function SectionRenderer({ section }: { section: SectionType }) {
         console.log('[SectionRenderer] Applying className:', sectionClassName, 'to section:', section.id)
     }
 
-    // merge padding style with background style
-    const mergedStyle = { ...secBgStyle, ...style }
-
     return (
-        <Section style={mergedStyle} className={cn('w-full', visClass, secBgClasses, sectionClassName)}>
+        <Section className={cn('w-full', visClass, secBgClasses, sectionClassName)}>
             <Container>
                 <div className='relative py-6'>
                     {secOverlay && (

@@ -66,6 +66,7 @@ export interface BaseComponent {
 
 /**
  * Component settings (styling, behavior)
+ * All visual styling is configured through className using Tailwind CSS
  */
 export interface ComponentSettings {
   // Visibility
@@ -73,44 +74,6 @@ export interface ComponentSettings {
   hideOnMobile?: boolean
   hideOnTablet?: boolean
   hideOnDesktop?: boolean
-
-  // Spacing
-  margin?: {
-    top?: string
-    right?: string
-    bottom?: string
-    left?: string
-  }
-  padding?: {
-    top?: string
-    right?: string
-    bottom?: string
-    left?: string
-  }
-
-  // Background
-  background?: {
-    type?: 'color' | 'gradient' | 'image' | 'video'
-    color?: string
-    gradient?: string
-    image?: string
-    video?: string
-    size?: 'cover' | 'contain' | 'auto'
-    position?: string
-    repeat?: 'no-repeat' | 'repeat' | 'repeat-x' | 'repeat-y'
-    attachment?: 'scroll' | 'fixed' | 'local'
-  }
-
-  // Border
-  border?: {
-    width?: string
-    style?: 'solid' | 'dashed' | 'dotted' | 'double' | 'none'
-    color?: string
-    radius?: string
-  }
-
-  // Shadow
-  boxShadow?: string
 
   // Animation
   animation?: {
@@ -120,10 +83,9 @@ export interface ComponentSettings {
     easing?: 'linear' | 'ease' | 'ease-in' | 'ease-out' | 'ease-in-out'
   }
 
-  // Custom
+  // Styling - Only className (Tailwind CSS utilities)
   className?: string
-  customCss?: string
-  id?: string
+  customId?: string
 }
 
 /**
@@ -218,37 +180,15 @@ export interface Column {
 
 /**
  * Column settings
+ * All visual styling is configured through className using Tailwind CSS
  */
 export interface ColumnSettings {
-  // Layout
+  // Layout (minimal, structural only)
   verticalAlign?: 'top' | 'center' | 'bottom' | 'stretch'
   horizontalAlign?: 'left' | 'center' | 'right'
 
-  // Spacing
-  padding?: {
-    top?: string
-    right?: string
-    bottom?: string
-    left?: string
-  }
-  margin?: {
-    top?: string
-    right?: string
-    bottom?: string
-    left?: string
-  }
-
-  // Background
-  background?: string
-  backgroundImage?: string
-
-  // Border
-  border?: string
-  borderRadius?: string
-
-  // Custom
+  // Styling - Only className (Tailwind CSS utilities)
   className?: string
-  customCss?: string
 }
 
 /**
@@ -263,10 +203,11 @@ export interface Row {
 
 /**
  * Row settings
+ * All visual styling is configured through className using Tailwind CSS
  */
 export interface RowSettings {
-  // Layout
-  columnsGap?: string
+  // Layout (minimal, structural only)
+  columnsGap?: string // Kept for backward compatibility, but should use className gap-*
   alignment?: 'left' | 'center' | 'right'
   reverseOnMobile?: boolean
 
@@ -274,27 +215,8 @@ export interface RowSettings {
   containerWidth?: 'full' | 'boxed'
   maxWidth?: string
 
-  // Spacing
-  padding?: {
-    top?: string
-    right?: string
-    bottom?: string
-    left?: string
-  }
-  margin?: {
-    top?: string
-    right?: string
-    bottom?: string
-    left?: string
-  }
-
-  // Background
-  background?: string
-  backgroundImage?: string
-
-  // Custom
+  // Styling - Only className (Tailwind CSS utilities)
   className?: string
-  customCss?: string
 }
 
 /**
@@ -310,48 +232,17 @@ export interface Section {
 
 /**
  * Section settings
+ * All visual styling is configured through className using Tailwind CSS
  */
 export interface SectionSettings {
-  // Layout
+  // Layout (minimal, structural only)
   containerWidth?: 'full' | 'boxed'
   maxWidth?: string
-
-  // Spacing
-  padding?: {
-    top?: string
-    right?: string
-    bottom?: string
-    left?: string
-  }
-  margin?: {
-    top?: string
-    right?: string
-    bottom?: string
-    left?: string
-  }
-
-  // Background
-  background?: {
-    type?: 'color' | 'gradient' | 'image' | 'video'
-    color?: string
-    gradient?: string
-    image?: string
-    video?: string
-    size?: 'cover' | 'contain' | 'auto'
-    position?: string
-    repeat?: 'no-repeat' | 'repeat'
-    attachment?: 'scroll' | 'fixed'
-    overlay?: {
-      enabled?: boolean
-      color?: string
-      opacity?: number
-    }
-  }
+  minHeight?: string
 
   // Effects
   parallax?: boolean
   parallaxSpeed?: number
-  minHeight?: string
 
   // Visibility
   visible?: boolean
@@ -359,9 +250,8 @@ export interface SectionSettings {
   hideOnTablet?: boolean
   hideOnDesktop?: boolean
 
-  // Custom
+  // Styling - Only className (Tailwind CSS utilities)
   className?: string
-  customCss?: string
   customId?: string
 }
 
@@ -591,33 +481,16 @@ export const ComponentSettingsSchema = z.object({
   hideOnMobile: z.boolean().optional(),
   hideOnTablet: z.boolean().optional(),
   hideOnDesktop: z.boolean().optional(),
-  margin: z
+  animation: z
     .object({
-      top: z.string().optional(),
-      right: z.string().optional(),
-      bottom: z.string().optional(),
-      left: z.string().optional()
-    })
-    .optional(),
-  padding: z
-    .object({
-      top: z.string().optional(),
-      right: z.string().optional(),
-      bottom: z.string().optional(),
-      left: z.string().optional()
-    })
-    .optional(),
-  background: z
-    .object({
-      type: z.enum(['color', 'gradient', 'image', 'video']).optional(),
-      color: z.string().optional(),
-      gradient: z.string().optional(),
-      image: z.string().optional(),
-      video: z.string().optional()
+      type: z.enum(['fade', 'slide', 'zoom', 'bounce', 'none']).optional(),
+      duration: z.number().optional(),
+      delay: z.number().optional(),
+      easing: z.enum(['linear', 'ease', 'ease-in', 'ease-out', 'ease-in-out']).optional()
     })
     .optional(),
   className: z.string().optional(),
-  customCss: z.string().optional()
+  customId: z.string().optional()
 })
 
 export const ComponentSchema = z.object({

@@ -44,19 +44,6 @@ export function RowRenderer({ row, sectionId }: RowRendererProps) {
 
     const columnIds = row.columns.map((column) => column.id)
 
-    // Build inline styles from row settings
-    const rowStyles: React.CSSProperties = {
-        backgroundColor: row.settings?.background || undefined,
-        backgroundImage: row.settings?.backgroundImage || undefined,
-        paddingTop: row.settings?.padding?.top || undefined,
-        paddingRight: row.settings?.padding?.right || undefined,
-        paddingBottom: row.settings?.padding?.bottom || undefined,
-        paddingLeft: row.settings?.padding?.left || undefined,
-        marginTop: row.settings?.margin?.top || undefined,
-        marginBottom: row.settings?.margin?.bottom || undefined,
-        gap: row.settings?.columnsGap || undefined
-    }
-
     return (
         <div
             ref={setNodeRef}
@@ -82,7 +69,6 @@ export function RowRenderer({ row, sectionId }: RowRendererProps) {
         >
             {/* Row Content */}
             <div
-                style={rowStyles}
                 className={cn(
                     'relative bg-white px-6 py-16 border-2 border-dashed w-full min-h-20 transition-colors',
                     isSelected && 'border-green-400 bg-green-50/30',

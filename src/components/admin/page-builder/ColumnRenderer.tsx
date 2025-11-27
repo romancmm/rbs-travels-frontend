@@ -67,16 +67,6 @@ export function ColumnRenderer({ column, sectionId, rowId }: ColumnRendererProps
 
     const componentIds = column.components.map((component) => component.id)
 
-    // Build inline styles from column settings
-    const columnStyles: React.CSSProperties = {
-        backgroundColor: column.settings?.background || undefined,
-        backgroundImage: column.settings?.backgroundImage || undefined,
-        paddingTop: column.settings?.padding?.top || undefined,
-        paddingRight: column.settings?.padding?.right || undefined,
-        paddingBottom: column.settings?.padding?.bottom || undefined,
-        paddingLeft: column.settings?.padding?.left || undefined
-    }
-
     return (
         <div
             ref={(node) => {
@@ -110,7 +100,6 @@ export function ColumnRenderer({ column, sectionId, rowId }: ColumnRendererProps
         >
             {/* Column Content */}
             <div
-                style={columnStyles}
                 className={cn(
                     'relative bg-gray-50/50 p-2 rounded-lg w-full min-h-[120px] transition-all',
                     isOver && 'bg-blue-50/50 ring-2 ring-blue-400 ring-inset',

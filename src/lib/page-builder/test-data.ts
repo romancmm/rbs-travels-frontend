@@ -12,14 +12,7 @@ export const samplePageContent: PageContent = {
       name: 'Hero Section',
       order: 0,
       settings: {
-        background: {
-          color: '#f5f5f5',
-          image: '/hero.jpg'
-        },
-        padding: {
-          top: '80px',
-          bottom: '80px'
-        }
+        className: 'bg-gray-100 py-20'
       },
       rows: [
         {
@@ -71,13 +64,7 @@ export const samplePageContent: PageContent = {
       name: 'Features Section',
       order: 1,
       settings: {
-        background: {
-          color: '#ffffff'
-        },
-        padding: {
-          top: '60px',
-          bottom: '60px'
-        }
+        className: 'bg-white py-16'
       },
       rows: [
         {

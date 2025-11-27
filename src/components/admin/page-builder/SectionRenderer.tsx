@@ -42,24 +42,6 @@ export function SectionRenderer({ section }: SectionRendererProps) {
 
     const rowIds = section.rows.map((row) => row.id)
 
-    // Build inline styles from section settings
-    const sectionStyles: React.CSSProperties = {
-        backgroundColor: section.settings?.background?.color || undefined,
-        backgroundImage: section.settings?.background?.image
-            ? `url(${section.settings.background.image})`
-            : undefined,
-        backgroundSize: section.settings?.background?.size || undefined,
-        backgroundPosition: section.settings?.background?.position || undefined,
-        backgroundRepeat: section.settings?.background?.repeat || undefined,
-        backgroundAttachment: section.settings?.background?.attachment || undefined,
-        paddingTop: section.settings?.padding?.top || undefined,
-        paddingRight: section.settings?.padding?.right || undefined,
-        paddingBottom: section.settings?.padding?.bottom || undefined,
-        paddingLeft: section.settings?.padding?.left || undefined,
-        marginTop: section.settings?.margin?.top || undefined,
-        marginBottom: section.settings?.margin?.bottom || undefined
-    }
-
     return (
         <div
             ref={setNodeRef}
@@ -81,7 +63,7 @@ export function SectionRenderer({ section }: SectionRendererProps) {
             onMouseLeave={() => hoverElement(null)}
         >
             {/* Section Content */}
-            <div style={sectionStyles} className={cn('relative p-4 w-full min-h-[100px]', section.settings?.className)}>
+            <div className={cn('relative p-4 w-full min-h-[100px]', section.settings?.className)}>
                 {/* Section Toolbar - Shows on hover/select */}
                 <div
                     className={cn(
