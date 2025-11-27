@@ -13,6 +13,13 @@ import {
     SelectTrigger,
     SelectValue
 } from '@/components/ui/select'
+import {
+    Sheet,
+    SheetContent,
+    SheetDescription,
+    SheetHeader,
+    SheetTitle,
+} from '@/components/ui/sheet'
 import { Textarea } from '@/components/ui/textarea'
 import { useBuilderStore } from '@/lib/page-builder/builder-store'
 import { findElementById } from '@/lib/page-builder/builder-utils'
@@ -23,13 +30,13 @@ export function PropertiesPanel() {
     const selectedId = useBuilderStore((state) => state.selection.selectedId)
     const selectedType = useBuilderStore((state) => state.selection.selectedType)
     const rightPanelOpen = useBuilderStore((state) => state.ui.rightPanelOpen)
+    const toggleRightPanel = useBuilderStore((state) => state.toggleRightPanel)
+    const selectElement = useBuilderStore((state) => state.selectElement)
     const content = useBuilderStore((state) => state.content)
     const updateComponent = useBuilderStore((state) => state.updateComponent)
     const updateSection = useBuilderStore((state) => state.updateSection)
     const updateRow = useBuilderStore((state) => state.updateRow)
     const updateColumn = useBuilderStore((state) => state.updateColumn)
-
-    if (!rightPanelOpen) return null
 
     // Find the selected element
     const selectedElement = selectedId ? findElementById(content, selectedId) : null
@@ -42,19 +49,45 @@ export function PropertiesPanel() {
         hasElement: !!selectedElement?.element
     })
 
-    return (
-        <div className='bg-white border-l w-80 shrink-0'>
-            <div className='flex flex-col h-full'>
-                {/* Header */}
-                <div className='flex justify-between items-center px-4 border-b h-14'>
-                    <div className='flex items-center gap-2'>
-                        <Settings className='w-4 h-4 text-gray-500' />
-                        <h2 className='font-semibold text-gray-900'>Properties</h2>
-                    </div>
-                </div>
+    const handleOpenChange = (open: boolean) => {
+        if (!open) {
+            // Close the sheet and clear selection
+            selectElement(null)
+        }
+    }
 
-                {/* Content */}
-                <div className='flex-1 p-4 overflow-auto'>
+    // Get the title based on selected element type
+    const getTitle = () => {
+        if (!selectedElement) return 'Properties'
+        switch (selectedElement.type) {
+            case 'section':
+                return 'Section Properties'
+            case 'row':
+                return 'Row Properties'
+            case 'column':
+                return 'Column Properties'
+            case 'component':
+                const componentDef = componentRegistry.get((selectedElement.element as BaseComponent)?.type)
+                return `${componentDef?.label || 'Component'} Properties`
+            default:
+                return 'Properties'
+        }
+    }
+
+    return (
+        <Sheet open={rightPanelOpen && !!selectedId} onOpenChange={handleOpenChange}>
+            <SheetContent side="right" className="w-[400px] sm:w-[500px] overflow-y-auto">
+                <SheetHeader>
+                    <SheetTitle className="flex items-center gap-2">
+                        <Settings className='w-5 h-5 text-gray-500' />
+                        {getTitle()}
+                    </SheetTitle>
+                    <SheetDescription>
+                        Configure the properties and styling for the selected element.
+                    </SheetDescription>
+                </SheetHeader>
+
+                <div className='px-4'>
                     {selectedElement?.type === 'section' && selectedElement.element ? (
                         <SectionProperties
                             section={selectedElement.element}
@@ -97,8 +130,8 @@ export function PropertiesPanel() {
                         </div>
                     )}
                 </div>
-            </div>
-        </div>
+            </SheetContent>
+        </Sheet>
     )
 }
 
