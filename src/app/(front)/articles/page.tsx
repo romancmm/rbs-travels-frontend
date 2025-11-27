@@ -1,3 +1,4 @@
+import { fetchOnServer } from '@/action/data'
 import BlogCard from '@/components/card/BlogCard'
 import { Container } from '@/components/common/container'
 import { Typography } from '@/components/common/typography'
@@ -32,10 +33,13 @@ async function getArticles(searchParams: { categories?: string }) {
 export default async function ArticlesPage({
     searchParams
 }: {
-    searchParams: { categories?: string }
+    searchParams: Promise<{ categories?: string }>
 }) {
-    const articlesData = await getArticles(searchParams)
+    const { categories } = await searchParams
+    const categoriesParam = categories ? `?categories=${categories}` : ''
 
+    const articlesData = await fetchOnServer(`/articles/posts${categoriesParam}`, 300)
+    console.log(articlesData)
     return (
         <div className='bg-background py-12 md:py-20'>
             <Container>
@@ -51,16 +55,16 @@ export default async function ArticlesPage({
                     </Typography>
 
                     <Typography variant='body1' className='text-muted-foreground'>
-                        {articlesData.total > 0
-                            ? `${articlesData.total} article${articlesData.total === 1 ? '' : 's'} published`
+                        {articlesData.data?.total > 0
+                            ? `${articlesData.data.total} article${articlesData.data.total === 1 ? '' : 's'} published`
                             : 'No articles found'}
                     </Typography>
                 </div>
 
                 {/* Articles Grid */}
-                {articlesData.items.length > 0 ? (
+                {articlesData.data?.items.length > 0 ? (
                     <div className='gap-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3'>
-                        {articlesData.items.map((article: any, index: number) => (
+                        {articlesData.data.items.map((article: any, index: number) => (
                             <BlogCard key={article.id || index} post={article} index={index} />
                         ))}
                     </div>
