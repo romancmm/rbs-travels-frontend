@@ -83,8 +83,8 @@ export function BorderControl({ value = {}, onChange }: BorderControlProps) {
     return (
         <div className='space-y-4'>
             <div className='flex justify-between items-center'>
-                <Label className='flex items-center gap-2'>
-                    <Square className='w-4 h-4' />
+                <Label className='flex items-center gap-2 font-semibold text-sm'>
+                    <Square className='w-4 h-4 text-primary' />
                     Border & Radius
                 </Label>
                 <div className='flex items-center gap-2'>
@@ -92,11 +92,18 @@ export function BorderControl({ value = {}, onChange }: BorderControlProps) {
                         variant='ghost'
                         size='sm'
                         onClick={() => setMode(mode === 'simple' ? 'advanced' : 'simple')}
+                        className='h-8 text-xs'
                     >
                         {mode === 'simple' ? 'Advanced' : 'Simple'}
                     </Button>
-                    <Button variant='ghost' size='sm' onClick={handleClear}>
+                    <Button
+                        variant='ghost'
+                        size='sm'
+                        onClick={handleClear}
+                        className='h-8 text-muted-foreground hover:text-destructive'
+                    >
                         <X className='w-4 h-4' />
+                        <span className='ml-1 text-xs'>Clear</span>
                     </Button>
                 </div>
             </div>

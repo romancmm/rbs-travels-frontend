@@ -56,16 +56,21 @@ export function SpacingControl({ value = {}, onChange }: SpacingControlProps) {
     return (
         <div className='space-y-4'>
             <div className='flex justify-between items-center'>
-                <Label className='flex items-center gap-2'>
-                    <Box className='w-4 h-4' />
+                <Label className='flex items-center gap-2 font-semibold text-sm'>
+                    <Box className='w-4 h-4 text-primary' />
                     Spacing
                 </Label>
                 <Button
                     variant='ghost'
                     size='sm'
                     onClick={() => setMode(mode === 'simple' ? 'advanced' : 'simple')}
+                    className='h-8 text-xs'
                 >
-                    {mode === 'simple' ? <Maximize2 className='w-4 h-4' /> : <Minimize2 className='w-4 h-4' />}
+                    {mode === 'simple' ? (
+                        <><Maximize2 className='mr-1 w-3.5 h-3.5' />Advanced</>
+                    ) : (
+                        <><Minimize2 className='mr-1 w-3.5 h-3.5' />Simple</>
+                    )}
                 </Button>
             </div>
 

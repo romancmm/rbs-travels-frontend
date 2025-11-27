@@ -44,34 +44,47 @@ export function ShadowControl({ value = 'none', onChange }: ShadowControlProps) 
 
     return (
         <div className='space-y-4'>
-            <Label className='flex items-center gap-2'>
-                <Droplet className='w-4 h-4' />
+            <Label className='flex items-center gap-2 font-semibold text-sm'>
+                <Droplet className='w-4 h-4 text-primary' />
                 Shadow
             </Label>
 
             <div className='space-y-2'>
+                <Label className='font-medium text-muted-foreground text-xs'>Shadow Intensity</Label>
                 <Select value={preset} onValueChange={handleChange}>
-                    <SelectTrigger>
+                    <SelectTrigger className='h-10'>
                         <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
                         {SHADOW_PRESETS.map((item) => (
                             <SelectItem key={item.value} value={item.value}>
-                                {item.label}
+                                <div className='flex items-center gap-2'>
+                                    <div className={`w-8 h-8 rounded bg-white border ${generateShadowClass(item.value)}`} />
+                                    <span>{item.label}</span>
+                                </div>
                             </SelectItem>
                         ))}
                     </SelectContent>
                 </Select>
             </div>
 
-            {/* Preview */}
-            <div className='bg-muted p-2 rounded font-mono text-muted-foreground text-xs'>
-                {generateShadowClass(preset)}
+            {/* Visual Preview */}
+            <div className='bg-muted/30 p-6 border rounded-lg'>
+                <div className='flex justify-center'>
+                    <div className={`bg-background rounded-lg w-24 h-24 flex items-center justify-center ${generateShadowClass(preset)}`}>
+                        <span className='text-muted-foreground text-xs'>Preview</span>
+                    </div>
+                </div>
             </div>
 
-            {/* Visual Preview */}
-            <div className='flex justify-center p-6'>
-                <div className={`bg-white rounded-lg w-24 h-24 ${generateShadowClass(preset)}`} />
+            {/* Generated Class */}
+            <div className='space-y-2'>
+                <Label className='font-medium text-muted-foreground text-xs'>Generated Class</Label>
+                <div className='bg-muted/50 p-3 border border-muted rounded-lg'>
+                    <code className='font-mono text-foreground text-xs'>
+                        {generateShadowClass(preset) || <span className='text-muted-foreground italic'>none</span>}
+                    </code>
+                </div>
             </div>
         </div>
     )

@@ -67,12 +67,18 @@ export function LayoutControl({ type = 'block', flexValue = {}, gridValue = {}, 
     return (
         <div className='space-y-4'>
             <div className='flex justify-between items-center'>
-                <Label className='flex items-center gap-2'>
-                    <LayoutGrid className='w-4 h-4' />
+                <Label className='flex items-center gap-2 font-semibold text-sm'>
+                    <LayoutGrid className='w-4 h-4 text-primary' />
                     Layout
                 </Label>
-                <Button variant='ghost' size='sm' onClick={handleClear}>
+                <Button
+                    variant='ghost'
+                    size='sm'
+                    onClick={handleClear}
+                    className='h-8 text-muted-foreground hover:text-destructive'
+                >
                     <X className='w-4 h-4' />
+                    <span className='ml-1 text-xs'>Clear</span>
                 </Button>
             </div>
 
