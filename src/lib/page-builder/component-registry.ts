@@ -67,7 +67,8 @@ class ComponentRegistry {
       id,
       type,
       order: 0,
-      props: { ...definition.defaultProps }
+      props: { ...definition.defaultProps },
+      settings: {} // Initialize empty settings object
     }
   }
 

@@ -707,11 +707,48 @@ export const useBuilderStore = create<BuilderStore>()(
           })
           console.log('[payload2] :>> ', payload)
 
+          // Debug: Check if className fields are present in payload
+          if (payload.content.sections.length > 0) {
+            const section = payload.content.sections[0]
+            console.log('[Store] 🔍 First section settings:', section.settings)
+            if (section.rows.length > 0) {
+              const row = section.rows[0]
+              console.log('[Store] 🔍 First row settings:', row.settings)
+              if (row.columns.length > 0) {
+                const column = row.columns[0]
+                console.log('[Store] 🔍 First column settings:', column.settings)
+                if (column.components.length > 0) {
+                  const component = column.components[0]
+                  console.log('[Store] 🔍 First component settings:', component.settings)
+                }
+              }
+            }
+          }
+
           // Call API to save page content
           // Using PUT to update the page with new content
           const response = await requests.put(`/admin/pages/${pageId}`, payload)
 
           console.log('[Store] Page saved successfully:', response)
+          console.log('[Store] 🔍 Response data content:', response.data?.content)
+
+          // Debug: Check if className fields are present in response
+          if (response.data?.content?.sections?.length > 0) {
+            const section = response.data.content.sections[0]
+            console.log('[Store] 🔍 Response first section settings:', section.settings)
+            if (section.rows?.length > 0) {
+              const row = section.rows[0]
+              console.log('[Store] 🔍 Response first row settings:', row.settings)
+              if (row.columns?.length > 0) {
+                const column = row.columns[0]
+                console.log('[Store] 🔍 Response first column settings:', column.settings)
+                if (column.components?.length > 0) {
+                  const component = column.components[0]
+                  console.log('[Store] 🔍 Response first component settings:', component.settings)
+                }
+              }
+            }
+          }
 
           set((state) => {
             state.isDirty = false

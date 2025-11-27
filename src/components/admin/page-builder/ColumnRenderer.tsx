@@ -112,8 +112,9 @@ export function ColumnRenderer({ column, sectionId, rowId }: ColumnRendererProps
             <div
                 style={columnStyles}
                 className={cn(
-                    'relative bg-gray-50/50 p-2 rounded-lg w-full min-h-[120px]',
-                    isOver && 'bg-blue-50/30'
+                    'relative bg-gray-50/50 p-2 rounded-lg w-full min-h-[120px] transition-all',
+                    isOver && 'bg-blue-50/50 ring-2 ring-blue-400 ring-inset',
+                    column.settings?.className
                 )}
             >
                 {/* Column Toolbar - Shows on hover/select */}
@@ -217,7 +218,7 @@ export function ColumnRenderer({ column, sectionId, rowId }: ColumnRendererProps
                     >
                         <div
                             className={cn(
-                                'flex flex-col items-center gap-2 p-6 border-2 border-dashed rounded-lg text-center transition-all',
+                                'flex flex-col items-center gap-2 p-6 border-2 border-dashed rounded-lg min-h-20 text-center transition-all',
                                 isOver ? 'bg-blue-50 border-blue-400 scale-105' : 'bg-gray-50 border-gray-300'
                             )}
                         >
@@ -230,16 +231,16 @@ export function ColumnRenderer({ column, sectionId, rowId }: ColumnRendererProps
                             <span
                                 className={cn(
                                     'font-medium text-xs transition-colors',
-                                    isOver ? 'text-blue-700' : 'text-gray-600'
+                                    isOver ? 'text-red-700' : 'text-gray-600'
                                 )}
                             >
-                                {isOver ? 'Drop to add component' : 'Drop component here'}
+                                {isOver ? 'Drop to add component' : 'Drop component here...'}
                             </span>
                         </div>
                     </div>
                 ) : (
                     <SortableContext items={componentIds} strategy={verticalListSortingStrategy}>
-                        <div className='space-y-3 p-2'>
+                        <div className={cn('space-y-3 p-2 min-h-[120px]', isOver && 'bg-blue-50/30')}>
                             {column.components.map((component) => (
                                 <ComponentRenderer
                                     key={component.id}
@@ -249,6 +250,13 @@ export function ColumnRenderer({ column, sectionId, rowId }: ColumnRendererProps
                                     columnId={column.id}
                                 />
                             ))}
+
+                            {/* Drop zone at the end when dragging */}
+                            {isOver && (
+                                <div className='flex justify-center items-center bg-blue-50 py-4 border-2 border-blue-400 border-dashed rounded-lg'>
+                                    <span className='font-medium text-blue-600 text-xs'>Drop here to add at the end</span>
+                                </div>
+                            )}
                         </div>
                     </SortableContext>
                 )}

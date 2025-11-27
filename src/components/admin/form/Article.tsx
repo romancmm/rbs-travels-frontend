@@ -6,7 +6,7 @@ import FileUploader from '@/components/common/FileUploader'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 import { showError } from '@/lib/errMsg'
-import { CreateArticleSchema, CreateArticleType } from '@/lib/validations/schemas/blog'
+import { CreateArticleSchema, CreateArticleType } from '@/lib/validations/schemas/article'
 import requests from '@/services/network/http'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useRouter } from 'next/navigation'
@@ -34,18 +34,19 @@ export default function ArticleForm({ initialData }: TProps) {
     defaultValues: {
       title: initialData?.title || '',
       slug: initialData?.slug || '',
-      categoryId: initialData?.categoryId || '',
-      content: initialData?.content || '',
       excerpt: initialData?.excerpt || '',
+      content: initialData?.content || '',
       thumbnail: initialData?.thumbnail || '',
       gallery: initialData?.gallery || [],
-      tags: initialData?.tags || [],
-      isPublished: initialData?.isPublished || true,
       seo: {
         title: initialData?.seo?.title || '',
         description: initialData?.seo?.description || '',
         keywords: initialData?.seo?.keywords || []
-      }
+      },
+      categoryIds: initialData?.categoryIds || [],
+      tags: initialData?.tags || [],
+      isPublished: initialData?.isPublished || true,
+      publishedAt: initialData?.publishedAt || undefined
     }
   })
 
@@ -162,25 +163,32 @@ export default function ArticleForm({ initialData }: TProps) {
             /> */}
 
             <Controller
-              name='categoryId'
+              name='categoryIds'
               control={control}
               render={({ field }) => (
                 <>
                   <CustomSelect
-                    label='Category'
-                    placeholder='Select Category'
-                    value={field.value?.toString() || ''}
-                    url='/admin/articles/categories'
-                    options={(data) =>
-                      data?.data?.items?.map((cat: any) => ({
-                        value: cat.id.toString(),
-                        label: cat.name
-                      }))
-                    }
-                    onChange={field.onChange}
+
+                    label='Categories'
+                    placeholder='Select Categories'
+                    value={Array.isArray(field.value) ? field.value : []}
+                    url={'/admin/articles/categories'}
+                    options={(data) => {
+                      return (
+                        data?.data?.items?.map((item: any) => ({
+                          value: item.id,
+                          label: item.title || item.name
+                        })) || []
+                      )
+                    }}
+                    onChange={(value) => {
+                      // CustomSelect already handles toggle logic, just update the field
+                      field.onChange(value)
+                    }}
+                    multiple
                   />
-                  {errors.categoryId && (
-                    <span className='font-medium text-red-500 text-xs'>{errors.categoryId.message}</span>
+                  {errors.categoryIds && (
+                    <span className='font-medium text-red-500 text-xs'>{errors.categoryIds.message}</span>
                   )}
                 </>
               )}
@@ -353,10 +361,32 @@ export default function ArticleForm({ initialData }: TProps) {
                   name='isPublished'
                   label={`Article is ${field.value ? 'Published' : 'Draft'}`}
                   checked={field.value}
-                  onCheckedChange={field.onChange}
+                  onCheckedChange={(checked) => {
+                    field.onChange(checked)
+                    if (checked && !watch('publishedAt')) {
+                      setValue('publishedAt', new Date().toISOString())
+                    }
+                  }}
                 />
               )}
             />
+
+            {/* <Controller
+              name='publishedAt'
+              control={control}
+              render={({ field }) => (
+                <CustomInput
+                  label='Published Date'
+                  type='datetime-local'
+                  value={field.value ? new Date(field.value).toISOString().slice(0, 16) : ''}
+                  onChange={(e) => {
+                    const date = e.target.value ? new Date(e.target.value).toISOString() : undefined
+                    field.onChange(date)
+                  }}
+                  error={errors.publishedAt?.message}
+                />
+              )}
+            /> */}
           </div>
         </div>
 

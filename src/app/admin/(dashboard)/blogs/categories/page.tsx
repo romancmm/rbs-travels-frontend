@@ -11,7 +11,7 @@ import { AddButton } from '@/components/common/PermissionGate'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import useAsync from '@/hooks/useAsync'
 import { useFilter } from '@/hooks/useFilter'
-import { ArticleCategoryType } from '@/lib/validations/schemas/blog'
+import { ArticleCategoryType } from '@/lib/validations/schemas/article'
 
 interface ArticleCategory extends ArticleCategoryType {
   id: number

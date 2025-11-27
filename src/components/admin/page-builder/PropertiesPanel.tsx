@@ -13,6 +13,13 @@ import {
     SelectTrigger,
     SelectValue
 } from '@/components/ui/select'
+import {
+    Sheet,
+    SheetContent,
+    SheetDescription,
+    SheetHeader,
+    SheetTitle,
+} from '@/components/ui/sheet'
 import { Textarea } from '@/components/ui/textarea'
 import { useBuilderStore } from '@/lib/page-builder/builder-store'
 import { findElementById } from '@/lib/page-builder/builder-utils'
@@ -23,13 +30,13 @@ export function PropertiesPanel() {
     const selectedId = useBuilderStore((state) => state.selection.selectedId)
     const selectedType = useBuilderStore((state) => state.selection.selectedType)
     const rightPanelOpen = useBuilderStore((state) => state.ui.rightPanelOpen)
+    const toggleRightPanel = useBuilderStore((state) => state.toggleRightPanel)
+    const selectElement = useBuilderStore((state) => state.selectElement)
     const content = useBuilderStore((state) => state.content)
     const updateComponent = useBuilderStore((state) => state.updateComponent)
     const updateSection = useBuilderStore((state) => state.updateSection)
     const updateRow = useBuilderStore((state) => state.updateRow)
     const updateColumn = useBuilderStore((state) => state.updateColumn)
-
-    if (!rightPanelOpen) return null
 
     // Find the selected element
     const selectedElement = selectedId ? findElementById(content, selectedId) : null
@@ -42,19 +49,45 @@ export function PropertiesPanel() {
         hasElement: !!selectedElement?.element
     })
 
-    return (
-        <div className='bg-white border-l w-80 shrink-0'>
-            <div className='flex flex-col h-full'>
-                {/* Header */}
-                <div className='flex justify-between items-center px-4 border-b h-14'>
-                    <div className='flex items-center gap-2'>
-                        <Settings className='w-4 h-4 text-gray-500' />
-                        <h2 className='font-semibold text-gray-900'>Properties</h2>
-                    </div>
-                </div>
+    const handleOpenChange = (open: boolean) => {
+        if (!open) {
+            // Close the sheet and clear selection
+            selectElement(null)
+        }
+    }
 
-                {/* Content */}
-                <div className='flex-1 p-4 overflow-auto'>
+    // Get the title based on selected element type
+    const getTitle = () => {
+        if (!selectedElement) return 'Properties'
+        switch (selectedElement.type) {
+            case 'section':
+                return 'Section Properties'
+            case 'row':
+                return 'Row Properties'
+            case 'column':
+                return 'Column Properties'
+            case 'component':
+                const componentDef = componentRegistry.get((selectedElement.element as BaseComponent)?.type)
+                return `${componentDef?.label || 'Component'} Properties`
+            default:
+                return 'Properties'
+        }
+    }
+
+    return (
+        <Sheet open={rightPanelOpen && !!selectedId} onOpenChange={handleOpenChange}>
+            <SheetContent side="right" className="w-[400px] sm:w-[500px] overflow-y-auto">
+                <SheetHeader>
+                    <SheetTitle className="flex items-center gap-2">
+                        <Settings className='w-5 h-5 text-gray-500' />
+                        {getTitle()}
+                    </SheetTitle>
+                    <SheetDescription>
+                        Configure the properties and styling for the selected element.
+                    </SheetDescription>
+                </SheetHeader>
+
+                <div className='px-4'>
                     {selectedElement?.type === 'section' && selectedElement.element ? (
                         <SectionProperties
                             section={selectedElement.element}
@@ -97,8 +130,8 @@ export function PropertiesPanel() {
                         </div>
                     )}
                 </div>
-            </div>
-        </div>
+            </SheetContent>
+        </Sheet>
     )
 }
 
@@ -141,6 +174,19 @@ function SectionProperties({ section, onUpdate }: any) {
                     onChange={(e) => onUpdate({ name: e.target.value })}
                     placeholder='Hero, Features, etc.'
                 />
+            </div>
+
+            {/* Custom Class Name */}
+            <div>
+                <Label>Custom Classes</Label>
+                <Input
+                    value={localSettings.className || ''}
+                    onChange={(e) => handleChange('className', e.target.value)}
+                    placeholder='custom-class another-class'
+                />
+                <p className='mt-1 text-muted-foreground text-xs'>
+                    Add custom Tailwind or CSS classes
+                </p>
             </div>
 
             {/* Background */}
@@ -260,6 +306,19 @@ function RowProperties({ row, onUpdate }: any) {
                 <p className='mt-1 text-muted-foreground text-xs'>Configure row layout and spacing</p>
             </div>
 
+            {/* Custom Class Name */}
+            <div>
+                <Label>Custom Classes</Label>
+                <Input
+                    value={localSettings.className || ''}
+                    onChange={(e) => handleChange('className', e.target.value)}
+                    placeholder='custom-class another-class'
+                />
+                <p className='mt-1 text-muted-foreground text-xs'>
+                    Add custom Tailwind or CSS classes
+                </p>
+            </div>
+
             {/* Layout */}
             <div className='space-y-3'>
                 <h3 className='font-medium text-sm'>Layout</h3>
@@ -373,6 +432,19 @@ function ColumnProperties({ column, onUpdate }: any) {
             <div className='bg-purple-50 p-3 border border-purple-200 rounded-lg'>
                 <p className='font-medium text-sm'>Column ({column.width}/12)</p>
                 <p className='mt-1 text-muted-foreground text-xs'>Configure column layout and styling</p>
+            </div>
+
+            {/* Custom Class Name */}
+            <div>
+                <Label>Custom Classes</Label>
+                <Input
+                    value={localSettings.className || ''}
+                    onChange={(e) => handleChange('className', e.target.value)}
+                    placeholder='custom-class another-class'
+                />
+                <p className='mt-1 text-muted-foreground text-xs'>
+                    Add custom Tailwind or CSS classes
+                </p>
             </div>
 
             {/* Layout */}
@@ -511,6 +583,31 @@ function ComponentProperties({ component, onUpdate }: ComponentPropertiesProps) 
             <div className='bg-primary/5 p-3 border rounded-lg'>
                 <p className='font-medium text-sm'>{componentDef?.label || component.type}</p>
                 <p className='mt-1 text-muted-foreground text-xs'>{componentDef?.description}</p>
+            </div>
+
+            {/* Custom Class Name */}
+            <div>
+                <Label>Custom Classes</Label>
+                <Input
+                    value={component.settings?.className || ''}
+                    onChange={(e) => {
+                        const newSettings = {
+                            ...(component.settings || {}),
+                            className: e.target.value
+                        }
+                        console.log('[ComponentProperties] Updating className:', {
+                            componentId: component.id,
+                            oldSettings: component.settings,
+                            newSettings,
+                            className: e.target.value
+                        })
+                        onUpdate({ settings: newSettings })
+                    }}
+                    placeholder='custom-class another-class'
+                />
+                <p className='mt-1 text-muted-foreground text-xs'>
+                    Add custom Tailwind or CSS classes
+                </p>
             </div>
 
             {/* Component-specific properties */}

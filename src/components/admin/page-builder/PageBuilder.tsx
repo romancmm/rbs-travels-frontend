@@ -205,10 +205,10 @@ export function PageBuilder({ pageId, initialContent, pageMetadata }: PageBuilde
           <div className='flex-1 bg-gray-100 overflow-auto'>
             <Canvas />
           </div>
-
-          {/* Right Sidebar - Properties Panel */}
-          <PropertiesPanel />
         </div>
+
+        {/* Properties Panel - Renders as Sheet */}
+        <PropertiesPanel />
       </div>
     </BuilderDndProvider>
   )

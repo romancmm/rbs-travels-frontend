@@ -42,17 +42,18 @@ export const ArticleSeoSchema = z.object({
 export const CreateArticleSchema = z.object({
   title: z.string().min(1, 'Title is required').max(200, 'Title must be less than 200 characters'),
   slug: z.string().min(1, 'Slug is required').max(200, 'Slug must be less than 200 characters'),
-  categoryId: z.string().min(1, 'Category is required').optional(),
-  content: z.string().min(1, 'Content is required'),
   excerpt: z
     .string()
     .min(1, 'Excerpt is required')
     .max(500, 'Excerpt must be less than 500 characters'),
-  thumbnail: z.string().optional(),
-  gallery: z.array(z.string()),
+  content: z.string().min(1, 'Content is required'),
+  thumbnail: z.string().url('Thumbnail must be a valid URL').optional(),
+  gallery: z.array(z.string().url('Gallery images must be valid URLs')),
+  seo: ArticleSeoSchema,
+  categoryIds: z.array(z.string()),
   tags: z.array(z.string()),
   isPublished: z.boolean(),
-  seo: ArticleSeoSchema
+  publishedAt: z.string().datetime().optional()
 })
 
 // Update blog schema (same as create but with optional fields for partial updates)

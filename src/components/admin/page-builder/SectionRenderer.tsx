@@ -81,7 +81,7 @@ export function SectionRenderer({ section }: SectionRendererProps) {
             onMouseLeave={() => hoverElement(null)}
         >
             {/* Section Content */}
-            <div style={sectionStyles} className='relative p-4 w-full min-h-[100px]'>
+            <div style={sectionStyles} className={cn('relative p-4 w-full min-h-[100px]', section.settings?.className)}>
                 {/* Section Toolbar - Shows on hover/select */}
                 <div
                     className={cn(

@@ -1,3 +1,4 @@
+import { fetchOnServer } from '@/action/data'
 import BlogCard from '@/components/card/BlogCard'
 import { Container } from '@/components/common/container'
 import { Typography } from '@/components/common/typography'
@@ -5,65 +6,55 @@ import { Layers } from 'lucide-react'
 
 // Fetch articles by category slugs
 async function getArticlesByCategories(categorySlugs: string[]) {
-    try {
-        const categoryParam = categorySlugs.join(',')
-        const res = await fetch(
-            `${process.env.NEXT_PUBLIC_APP_ROOT_API}/articles/posts?categories=${categoryParam}`,
-            {
-                next: { revalidate: 60 } // Revalidate every 60 seconds
-            }
-        )
+    // Construct query string with multiple categorySlugs parameters
+    const queryParams = categorySlugs.map(slug => `categorySlugs=${slug}`).join('&')
 
-        if (!res.ok) {
-            return { items: [], total: 0 }
-        }
+    const { data, error } = await fetchOnServer(
+        `/articles/posts?${queryParams}`,
+        300 // Revalidate every 300 seconds
+    )
 
-        const data = await res.json()
-        return {
-            items: data?.data?.items || [],
-            total: data?.data?.total || 0
-        }
-    } catch (error) {
-        console.error('Error fetching articles:', error)
+    if (error || !data) {
         return { items: [], total: 0 }
+    }
+
+    return {
+        items: data?.items || [],
+        total: data?.total || 0
     }
 }
 
-// Fetch category names for display
-async function getCategoryNames(categorySlugs: string[]) {
-    try {
-        const categoryParam = categorySlugs.join(',')
-        const res = await fetch(
-            `${process.env.NEXT_PUBLIC_APP_ROOT_API}/articles/categories?slugs=${categoryParam}`,
-            {
-                next: { revalidate: 60 }
-            }
-        )
+// Fetch menu item details for display
+async function getMenuItemDetails(categorySlugs: string[]) {
+    // Use the first slug to get menu item details
+    const menuSlug = categorySlugs[0]
+    const { data, error } = await fetchOnServer(
+        `/menu-items/${menuSlug}`,
+        300
+    )
 
-        if (!res.ok) {
-            return []
-        }
-
-        const data = await res.json()
-        return data?.data?.items || []
-    } catch (error) {
-        console.error('Error fetching categories:', error)
-        return []
+    if (error || !data) {
+        return null
     }
+
+    return data
 }
 
 export default async function CategoryArticlesPage({
     params
 }: {
-    params: { slugs: string[] }
+    params: Promise<{ slugs: string[] }>
 }) {
-    const categorySlugs = params.slugs
-    const [articlesData, categories] = await Promise.all([
+    const { slugs } = await params
+    const categorySlugs = slugs ?? []
+
+    const [articlesData, menuItem] = await Promise.all([
         getArticlesByCategories(categorySlugs),
-        getCategoryNames(categorySlugs)
+        getMenuItemDetails(categorySlugs)
     ])
 
-    const categoryNames = categories.map((cat: any) => cat.name || cat.title).join(', ')
+    const pageTitle = menuItem?.title || menuItem?.name || 'Articles'
+    const pageDescription = menuItem?.description || menuItem?.excerpt
 
     return (
         <div className='bg-background py-12 md:py-20'>
@@ -76,10 +67,16 @@ export default async function CategoryArticlesPage({
                     </div>
 
                     <Typography variant='h2' weight='bold' className='mb-4'>
-                        {categoryNames || 'Articles'}
+                        {pageTitle}
                     </Typography>
 
-                    <Typography variant='body1' className='text-muted-foreground'>
+                    {pageDescription && (
+                        <Typography variant='body1' className='mb-4 text-muted-foreground'>
+                            {pageDescription}
+                        </Typography>
+                    )}
+
+                    <Typography variant='body2' className='text-muted-foreground'>
                         {articlesData.total > 0
                             ? `${articlesData.total} article${articlesData.total === 1 ? '' : 's'} found`
                             : 'No articles found'}

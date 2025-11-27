@@ -5,6 +5,7 @@ import CustomImage from '@/components/common/CustomImage'
 import CustomLink from '@/components/common/CustomLink'
 import { Section } from '@/components/common/section'
 import { Typography } from '@/components/common/typography'
+import { cn } from '@/lib/utils'
 import type { BaseComponent, Column as ColumnType, PageContent, Row as RowType, Section as SectionType } from '@/types/page-builder'
 import React from 'react'
 
@@ -72,18 +73,24 @@ function getBackgroundFromSettings(settings?: any) {
 
 function renderComponent(component: BaseComponent) {
     const props = component.props || {}
+    const componentClassName = (component as any).settings?.className || ''
     const styleProps: React.CSSProperties = {}
     if (props.color) styleProps.color = props.color
     if (props.fontSize) styleProps.fontSize = props.fontSize
     if (props.lineHeight) styleProps.lineHeight = props.lineHeight
     if (props.fontWeight) styleProps.fontWeight = props.fontWeight
 
+    // Debug log to verify className is being applied
+    if (componentClassName) {
+        console.log('[renderComponent] Applying className:', componentClassName, 'to component:', component.id, 'type:', component.type)
+    }
+
     // Basic rendering mirroring admin previews (no editor chrome)
     switch (component.type) {
         case 'heading': {
             const { level = 'h2', text = '', align = 'left' } = props as any
             return (
-                <Typography key={component.id} variant={level as any} weight={props.fontWeight || 'bold'} align={align as any} style={styleProps}>
+                <Typography key={component.id} variant={level as any} weight={props.fontWeight || 'bold'} align={align as any} style={styleProps} className={componentClassName}>
                     {text}
                 </Typography>
             )
@@ -92,7 +99,7 @@ function renderComponent(component: BaseComponent) {
         case 'text': {
             const { text = '', align = 'left' } = props as any
             return (
-                <Typography key={component.id} variant='body1' className='text-gray-700' align={align as any} style={styleProps}>
+                <Typography key={component.id} variant='body1' className={cn('text-gray-700', componentClassName)} align={align as any} style={styleProps}>
                     {text}
                 </Typography>
             )
@@ -113,7 +120,7 @@ function renderComponent(component: BaseComponent) {
             const sizeClass = size === 'small' ? 'px-3 py-1 text-sm' : size === 'large' ? 'px-6 py-3 text-lg' : 'px-4 py-2'
 
             return (
-                <div key={component.id}>
+                <div key={component.id} className={componentClassName}>
                     <CustomLink href={url} className={`inline-block rounded ${variantClass} ${sizeClass}`} target={openInNewTab ? '_blank' : undefined}>
                         {text}
                     </CustomLink>
@@ -147,7 +154,7 @@ function renderComponent(component: BaseComponent) {
             )
 
             return (
-                <div key={component.id}>
+                <div key={component.id} className={componentClassName}>
                     {link ? (
                         <CustomLink href={link} target={openInNewTab ? '_blank' : undefined}>
                             {imgElement}
@@ -180,7 +187,7 @@ function renderComponent(component: BaseComponent) {
 
             const embed = getEmbed(url)
             return (
-                <div key={component.id} className='w-full'>
+                <div key={component.id} className={cn('w-full', componentClassName)}>
                     {embed ? (
                         <div style={{ paddingBottom: '56.25%', position: 'relative' }}>
                             <iframe src={embed} className='absolute inset-0 w-full h-full' allowFullScreen title={`video-${component.id}`} />
@@ -193,17 +200,17 @@ function renderComponent(component: BaseComponent) {
         }
 
         case 'divider': {
-            return <hr key={component.id} className='my-4 border-t' />
+            return <hr key={component.id} className={cn('my-4 border-t', componentClassName)} />
         }
 
         case 'spacer': {
             const { height = '40px' } = props as any
-            return <div key={component.id} style={{ height }} />
+            return <div key={component.id} style={{ height }} className={componentClassName} />
         }
 
         default:
             return (
-                <div key={component.id} className='text-gray-500 text-sm'>
+                <div key={component.id} className={cn('text-gray-500 text-sm', componentClassName)}>
                     {component.type}
                 </div>
             )
@@ -212,12 +219,18 @@ function renderComponent(component: BaseComponent) {
 
 function ColumnRenderer({ column }: { column: ColumnType }) {
     const spanClass = getColumnSpanClasses(column)
+    const columnSettings = (column as any).settings
+    const columnClassName = columnSettings?.className || ''
+    const visClass = getVisibilityClasses(columnSettings)
+    const { style: colBgStyle, classes: colBgClasses, overlay: colOverlay } = getBackgroundFromSettings(columnSettings)
 
-    const visClass = getVisibilityClasses((column as any).settings)
-    const { style: colBgStyle, classes: colBgClasses, overlay: colOverlay } = getBackgroundFromSettings((column as any).settings)
+    // Debug log to verify className is being applied
+    if (columnClassName) {
+        console.log('[ColumnRenderer] Applying className:', columnClassName, 'to column:', column.id)
+    }
 
     return (
-        <div className={`${spanClass} items-center px-3 ${visClass} ${colBgClasses}`} style={colBgStyle}>
+        <div className={cn(spanClass, 'items-center px-3', visClass, colBgClasses, columnClassName)} style={colBgStyle}>
             <div className={`${colOverlay ? 'relative' : ''}`}>
                 {colOverlay && (
                     <div
@@ -239,11 +252,17 @@ function ColumnRenderer({ column }: { column: ColumnType }) {
 
 function RowRenderer({ row }: { row: RowType }) {
     const rowSettings = (row as any).settings
+    const rowClassName = rowSettings?.className || ''
     const visClass = getVisibilityClasses(rowSettings)
     const { style: rowBgStyle, classes: rowBgClasses, overlay: rowOverlay } = getBackgroundFromSettings(rowSettings)
 
+    // Debug log to verify className is being applied
+    if (rowClassName) {
+        console.log('[RowRenderer] Applying className:', rowClassName, 'to row:', row.id)
+    }
+
     return (
-        <div className={`gap-4 grid grid-cols-12 -mx-3 ${visClass} ${rowBgClasses}`} style={rowBgStyle}>
+        <div className={cn('gap-4 grid grid-cols-12 -mx-3', visClass, rowBgClasses, rowClassName)} style={rowBgStyle}>
             {rowOverlay && (
                 <div aria-hidden className='absolute inset-0 pointer-events-none' style={{ backgroundColor: rowOverlay.color, opacity: rowOverlay.opacity }} />
             )}
@@ -264,14 +283,20 @@ function SectionRenderer({ section }: { section: SectionType }) {
     }
 
     const sectionSettings = (section as any).settings
+    const sectionClassName = sectionSettings?.className || ''
     const visClass = getVisibilityClasses(sectionSettings)
     const { style: secBgStyle, classes: secBgClasses, overlay: secOverlay } = getBackgroundFromSettings(sectionSettings)
+
+    // Debug log to verify className is being applied
+    if (sectionClassName) {
+        console.log('[SectionRenderer] Applying className:', sectionClassName, 'to section:', section.id)
+    }
 
     // merge padding style with background style
     const mergedStyle = { ...secBgStyle, ...style }
 
     return (
-        <Section style={mergedStyle} className={`w-full ${visClass} ${secBgClasses}`}>
+        <Section style={mergedStyle} className={cn('w-full', visClass, secBgClasses, sectionClassName)}>
             <Container>
                 <div className='relative py-6'>
                     {secOverlay && (

@@ -12,7 +12,7 @@ import { cn } from '@/lib/utils'
 import type { ComponentDefinition } from '@/types/page-builder'
 import { useDraggable } from '@dnd-kit/core'
 import { CSS } from '@dnd-kit/utilities'
-import { Search } from 'lucide-react'
+import { GripVertical, Search } from 'lucide-react'
 import { useState } from 'react'
 
 // ==================== DRAGGABLE COMPONENT ITEM ====================
@@ -22,18 +22,31 @@ interface DraggableComponentItemProps {
 }
 
 function DraggableComponentItem({ component }: DraggableComponentItemProps) {
+    // Generate a stable unique ID for this draggable instance
+    const [dragId] = useState(() => `new-${component.type}-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`)
+
     const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
-        id: `new-${component.type}-${Date.now()}`,
+        id: dragId,
         data: {
-            id: `new-${component.type}`,
+            id: dragId,
             type: 'component',
             componentType: component.type,
         },
     })
 
-    const style = {
+    const style: React.CSSProperties = {
         transform: CSS.Translate.toString(transform),
+        transition: 'transform 200ms ease, opacity 200ms ease',
         opacity: isDragging ? 0.5 : 1,
+    }
+
+    // Log when dragging starts
+    if (isDragging) {
+        console.log('[ComponentsSidebar] 🎬 Dragging component:', {
+            id: dragId,
+            type: component.type,
+            label: component.label
+        })
     }
 
     return (
@@ -43,10 +56,16 @@ function DraggableComponentItem({ component }: DraggableComponentItemProps) {
             {...attributes}
             {...listeners}
             className={cn(
-                'group flex items-start gap-3 bg-card hover:bg-accent p-3 border rounded-lg transition-colors cursor-grab active:cursor-grabbing',
-                isDragging && 'shadow-lg ring-2 ring-primary'
+                'group flex items-start gap-3 bg-card hover:bg-accent p-3 border rounded-lg cursor-grab active:cursor-grabbing',
+                'transition-all duration-200 ease-in-out',
+                isDragging && 'scale-[0.98] shadow-lg z-50'
             )}
         >
+            {/* Drag Handle Icon */}
+            <div className='opacity-40 group-hover:opacity-100 pt-0.5 text-muted-foreground transition-opacity shrink-0'>
+                <GripVertical className='w-4 h-4' />
+            </div>
+
             <div className='bg-primary/10 group-hover:bg-primary/20 p-2 rounded transition-colors shrink-0'>
                 <svg
                     width='20'
@@ -153,9 +172,12 @@ export function ComponentsSidebar() {
             </Tabs>
 
             {/* Footer Info */}
-            <div className='p-4 border-t shrink-0'>
+            <div className='space-y-2 p-4 border-t shrink-0'>
                 <p className='text-muted-foreground text-xs'>
-                    Drag components onto the canvas to build your page
+                    💡 <strong>Drag components</strong> onto the canvas to build your page
+                </p>
+                <p className='text-[10px] text-muted-foreground'>
+                    Drop onto columns to add new components
                 </p>
             </div>
         </div>
