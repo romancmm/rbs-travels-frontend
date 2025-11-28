@@ -207,6 +207,448 @@ function renderComponent(component: BaseComponent) {
             return <div key={component.id} style={{ height }} className={componentClassName} />
         }
 
+        // ==================== FORM WIDGETS ====================
+        case 'contact-form': {
+            const { title = 'Contact Us', subtitle, showLabels = true, buttonText = 'Send Message' } = props as any
+            return (
+                <div key={component.id} className={cn('space-y-6', componentClassName)}>
+                    {title && <Typography variant='h3' weight='bold'>{title}</Typography>}
+                    {subtitle && <Typography variant='body1' className='text-gray-600'>{subtitle}</Typography>}
+                    <form className='space-y-4'>
+                        <div>
+                            {showLabels && <label className='block mb-1 font-medium text-sm'>Name</label>}
+                            <input type='text' placeholder='Your name' className='px-4 py-2 border rounded-lg w-full' />
+                        </div>
+                        <div>
+                            {showLabels && <label className='block mb-1 font-medium text-sm'>Email</label>}
+                            <input type='email' placeholder='Your email' className='px-4 py-2 border rounded-lg w-full' />
+                        </div>
+                        <div>
+                            {showLabels && <label className='block mb-1 font-medium text-sm'>Message</label>}
+                            <textarea placeholder='Your message' rows={4} className='px-4 py-2 border rounded-lg w-full' />
+                        </div>
+                        <button type='submit' className='bg-primary hover:bg-primary/90 px-6 py-3 rounded-lg text-white'>
+                            {buttonText}
+                        </button>
+                    </form>
+                </div>
+            )
+        }
+
+        case 'newsletter': {
+            const { title = 'Subscribe to Newsletter', subtitle, placeholder = 'Enter your email', buttonText = 'Subscribe' } = props as any
+            return (
+                <div key={component.id} className={cn('space-y-4', componentClassName)}>
+                    {title && <Typography variant='h4' weight='bold'>{title}</Typography>}
+                    {subtitle && <Typography variant='body2' className='text-gray-600'>{subtitle}</Typography>}
+                    <form className='flex gap-2'>
+                        <input type='email' placeholder={placeholder} className='flex-1 px-4 py-2 border rounded-lg' />
+                        <button type='submit' className='bg-primary hover:bg-primary/90 px-6 py-2 rounded-lg text-white whitespace-nowrap'>
+                            {buttonText}
+                        </button>
+                    </form>
+                </div>
+            )
+        }
+
+        case 'search': {
+            const { placeholder = 'Search...', buttonText = 'Search' } = props as any
+            return (
+                <div key={component.id} className={cn('', componentClassName)}>
+                    <form className='flex gap-2'>
+                        <input type='text' placeholder={placeholder} className='flex-1 px-4 py-2 border rounded-lg' />
+                        <button type='submit' className='bg-gray-800 hover:bg-gray-900 px-6 py-2 rounded-lg text-white whitespace-nowrap'>
+                            {buttonText}
+                        </button>
+                    </form>
+                </div>
+            )
+        }
+
+        // ==================== CONTENT WIDGETS ====================
+        case 'blog-grid':
+        case 'blog-carousel': {
+            const { title, subtitle, showTitle = true, columns = 3 } = props as any
+            const isCarousel = component.type === 'blog-carousel'
+            return (
+                <div key={component.id} className={cn('space-y-6', componentClassName)}>
+                    {showTitle && title && (
+                        <div className='space-y-2 text-center'>
+                            <Typography variant='h3' weight='bold'>{title}</Typography>
+                            {subtitle && <Typography variant='body1' className='text-gray-600'>{subtitle}</Typography>}
+                        </div>
+                    )}
+                    <div className={cn('gap-6 grid', !isCarousel && `grid-cols-1 md:grid-cols-${columns}`)}>
+                        {[1, 2, 3].map((i) => (
+                            <div key={i} className='bg-white hover:shadow-lg border rounded-lg overflow-hidden transition-shadow'>
+                                <div className='bg-gray-200 aspect-video' />
+                                <div className='space-y-2 p-4'>
+                                    <Typography variant='h5' weight='semibold'>Blog Post Title {i}</Typography>
+                                    <Typography variant='body2' className='text-gray-600'>
+                                        Preview excerpt of the blog post content goes here...
+                                    </Typography>
+                                    <CustomLink href='#' className='text-primary text-sm hover:underline'>Read More →</CustomLink>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            )
+        }
+
+        case 'product-grid': {
+            const { title, subtitle, columns = 3 } = props as any
+            return (
+                <div key={component.id} className={cn('space-y-6', componentClassName)}>
+                    {title && (
+                        <div className='space-y-2 text-center'>
+                            <Typography variant='h3' weight='bold'>{title}</Typography>
+                            {subtitle && <Typography variant='body1' className='text-gray-600'>{subtitle}</Typography>}
+                        </div>
+                    )}
+                    <div className={cn('gap-6 grid', `grid-cols-1 md:grid-cols-${columns}`)}>
+                        {[1, 2, 3].map((i) => (
+                            <div key={i} className='bg-white hover:shadow-lg border rounded-lg overflow-hidden transition-shadow'>
+                                <div className='bg-gray-200 aspect-square' />
+                                <div className='space-y-2 p-4'>
+                                    <Typography variant='h5' weight='semibold'>Product Name {i}</Typography>
+                                    <Typography variant='h4' weight='bold' className='text-green-600'>$99.00</Typography>
+                                    <button className='bg-primary hover:bg-primary/90 py-2 rounded-lg w-full text-white'>
+                                        Add to Cart
+                                    </button>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            )
+        }
+
+        case 'tour-packages': {
+            const { title, subtitle, columns = 2 } = props as any
+            return (
+                <div key={component.id} className={cn('space-y-6', componentClassName)}>
+                    {title && (
+                        <div className='space-y-2 text-center'>
+                            <Typography variant='h3' weight='bold'>{title}</Typography>
+                            {subtitle && <Typography variant='body1' className='text-gray-600'>{subtitle}</Typography>}
+                        </div>
+                    )}
+                    <div className={cn('gap-6 grid', `grid-cols-1 md:grid-cols-${columns}`)}>
+                        {[1, 2].map((i) => (
+                            <div key={i} className='bg-white hover:shadow-lg border rounded-lg overflow-hidden transition-shadow'>
+                                <div className='bg-gray-200 aspect-video' />
+                                <div className='space-y-3 p-4'>
+                                    <Typography variant='h5' weight='semibold'>Amazing Tour Package {i}</Typography>
+                                    <Typography variant='body2' className='text-gray-600'>5 Days / 4 Nights</Typography>
+                                    <div className='flex justify-between items-center'>
+                                        <Typography variant='h4' weight='bold' className='text-primary'>$599</Typography>
+                                        <button className='bg-primary hover:bg-primary/90 px-4 py-2 rounded-lg text-white'>
+                                            Book Now
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            )
+        }
+
+        // ==================== INTERACTIVE WIDGETS ====================
+        case 'testimonials': {
+            const { title, subtitle, columns = 2 } = props as any
+            return (
+                <div key={component.id} className={cn('space-y-6', componentClassName)}>
+                    {title && (
+                        <div className='space-y-2 text-center'>
+                            <Typography variant='h3' weight='bold'>{title}</Typography>
+                            {subtitle && <Typography variant='body1' className='text-gray-600'>{subtitle}</Typography>}
+                        </div>
+                    )}
+                    <div className={cn('gap-6 grid', `grid-cols-1 md:grid-cols-${columns}`)}>
+                        {[1, 2].map((i) => (
+                            <div key={i} className='space-y-4 bg-white p-6 border rounded-lg'>
+                                <div className='flex items-center gap-2'>
+                                    {[1, 2, 3, 4, 5].map((star) => (
+                                        <span key={star} className='text-yellow-400'>★</span>
+                                    ))}
+                                </div>
+                                <Typography variant='body1' className='text-gray-700 italic'>
+                                    &quot;Excellent service! Highly recommend to everyone. The experience was amazing and unforgettable.&quot;
+                                </Typography>
+                                <div className='flex items-center gap-3'>
+                                    <div className='bg-gray-200 rounded-full w-12 h-12' />
+                                    <div>
+                                        <Typography variant='body1' weight='semibold'>Customer Name</Typography>
+                                        <Typography variant='body2' className='text-gray-500'>Verified Customer</Typography>
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            )
+        }
+
+        case 'faq': {
+            const { title, subtitle } = props as any
+            return (
+                <div key={component.id} className={cn('space-y-6', componentClassName)}>
+                    {title && (
+                        <div className='space-y-2 text-center'>
+                            <Typography variant='h3' weight='bold'>{title}</Typography>
+                            {subtitle && <Typography variant='body1' className='text-gray-600'>{subtitle}</Typography>}
+                        </div>
+                    )}
+                    <div className='space-y-3'>
+                        {[1, 2, 3].map((i) => (
+                            <details key={i} className='group bg-white p-4 border rounded-lg'>
+                                <summary className='flex justify-between items-center font-semibold cursor-pointer list-none'>
+                                    Frequently Asked Question {i}?
+                                    <span className='text-gray-400 group-open:rotate-180 transition-transform'>▼</span>
+                                </summary>
+                                <Typography variant='body2' className='mt-3 text-gray-600'>
+                                    This is the answer to the frequently asked question. It provides detailed information to help users.
+                                </Typography>
+                            </details>
+                        ))}
+                    </div>
+                </div>
+            )
+        }
+
+        case 'stats': {
+            const { title, columns = 4 } = props as any
+            return (
+                <div key={component.id} className={cn('space-y-6', componentClassName)}>
+                    {title && <Typography variant='h3' weight='bold' align='center'>{title}</Typography>}
+                    <div className={cn('gap-6 grid text-center', `grid-cols-2 md:grid-cols-${columns}`)}>
+                        {[
+                            { number: '1000+', label: 'Happy Customers' },
+                            { number: '50+', label: 'Destinations' },
+                            { number: '10+', label: 'Years Experience' },
+                            { number: '24/7', label: 'Support' }
+                        ].map((stat, i) => (
+                            <div key={i} className='space-y-2'>
+                                <Typography variant='h2' weight='bold' className='text-primary'>{stat.number}</Typography>
+                                <Typography variant='body1' className='text-gray-600'>{stat.label}</Typography>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            )
+        }
+
+        case 'gallery': {
+            const { title, subtitle, columns = 4 } = props as any
+            return (
+                <div key={component.id} className={cn('space-y-6', componentClassName)}>
+                    {title && (
+                        <div className='space-y-2 text-center'>
+                            <Typography variant='h3' weight='bold'>{title}</Typography>
+                            {subtitle && <Typography variant='body1' className='text-gray-600'>{subtitle}</Typography>}
+                        </div>
+                    )}
+                    <div className={cn('gap-4 grid', `grid-cols-2 md:grid-cols-${columns}`)}>
+                        {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
+                            <div key={i} className='bg-gray-200 hover:opacity-80 rounded-lg aspect-square transition-opacity cursor-pointer' />
+                        ))}
+                    </div>
+                </div>
+            )
+        }
+
+        case 'map': {
+            const { title, address = 'Your Location', height = '400px' } = props as any
+            return (
+                <div key={component.id} className={cn('space-y-4', componentClassName)}>
+                    {title && <Typography variant='h3' weight='bold'>{title}</Typography>}
+                    <div style={{ height }} className='flex justify-center items-center bg-gray-200 rounded-lg'>
+                        <div className='space-y-2 text-center'>
+                            <Typography variant='h5' className='text-gray-500'>📍 Map Location</Typography>
+                            <Typography variant='body2' className='text-gray-400'>{address}</Typography>
+                        </div>
+                    </div>
+                </div>
+            )
+        }
+
+        case 'countdown': {
+            const { title } = props as any
+            return (
+                <div key={component.id} className={cn('space-y-6', componentClassName)}>
+                    {title && <Typography variant='h3' weight='bold' align='center'>{title}</Typography>}
+                    <div className='gap-4 grid grid-cols-4 text-center'>
+                        {[
+                            { value: '10', label: 'Days' },
+                            { value: '05', label: 'Hours' },
+                            { value: '30', label: 'Minutes' },
+                            { value: '45', label: 'Seconds' }
+                        ].map((unit, i) => (
+                            <div key={i} className='space-y-2 bg-white p-4 border rounded-lg'>
+                                <Typography variant='h2' weight='bold' className='text-primary'>{unit.value}</Typography>
+                                <Typography variant='body2' className='text-gray-600'>{unit.label}</Typography>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            )
+        }
+
+        // ==================== LAYOUT WIDGETS ====================
+        case 'tabs': {
+            const { tabs = [] } = props as any
+            const defaultTabs = tabs.length > 0 ? tabs : [
+                { title: 'Tab 1', content: 'Content for tab 1' },
+                { title: 'Tab 2', content: 'Content for tab 2' },
+                { title: 'Tab 3', content: 'Content for tab 3' }
+            ]
+            return (
+                <div key={component.id} className={cn('space-y-4', componentClassName)}>
+                    <div className='flex gap-2 border-b'>
+                        {defaultTabs.map((tab: any, i: number) => (
+                            <button
+                                key={i}
+                                className={cn(
+                                    'px-4 py-2 font-medium transition-colors',
+                                    i === 0 ? 'border-b-2 border-primary text-primary' : 'text-gray-600 hover:text-gray-900'
+                                )}
+                            >
+                                {tab.title}
+                            </button>
+                        ))}
+                    </div>
+                    <div className='bg-white p-4 border rounded-lg'>
+                        <Typography variant='body1'>{defaultTabs[0]?.content}</Typography>
+                    </div>
+                </div>
+            )
+        }
+
+        case 'accordion': {
+            const { title, items = [] } = props as any
+            const defaultItems = items.length > 0 ? items : [
+                { title: 'Accordion Item 1', content: 'Content for accordion item 1' },
+                { title: 'Accordion Item 2', content: 'Content for accordion item 2' },
+                { title: 'Accordion Item 3', content: 'Content for accordion item 3' }
+            ]
+            return (
+                <div key={component.id} className={cn('space-y-6', componentClassName)}>
+                    {title && <Typography variant='h3' weight='bold'>{title}</Typography>}
+                    <div className='space-y-2'>
+                        {defaultItems.map((item: any, i: number) => (
+                            <details key={i} className='group bg-white p-4 border rounded-lg'>
+                                <summary className='flex justify-between items-center font-semibold cursor-pointer list-none'>
+                                    {item.title}
+                                    <span className='text-gray-400 group-open:rotate-180 transition-transform'>▼</span>
+                                </summary>
+                                <Typography variant='body2' className='mt-3 text-gray-600'>
+                                    {item.content}
+                                </Typography>
+                            </details>
+                        ))}
+                    </div>
+                </div>
+            )
+        }
+
+        // ==================== SOCIAL/ADVANCED WIDGETS ====================
+        case 'social-share': {
+            const { title, platforms = ['facebook', 'twitter', 'linkedin', 'whatsapp'] } = props as any
+            return (
+                <div key={component.id} className={cn('space-y-4', componentClassName)}>
+                    {title && <Typography variant='h5' weight='semibold'>{title}</Typography>}
+                    <div className='flex gap-3'>
+                        {platforms.map((platform: string) => (
+                            <button
+                                key={platform}
+                                className='flex justify-center items-center bg-gray-100 hover:bg-gray-200 rounded-full w-10 h-10 transition-colors'
+                                title={`Share on ${platform}`}
+                            >
+                                <span className='text-xl'>{platform[0].toUpperCase()}</span>
+                            </button>
+                        ))}
+                    </div>
+                </div>
+            )
+        }
+
+        case 'social-feed': {
+            const { title, postsToShow = 6 } = props as any
+            return (
+                <div key={component.id} className={cn('space-y-6', componentClassName)}>
+                    {title && <Typography variant='h3' weight='bold' align='center'>{title}</Typography>}
+                    <div className='gap-4 grid grid-cols-2 md:grid-cols-3'>
+                        {Array.from({ length: postsToShow }).map((_, i) => (
+                            <div key={i} className='bg-gray-200 hover:opacity-80 rounded-lg aspect-square transition-opacity cursor-pointer' />
+                        ))}
+                    </div>
+                </div>
+            )
+        }
+
+        case 'pricing': {
+            const { title, subtitle, plans = [] } = props as any
+            const defaultPlans = plans.length > 0 ? plans : [
+                { name: 'Basic', price: '$29', features: ['Feature 1', 'Feature 2', 'Feature 3'] },
+                { name: 'Pro', price: '$59', features: ['All Basic', 'Feature 4', 'Feature 5'], highlighted: true },
+                { name: 'Enterprise', price: '$99', features: ['All Pro', 'Feature 6', 'Feature 7'] }
+            ]
+            return (
+                <div key={component.id} className={cn('space-y-6', componentClassName)}>
+                    {title && (
+                        <div className='space-y-2 text-center'>
+                            <Typography variant='h3' weight='bold'>{title}</Typography>
+                            {subtitle && <Typography variant='body1' className='text-gray-600'>{subtitle}</Typography>}
+                        </div>
+                    )}
+                    <div className='gap-6 grid grid-cols-1 md:grid-cols-3'>
+                        {defaultPlans.map((plan: any, i: number) => (
+                            <div
+                                key={i}
+                                className={cn(
+                                    'space-y-4 bg-white p-6 border rounded-lg text-center',
+                                    plan.highlighted && 'ring-2 ring-primary shadow-lg scale-105'
+                                )}
+                            >
+                                <Typography variant='h4' weight='bold'>{plan.name}</Typography>
+                                <Typography variant='h2' weight='bold' className='text-primary'>{plan.price}</Typography>
+                                <div className='space-y-2'>
+                                    {plan.features.map((feature: string, j: number) => (
+                                        <Typography key={j} variant='body2' className='text-gray-600'>✓ {feature}</Typography>
+                                    ))}
+                                </div>
+                                <button className='bg-primary hover:bg-primary/90 py-3 rounded-lg w-full text-white'>
+                                    Choose Plan
+                                </button>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            )
+        }
+
+        case 'icon-box': {
+            const { icon = '📦', title = 'Icon Box Title', description = 'Description text goes here', layout = 'horizontal' } = props as any
+            return (
+                <div
+                    key={component.id}
+                    className={cn(
+                        'bg-white p-6 border rounded-lg',
+                        layout === 'horizontal' ? 'flex items-center gap-4' : 'space-y-4 text-center',
+                        componentClassName
+                    )}
+                >
+                    <div className='flex-shrink-0 text-5xl'>{icon}</div>
+                    <div className='space-y-2'>
+                        <Typography variant='h4' weight='bold'>{title}</Typography>
+                        <Typography variant='body2' className='text-gray-600'>{description}</Typography>
+                    </div>
+                </div>
+            )
+        }
+
         default:
             return (
                 <div key={component.id} className={cn('text-gray-500 text-sm', componentClassName)}>
@@ -284,7 +726,7 @@ function SectionRenderer({ section }: { section: SectionType }) {
     }
 
     return (
-        <section className={cn('w-full', visClass, secBgClasses, sectionClassName)}>
+        <section className={cn('w-full', visClass, secBgClasses, sectionClassName)} style={secBgStyle}>
             <Container>
                 <div className='relative py-6'>
                     {secOverlay && (
