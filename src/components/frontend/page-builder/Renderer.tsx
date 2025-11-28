@@ -3,7 +3,6 @@
 import { Container } from '@/components/common/container'
 import CustomImage from '@/components/common/CustomImage'
 import CustomLink from '@/components/common/CustomLink'
-import { Section } from '@/components/common/section'
 import { Typography } from '@/components/common/typography'
 import { cn } from '@/lib/utils'
 import type { BaseComponent, Column as ColumnType, PageContent, Row as RowType, Section as SectionType } from '@/types/page-builder'
@@ -285,7 +284,7 @@ function SectionRenderer({ section }: { section: SectionType }) {
     }
 
     return (
-        <Section className={cn('w-full', visClass, secBgClasses, sectionClassName)}>
+        <section className={cn('w-full', visClass, secBgClasses, sectionClassName)}>
             <Container>
                 <div className='relative py-6'>
                     {secOverlay && (
@@ -300,7 +299,7 @@ function SectionRenderer({ section }: { section: SectionType }) {
                     ))}
                 </div>
             </Container>
-        </Section>
+        </section>
     )
 }
 

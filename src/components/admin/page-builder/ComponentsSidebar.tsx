@@ -7,13 +7,67 @@
 
 import { Input } from '@/components/ui/input'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { COMPONENT_CATEGORIES, componentRegistry } from '@/lib/page-builder/component-registry'
+import { COMPONENT_CATEGORIES, componentRegistry } from '@/lib/page-builder/widgets'
 import { cn } from '@/lib/utils'
 import type { ComponentDefinition } from '@/types/page-builder'
 import { useDraggable } from '@dnd-kit/core'
 import { CSS } from '@dnd-kit/utilities'
-import { GripVertical, Search } from 'lucide-react'
+import {
+    AlignLeft,
+    BarChart3,
+    Box,
+    ChevronDown,
+    Clock,
+    DollarSign,
+    Folder,
+    GripVertical,
+    HelpCircle,
+    ImageIcon,
+    Images,
+    Mail,
+    Map,
+    MessageSquareQuote,
+    Minus,
+    MousePointerClick,
+    Newspaper,
+    Plane,
+    Rss,
+    Search,
+    Share2,
+    ShoppingBag,
+    Square,
+    Type,
+    Video
+} from 'lucide-react'
 import { useState } from 'react'
+
+// Icon mapping for component types
+const ICON_MAP: Record<string, React.ComponentType<any>> = {
+    Type,
+    AlignLeft,
+    MousePointerClick,
+    ImageIcon,
+    Square,
+    Minus,
+    Video,
+    Images,
+    Map,
+    Mail,
+    Search,
+    Newspaper,
+    ShoppingBag,
+    Plane,
+    MessageSquareQuote,
+    HelpCircle,
+    BarChart3,
+    Share2,
+    Rss,
+    DollarSign,
+    Box,
+    Folder,
+    ChevronDown,
+    Clock
+}
 
 // ==================== DRAGGABLE COMPONENT ITEM ====================
 
@@ -66,16 +120,25 @@ function DraggableComponentItem({ component }: DraggableComponentItemProps) {
                 <GripVertical className='w-4 h-4' />
             </div>
 
+            {/* Component Icon */}
             <div className='bg-primary/10 group-hover:bg-primary/20 p-2 rounded transition-colors shrink-0'>
-                <svg
-                    width='20'
-                    height='20'
-                    viewBox='0 0 20 20'
-                    fill='none'
-                    className='text-primary'
-                >
-                    <rect x='2' y='2' width='16' height='16' rx='2' stroke='currentColor' strokeWidth='2' />
-                </svg>
+                {(() => {
+                    const IconComponent = ICON_MAP[component.icon]
+                    if (IconComponent) {
+                        return <IconComponent className='w-5 h-5 text-primary' />
+                    }
+                    return (
+                        <svg
+                            width='20'
+                            height='20'
+                            viewBox='0 0 20 20'
+                            fill='none'
+                            className='text-primary'
+                        >
+                            <rect x='2' y='2' width='16' height='16' rx='2' stroke='currentColor' strokeWidth='2' />
+                        </svg>
+                    )
+                })()}
             </div>
 
             <div className='flex-1 min-w-0'>

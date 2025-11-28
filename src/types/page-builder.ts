@@ -24,11 +24,13 @@ export type ComponentType =
   | 'spacer'
   | 'divider'
   | 'icon'
+  | 'icon-box'
   // Media Elements
   | 'image'
   | 'video'
   | 'gallery'
   | 'audio'
+  | 'map'
   // Layout Elements
   | 'container'
   | 'grid'
@@ -38,20 +40,26 @@ export type ComponentType =
   | 'carousel'
   // Dynamic Content
   | 'blog-grid'
+  | 'blog-carousel'
+  | 'product-grid'
+  | 'tour-packages'
   | 'testimonials'
   | 'team-members'
   | 'pricing-table'
+  | 'pricing'
   | 'faq'
+  | 'stats'
   // Form Elements
   | 'contact-form'
   | 'newsletter'
   | 'search-bar'
+  | 'search'
   // Advanced
   | 'html'
   | 'code'
-  | 'map'
   | 'countdown'
   | 'social-share'
+  | 'social-feed'
 
 /**
  * Base component interface
@@ -146,6 +154,9 @@ export type PropertyFieldType =
   | 'alignment'
   | 'font-picker'
   | 'icon-picker'
+  | 'multi-select'
+  | 'repeater'
+  | 'datetime'
 
 /**
  * Property field configuration
