@@ -8,6 +8,7 @@
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Separator } from '@/components/ui/separator'
 import {
   Sheet,
@@ -17,13 +18,15 @@ import {
   SheetHeader,
   SheetTitle
 } from '@/components/ui/sheet'
+import { Switch } from '@/components/ui/switch'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Textarea } from '@/components/ui/textarea'
 import { useBuilderStore } from '@/lib/page-builder/builder-store'
 import { findElementById } from '@/lib/page-builder/builder-utils'
-import { componentRegistry } from '@/lib/page-builder/component-registry'
 import type { FlexConfig, GridConfig, VisualConfig } from '@/lib/page-builder/tailwind-generator'
 import { parseClassNameToConfig, updateClassNameAspect } from '@/lib/page-builder/tailwind-generator'
-import type { BaseComponent } from '@/types/page-builder'
+import { componentRegistry } from '@/lib/page-builder/widgets'
+import type { BaseComponent, PropertyField, PropertyPanel } from '@/types/page-builder'
 import { Settings } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import {
@@ -512,6 +515,228 @@ function ColumnProperties({ column, onUpdate }: { column: any; onUpdate: (update
   )
 }
 
+// ==================== DYNAMIC PROPERTY FIELDS ====================
+
+interface DynamicPropertyFieldsProps {
+  panels: PropertyPanel[]
+  props: Record<string, any>
+  onChange: (key: string, value: any) => void
+}
+
+function DynamicPropertyFields({ panels, props, onChange }: DynamicPropertyFieldsProps) {
+  if (panels.length === 0) return null
+
+  // If only one panel, render fields directly
+  if (panels.length === 1) {
+    return (
+      <div className='space-y-4'>
+        {panels[0].fields.map((field) => (
+          <PropertyFieldRenderer
+            key={field.name}
+            field={field}
+            value={props[field.name]}
+            onChange={(value) => onChange(field.name, value)}
+          />
+        ))}
+      </div>
+    )
+  }
+
+  // Multiple panels - use accordion or sections
+  return (
+    <div className='space-y-6'>
+      {panels.map((panel) => (
+        <div key={panel.id} className='space-y-4'>
+          <div className='pb-2 border-b'>
+            <h4 className='font-medium text-sm'>{panel.label}</h4>
+          </div>
+          {panel.fields.map((field) => (
+            <PropertyFieldRenderer
+              key={field.name}
+              field={field}
+              value={props[field.name]}
+              onChange={(value) => onChange(field.name, value)}
+            />
+          ))}
+        </div>
+      ))}
+    </div>
+  )
+}
+
+// ==================== PROPERTY FIELD RENDERER ====================
+
+interface PropertyFieldRendererProps {
+  field: PropertyField
+  value: any
+  onChange: (value: any) => void
+}
+
+function PropertyFieldRenderer({ field, value, onChange }: PropertyFieldRendererProps) {
+  const renderField = () => {
+    switch (field.type) {
+      case 'text':
+      case 'url':
+        return (
+          <Input
+            value={value || ''}
+            onChange={(e) => onChange(e.target.value)}
+            placeholder={field.placeholder}
+          />
+        )
+
+      case 'textarea':
+      case 'rich-text':
+        return (
+          <Textarea
+            value={value || ''}
+            onChange={(e) => onChange(e.target.value)}
+            placeholder={field.placeholder}
+            rows={4}
+          />
+        )
+
+      case 'number':
+      case 'slider':
+        return (
+          <Input
+            type='number'
+            value={value ?? field.defaultValue ?? ''}
+            onChange={(e) => onChange(Number(e.target.value))}
+            min={field.min}
+            max={field.max}
+            step={field.step}
+            placeholder={field.placeholder}
+          />
+        )
+
+      case 'toggle':
+        return (
+          <div className='flex items-center gap-2'>
+            <Switch
+              checked={value ?? field.defaultValue ?? false}
+              onCheckedChange={onChange}
+            />
+            <span className='text-muted-foreground text-sm'>
+              {value ? 'Enabled' : 'Disabled'}
+            </span>
+          </div>
+        )
+
+      case 'select':
+        return (
+          <Select value={value?.toString() || field.defaultValue?.toString()} onValueChange={onChange}>
+            <SelectTrigger>
+              <SelectValue placeholder={field.placeholder || 'Select option'} />
+            </SelectTrigger>
+            <SelectContent>
+              {field.options?.map((option) => (
+                <SelectItem key={option.value} value={option.value.toString()}>
+                  {option.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        )
+
+      case 'color':
+        return (
+          <div className='flex gap-2'>
+            <Input
+              type='color'
+              value={value || '#000000'}
+              onChange={(e) => onChange(e.target.value)}
+              className='w-20 h-10'
+            />
+            <Input
+              type='text'
+              value={value || ''}
+              onChange={(e) => onChange(e.target.value)}
+              placeholder='#000000'
+              className='flex-1 font-mono'
+            />
+          </div>
+        )
+
+      case 'image-upload':
+        return (
+          <div className='space-y-2'>
+            <Input
+              type='text'
+              value={value || ''}
+              onChange={(e) => onChange(e.target.value)}
+              placeholder='Image URL or upload'
+            />
+            <Button variant='outline' size='sm' className='w-full'>
+              Upload Image
+            </Button>
+          </div>
+        )
+
+      case 'multi-select':
+        return (
+          <div className='space-y-2'>
+            {field.options?.map((option) => (
+              <div key={option.value} className='flex items-center gap-2'>
+                <Switch
+                  checked={Array.isArray(value) && value.includes(option.value)}
+                  onCheckedChange={(checked) => {
+                    const currentValues = Array.isArray(value) ? value : []
+                    if (checked) {
+                      onChange([...currentValues, option.value])
+                    } else {
+                      onChange(currentValues.filter((v: any) => v !== option.value))
+                    }
+                  }}
+                />
+                <Label>{option.label}</Label>
+              </div>
+            ))}
+          </div>
+        )
+
+      case 'alignment':
+        return (
+          <div className='flex gap-2'>
+            {['left', 'center', 'right', 'justify'].map((align) => (
+              <Button
+                key={align}
+                variant={value === align ? 'default' : 'outline'}
+                size='sm'
+                onClick={() => onChange(align)}
+                className='flex-1'
+              >
+                {align}
+              </Button>
+            ))}
+          </div>
+        )
+
+      default:
+        return (
+          <Input
+            value={value || ''}
+            onChange={(e) => onChange(e.target.value)}
+            placeholder={field.placeholder}
+          />
+        )
+    }
+  }
+
+  return (
+    <div className='space-y-2'>
+      <Label>
+        {field.label}
+        {field.required && <span className='ml-1 text-destructive'>*</span>}
+      </Label>
+      {renderField()}
+      {field.description && (
+        <p className='text-muted-foreground text-xs'>{field.description}</p>
+      )}
+    </div>
+  )
+}
+
 // ==================== COMPONENT PROPERTIES ====================
 
 interface ComponentPropertiesProps {
@@ -557,17 +782,29 @@ function ComponentProperties({ component, onUpdate }: ComponentPropertiesProps) 
         </TabsList>
 
         <TabsContent value='content' className='space-y-6 mt-6'>
-          {/* Component-specific props */}
-          {component.type === 'heading' && (
-            <HeadingProperties props={localProps} onChange={handlePropChange} />
+          {/* Dynamic property fields from component definition */}
+          {componentDef?.propertyPanels && (
+            <DynamicPropertyFields
+              panels={componentDef.propertyPanels}
+              props={localProps}
+              onChange={handlePropChange}
+            />
           )}
-          {component.type === 'text' && (
-            <TextProperties props={localProps} onChange={handlePropChange} />
+
+          {/* Fallback for components without propertyPanels */}
+          {!componentDef?.propertyPanels && (
+            <>
+              {component.type === 'heading' && (
+                <HeadingProperties props={localProps} onChange={handlePropChange} />
+              )}
+              {component.type === 'text' && (
+                <TextProperties props={localProps} onChange={handlePropChange} />
+              )}
+              {component.type === 'button' && (
+                <ButtonProperties props={localProps} onChange={handlePropChange} />
+              )}
+            </>
           )}
-          {component.type === 'button' && (
-            <ButtonProperties props={localProps} onChange={handlePropChange} />
-          )}
-          {/* Add more component types as needed */}
         </TabsContent>
 
         <TabsContent value='style' className='space-y-6 mt-6'>
