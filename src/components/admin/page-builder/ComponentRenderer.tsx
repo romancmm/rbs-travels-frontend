@@ -466,7 +466,7 @@ function ComponentPreview({
                     <div className='space-y-3'>
                         {[1, 2].map((i) => (
                             <div key={i} className='space-y-2 bg-white p-4 border rounded'>
-                                <p className='text-sm italic'>"Great service and experience!"</p>
+                                <p className='text-sm italic'>&quot;Great service and experience!&quot;</p>
                                 <div className='font-medium text-xs'>- Customer {i}</div>
                             </div>
                         ))}
