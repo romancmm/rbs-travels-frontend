@@ -6,7 +6,7 @@ import { Copy, GripVertical, Settings, Trash2 } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
 import { useBuilderStore } from '@/lib/page-builder/builder-store'
-import { componentRegistry } from '@/lib/page-builder/component-registry'
+import { componentRegistry } from '@/lib/page-builder/widgets'
 import { cn } from '@/lib/utils'
 import type { BaseComponent } from '@/types/page-builder'
 import { useDndContext } from '@dnd-kit/core'
@@ -375,6 +375,265 @@ function ComponentPreview({
                 />
             )
         }
+
+        // ==================== FORM WIDGETS ====================
+        case 'contact-form':
+            return (
+                <div className='space-y-4 bg-gray-50 p-6 border-2 border-gray-300 border-dashed rounded-lg'>
+                    <div className='font-semibold text-lg'>Contact Form</div>
+                    <p className='text-muted-foreground text-sm'>Form fields will render here</p>
+                </div>
+            )
+
+        case 'newsletter':
+            return (
+                <div className='space-y-3 bg-gray-50 p-6 border-2 border-gray-300 border-dashed rounded-lg'>
+                    <div className='font-semibold'>Newsletter Subscribe</div>
+                    <div className='flex gap-2'>
+                        <div className='flex-1 bg-white px-3 py-2 border rounded text-sm'>Email address</div>
+                        <button className='bg-blue-600 px-4 py-2 rounded text-white text-sm'>Subscribe</button>
+                    </div>
+                </div>
+            )
+
+        case 'search':
+            return (
+                <div className='bg-gray-50 p-6 border-2 border-gray-300 border-dashed rounded-lg'>
+                    <div className='flex gap-2'>
+                        <div className='flex-1 bg-white px-3 py-2 border rounded text-sm'>Search...</div>
+                        <button className='bg-gray-800 px-4 py-2 rounded text-white text-sm'>Search</button>
+                    </div>
+                </div>
+            )
+
+        // ==================== CONTENT WIDGETS ====================
+        case 'blog-grid':
+        case 'blog-carousel':
+            return (
+                <div className='space-y-4 bg-blue-50 p-6 border-2 border-blue-300 border-dashed rounded-lg'>
+                    <div className='font-semibold text-lg'>
+                        {component.type === 'blog-grid' ? 'Blog Grid' : 'Blog Carousel'}
+                    </div>
+                    <div className='gap-4 grid grid-cols-3'>
+                        {[1, 2, 3].map((i) => (
+                            <div key={i} className='space-y-2 bg-white p-3 border rounded'>
+                                <div className='bg-gray-200 rounded aspect-video'></div>
+                                <div className='font-medium text-sm'>Blog Post {i}</div>
+                                <div className='text-muted-foreground text-xs'>Preview text...</div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            )
+
+        case 'product-grid':
+            return (
+                <div className='space-y-4 bg-green-50 p-6 border-2 border-green-300 border-dashed rounded-lg'>
+                    <div className='font-semibold text-lg'>Product Grid</div>
+                    <div className='gap-4 grid grid-cols-3'>
+                        {[1, 2, 3].map((i) => (
+                            <div key={i} className='space-y-2 bg-white p-3 border rounded'>
+                                <div className='bg-gray-200 rounded aspect-square'></div>
+                                <div className='font-medium text-sm'>Product {i}</div>
+                                <div className='font-bold text-green-600 text-sm'>$99.00</div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            )
+
+        case 'tour-packages':
+            return (
+                <div className='space-y-4 bg-purple-50 p-6 border-2 border-purple-300 border-dashed rounded-lg'>
+                    <div className='font-semibold text-lg'>Tour Packages</div>
+                    <div className='gap-4 grid grid-cols-2'>
+                        {[1, 2].map((i) => (
+                            <div key={i} className='space-y-2 bg-white p-3 border rounded'>
+                                <div className='bg-gray-200 rounded aspect-video'></div>
+                                <div className='font-medium text-sm'>Package {i}</div>
+                                <div className='text-muted-foreground text-xs'>5 Days / 4 Nights</div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            )
+
+        // ==================== INTERACTIVE WIDGETS ====================
+        case 'testimonials':
+            return (
+                <div className='space-y-4 bg-yellow-50 p-6 border-2 border-yellow-300 border-dashed rounded-lg'>
+                    <div className='font-semibold text-lg'>Testimonials</div>
+                    <div className='space-y-3'>
+                        {[1, 2].map((i) => (
+                            <div key={i} className='space-y-2 bg-white p-4 border rounded'>
+                                <p className='text-sm italic'>"Great service and experience!"</p>
+                                <div className='font-medium text-xs'>- Customer {i}</div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            )
+
+        case 'faq':
+            return (
+                <div className='space-y-4 bg-indigo-50 p-6 border-2 border-indigo-300 border-dashed rounded-lg'>
+                    <div className='font-semibold text-lg'>FAQ</div>
+                    <div className='space-y-2'>
+                        {[1, 2, 3].map((i) => (
+                            <div key={i} className='bg-white p-3 border rounded'>
+                                <div className='font-medium text-sm'>Question {i}</div>
+                                <div className='mt-1 text-muted-foreground text-xs'>Answer text...</div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            )
+
+        case 'stats':
+            return (
+                <div className='bg-red-50 p-6 border-2 border-red-300 border-dashed rounded-lg'>
+                    <div className='gap-4 grid grid-cols-4 text-center'>
+                        {[1, 2, 3, 4].map((i) => (
+                            <div key={i} className='bg-white p-4 border rounded'>
+                                <div className='font-bold text-2xl'>100+</div>
+                                <div className='text-muted-foreground text-xs'>Stat {i}</div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            )
+
+        case 'gallery':
+            return (
+                <div className='space-y-4 bg-pink-50 p-6 border-2 border-pink-300 border-dashed rounded-lg'>
+                    <div className='font-semibold text-lg'>Photo Gallery</div>
+                    <div className='gap-2 grid grid-cols-4'>
+                        {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
+                            <div key={i} className='bg-gray-200 rounded aspect-square'></div>
+                        ))}
+                    </div>
+                </div>
+            )
+
+        case 'map':
+            return (
+                <div className='bg-teal-50 p-6 border-2 border-teal-300 border-dashed rounded-lg'>
+                    <div className='flex justify-center items-center bg-gray-200 rounded aspect-video'>
+                        <span className='text-gray-500 text-sm'>Google Map</span>
+                    </div>
+                </div>
+            )
+
+        case 'countdown':
+            return (
+                <div className='bg-orange-50 p-6 border-2 border-orange-300 border-dashed rounded-lg'>
+                    <div className='gap-4 grid grid-cols-4 text-center'>
+                        <div className='bg-white p-4 border rounded'>
+                            <div className='font-bold text-2xl'>10</div>
+                            <div className='text-xs'>Days</div>
+                        </div>
+                        <div className='bg-white p-4 border rounded'>
+                            <div className='font-bold text-2xl'>05</div>
+                            <div className='text-xs'>Hours</div>
+                        </div>
+                        <div className='bg-white p-4 border rounded'>
+                            <div className='font-bold text-2xl'>30</div>
+                            <div className='text-xs'>Minutes</div>
+                        </div>
+                        <div className='bg-white p-4 border rounded'>
+                            <div className='font-bold text-2xl'>45</div>
+                            <div className='text-xs'>Seconds</div>
+                        </div>
+                    </div>
+                </div>
+            )
+
+        // ==================== LAYOUT WIDGETS ====================
+        case 'tabs':
+            return (
+                <div className='space-y-4 bg-cyan-50 p-6 border-2 border-cyan-300 border-dashed rounded-lg'>
+                    <div className='flex gap-2 border-b'>
+                        <div className='px-4 py-2 border-blue-600 border-b-2 font-medium text-sm'>Tab 1</div>
+                        <div className='px-4 py-2 text-muted-foreground text-sm'>Tab 2</div>
+                        <div className='px-4 py-2 text-muted-foreground text-sm'>Tab 3</div>
+                    </div>
+                    <div className='bg-white p-4 rounded'>Tab content goes here</div>
+                </div>
+            )
+
+        case 'accordion':
+            return (
+                <div className='space-y-2 bg-violet-50 p-6 border-2 border-violet-300 border-dashed rounded-lg'>
+                    <div className='mb-2 font-semibold text-lg'>Accordion</div>
+                    {[1, 2, 3].map((i) => (
+                        <div key={i} className='bg-white border rounded'>
+                            <div className='p-3 font-medium text-sm'>Accordion Item {i}</div>
+                        </div>
+                    ))}
+                </div>
+            )
+
+        // ==================== SOCIAL/ADVANCED WIDGETS ====================
+        case 'social-share':
+            return (
+                <div className='bg-blue-50 p-6 border-2 border-blue-300 border-dashed rounded-lg'>
+                    <div className='flex justify-center gap-2'>
+                        {['Facebook', 'Twitter', 'LinkedIn'].map((platform) => (
+                            <div key={platform} className='bg-white px-4 py-2 border rounded text-sm'>
+                                {platform}
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            )
+
+        case 'social-feed':
+            return (
+                <div className='space-y-4 bg-sky-50 p-6 border-2 border-sky-300 border-dashed rounded-lg'>
+                    <div className='font-semibold text-lg'>Social Feed</div>
+                    <div className='space-y-2'>
+                        {[1, 2].map((i) => (
+                            <div key={i} className='space-y-2 bg-white p-3 border rounded'>
+                                <div className='text-sm'>Post {i}</div>
+                                <div className='bg-gray-200 rounded aspect-video'></div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            )
+
+        case 'pricing':
+            return (
+                <div className='space-y-4 bg-emerald-50 p-6 border-2 border-emerald-300 border-dashed rounded-lg'>
+                    <div className='font-semibold text-lg'>Pricing Table</div>
+                    <div className='gap-4 grid grid-cols-3'>
+                        {['Basic', 'Pro', 'Enterprise'].map((plan) => (
+                            <div key={plan} className='space-y-2 bg-white p-4 border rounded text-center'>
+                                <div className='font-bold'>{plan}</div>
+                                <div className='font-bold text-green-600 text-2xl'>$99</div>
+                                <button className='bg-blue-600 px-4 py-2 rounded w-full text-white text-sm'>
+                                    Choose
+                                </button>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            )
+
+        case 'icon-box':
+            return (
+                <div className='bg-amber-50 p-6 border-2 border-amber-300 border-dashed rounded-lg'>
+                    <div className='flex items-center gap-4'>
+                        <div className='flex justify-center items-center bg-blue-100 rounded-full w-16 h-16'>
+                            <span className='text-2xl'>📦</span>
+                        </div>
+                        <div className='flex-1'>
+                            <div className='font-bold'>Icon Box Title</div>
+                            <p className='text-muted-foreground text-sm'>Description text here</p>
+                        </div>
+                    </div>
+                </div>
+            )
 
         default:
             return <div className='text-gray-500 text-sm'>Component: {component.type}</div>
