@@ -21,9 +21,9 @@ export default function ArticleDetailRenderer({ data, relatedPosts = [] }: Artic
     <Section variant='xl'>
       <Container className='space-y-12'>
         <div className='space-y-4'>
-          {data.category && (
+          {data.categories && data.categories.length > 0 && (
             <Badge variant='secondary' className='mb-2 text-white'>
-              {data.category?.name}
+              {data.categories[0].name}
             </Badge>
           )}
           <Typography variant='h1' as='h1' weight='bold'>
@@ -104,7 +104,7 @@ export default function ArticleDetailRenderer({ data, relatedPosts = [] }: Artic
                       {relatedPosts.slice(0, 3).map((post) => (
                         <CustomLink
                           key={post.id}
-                          href={`/page/${data.category?.slug}/${post.slug}`}
+                          href={`/page/${data.categories?.[0]?.slug || 'blogs'}/${post.slug}`}
                           className='group block hover:bg-muted -m-2 p-2 rounded-lg transition-colors'
                         >
                           <div className='flex gap-3'>
