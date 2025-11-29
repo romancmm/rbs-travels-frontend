@@ -88,8 +88,8 @@ export default function Footer({ data }: { data: any }) {
 
               {/* 3️⃣ Contact Information */}
               <div
-                className={cn('space-y-6 col-span-2', {
-                  'lg: col-span-2': footerNav?.data?.items?.length < 4
+                className={cn('space-y-6', {
+                  'lg:col-span-2': footerNav?.data?.items?.length <= 1
                 })}
               >
                 <Typography variant='h6' weight='semibold' className='text-white'>
@@ -99,8 +99,7 @@ export default function Footer({ data }: { data: any }) {
                 <div
                   className={cn('flex flex-wrap gap-8 w-full', {
                     'flex-col sm:flex-row sm:gap-12 *:lg:max-w-[calc(50%-3rem)]':
-                      (siteConfig?.addresses?.length ?? 0) > 1,
-                    'flex-col': (siteConfig?.addresses?.length ?? 0) <= 1
+                      (siteConfig?.addresses?.length ?? 0) <= 1
                   })}
                 >
                   {siteConfig?.addresses?.map((office, index) => (
