@@ -11,7 +11,8 @@ import {
 import { Switch } from '@/components/ui/switch'
 import { Textarea } from '@/components/ui/textarea'
 import { cn } from '@/lib/utils'
-import { forwardRef } from 'react'
+import { Eye, EyeOff } from 'lucide-react'
+import { forwardRef, useState } from 'react'
 
 type TProps = {
   label?: string
@@ -21,17 +22,17 @@ type TProps = {
   helperText?: string
   required?: boolean
   type?:
-    | 'text'
-    | 'email'
-    | 'password'
-    | 'number'
-    | 'tel'
-    | 'url'
-    | 'textarea'
-    | 'checkbox'
-    | 'switch'
-    | 'select'
-    | 'file'
+  | 'text'
+  | 'email'
+  | 'password'
+  | 'number'
+  | 'tel'
+  | 'url'
+  | 'textarea'
+  | 'checkbox'
+  | 'switch'
+  | 'select'
+  | 'file'
   size?: 'small' | 'middle' | 'large'
   rows?: number
   compact?: boolean
@@ -60,6 +61,8 @@ type TProps = {
   // File input specific props
   accept?: string
   multiple?: boolean
+  // Password visibility toggle
+  showPasswordToggle?: boolean
 }
 
 const CustomInput = forwardRef<HTMLInputElement | HTMLTextAreaElement, TProps>(
@@ -96,10 +99,12 @@ const CustomInput = forwardRef<HTMLInputElement | HTMLTextAreaElement, TProps>(
       suffix,
       accept,
       multiple,
+      showPasswordToggle = false,
       ...props
     },
     ref
   ) => {
+    const [showPassword, setShowPassword] = useState(false)
     const isTextarea = type === 'textarea'
     const isCheckbox = type === 'checkbox'
     const isSwitch = type === 'switch'
@@ -212,7 +217,7 @@ const CustomInput = forwardRef<HTMLInputElement | HTMLTextAreaElement, TProps>(
             )}
             {...(props as any)}
           />
-        ) : prefix || suffix ? (
+        ) : prefix || suffix || (type === 'password' && showPasswordToggle) ? (
           // Input with prefix/suffix wrapper
           <div
             className={cn(
@@ -240,7 +245,7 @@ const CustomInput = forwardRef<HTMLInputElement | HTMLTextAreaElement, TProps>(
               ref={ref as React.ForwardedRef<HTMLInputElement>}
               id={name}
               name={name}
-              type={type}
+              type={type === 'password' && showPasswordToggle ? (showPassword ? 'text' : 'password') : type}
               placeholder={placeholder}
               maxLength={maxLength}
               disabled={disabled}
@@ -264,7 +269,7 @@ const CustomInput = forwardRef<HTMLInputElement | HTMLTextAreaElement, TProps>(
               )}
               {...(props as any)}
             />
-            {suffix && (
+            {(suffix || (type === 'password' && showPasswordToggle)) && (
               <div
                 className={cn(
                   'flex items-center ml-2',
@@ -273,6 +278,16 @@ const CustomInput = forwardRef<HTMLInputElement | HTMLTextAreaElement, TProps>(
                 )}
               >
                 {suffix}
+                {type === 'password' && showPasswordToggle && (
+                  <button
+                    type='button'
+                    onClick={() => setShowPassword(!showPassword)}
+                    className='text-muted-foreground hover:text-foreground transition-colors'
+                    tabIndex={-1}
+                  >
+                    {showPassword ? <EyeOff className='w-4 h-4' /> : <Eye className='w-4 h-4' />}
+                  </button>
+                )}
               </div>
             )}
           </div>
@@ -301,7 +316,7 @@ const CustomInput = forwardRef<HTMLInputElement | HTMLTextAreaElement, TProps>(
               sizeClasses[size],
               // Hide number input arrows/spinners
               type === 'number' &&
-                '[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none',
+              '[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none',
               inputClassName
             )}
             {...(props as any)}
