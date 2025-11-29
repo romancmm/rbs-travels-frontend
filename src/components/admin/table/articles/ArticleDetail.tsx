@@ -51,11 +51,21 @@ const ArticleDetail = ({ data }: ArticleDetailViewProps) => {
               <Calendar className='w-4 h-4' />
               <span>Created {new Date(data?.createdAt).toLocaleDateString()}</span>
             </div>
-            <div className='flex items-center gap-1'>
+            <div className='flex items-center gap-2'>
               <Tag className='w-4 h-4' />
-              <Badge variant='outline' className='text-muted capitalize'>
-                {data?.category?.name || `Category ${data?.categoryId}`}
-              </Badge>
+              <div className='flex flex-wrap gap-1'>
+                {data?.categories && data.categories.length > 0 ? (
+                  data.categories.map((cat: any) => (
+                    <Badge key={cat.id} variant='outline' className='capitalize'>
+                      {cat.name}
+                    </Badge>
+                  ))
+                ) : (
+                  <Badge variant='outline' className='text-muted capitalize'>
+                    No categories
+                  </Badge>
+                )}
+              </div>
             </div>
           </div>
 
@@ -150,10 +160,18 @@ const ArticleDetail = ({ data }: ArticleDetailViewProps) => {
 
 
               <div>
-                <span className='font-medium text-sm'>Category:</span>
-                <p className='mt-1 text-muted-foreground text-sm'>
-                  {data?.category?.name || `Category ${data?.categoryId}`}
-                </p>
+                <span className='font-medium text-sm'>Categories:</span>
+                <div className='flex flex-wrap gap-1 mt-1'>
+                  {data?.categories && data.categories.length > 0 ? (
+                    data.categories.map((cat: any) => (
+                      <Badge key={cat.id} variant='outline'>
+                        {cat.name}
+                      </Badge>
+                    ))
+                  ) : (
+                    <span className='text-muted-foreground text-sm'>No categories</span>
+                  )}
+                </div>
               </div>
 
               <div>

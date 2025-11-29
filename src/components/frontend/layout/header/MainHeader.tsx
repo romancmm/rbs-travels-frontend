@@ -132,7 +132,7 @@ export default function MainHeader({ data }: { data: any }) {
                               {childPublishedChildren.length > 0 && hoveredChild === childKey && (
                                 <div
                                   className={cn(
-                                    'top-0 z-50 absolute bg-white shadow-2xl backdrop-blur-sm border border-gray-200/50 rounded-2xl w-64 animate-in duration-300 fade-in-0',
+                                    'top-0 z-50 absolute bg-header-background shadow-2xl backdrop-blur-sm border border-gray-200/50 rounded-2xl w-64 animate-in duration-300 fade-in-0',
                                     getDropdownPosition(childKey, true) === 'right'
                                       ? 'right-full mr-2 slide-in-from-right-2'
                                       : 'left-full ml-2 slide-in-from-left-2'
@@ -196,7 +196,7 @@ export default function MainHeader({ data }: { data: any }) {
                 {isMoreHovered && (
                   <div
                     className={cn(
-                      'top-full z-50 absolute bg-white slide-in-from-top-2 shadow-2xl backdrop-blur-sm border border-gray-200/50 rounded-2xl w-64 animate-in duration-300 fade-in-0',
+                      'top-full z-50 absolute bg-header-background slide-in-from-top-2 shadow-2xl backdrop-blur-sm border border-gray-200/50 rounded-2xl w-64 animate-in duration-300 fade-in-0',
                       getDropdownPosition('more-menu') === 'right' ? 'right-0' : 'left-0'
                     )}
                   >
@@ -236,7 +236,7 @@ export default function MainHeader({ data }: { data: any }) {
                             {publishedChildren.length > 0 && hoveredChild === moreItemKey && (
                               <div
                                 className={cn(
-                                  'top-0 z-50 absolute bg-white shadow-2xl backdrop-blur-sm border border-gray-200/50 rounded-2xl w-64 animate-in duration-300 fade-in-0',
+                                  'top-0 z-50 absolute bg-white shadow-2xl backdrop-blur-sm rounded-2xl w-64 animate-in duration-300 fade-in-0',
                                   getDropdownPosition(moreItemKey, true) === 'right'
                                     ? 'right-full mr-2 slide-in-from-right-2'
                                     : 'left-full ml-2 slide-in-from-left-2'
@@ -279,7 +279,7 @@ export default function MainHeader({ data }: { data: any }) {
                                           hoveredChild === nestedKey && (
                                             <div
                                               className={cn(
-                                                'top-0 z-50 absolute bg-white shadow-2xl backdrop-blur-sm border border-gray-200/50 rounded-2xl w-64 animate-in duration-300 fade-in-0',
+                                                'top-0 z-50 absolute bg-white shadow-2xl backdrop-blur-sm rounded-2xl w-64 animate-in duration-300 fade-in-0',
                                                 getDropdownPosition(nestedKey, true) === 'right'
                                                   ? 'right-full mr-2 slide-in-from-right-2'
                                                   : 'left-full ml-2 slide-in-from-left-2'

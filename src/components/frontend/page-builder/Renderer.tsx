@@ -104,8 +104,6 @@ function renderComponent(component: BaseComponent) {
             // Prepare props for CustomImage (prefer numeric values). If builder provides
             // percentage or 'auto' values, apply them via wrapper styles instead.
             const imageProps: any = {}
-
-
             const imgElement = (
                 <div className='max-w-full' key={component.id}>
                     <CustomImage src={src} alt={alt} className={cn('w-full h-auto', componentClassName)} {...imageProps} />
@@ -598,7 +596,7 @@ function renderComponent(component: BaseComponent) {
                         componentClassName
                     )}
                 >
-                    <div className='flex-shrink-0 text-5xl'>{icon}</div>
+                    <div className='text-5xl shrink-0'>{icon}</div>
                     <div className='space-y-2'>
                         <Typography variant='h4' weight='bold'>{title}</Typography>
                         <Typography variant='body2' className='text-gray-600'>{description}</Typography>

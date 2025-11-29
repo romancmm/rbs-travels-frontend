@@ -66,7 +66,7 @@ export default function DashboardPage() {
       title: 'View Analytics',
       description: 'Check website performance and visitor statistics',
       icon: TrendingUp,
-      href: '/admin/analytics',
+      href: '/admin/dashboard',
       color: 'warning' as const
     }
   ]

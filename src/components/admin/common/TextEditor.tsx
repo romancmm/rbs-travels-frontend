@@ -2,7 +2,7 @@
 
 import { Label } from '@/components/ui/label'
 import dynamic from 'next/dynamic'
-import { forwardRef, useRef } from 'react'
+import { forwardRef, useCallback, useRef } from 'react'
 
 // Dynamically import Jodit (disable SSR)
 const JoditEditor = dynamic(() => import('jodit-react'), {
@@ -54,6 +54,20 @@ const TextEditor = forwardRef<any, TextEditorProps>(
     ref
   ) => {
     const editorRef = useRef(null)
+    const contentRef = useRef(value)
+
+    // Update ref when value changes from outside
+    contentRef.current = value
+
+    // Handle content change without triggering re-render
+    const handleBlur = useCallback(
+      (newContent: string) => {
+        if (newContent !== contentRef.current) {
+          onChange(newContent)
+        }
+      },
+      [onChange]
+    )
 
     // Get theme-based colors
     const getThemeColors = () => {
@@ -65,12 +79,12 @@ const TextEditor = forwardRef<any, TextEditorProps>(
         case 'dark':
           return {
             background: 'hsl(var(--background))',
-            color: 'hsl(var(--muted))'
+            color: 'hsl(var(--foreground))'
           }
         case 'light':
           return {
             background: '#ffffff',
-            color: 'hsl(var(--muted))'
+            color: 'hsl(var(--foreground))'
           }
         case 'auto':
         default:
@@ -129,14 +143,15 @@ const TextEditor = forwardRef<any, TextEditorProps>(
           className={`
             rounded-md border border-input 
             ${theme === 'dark' ? 'bg-background' : 'bg-background'}
+            [&_.jodit-toolbar__box]:!bg-foreground
             [&_.jodit-container]:!bg-transparent
             [&_.jodit-workplace]:!bg-transparent  
             [&_.jodit-wysiwyg]:!bg-transparent
+            [&_.jodit-wysiwyg]:!text-white
             [&_.jodit-toolbar]:border-b
             [&_.jodit-toolbar]:border-border
             [&_.jodit-toolbar-button]:!bg-transparent
             [&_.jodit-toolbar-button]:hover:!bg-muted/80
-            [&_.jodit-toolbar-button]:!text-foreground
             [&_.jodit-toolbar-button]:!border-transparent
             [&_.jodit-status-bar]:!bg-muted/30
             [&_.jodit-status-bar]:!text-muted-foreground
@@ -154,13 +169,19 @@ const TextEditor = forwardRef<any, TextEditorProps>(
             div :global(.jodit-toolbar) {
               background-color: var(--toolbar-bg) !important;
             }
+            div :global(.jodit-wysiwyg) {
+              color: white !important;
+            }
+            // div :global(.jodit-wysiwyg *) {
+            //   color: inherit !important;
+            // }
           `}</style>
           <JoditEditor
             ref={ref || editorRef}
             value={value}
             config={getConfig() as any}
-            onBlur={(newContent) => onChange(newContent)}
-            onChange={(newContent) => onChange(newContent)}
+            onBlur={handleBlur}
+            tabIndex={-1}
             className={`
               ${theme === 'dark' ? 'text-foreground' : 'text-black'}
             `}

@@ -475,7 +475,7 @@ declare global {
     categoryId: number
     seo?: Record<string, any> | null
     // Relations
-    category?: ArticleCategory
+    categories?: ArticleCategory[]
     author?: User
     readTime?: number
   }

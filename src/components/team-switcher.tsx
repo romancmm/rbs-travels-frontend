@@ -100,7 +100,7 @@ export function SiteSwitcher({
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem asChild className='gap-2 p-2 cursor-pointer'>
-              <Link href='/admin/analytics'>
+              <Link href='/admin/dashboard'>
                 <div className='flex justify-center items-center bg-transparent border rounded-md size-6'>
                   <BarChart3 className='size-4' />
                 </div>
