@@ -97,7 +97,7 @@ export function ColumnRenderer({ column, sectionId, rowId }: ColumnRendererProps
             {/* Column Content */}
             <div
                 className={cn(
-                    'relative bg-gray-50/50 p-2 rounded-lg w-full min-h-[120px] transition-all',
+                    'relative bg-gray-50/50 p-2 py-10 rounded-lg w-full min-h-[120px] transition-all',
                     isOver && 'bg-blue-50/50 ring-2 ring-blue-400 ring-inset',
                     column.settings?.className
                 )}

@@ -24,6 +24,8 @@ export interface TableColumn<T = any> {
 export type ArticleActionType = 'view' | 'edit' | 'delete'
 
 const ActionsCell = ({ data, mutate }: { data: any; mutate?: () => void }) => {
+  console.log('article-columns loaded', data)
+
   // Define action configurations for confirmation modals
   const actionConfigs = {
     delete: {
@@ -99,39 +101,44 @@ const ActionsCell = ({ data, mutate }: { data: any; mutate?: () => void }) => {
     </>
   )
 }
-
 // Article columns function that accepts mutate callback
 export const blogColumns = (mutate?: () => void): TableColumn<any>[] => {
   return [
     {
-      key: 'thumbnail',
-      header: 'Thumbnail',
-      render: (value) =>
-        value ? (
-          <div className='relative bg-gray-100 rounded-md w-12 h-12 overflow-hidden'>
-            <CustomImage src={value} alt='Thumbnail' fill className='w-full h-full object-cover' />
-          </div>
-        ) : (
-          <span className='text-muted-foreground'>-</span>
-        ),
-      width: 'w-20'
-    },
-    {
       key: 'title',
       header: 'Title',
       render: (value, data) => (
-        <div className='max-w-xs'>
-          <div className='font-medium truncate'>{value}</div>
-          <div className='text-muted-foreground text-xs truncate'>/{data.slug}</div>
+        <div className='flex items-center gap-3 max-w-xs overflow-hidden'>
+          <div className='relative bg-gray-100 rounded-md w-12 min-w-12 h-12 aspect-square overflow-hidden'>
+            <CustomImage src={data.thumbnail} alt='Thumbnail' fill className='w-full h-full object-cover' />
+          </div>
+          <div className="max-w-60">
+            <div className='font-medium truncate'>{value}</div>
+            <div className='text-muted-foreground text-xs truncate'>/{data.slug}</div>
+          </div>
         </div>
       ),
       width: 'w-64'
     },
     {
-      key: 'categoryId',
+      key: 'categories',
       header: 'Category',
-      render: (value, data) => data?.category?.name || `Category ${value}`,
-      width: 'w-28'
+      render: (value, data) => {
+        if (!value) return '-'
+        if (Array.isArray(value)) {
+          return (
+            <div className='flex flex-wrap gap-1'>
+              {value.map((cat: any) => (
+                <Badge key={cat.id} variant='outline' className='font-light text-xs'>
+                  {cat.name}
+                </Badge>
+              ))}
+            </div>
+          )
+        }
+        return data?.categories?.name || '-'
+      },
+      width: 'w-40'
     },
     {
       key: 'isPublished',

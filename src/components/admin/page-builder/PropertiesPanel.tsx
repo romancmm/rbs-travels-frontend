@@ -5,6 +5,7 @@
 
 'use client'
 
+import FileUploader from '@/components/common/FileUploader'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -660,17 +661,11 @@ function PropertyFieldRenderer({ field, value, onChange }: PropertyFieldRenderer
 
       case 'image-upload':
         return (
-          <div className='space-y-2'>
-            <Input
-              type='text'
-              value={value || ''}
-              onChange={(e) => onChange(e.target.value)}
-              placeholder='Image URL or upload'
-            />
-            <Button variant='outline' size='sm' className='w-full'>
-              Upload Image
-            </Button>
-          </div>
+          <FileUploader
+            value={value || ''}
+            onChangeAction={(val: string | string[]) => onChange(val)}
+            size='medium'
+          />
         )
 
       case 'multi-select':

@@ -3,10 +3,10 @@
 import { Container } from '@/components/common/container'
 import CustomImage from '@/components/common/CustomImage'
 import CustomLink from '@/components/common/CustomLink'
+import { Section } from '@/components/common/section'
 import { Typography } from '@/components/common/typography'
 import { cn } from '@/lib/utils'
 import type { BaseComponent, Column as ColumnType, PageContent, Row as RowType, Section as SectionType } from '@/types/page-builder'
-import React from 'react'
 
 // Global col-span map
 const COL_SPAN: Record<number, string> = {
@@ -49,56 +49,27 @@ function getVisibilityClasses(settings?: any) {
     return classes.join(' ')
 }
 
-function getBackgroundFromSettings(settings?: any) {
-    if (!settings || !settings.background) return { style: {}, classes: '', overlay: null as any }
-    const bg = settings.background
-    const style: React.CSSProperties = {}
-    let classes = ''
-    let overlay = null
 
-    if (bg.type === 'color' && bg.color) {
-        style.backgroundColor = bg.color
-    }
-    if (bg.type === 'image' && bg.image) {
-        style.backgroundImage = `url(${bg.image})`
-        classes += ' bg-cover bg-center'
-    }
-    if (bg.overlay && bg.overlay.enabled) {
-        overlay = { color: bg.overlay.color, opacity: bg.overlay.opacity ?? 0.5 }
-    }
-
-    return { style, classes: classes.trim(), overlay }
-}
 
 function renderComponent(component: BaseComponent) {
     const props = component.props || {}
     const componentClassName = (component as any).settings?.className || ''
-    const styleProps: React.CSSProperties = {}
-    if (props.color) styleProps.color = props.color
-    if (props.fontSize) styleProps.fontSize = props.fontSize
-    if (props.lineHeight) styleProps.lineHeight = props.lineHeight
-    if (props.fontWeight) styleProps.fontWeight = props.fontWeight
-
-    // Debug log to verify className is being applied
-    if (componentClassName) {
-        console.log('[renderComponent] Applying className:', componentClassName, 'to component:', component.id, 'type:', component.type)
-    }
 
     // Basic rendering mirroring admin previews (no editor chrome)
     switch (component.type) {
         case 'heading': {
-            const { level = 'h2', text = '', align = 'left' } = props as any
+            const { level = 'h2', text = '' } = props as any
             return (
-                <Typography key={component.id} variant={level as any} weight={props.fontWeight || 'bold'} align={align as any} style={styleProps} className={componentClassName}>
+                <Typography key={component.id} variant={level as any} className={componentClassName}>
                     {text}
                 </Typography>
             )
         }
 
         case 'text': {
-            const { text = '', align = 'left' } = props as any
+            const { text = '' } = props as any
             return (
-                <Typography key={component.id} variant='body1' className={cn('text-gray-700', componentClassName)} align={align as any} style={styleProps}>
+                <Typography key={component.id} variant='body1' className={cn(componentClassName)}>
                     {text}
                 </Typography>
             )
@@ -128,40 +99,27 @@ function renderComponent(component: BaseComponent) {
         }
 
         case 'image': {
-            const { src, alt = '', link = '', openInNewTab = false, width: imgWidth, height: imgHeight } = props as any
+            const { src, alt = '', link = '', openInNewTab = false, } = props as any
 
             // Prepare props for CustomImage (prefer numeric values). If builder provides
             // percentage or 'auto' values, apply them via wrapper styles instead.
             const imageProps: any = {}
-            const wrapperStyle: React.CSSProperties = {}
 
-            if (typeof imgWidth === 'number') imageProps.width = imgWidth
-            else if (typeof imgWidth === 'string') {
-                // keep percent or px as wrapper style
-                if (imgWidth !== 'auto') wrapperStyle.width = imgWidth
-            }
-
-            if (typeof imgHeight === 'number') imageProps.height = imgHeight
-            else if (typeof imgHeight === 'string') {
-                if (imgHeight !== 'auto') wrapperStyle.height = imgHeight
-            }
 
             const imgElement = (
-                <div style={wrapperStyle} className='max-w-full'>
-                    <CustomImage src={src} alt={alt} className='w-full h-auto' {...imageProps} />
+                <div className='max-w-full' key={component.id}>
+                    <CustomImage src={src} alt={alt} className={cn('w-full h-auto', componentClassName)} {...imageProps} />
                 </div>
             )
 
             return (
-                <div key={component.id} className={componentClassName}>
-                    {link ? (
-                        <CustomLink href={link} target={openInNewTab ? '_blank' : undefined}>
-                            {imgElement}
-                        </CustomLink>
-                    ) : (
-                        imgElement
-                    )}
-                </div>
+                link ? (
+                    <CustomLink href={link} target={openInNewTab ? '_blank' : undefined}>
+                        {imgElement}
+                    </CustomLink>
+                ) : (
+                    imgElement
+                )
             )
         }
 
@@ -188,7 +146,7 @@ function renderComponent(component: BaseComponent) {
             return (
                 <div key={component.id} className={cn('w-full', componentClassName)}>
                     {embed ? (
-                        <div style={{ paddingBottom: '56.25%', position: 'relative' }}>
+                        <div className='relative pb-[56.25%] w-full'>
                             <iframe src={embed} className='absolute inset-0 w-full h-full' allowFullScreen title={`video-${component.id}`} />
                         </div>
                     ) : (
@@ -204,7 +162,7 @@ function renderComponent(component: BaseComponent) {
 
         case 'spacer': {
             const { height = '40px' } = props as any
-            return <div key={component.id} style={{ height }} className={componentClassName} />
+            return <div key={component.id} className={cn(componentClassName)} data-height={height} />
         }
 
         // ==================== FORM WIDGETS ====================
@@ -460,11 +418,11 @@ function renderComponent(component: BaseComponent) {
         }
 
         case 'map': {
-            const { title, address = 'Your Location', height = '400px' } = props as any
+            const { title, address = 'Your Location' } = props as any
             return (
                 <div key={component.id} className={cn('space-y-4', componentClassName)}>
                     {title && <Typography variant='h3' weight='bold'>{title}</Typography>}
-                    <div style={{ height }} className='flex justify-center items-center bg-gray-200 rounded-lg'>
+                    <div className='flex justify-center items-center bg-gray-200 rounded-lg h-[400px]'>
                         <div className='space-y-2 text-center'>
                             <Typography variant='h5' className='text-gray-500'>📍 Map Location</Typography>
                             <Typography variant='body2' className='text-gray-400'>{address}</Typography>
@@ -663,30 +621,14 @@ function ColumnRenderer({ column }: { column: ColumnType }) {
     const columnSettings = (column as any).settings
     const columnClassName = columnSettings?.className || ''
     const visClass = getVisibilityClasses(columnSettings)
-    const { style: colBgStyle, classes: colBgClasses, overlay: colOverlay } = getBackgroundFromSettings(columnSettings)
-
-    // Debug log to verify className is being applied
-    if (columnClassName) {
-        console.log('[ColumnRenderer] Applying className:', columnClassName, 'to column:', column.id)
-    }
 
     return (
-        <div className={cn(spanClass, 'items-center px-3', visClass, colBgClasses, columnClassName)} style={colBgStyle}>
-            <div className={`${colOverlay ? 'relative' : ''}`}>
-                {colOverlay && (
-                    <div
-                        aria-hidden
-                        className='absolute inset-0'
-                        style={{ backgroundColor: colOverlay.color, opacity: colOverlay.opacity }}
-                    />
-                )}
-
-                {column.components?.map((c) => (
-                    <div key={c.id} className='mb-4'>
-                        {renderComponent(c)}
-                    </div>
-                ))}
-            </div>
+        <div className={cn('items-center', spanClass, visClass, columnClassName)}>
+            {column.components?.map((c, index) => (
+                <div key={index}>
+                    {renderComponent(c)}
+                </div>
+            ))}
         </div>
     )
 }
@@ -695,18 +637,9 @@ function RowRenderer({ row }: { row: RowType }) {
     const rowSettings = (row as any).settings
     const rowClassName = rowSettings?.className || ''
     const visClass = getVisibilityClasses(rowSettings)
-    const { style: rowBgStyle, classes: rowBgClasses, overlay: rowOverlay } = getBackgroundFromSettings(rowSettings)
-
-    // Debug log to verify className is being applied
-    if (rowClassName) {
-        console.log('[RowRenderer] Applying className:', rowClassName, 'to row:', row.id)
-    }
 
     return (
-        <div className={cn('gap-4 grid grid-cols-12 -mx-3', visClass, rowBgClasses, rowClassName)} style={rowBgStyle}>
-            {rowOverlay && (
-                <div aria-hidden className='absolute inset-0 pointer-events-none' style={{ backgroundColor: rowOverlay.color, opacity: rowOverlay.opacity }} />
-            )}
+        <div className={cn('gap-4 grid grid-cols-12', visClass, rowClassName)}>
             {row.columns.map((col) => (
                 <ColumnRenderer key={col.id} column={col} />
             ))}
@@ -718,30 +651,17 @@ function SectionRenderer({ section }: { section: SectionType }) {
     const sectionSettings = (section as any).settings
     const sectionClassName = sectionSettings?.className || ''
     const visClass = getVisibilityClasses(sectionSettings)
-    const { style: secBgStyle, classes: secBgClasses, overlay: secOverlay } = getBackgroundFromSettings(sectionSettings)
-
-    // Debug log to verify className is being applied
-    if (sectionClassName) {
-        console.log('[SectionRenderer] Applying className:', sectionClassName, 'to section:', section.id)
-    }
 
     return (
-        <section className={cn('w-full', visClass, secBgClasses, sectionClassName)} style={secBgStyle}>
+        <Section className={cn('w-full', visClass, sectionClassName)}>
             <Container>
-                <div className='relative py-6'>
-                    {secOverlay && (
-                        <div aria-hidden className='absolute inset-0 pointer-events-none' style={{ backgroundColor: secOverlay.color, opacity: secOverlay.opacity }} />
-                    )}
-
-                    {/* {section.name && <PageHeader title={section.name} />} */}
-                    {section.rows.map((r) => (
-                        <div key={r.id} className='mb-6'>
-                            <RowRenderer row={r} />
-                        </div>
-                    ))}
-                </div>
+                {section.rows.map((r) => (
+                    <div key={r.id} className='mb-6'>
+                        <RowRenderer row={r} />
+                    </div>
+                ))}
             </Container>
-        </section>
+        </Section>
     )
 }
 
