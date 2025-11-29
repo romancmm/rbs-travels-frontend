@@ -4,7 +4,7 @@ import CustomImage from '@/components/common/CustomImage'
 import { Typography } from '@/components/common/typography'
 import { cn } from '@/lib/utils'
 import { format } from 'date-fns'
-import { Calendar, Tag } from 'lucide-react'
+import { Calendar } from 'lucide-react'
 import { motion } from 'motion/react'
 import { useState } from 'react'
 
@@ -43,7 +43,7 @@ const BlogCard = ({ post, index, className }: BlogCardProps) => {
         </motion.div>
 
         {/* Category Badge */}
-        <div className='top-4 left-4 absolute'>
+        {/* <div className='top-4 left-4 absolute'>
           <motion.div
             initial={{ opacity: 0.8 }}
             animate={{ opacity: isHovered ? 1 : 0.8 }}
@@ -56,7 +56,7 @@ const BlogCard = ({ post, index, className }: BlogCardProps) => {
             <Tag className='w-3 h-3' />
             {post.category?.name}
           </motion.div>
-        </div>
+        </div> */}
 
         {/* Gradient Overlay */}
         <div className='absolute inset-0 bg-linear-to-t from-black/20 via-transparent to-transparent' />

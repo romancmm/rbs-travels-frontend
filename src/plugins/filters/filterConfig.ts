@@ -64,7 +64,7 @@ export const filterConfigs = {
     ...defaultFilter,
     {
       type: 'select-api',
-      name: 'categorySlug',
+      name: 'categorySlugs',
       label: 'Category',
       placeholder: 'Filter by category',
       url: '/admin/articles/categories?page=1&limit=12',

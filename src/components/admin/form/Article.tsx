@@ -43,7 +43,7 @@ export default function ArticleForm({ initialData }: TProps) {
         description: initialData?.seo?.description || '',
         keywords: initialData?.seo?.keywords || []
       },
-      categoryIds: initialData?.categoryIds || [],
+      categoryIds: initialData?.categoryIds || (initialData?.categories ? initialData.categories.map((cat: any) => cat.id) : []),
       tags: initialData?.tags || [],
       isPublished: initialData?.isPublished || true,
       publishedAt: initialData?.publishedAt || undefined

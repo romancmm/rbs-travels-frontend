@@ -33,7 +33,7 @@ export const categoryFilterSchema = z
 
 export const blogsFilterSchema = z
   .object({
-    categorySlug: z.string().optional()
+    categorySlugs: z.string().optional()
   })
   .merge(defaultFilter)
 
