@@ -23,24 +23,21 @@ import { navItems as adminNavItems } from '@/config/adminNavItems'
 const mapNavItems = (
   items: typeof adminNavItems,
   pathname: string,
-  hasPermission?: (resource: string, action?: string) => boolean,
-  loading?: boolean
+  hasPermission?: (resource: string, action?: string) => boolean
 ) => {
   return items
     .filter((it) => {
       if (!it.permission) return true
-      if (loading) return true // don't block UI while loading
-      return hasPermission ? hasPermission(it.permission.resource, it.permission.action) : true
+      return hasPermission ? hasPermission(it.permission.resource, it.permission.action) : false
     })
     .map((it) => {
       const children =
         it?.children
           ?.filter((child) => {
             if (!child.permission) return true
-            if (loading) return true
             return hasPermission
               ? hasPermission(child.permission.resource, child.permission.action)
-              : true
+              : false
           })
           .map((child) => ({ title: child.title, url: child.href })) || []
 
@@ -65,7 +62,7 @@ const buildAdminData = () => {
   try {
     const raw = Cookies.get('adminInfo')
     if (raw) cookieUser = JSON.parse(raw)
-  } catch {}
+  } catch { }
 
   const user = {
     name:
@@ -92,7 +89,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const data = React.useMemo(() => buildAdminData(), [])
 
   const navMain = React.useMemo(
-    () => mapNavItems(adminNavItems, pathname, hasPermission, loading),
+    () => (loading ? [] : mapNavItems(adminNavItems, pathname, hasPermission)),
     [pathname, hasPermission, loading]
   )
 
@@ -106,7 +103,13 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         />
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={navMain ?? []} />
+        {loading ? (
+          <div className='flex justify-center items-center p-4'>
+            <div className='text-muted-foreground text-sm'>Loading permissions...</div>
+          </div>
+        ) : (
+          <NavMain items={navMain ?? []} />
+        )}
         {/* <NavProjects projects={data.projects} /> */}
       </SidebarContent>
       <SidebarFooter>
