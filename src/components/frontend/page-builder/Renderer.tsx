@@ -99,7 +99,7 @@ function renderComponent(component: BaseComponent) {
         }
 
         case 'image': {
-            const { src, alt = '', link = '', openInNewTab = false, width: imgWidth, height: imgHeight } = props as any
+            const { src, alt = '', link = '', openInNewTab = false, } = props as any
 
             // Prepare props for CustomImage (prefer numeric values). If builder provides
             // percentage or 'auto' values, apply them via wrapper styles instead.
