@@ -73,7 +73,7 @@ function ArticleCategoryList() {
         extra={
           <div className='flex sm:flex-row flex-col sm:justify-between sm:items-end gap-4 mb-6'>
             <div className='flex sm:flex-row flex-col sm:items-end gap-4'>
-              <AddButton resource='blogs' onClick={handleAddNew} />
+              <AddButton resource='category' onClick={handleAddNew} />
             </div>
           </div>
         }

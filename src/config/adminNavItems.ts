@@ -30,17 +30,17 @@ export const navItems: NavItem[] = [
     title: 'Article & Content',
     href: '',
     icon: FileText,
-    // permission: { resource: 'blogs', action: 'index' },
+    permission: { resource: 'post', action: 'index' },
     children: [
       {
         title: 'Categories',
-        href: '/admin/blogs/categories'
-        // permission: { resource: 'blogs', action: 'index' }
+        href: '/admin/blogs/categories',
+        permission: { resource: 'post', action: 'index' }
       },
       {
         title: 'Posts',
-        href: '/admin/blogs'
-        // permission: { resource: 'blogs', action: 'index' }
+        href: '/admin/blogs',
+        permission: { resource: 'category', action: 'index' }
       }
     ]
   },
@@ -49,21 +49,24 @@ export const navItems: NavItem[] = [
   {
     title: 'Menu Manager',
     href: '/admin/menu-manager',
-    icon: ListTodo
+    icon: ListTodo,
+    permission: { resource: 'menu', action: 'index' }
   },
 
   // Page Builder
   {
     title: 'Page Builder',
     href: '/admin/pages',
-    icon: LayoutTemplate
+    icon: LayoutTemplate,
+    permission: { resource: 'pages', action: 'index' }
   },
 
   // File Manager
   {
     title: 'File Manager',
     href: '/admin/file-manager',
-    icon: FolderOpen
+    icon: FolderOpen,
+    permission: { resource: 'media', action: 'index' }
   },
 
   // SEO Settings
@@ -91,27 +94,27 @@ export const navItems: NavItem[] = [
     title: 'Site Settings',
     href: '',
     icon: Settings,
-    // permission: { resource: 'dashboard', action: 'index' },
+    permission: { resource: 'settings', action: 'index' },
     children: [
       {
         title: 'Logo Management',
-        href: '/admin/settings/logo-management'
-        // permission: { resource: 'settings', action: 'update' }
+        href: '/admin/settings/logo-management',
+        permission: { resource: 'settings', action: 'update' }
       },
       {
         title: 'General Settings',
-        href: '/admin/settings'
-        // permission: { resource: 'settings', action: 'update' }
+        href: '/admin/settings',
+        permission: { resource: 'settings', action: 'update' }
       },
       {
         title: 'Theme Settings',
-        href: '/admin/settings/theme-settings'
-        // permission: { resource: 'settings', action: 'update' }
+        href: '/admin/settings/theme-settings',
+        permission: { resource: 'settings', action: 'update' }
       },
       {
         title: 'Social Links',
-        href: '/admin/settings/social-links'
-        // permission: { resource: 'settings', action: 'update' }
+        href: '/admin/settings/social-links',
+        permission: { resource: 'settings', action: 'update' }
       }
     ]
   },
@@ -121,12 +124,12 @@ export const navItems: NavItem[] = [
     title: 'Homepage Builder',
     href: '',
     icon: FileCog,
-    // permission: { resource: 'settings', action: 'index' },
+    permission: { resource: 'settings', action: 'index' },
     children: [
       {
         title: 'Banner Management',
-        href: '/admin/homepage-settings/banners'
-        // permission: { resource: 'settings', action: 'index' }
+        href: '/admin/homepage-settings/banners',
+        permission: { resource: 'settings', action: 'index' }
       },
       {
         title: 'About Us',
@@ -160,22 +163,22 @@ export const navItems: NavItem[] = [
     title: 'Administration',
     href: '',
     icon: ShieldAlert,
-    // permission: { resource: 'accounts', action: 'index' },
+    permission: { resource: 'admin', action: 'index' },
     children: [
       {
         title: 'Manage Admins',
-        href: '/admin/administration/admins'
-        // permission: { resource: 'accounts', action: 'index' }
+        href: '/admin/administration/admins',
+        permission: { resource: 'admin', action: 'index' }
       },
       {
         title: 'Roles & Permissions',
-        href: '/admin/administration/roles'
-        // permission: { resource: 'accounts', action: 'index' }
+        href: '/admin/administration/roles',
+        permission: { resource: 'roles', action: 'index' }
       },
       {
         title: 'Permissions',
-        href: '/admin/administration/permissions'
-        // permission: { resource: 'accounts', action: 'index' }
+        href: '/admin/administration/permissions',
+        permission: { resource: 'permissions', action: 'index' }
       }
     ]
   }
