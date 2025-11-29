@@ -192,19 +192,27 @@ declare global {
   type FilterField = InputField | SelectApiField | DateField | CheckboxField
 
   interface TAdmin {
-    id: number
+    id: string
+    name: string
     email: string
-    username: string
-    firstName: string
-    lastName: string
-    phone: string
-    telegramUsername: string
-    role: 'ADMIN'
+    avatar?: string | null
     isActive: boolean
-    isBanned: boolean
-    banReason: string
-    isVerified: boolean
-    customRole: Role | null
+    isAdmin: boolean
+    createdAt: string
+    updatedAt: string
+    permissions: string[]
+    isSuperAdmin: boolean
+    // Legacy fields (optional for backward compatibility)
+    username?: string
+    firstName?: string
+    lastName?: string
+    phone?: string
+    telegramUsername?: string
+    role?: 'ADMIN'
+    isBanned?: boolean
+    banReason?: string
+    isVerified?: boolean
+    customRole?: Role | null
   }
 
   interface User extends BaseEntity {

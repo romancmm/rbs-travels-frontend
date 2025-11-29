@@ -107,6 +107,7 @@ export const persistAdminSession = async (session: NormalizedAdminAuth) => {
     JSON.stringify({
       name: user?.name,
       email: user?.email,
+      avatar: user?.avatar,
       isAdmin,
       isSuperAdmin
     }),
