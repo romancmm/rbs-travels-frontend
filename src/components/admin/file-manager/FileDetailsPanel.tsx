@@ -3,7 +3,6 @@
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { formatDistanceToNow } from 'date-fns'
 import {
   Calendar,
   Copy,
@@ -157,7 +156,7 @@ export function FileDetailsPanel({ file, onClose }: FileDetailsPanelProps) {
               <Calendar className='w-4 h-4 text-muted-foreground' />
               <span className='text-muted-foreground'>Modified:</span>
               <span className='font-medium'>
-                {formatDistanceToNow(new Date(file.updatedAt), { addSuffix: true })}
+                {/* {formatDistanceToNow(new Date(file?.updatedAt), { addSuffix: true })} */}
               </span>
             </div>
 
