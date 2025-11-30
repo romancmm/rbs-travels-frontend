@@ -313,22 +313,20 @@ function ComponentPreview({
 
       const embedUrl = getVideoEmbedUrl(url, provider)
 
+      // Convert aspectRatio to Tailwind classes
+      const aspectClass =
+        aspectRatio === '4/3'
+          ? 'aspect-[4/3]'
+          : aspectRatio === '1/1'
+          ? 'aspect-square'
+          : aspectRatio === '21/9'
+          ? 'aspect-[21/9]'
+          : 'aspect-video' // Default 16/9
+
       return (
         <div className='relative bg-black rounded-lg overflow-hidden'>
           {embedUrl ? (
-            <div
-              style={{
-                paddingBottom:
-                  aspectRatio === '4/3'
-                    ? '75%'
-                    : aspectRatio === '1/1'
-                    ? '100%'
-                    : aspectRatio === '21/9'
-                    ? '42.86%'
-                    : '56.25%' // Default 16/9
-              }}
-              className='relative w-full'
-            >
+            <div className={cn('relative w-full', aspectClass)}>
               {provider === 'direct' ? (
                 <video src={embedUrl} controls className='absolute inset-0 w-full h-full'>
                   Your browser does not support the video tag.
@@ -356,8 +354,22 @@ function ComponentPreview({
 
     case 'spacer': {
       const { height = '40px' } = component.props as any
+
+      // Convert height to Tailwind classes
+      const getHeightClass = (h: string) => {
+        const heightMap: Record<string, string> = {
+          '20px': 'h-5',
+          '40px': 'h-10',
+          '60px': 'h-15',
+          '80px': 'h-20',
+          '100px': 'h-25',
+          '120px': 'h-30'
+        }
+        return heightMap[h] || 'h-10'
+      }
+
       return (
-        <div style={{ height }} className='bg-gray-50'>
+        <div className={cn('bg-gray-50', getHeightClass(height))}>
           <div className='flex justify-center items-center h-full'>
             <span className='text-gray-400 text-xs'>Spacer ({height})</span>
           </div>
@@ -366,17 +378,17 @@ function ComponentPreview({
     }
 
     case 'divider': {
-      const { style = 'solid', color = '#e5e7eb', thickness = '1px' } = component.props as any
-      return (
-        <hr
-          style={{
-            borderStyle: style,
-            borderColor: color,
-            borderWidth: thickness
-          }}
-          className='my-4'
-        />
-      )
+      const { style = 'solid', thickness = '1px' } = component.props as any
+
+      // Convert style to Tailwind classes
+      const styleClass =
+        style === 'dashed' ? 'border-dashed' : style === 'dotted' ? 'border-dotted' : 'border-solid'
+
+      // Convert thickness to Tailwind classes
+      const thicknessClass =
+        thickness === '2px' ? 'border-t-2' : thickness === '4px' ? 'border-t-4' : 'border-t'
+
+      return <hr className={cn('my-4', styleClass, thicknessClass)} />
     }
 
     // ==================== FORM WIDGETS ====================
