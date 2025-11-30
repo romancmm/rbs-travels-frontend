@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input'
 import { useIsMobile } from '@/hooks/use-mobile'
 import useAsync from '@/hooks/useAsync'
 import { cn } from '@/lib/utils'
+import requests from '@/services/network/http'
 import {
   ChevronRight,
   FileAudio,
@@ -20,7 +21,7 @@ import {
   Search,
   Upload
 } from 'lucide-react'
-import { useCallback, useMemo, useState } from 'react'
+import { useState } from 'react'
 import { CreateFolderModal } from './CreateFolderModal'
 import { FileDetailsPanel } from './FileDetailsPanel'
 import { FileGrid } from './FileGrid'
@@ -73,14 +74,14 @@ export function FileManagerComponent({
   const isMobile = useIsMobile()
 
   // Build API path based on current folder
-  const apiPath = useMemo(() => {
+  const apiPath = (() => {
     const params = new URLSearchParams({
       fileType: 'all',
       path: currentPath,
       ...(searchQuery && { search: searchQuery })
     })
     return `/admin/media?${params.toString()}`
-  }, [currentPath, searchQuery])
+  })()
 
   const { data, loading, mutate } = useAsync<{
     items: FileItem[]
@@ -90,7 +91,7 @@ export function FileManagerComponent({
   }>(() => apiPath)
 
   // Path breadcrumbs
-  const pathSegments = useMemo(() => {
+  const pathSegments = (() => {
     if (currentPath === '/') return [{ name: 'Root', path: '/' }]
     const segments = currentPath?.split('/').filter(Boolean)
     const breadcrumbs = [{ name: 'Root', path: '/' }]
@@ -105,10 +106,10 @@ export function FileManagerComponent({
     })
 
     return breadcrumbs
-  }, [currentPath])
+  })()
 
   // Filtered files based on allowed types
-  const filteredFiles = useMemo(() => {
+  const filteredFiles = (() => {
     if (!data?.items) return []
 
     return data.items.filter((item) => {
@@ -129,126 +130,94 @@ export function FileManagerComponent({
         return false
       })
     })
-  }, [data?.items, allowedTypes])
+  })()
 
   // Get existing folder names for uniqueness check
-  const existingFolders = useMemo(() => {
-    return filteredFiles
-      .filter((item: FileItem) => item.type === 'folder')
-      .map((folder: FileItem) => folder.name)
-  }, [filteredFiles])
+  const existingFolders = filteredFiles
+    .filter((item: FileItem) => item.type === 'folder')
+    .map((folder: FileItem) => folder.name)
 
   // Get existing file names for rename check
-  const existingNames = useMemo(() => {
-    return filteredFiles.map((item: FileItem) => item.name)
-  }, [filteredFiles])
+  const existingNames = filteredFiles.map((item: FileItem) => item.name)
 
   // Handle folder navigation
-  const handleFolderClick = useCallback((folder: FileItem) => {
+  const handleFolderClick = (folder: FileItem) => {
     setCurrentPath(folder.filePath)
     setSelectedFile(null)
-  }, [])
+  }
 
   // Handle file selection
-  const handleFileSelect = useCallback(
-    (file: FileItem) => {
-      if (mode === 'modal' && onFileSelect) {
-        if (maxFiles === 1) {
-          onFileSelect(file)
-        } else {
-          // Multi-select logic
-          const isSelected = selectedFiles.some((f) => f.fileId === file.fileId)
-          if (isSelected) {
-            setSelectedFiles((prev) => prev.filter((f) => f.fileId !== file.fileId))
-          } else if (selectedFiles.length < maxFiles) {
-            setSelectedFiles((prev) => [...prev, file])
-          }
-        }
+  const handleFileSelect = (file: FileItem) => {
+    if (mode === 'modal' && onFileSelect) {
+      if (maxFiles === 1) {
+        onFileSelect(file)
       } else {
-        setSelectedFile(file)
+        // Multi-select logic
+        const isSelected = selectedFiles.some((f) => f.fileId === file.fileId)
+        if (isSelected) {
+          setSelectedFiles((prev) => prev.filter((f) => f.fileId !== file.fileId))
+        } else if (selectedFiles.length < maxFiles) {
+          setSelectedFiles((prev) => [...prev, file])
+        }
       }
-    },
-    [mode, onFileSelect, maxFiles, selectedFiles]
-  )
+    } else {
+      setSelectedFile(file)
+    }
+  }
 
   // Handle file preview
-  const handleFilePreview = useCallback((file: FileItem) => {
+  const handleFilePreview = (file: FileItem) => {
     setPreviewFile(file)
-  }, [])
+  }
 
   // Handle file/folder delete
-  const handleDelete = useCallback(
-    async (file: FileItem) => {
-      try {
-        const response = await fetch('/api/admin/media/delete', {
-          method: 'DELETE',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            fileId: file.fileId,
-            path: file.filePath,
-            type: file.type
-          })
-        })
-
-        if (response.ok) {
-          mutate() // Refresh the file list
-          // Clear selected file if it was deleted
-          if (selectedFile?.fileId === file.fileId) {
-            setSelectedFile(null)
-          }
-        } else {
-          // Handle error - you might want to show a toast notification
-          console.error('Failed to delete file/folder')
+  const handleDelete = async (file: FileItem) => {
+    try {
+      await requests.delete(`/admin/media/file/${file.fileId}`, {
+        data: {
+          fileId: file.fileId,
+          path: file.filePath,
+          type: file.type
         }
-      } catch (error) {
-        console.error('Error deleting file/folder:', error)
+      })
+
+      mutate()
+      if (selectedFile?.fileId === file.fileId) {
+        setSelectedFile(null)
       }
-    },
-    [mutate, selectedFile]
-  )
+    } catch (error) {
+      console.error('Error deleting file/folder:', error)
+    } finally {
+      mutate()
+    }
+  }
 
   // Handle file/folder rename
-  const handleRename = useCallback(
-    async (file: FileItem, newName: string) => {
-      try {
-        const response = await fetch('/api/admin/media/rename', {
-          method: 'PATCH',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            fileId: file.fileId,
-            currentName: file.name,
-            newName: newName,
-            path: file.filePath,
-            type: file.type
-          })
-        })
+  const handleRename = async (file: FileItem, newName: string) => {
+    try {
+      await requests.patch('/api/admin/media/rename', {
+        fileId: file.fileId,
+        currentName: file.name,
+        newName: newName,
+        path: file.filePath,
+        type: file.type
+      })
 
-        if (response.ok) {
-          mutate() // Refresh the file list
-          // Update selected file if it was renamed
-          if (selectedFile?.fileId === file.fileId) {
-            setSelectedFile({ ...selectedFile, name: newName })
-          }
-        } else {
-          throw new Error('Failed to rename')
-        }
-      } catch (error) {
-        console.error('Error renaming file/folder:', error)
-        throw error
+      mutate()
+      if (selectedFile?.fileId === file.fileId) {
+        setSelectedFile({ ...selectedFile, name: newName })
       }
-    },
-    [mutate, selectedFile]
-  )
+    } catch (error) {
+      console.error('Error renaming file/folder:', error)
+      throw error
+    }
+  }
 
   // Handle breadcrumb navigation
-  const handleBreadcrumbClick = useCallback((path: string) => {
+  const handleBreadcrumbClick = (path: string) => {
     setCurrentPath(path)
     setSelectedFile(null)
-  }, [])
+  }
 
   // Get file icon based on type
   const getFileIcon = (file: FileItem) => {

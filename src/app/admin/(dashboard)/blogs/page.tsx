@@ -35,7 +35,7 @@ function ArticleList() {
             values={filters}
             onChange={setFilters}
             onReset={queryString ? resetFilters : undefined}
-            addButton={{ href: '/admin/blogs/add', resource: 'blog' }}
+            addButton={{ href: '/admin/blogs/add', resource: 'post' }}
           />
         }
       />

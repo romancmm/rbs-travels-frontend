@@ -13,6 +13,10 @@ const nextConfig: NextConfig = {
         hostname: 'ik.imagekit.io'
       },
       {
+        protocol: 'https',
+        hostname: 'imagekit.io'
+      },
+      {
         protocol: 'http',
         hostname: 'localhost'
       },

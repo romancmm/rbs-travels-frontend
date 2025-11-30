@@ -15,7 +15,8 @@ const axiosInstance = axios.create({
 axiosInstance.interceptors.request.use(
   (config) => {
     const url = (config.url || '').toString()
-    const isAdmin = url.startsWith('/admin') || url.startsWith('admin')
+    const isAdmin =
+      url.startsWith('/admin') || url.startsWith('admin') || url.startsWith('/auth/admin')
     const cookieName = isAdmin ? 'adminToken' : 'token'
     const token = Cookies.get(cookieName)
 
