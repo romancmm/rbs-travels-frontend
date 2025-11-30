@@ -174,10 +174,14 @@ function renderComponent(component: BaseComponent) {
       }
 
       const embed = getEmbed(url)
+
+      // Convert aspectRatio to Tailwind classes (if aspectRatio prop is added later)
+      const aspectClass = 'aspect-video' // Default 16/9
+
       return (
         <div key={component.id} className={cn('w-full', componentClassName)}>
           {embed ? (
-            <div className='relative pb-[56.25%] w-full'>
+            <div className={cn('relative w-full', aspectClass)}>
               <iframe
                 src={embed}
                 className='absolute inset-0 w-full h-full'
@@ -193,12 +197,41 @@ function renderComponent(component: BaseComponent) {
     }
 
     case 'divider': {
-      return <hr key={component.id} className={cn('my-4 border-t', componentClassName)} />
+      const { style = 'solid', thickness = '1px' } = props as any
+
+      // Convert style to Tailwind classes
+      const styleClass =
+        style === 'dashed' ? 'border-dashed' : style === 'dotted' ? 'border-dotted' : 'border-solid'
+
+      // Convert thickness to Tailwind classes
+      const thicknessClass =
+        thickness === '2px' ? 'border-t-2' : thickness === '4px' ? 'border-t-4' : 'border-t'
+
+      return (
+        <hr
+          key={component.id}
+          className={cn('my-4', styleClass, thicknessClass, componentClassName)}
+        />
+      )
     }
 
     case 'spacer': {
       const { height = '40px' } = props as any
-      return <div key={component.id} className={cn(componentClassName)} data-height={height} />
+
+      // Convert height to Tailwind classes
+      const getHeightClass = (h: string) => {
+        const heightMap: Record<string, string> = {
+          '20px': 'h-5',
+          '40px': 'h-10',
+          '60px': 'h-15',
+          '80px': 'h-20',
+          '100px': 'h-25',
+          '120px': 'h-30'
+        }
+        return heightMap[h] || 'h-10'
+      }
+
+      return <div key={component.id} className={cn(getHeightClass(height), componentClassName)} />
     }
 
     // ==================== FORM WIDGETS ====================
