@@ -45,21 +45,21 @@ interface SettingsModalProps {
 }
 
 export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
-  const { data, loading, mutate } = useAsync<AdminProfileResponse>(() => '/auth/admin/me', false)
+  const { data, loading, mutate } = useAsync<AdminProfileResponse>(() => isOpen ? '/auth/admin/me' : '', false)
 
   const adminInfo = data?.data
 
   const {
     control,
-    handleSubmit,
     reset,
+    handleSubmit,
     formState: { errors, isSubmitting }
   } = useForm<UpdateProfileData>({
     resolver: zodResolver(updateProfileSchema),
     defaultValues: {
-      name: '',
-      email: '',
-      avatar: ''
+      name: adminInfo?.name || '',
+      email: adminInfo?.email || '',
+      avatar: adminInfo?.avatar || ''
     }
   })
 
@@ -102,11 +102,11 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
         Cookies.set(
           'adminInfo',
           JSON.stringify({
-            name: updatedAdmin.name,
-            email: updatedAdmin.email,
-            avatar: updatedAdmin.avatar,
-            isAdmin: updatedAdmin.isAdmin,
-            isSuperAdmin: updatedAdmin.isSuperAdmin
+            name: updatedAdmin?.user?.name,
+            email: updatedAdmin?.user?.email,
+            avatar: updatedAdmin?.user?.avatar,
+            isAdmin: updatedAdmin?.user?.isAdmin,
+            isSuperAdmin: updatedAdmin?.isSuperAdmin
           }),
           {
             secure: process.env.NODE_ENV === 'production',
