@@ -1,6 +1,7 @@
 'use client'
 
 import CustomImage from '@/components/common/CustomImage'
+import CustomLink from '@/components/common/CustomLink'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { Eye } from 'lucide-react'
@@ -20,7 +21,6 @@ interface FileGridProps {
 
 export function FileGrid({
   files,
-  onFileSelect,
   onFolderClick,
   onFilePreview,
   onFileDelete,
@@ -37,13 +37,13 @@ export function FileGrid({
     return `${(bytes / Math.pow(1024, i)).toFixed(1)} ${sizes[i]}`
   }
 
-  const handleClick = (file: FileItem) => {
-    if (file.type === 'folder') {
-      onFolderClick(file)
-    } else {
-      onFileSelect(file)
-    }
-  }
+  // const handleClick = (file: FileItem) => {
+  //   if (file.type === 'folder') {
+  //     onFolderClick(file)
+  //   } else {
+  //     onFileSelect(file)
+  //   }
+  // }
 
   return (
     <div className='bg-gray-50/30 p-6'>
@@ -53,7 +53,7 @@ export function FileGrid({
           const selected = isSelected(file)
 
           return (
-            <div
+            <CustomLink
               key={index}
               className={cn(
                 'group relative hover:shadow-2xl border hover:scale-[1.03] transition-all duration-300 cursor-pointer',
@@ -62,7 +62,7 @@ export function FileGrid({
                   ? 'ring-2 ring-primary ring-offset-2 border-primary bg-primary/5 shadow-xl'
                   : 'border-gray-200/80 hover:border-primary/40 shadow-sm'
               )}
-              onClick={() => handleClick(file)}
+              href={`/admin/file-manager/${file.name}`}
               onDoubleClick={() => {
                 if (file.type === 'file') {
                   onFilePreview(file)
@@ -72,7 +72,7 @@ export function FileGrid({
               {/* File Preview */}
               <div className='relative flex flex-col flex-1 justify-center items-center bg-linear-to-br from-gray-50 via-gray-50/50 to-white px-4'>
                 {file.type === 'folder' ? (
-                  <div className='flex flex-col justify-center items-center'>
+                  <div className='flex flex-col justify-center items-center p-4'>
                     <div className='flex justify-center items-center bg-linear-to-br from-primary/10 group-hover:from-primary/20 to-primary/5 group-hover:to-primary/10 shadow-sm mb-2 rounded-3xl w-20 h-20 transition-all duration-300'>
                       <Icon className='drop-shadow-sm w-9 h-9 text-primary' />
                     </div>
@@ -84,7 +84,7 @@ export function FileGrid({
                       alt={file.name}
                       fill
                       className='rounded-xl h-full object-cover group-hover:scale-110 transition-transform duration-500'
-                    // sizes='(max-width: 768px) 50vw, (max-width: 1200px) 25vw, 12.5vw'
+                      // sizes='(max-width: 768px) 50vw, (max-width: 1200px) 25vw, 12.5vw'
                     />
                     <div className='absolute inset-0 bg-linear-to-t from-black/30 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300' />
                   </div>
@@ -99,7 +99,10 @@ export function FileGrid({
 
               {/* File Info */}
               <div className='bg-white/95 backdrop-blur-sm px-4 py-2 border-gray-100 border-t'>
-                <div className='font-semibold text-gray-800 group-hover:text-primary text-xs truncate transition-colors duration-200' title={file.name}>
+                <div
+                  className='font-semibold text-gray-800 group-hover:text-primary text-xs truncate transition-colors duration-200'
+                  title={file.name}
+                >
                   {file.name}
                 </div>
                 <div className='flex justify-between items-center gap-2 mt-1'>
@@ -145,8 +148,7 @@ export function FileGrid({
                   <div className='bg-white rounded-full w-2.5 h-2.5' />
                 </div>
               )}
-
-            </div>
+            </CustomLink>
           )
         })}
       </div>

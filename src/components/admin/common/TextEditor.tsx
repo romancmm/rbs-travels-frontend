@@ -59,7 +59,16 @@ const TextEditor = forwardRef<any, TextEditorProps>(
     // Update ref when value changes from outside
     contentRef.current = value
 
-    // Handle content change without triggering re-render
+    // Handle content change in real-time
+    const handleChange = useCallback(
+      (newContent: string) => {
+        contentRef.current = newContent
+        onChange(newContent)
+      },
+      [onChange]
+    )
+
+    // Handle blur event (legacy support)
     const handleBlur = useCallback(
       (newContent: string) => {
         if (newContent !== contentRef.current) {
@@ -147,7 +156,12 @@ const TextEditor = forwardRef<any, TextEditorProps>(
             [&_.jodit-container]:!bg-transparent
             [&_.jodit-workplace]:!bg-transparent  
             [&_.jodit-wysiwyg]:!bg-transparent
-            [&_.jodit-wysiwyg]:!text-white
+            [&_.jodit-wysiwyg]:!text-gray-900
+            [&_.jodit-wysiwyg]:${
+              theme === 'dark' ? '!bg-background !text-foreground' : '!bg-white !text-black'
+            }
+            [&_.jodit-toolbar]:!bg-muted/30
+            [&_.jodit-toolbar]:!text-muted-foreground
             [&_.jodit-toolbar]:border-b
             [&_.jodit-toolbar]:border-border
             [&_.jodit-toolbar-button]:!bg-transparent
@@ -180,6 +194,7 @@ const TextEditor = forwardRef<any, TextEditorProps>(
             ref={ref || editorRef}
             value={value}
             config={getConfig() as any}
+            onChange={handleChange}
             onBlur={handleBlur}
             tabIndex={-1}
             className={`
