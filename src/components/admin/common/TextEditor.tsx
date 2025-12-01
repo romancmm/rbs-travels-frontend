@@ -147,7 +147,12 @@ const TextEditor = forwardRef<any, TextEditorProps>(
             [&_.jodit-container]:!bg-transparent
             [&_.jodit-workplace]:!bg-transparent  
             [&_.jodit-wysiwyg]:!bg-transparent
-            [&_.jodit-wysiwyg]:!text-white
+            [&_.jodit-wysiwyg]:!text-gray-900
+            [&_.jodit-wysiwyg]:${
+              theme === 'dark' ? '!bg-background !text-foreground' : '!bg-white !text-black'
+            }
+            [&_.jodit-toolbar]:!bg-muted/30
+            [&_.jodit-toolbar]:!text-muted-foreground
             [&_.jodit-toolbar]:border-b
             [&_.jodit-toolbar]:border-border
             [&_.jodit-toolbar-button]:!bg-transparent
