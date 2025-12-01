@@ -6,12 +6,14 @@ import SocialLinks from '@/components/common/SocialLinks'
 import { Typography } from '@/components/common/typography'
 import { useSiteConfig } from '@/components/providers/store-provider'
 import { cn } from '@/lib/utils'
+import { SiteSettings } from '@/lib/validations/schemas/siteSettings'
 import { getMenuItemUrl } from '@/types/menu.types'
 import { ArrowRight, Mail, Phone } from 'lucide-react'
 import { use } from 'react'
 
+
 export default function Footer({ data }: { data: any }) {
-  const { siteConfig } = useSiteConfig()
+  const { siteConfig } = useSiteConfig() as { siteConfig?: SiteSettings }
   const footerNav: any = use(data)
 
   return (

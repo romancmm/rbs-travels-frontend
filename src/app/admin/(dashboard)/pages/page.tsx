@@ -14,7 +14,7 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
-  DropdownMenuTrigger,
+  DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
 import useAsync from '@/hooks/useAsync'
 import { useFilter } from '@/hooks/useFilter'
@@ -33,8 +33,7 @@ function PageList() {
       pagination: any
     }
   }>(() => {
-    const url =
-      '/admin/pages' + (page ? `?page=${page}` : '') + (limit ? `&limit=${limit}` : '')
+    const url = '/admin/pages' + (page ? `?page=${page}` : '') + (limit ? `&limit=${limit}` : '')
     return url
   })
 
@@ -49,8 +48,7 @@ function PageList() {
   }
 
   const handleDelete = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this page? This action cannot be undone.'))
-      return
+    if (!confirm('Are you sure you want to delete this page? This action cannot be undone.')) return
 
     try {
       await pageBuilderService.deletePage(id)
@@ -86,7 +84,7 @@ function PageList() {
     return new Date(dateString).toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'short',
-      day: 'numeric',
+      day: 'numeric'
     })
   }
 
@@ -127,14 +125,14 @@ function PageList() {
             onAction={handleCreate}
           />
         ) : (
-          <div className='gap-4 grid md:grid-cols-2 lg:grid-cols-3'>
+          <div className='gap-4 grid md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4'>
             {pages.map((page) => (
               <div
                 key={page.id}
                 className='group bg-white p-4 border hover:border-primary/50 rounded-lg transition-colors'
               >
                 {/* Page Preview Thumbnail */}
-                <div className='relative flex justify-center items-center bg-muted mb-4 rounded-lg h-32 overflow-hidden'>
+                <div className='relative flex justify-center items-center bg-muted/20 mb-4 rounded-lg h-32 overflow-hidden'>
                   <FileText className='w-12 h-12 text-muted-foreground' />
                   <div className='absolute inset-0 flex justify-center items-center gap-2 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity'>
                     <Button size='sm' variant='secondary' onClick={() => handleEdit(page)}>
@@ -151,11 +149,12 @@ function PageList() {
                   <div>
                     <div className='flex justify-between items-start gap-2 mb-1'>
                       <h3 className='font-semibold line-clamp-1'>{page.title}</h3>
-                      <CMSStatusBadge status={page.isPublished ? 'published' : 'draft'} showIcon={false} />
+                      <CMSStatusBadge
+                        status={page.isPublished ? 'published' : 'draft'}
+                        showIcon={false}
+                      />
                     </div>
-                    <p className='text-muted-foreground text-xs'>
-                      /{page.slug}
-                    </p>
+                    <p className='text-muted-foreground text-xs'>/{page.slug}</p>
                   </div>
 
                   <div className='flex justify-between items-center text-muted-foreground text-xs'>

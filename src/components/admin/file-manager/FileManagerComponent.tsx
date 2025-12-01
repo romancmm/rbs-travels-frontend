@@ -21,6 +21,7 @@ import {
   Search,
   Upload
 } from 'lucide-react'
+import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { useState } from 'react'
 import { CreateFolderModal } from './CreateFolderModal'
 import { FileDetailsPanel } from './FileDetailsPanel'
@@ -36,6 +37,7 @@ export interface FileItem {
   createdAt: string
   updatedAt: string
   fileId: string
+  folderId: string
   url?: string
   thumbnail?: string
   fileType?: 'image' | 'non-image'
@@ -53,6 +55,7 @@ interface FileManagerComponentProps {
   allowedTypes?: string[]
   maxFiles?: number
   className?: string
+  initialPath?: string
 }
 
 export function FileManagerComponent({
@@ -60,11 +63,20 @@ export function FileManagerComponent({
   onFileSelect,
   allowedTypes = [],
   maxFiles = 1,
-  className
+  className,
+  initialPath = '/'
 }: FileManagerComponentProps) {
-  const [currentPath, setCurrentPath] = useState<string>('/')
+  const router = useRouter()
+  const pathname = usePathname()
+  const searchParams = useSearchParams()
+
+  // Extract current path from URL pathname
+  // /admin/file-manager/folder1/folder2 -> /folder1/folder2
+  const basePath = '/admin/file-manager'
+  const currentPath = pathname.replace(basePath, '') || initialPath || '/'
+  const searchQuery = searchParams.get('search') || ''
+
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
-  const [searchQuery, setSearchQuery] = useState('')
   const [selectedFiles, setSelectedFiles] = useState<FileItem[]>([])
   const [showUploadModal, setShowUploadModal] = useState(false)
   const [showCreateFolderModal, setShowCreateFolderModal] = useState(false)
@@ -73,23 +85,51 @@ export function FileManagerComponent({
   const [renameFile, setRenameFile] = useState<FileItem | null>(null)
   const isMobile = useIsMobile()
 
+  // Navigate to path
+  const navigateToPath = (path: string, search?: string) => {
+    const params = new URLSearchParams()
+
+    // Add search param if exists
+    const searchValue = search !== undefined ? search : searchQuery
+    if (searchValue) {
+      params.set('search', searchValue)
+    }
+
+    // Build URL with pathname
+    const targetPath = path === '/' ? basePath : `${basePath}${path}`
+    const queryString = params.toString()
+    const fullPath = queryString ? `${targetPath}?${queryString}` : targetPath
+
+    router.push(fullPath, { scroll: false })
+  }
+
+  // Update search only
+  const updateSearch = (search: string) => {
+    const params = new URLSearchParams()
+    if (search) {
+      params.set('search', search)
+    }
+    const queryString = params.toString()
+    const targetPath = currentPath === '/' ? basePath : `${basePath}${currentPath}`
+    const fullPath = queryString ? `${targetPath}?${queryString}` : targetPath
+    router.push(fullPath, { scroll: false })
+  }
+
   // Build API path based on current folder
-  const apiPath = (() => {
-    const params = new URLSearchParams({
-      fileType: 'all',
-      path: currentPath,
-      ...(searchQuery && { search: searchQuery })
-    })
-    return `/admin/media?${params.toString()}`
-  })()
+  const apiPath = `/admin/media?${new URLSearchParams({
+    fileType: 'all',
+    path: currentPath,
+    ...(searchQuery && { search: searchQuery })
+  }).toString()}`
 
   const { data, loading, mutate } = useAsync<{
     items: FileItem[]
     page: number
     perPage: number
     hasMore: boolean
-  }>(() => apiPath)
+  }>(apiPath)
 
+  console.log('data', data)
   // Path breadcrumbs
   const pathSegments = (() => {
     if (currentPath === '/') return [{ name: 'Root', path: '/' }]
@@ -142,7 +182,7 @@ export function FileManagerComponent({
 
   // Handle folder navigation
   const handleFolderClick = (folder: FileItem) => {
-    setCurrentPath(folder.filePath)
+    navigateToPath(folder.filePath)
     setSelectedFile(null)
   }
 
@@ -172,14 +212,10 @@ export function FileManagerComponent({
 
   // Handle file/folder delete
   const handleDelete = async (file: FileItem) => {
+    const id = file.type === 'file' ? file.fileId : file.folderId
+
     try {
-      await requests.delete(`/admin/media/file/${file.fileId}`, {
-        data: {
-          fileId: file.fileId,
-          path: file.filePath,
-          type: file.type
-        }
-      })
+      await requests.delete(`/admin/media/file/${id}`)
 
       mutate()
       if (selectedFile?.fileId === file.fileId) {
@@ -215,7 +251,7 @@ export function FileManagerComponent({
 
   // Handle breadcrumb navigation
   const handleBreadcrumbClick = (path: string) => {
-    setCurrentPath(path)
+    navigateToPath(path)
     setSelectedFile(null)
   }
 
@@ -264,15 +300,13 @@ export function FileManagerComponent({
               <Input
                 placeholder='Search files...'
                 value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+                onChange={(e) => updateSearch(e.target.value)}
                 className='pl-9'
               />
             </div>
           </div>
 
           <div className='flex items-center gap-2'>
-
-
             {/* Action Buttons */}
             <Button variant='outline' size='sm' onClick={() => setShowCreateFolderModal(true)}>
               <Plus className='w-4 h-4' />

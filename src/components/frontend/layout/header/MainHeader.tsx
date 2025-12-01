@@ -20,8 +20,8 @@ export default function MainHeader({ data }: { data: any }) {
   const { siteConfig } = useSiteConfig()
 
   const publishedItems = data?.filter((i: any) => i.isPublished) ?? []
-  const visibleItems = publishedItems.length > 5 ? publishedItems.slice(0, 4) : publishedItems
-  const moreItems = publishedItems.length > 5 ? publishedItems.slice(4) : []
+  const visibleItems = publishedItems.length > 5 ? publishedItems.slice(0, 6) : publishedItems
+  const moreItems = publishedItems.length > 5 ? publishedItems.slice(6) : []
 
   const getDropdownPosition = (parentKey: string, isNested: boolean = false) => {
     const parentEl = parentRefs.current[parentKey]
@@ -83,8 +83,9 @@ export default function MainHeader({ data }: { data: any }) {
                     </Typography>
                     {publishedChildren.length > 0 && (
                       <ChevronDown
-                        className={`w-4 h-4 transition-transform duration-300 ${hoveredItem === index ? 'rotate-180' : ''
-                          }`}
+                        className={`w-4 h-4 transition-transform duration-300 ${
+                          hoveredItem === index ? 'rotate-180' : ''
+                        }`}
                       />
                     )}
                   </CustomLink>
@@ -189,8 +190,9 @@ export default function MainHeader({ data }: { data: any }) {
                     More
                   </Typography>
                   <ChevronDown
-                    className={`w-4 h-4 transition-transform duration-300 ${isMoreHovered ? 'rotate-180' : ''
-                      }`}
+                    className={`w-4 h-4 transition-transform duration-300 ${
+                      isMoreHovered ? 'rotate-180' : ''
+                    }`}
                   />
                 </button>
                 {isMoreHovered && (
