@@ -8,9 +8,10 @@ import { ImageLightbox } from '@/components/frontend/ImageLightbox'
 import { Skeleton } from '@/components/ui/skeleton'
 import useAsync from '@/hooks/useAsync'
 import { cn } from '@/lib/utils'
-import { Eye, Image as ImageIcon } from 'lucide-react'
+import { Eye, Folder, Image as ImageIcon } from 'lucide-react'
 import { motion } from 'motion/react'
-import { useMemo, useState } from 'react'
+import { useRouter } from 'next/navigation'
+import { use, useState } from 'react'
 
 interface FileItem {
   type: 'file' | 'folder'
@@ -29,26 +30,30 @@ interface FileItem {
 }
 
 interface GalleryPageProps {
-  params: {
+  params: Promise<{
     pathname?: string[]
-  }
+  }>
 }
 
 export default function GalleryPage({ params }: GalleryPageProps) {
+  const resolvedParams = use(params)
+
+  return <GalleryContent params={resolvedParams} />
+}
+
+function GalleryContent({ params }: { params: { pathname?: string[] } }) {
+  const router = useRouter()
   const [lightboxOpen, setLightboxOpen] = useState(false)
   const [selectedImageIndex, setSelectedImageIndex] = useState(0)
 
   // Convert pathname array to folder path
   // e.g., ['folder1', 'folder2'] -> '/folder1/folder2'
-  const folderPath = useMemo(() => {
-    if (!params.pathname || params.pathname.length === 0) {
-      return '/'
-    }
-    return `/${params.pathname.join('/')}`
-  }, [params.pathname])
+  const folderPath = !params.pathname || params.pathname.length === 0
+    ? '/'
+    : `/${params.pathname.join('/')}`
 
   // Get display name (last segment of path)
-  const displayName = useMemo(() => {
+  const displayName = (() => {
     if (!params.pathname || params.pathname.length === 0) {
       return 'Gallery'
     }
@@ -56,13 +61,11 @@ export default function GalleryPage({ params }: GalleryPageProps) {
     return decodeURIComponent(lastName)
       .replace(/-/g, ' ')
       .replace(/\b\w/g, (l) => l.toUpperCase())
-  }, [params.pathname])
+  })()
 
   // Build API path for the gallery folder
-  const apiPath = useMemo(() => {
-    const encodedPath = encodeURIComponent(folderPath)
-    return `/media?path=${encodedPath}&page=1&perPage=100&fileType=image`
-  }, [folderPath])
+  const encodedPath = encodeURIComponent(folderPath)
+  const apiPath = `/media?path=${encodedPath}&page=1&perPage=100`
 
   const { data, loading } = useAsync<{
     items: FileItem[]
@@ -75,20 +78,27 @@ export default function GalleryPage({ params }: GalleryPageProps) {
     currentPath: string
   }>(apiPath, true)
 
-  // Filter only images from items or files array
-  const images = useMemo(() => {
+  // Filter folders and images from items
+  const folders = (() => {
+    const itemsArray = data?.items || data?.files || []
+    return itemsArray.filter((item) => item.type === 'folder')
+  })()
+
+  const images = (() => {
     const itemsArray = data?.items || data?.files || []
     return itemsArray.filter((item) => item.type === 'file' && item.fileType === 'image')
-  }, [data])
+  })()
 
   // Extract image URLs for lightbox
-  const imageUrls = useMemo(() => {
-    return images.map((img) => img.url || img.thumbnail || '')
-  }, [images])
+  const imageUrls = images.map((img) => img.url || img.thumbnail || '')
 
   const handleImageClick = (index: number) => {
     setSelectedImageIndex(index)
     setLightboxOpen(true)
+  }
+
+  const handleFolderClick = (folder: FileItem) => {
+    router.push(`/gallery${folder.filePath}`)
   }
 
   if (loading) {
@@ -116,7 +126,7 @@ export default function GalleryPage({ params }: GalleryPageProps) {
     )
   }
 
-  if (images.length === 0) {
+  if (images.length === 0 && folders.length === 0) {
     return (
       <>
         <Section className='bg-linear-to-r from-primary/90 to-primary/70'>
@@ -137,10 +147,10 @@ export default function GalleryPage({ params }: GalleryPageProps) {
             <div className='flex flex-col justify-center items-center py-16 text-center'>
               <ImageIcon className='mb-4 w-16 h-16 text-muted-foreground' />
               <Typography variant='h4' weight='semibold' className='mb-2 text-gray-800'>
-                No Images Found
+                No Content Found
               </Typography>
               <Typography variant='body1' className='text-gray-600'>
-                This gallery folder doesn&apos;t contain any images yet.
+                This gallery folder doesn&apos;t contain any images or folders yet.
               </Typography>
             </div>
           </Container>
@@ -164,8 +174,11 @@ export default function GalleryPage({ params }: GalleryPageProps) {
               {displayName}
             </Typography>
             <Typography variant='body1' className='opacity-90 mx-auto max-w-2xl'>
-              Explore our collection of {images.length} beautiful{' '}
-              {images.length === 1 ? 'image' : 'images'}
+              {folders.length > 0 && images.length > 0
+                ? `${folders.length} ${folders.length === 1 ? 'folder' : 'folders'} • ${images.length} ${images.length === 1 ? 'image' : 'images'}`
+                : folders.length > 0
+                  ? `${folders.length} ${folders.length === 1 ? 'folder' : 'folders'}`
+                  : `${images.length} ${images.length === 1 ? 'image' : 'images'}`}
             </Typography>
           </motion.div>
         </Container>
@@ -175,6 +188,33 @@ export default function GalleryPage({ params }: GalleryPageProps) {
       <Section variant={'xl'}>
         <Container>
           <div className='gap-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5'>
+            {/* Folders */}
+            {folders.map((folder, index) => (
+              <motion.div
+                key={folder.fileId}
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.3, delay: index * 0.05 }}
+                className='group relative bg-linear-to-br from-primary/10 hover:from-primary/20 to-primary/5 hover:to-primary/10 rounded-lg aspect-square overflow-hidden cursor-pointer'
+                onClick={() => handleFolderClick(folder)}
+              >
+                <div className='flex flex-col justify-center items-center w-full h-full'>
+                  <div className='flex justify-center items-center bg-white shadow-md group-hover:shadow-lg mb-4 rounded-full w-20 h-20 transition-all duration-300'>
+                    <Folder className='w-10 h-10 text-primary' />
+                  </div>
+                  <Typography
+                    variant='body2'
+                    weight='medium'
+                    className='px-4 text-gray-800 text-center truncate'
+                    title={folder.name}
+                  >
+                    {folder.name}
+                  </Typography>
+                </div>
+              </motion.div>
+            ))}
+
+            {/* Images */}
             {images.map((image, index) => (
               <motion.div
                 key={image.fileId}

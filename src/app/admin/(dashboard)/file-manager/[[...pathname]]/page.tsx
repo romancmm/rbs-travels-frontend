@@ -1,15 +1,15 @@
 'use client'
 
 import { FileManagerComponent } from '@/components/admin/file-manager'
-import { Suspense } from 'react'
+import { Suspense, use } from 'react'
 
 interface FileManagerPageProps {
-  params: {
+  params: Promise<{
     pathname?: string[]
-  }
+  }>
 }
 
-function FileManager({ params }: FileManagerPageProps) {
+function FileManager({ params }: { params: { pathname?: string[] } }) {
   // Convert pathname array to path string
   // e.g., ['folder1', 'folder2'] -> '/folder1/folder2'
   const currentPath = params.pathname ? `/${params.pathname.join('/')}` : '/'
@@ -25,9 +25,11 @@ function FileManager({ params }: FileManagerPageProps) {
 }
 
 export default function FileManagerPage({ params }: FileManagerPageProps) {
+  const resolvedParams = use(params)
+
   return (
     <Suspense fallback={<div>Loading...</div>}>
-      <FileManager params={params} />
+      <FileManager params={resolvedParams} />
     </Suspense>
   )
 }
