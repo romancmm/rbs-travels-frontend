@@ -80,16 +80,17 @@ export function FileList({
             </TableRow>
           </TableHeader>
           <TableBody>
-            {files.map((file, index) => {
+            {files.map((file) => {
               const Icon = getFileIcon(file)
               const selected = isSelected(file)
 
               return (
                 <TableRow
-                  key={index}
+                  key={file.fileId}
                   className={cn(
                     'group hover:bg-primary/5 hover:shadow-sm border-gray-100/50 border-b transition-all duration-200 cursor-pointer',
-                    selected && 'bg-linear-to-r from-primary/10 to-primary/5 border-l-4 border-l-primary shadow-md ring-1 ring-primary/20'
+                    selected &&
+                      'bg-linear-to-r from-primary/10 to-primary/5 border-l-4 border-l-primary shadow-md ring-1 ring-primary/20'
                   )}
                   onClick={() => handleClick(file)}
                   onDoubleClick={() => {
@@ -130,11 +131,16 @@ export function FileList({
 
                   <TableCell>
                     <div className='flex flex-col gap-1'>
-                      <span className='max-w-md font-bold text-gray-800 group-hover:text-primary text-sm truncate transition-colors duration-200' title={file.name}>
+                      <span
+                        className='max-w-md font-bold text-gray-800 group-hover:text-primary text-sm truncate transition-colors duration-200'
+                        title={file.name}
+                      >
                         {file.name}
                       </span>
                       {file.type === 'file' && file.mime && (
-                        <span className='font-medium text-muted-foreground text-xs'>{file.mime}</span>
+                        <span className='font-medium text-muted-foreground text-xs'>
+                          {file.mime}
+                        </span>
                       )}
                     </div>
                   </TableCell>

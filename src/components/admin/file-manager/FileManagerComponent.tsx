@@ -89,7 +89,7 @@ export function FileManagerComponent({
     perPage: number
     hasMore: boolean
   }>(() => apiPath)
-
+  console.log('data', data)
   // Path breadcrumbs
   const pathSegments = (() => {
     if (currentPath === '/') return [{ name: 'Root', path: '/' }]
@@ -271,8 +271,6 @@ export function FileManagerComponent({
           </div>
 
           <div className='flex items-center gap-2'>
-
-
             {/* Action Buttons */}
             <Button variant='outline' size='sm' onClick={() => setShowCreateFolderModal(true)}>
               <Plus className='w-4 h-4' />

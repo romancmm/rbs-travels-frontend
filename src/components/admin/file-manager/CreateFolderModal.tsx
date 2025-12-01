@@ -11,6 +11,7 @@ import {
 } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import requests from '@/services/network/http'
 import { FolderPlus } from 'lucide-react'
 import { useState } from 'react'
 
@@ -55,27 +56,16 @@ export function CreateFolderModal({
     setError('')
 
     try {
-      const response = await fetch('/api/admin/media/folder', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          name: folderName.trim(),
-          path: currentPath
-        })
+      await requests.post('/admin/media/folder', {
+        folderName: folderName.trim(),
+        path: currentPath
       })
 
-      if (response.ok) {
-        onFolderCreated()
-        setFolderName('')
-        onClose()
-      } else {
-        const data = await response.json()
-        setError(data.message || 'Failed to create folder')
-      }
-    } catch {
-      setError('Failed to create folder')
+      onFolderCreated()
+      setFolderName('')
+      onClose()
+    } catch (error: any) {
+      setError(error?.response?.data?.message || 'Failed to create folder')
     } finally {
       setIsCreating(false)
     }
