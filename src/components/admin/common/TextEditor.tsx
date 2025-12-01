@@ -59,7 +59,16 @@ const TextEditor = forwardRef<any, TextEditorProps>(
     // Update ref when value changes from outside
     contentRef.current = value
 
-    // Handle content change without triggering re-render
+    // Handle content change in real-time
+    const handleChange = useCallback(
+      (newContent: string) => {
+        contentRef.current = newContent
+        onChange(newContent)
+      },
+      [onChange]
+    )
+
+    // Handle blur event (legacy support)
     const handleBlur = useCallback(
       (newContent: string) => {
         if (newContent !== contentRef.current) {
@@ -185,6 +194,7 @@ const TextEditor = forwardRef<any, TextEditorProps>(
             ref={ref || editorRef}
             value={value}
             config={getConfig() as any}
+            onChange={handleChange}
             onBlur={handleBlur}
             tabIndex={-1}
             className={`

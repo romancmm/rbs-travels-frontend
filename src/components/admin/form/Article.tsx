@@ -30,7 +30,7 @@ export default function ArticleForm({ initialData }: TProps) {
     formState: { errors }
   } = useForm<CreateArticleType>({
     resolver: zodResolver(CreateArticleSchema),
-    mode: 'onSubmit',
+    mode: 'onChange',
     defaultValues: {
       title: initialData?.title || '',
       slug: initialData?.slug || '',
@@ -43,7 +43,9 @@ export default function ArticleForm({ initialData }: TProps) {
         description: initialData?.seo?.description || '',
         keywords: initialData?.seo?.keywords || []
       },
-      categoryIds: initialData?.categoryIds || (initialData?.categories ? initialData.categories.map((cat: any) => cat.id) : []),
+      categoryIds:
+        initialData?.categoryIds ||
+        (initialData?.categories ? initialData.categories.map((cat: any) => cat.id) : []),
       tags: initialData?.tags || [],
       isPublished: initialData?.isPublished || true,
       publishedAt: initialData?.publishedAt || undefined
@@ -168,7 +170,6 @@ export default function ArticleForm({ initialData }: TProps) {
               render={({ field }) => (
                 <>
                   <CustomSelect
-
                     label='Categories'
                     placeholder='Select Categories'
                     value={Array.isArray(field.value) ? field.value : []}
@@ -188,7 +189,9 @@ export default function ArticleForm({ initialData }: TProps) {
                     multiple
                   />
                   {errors.categoryIds && (
-                    <span className='font-medium text-red-500 text-xs'>{errors.categoryIds.message}</span>
+                    <span className='font-medium text-red-500 text-xs'>
+                      {errors.categoryIds.message}
+                    </span>
                   )}
                 </>
               )}
