@@ -11,7 +11,7 @@ import { cn } from '@/lib/utils'
 import { Eye, Folder, Image as ImageIcon } from 'lucide-react'
 import { motion } from 'motion/react'
 import { useRouter } from 'next/navigation'
-import { use, useState } from 'react'
+import React, { use, useState } from 'react'
 
 interface FileItem {
   type: 'file' | 'folder'
@@ -27,6 +27,7 @@ interface FileItem {
   width?: number
   size?: number
   mime?: string
+  children?: FileItem[]
 }
 
 interface GalleryPageProps {
@@ -45,6 +46,7 @@ function GalleryContent({ params }: { params: { pathname?: string[] } }) {
   const router = useRouter()
   const [lightboxOpen, setLightboxOpen] = useState(false)
   const [selectedImageIndex, setSelectedImageIndex] = useState(0)
+  const [folderPreviews, setFolderPreviews] = useState<Record<string, FileItem[]>>({})
 
   // Convert pathname array to folder path
   // e.g., ['folder1', 'folder2'] -> '/folder1/folder2'
@@ -98,8 +100,54 @@ function GalleryContent({ params }: { params: { pathname?: string[] } }) {
   }
 
   const handleFolderClick = (folder: FileItem) => {
-    router.push(`/gallery${folder.filePath}`)
+    router.push(`/gallery/${folder.filePath}`)
   }
+
+  // Load folder previews when folders change
+  React.useEffect(() => {
+    const fetchFolderPreviews = async () => {
+      if (!folders.length) return
+
+      const previews: Record<string, FileItem[]> = {}
+
+      await Promise.all(
+        folders.map(async (folder) => {
+          try {
+            const encodedFolderPath = encodeURIComponent(folder.filePath)
+            const previewUrl = `/media?path=${encodedFolderPath}&page=1&perPage=4`
+            console.log('Fetching preview for folder:', folder.name, 'URL:', previewUrl)
+
+            const response = await fetch(previewUrl)
+
+            if (!response.ok) {
+              console.error(`Failed to fetch preview for ${folder.name}:`, response.status)
+              return
+            }
+
+            const folderData = await response.json()
+            console.log('Preview data for', folder.name, ':', folderData)
+
+            const folderImages = (folderData?.items || folderData?.files || [])
+              .filter((item: FileItem) => item.type === 'file' && item.fileType === 'image')
+              .slice(0, 4)
+
+            if (folderImages.length > 0) {
+              previews[folder.fileId] = folderImages
+            }
+          } catch (error) {
+            console.error(`Failed to fetch preview for ${folder.name}:`, error)
+          }
+        })
+      )
+
+      setFolderPreviews(previews)
+    }
+
+    if (folders.length > 0 && !loading) {
+      fetchFolderPreviews()
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [folders.length, loading])
 
   if (loading) {
     return (
@@ -189,30 +237,87 @@ function GalleryContent({ params }: { params: { pathname?: string[] } }) {
         <Container>
           <div className='gap-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5'>
             {/* Folders */}
-            {folders.map((folder, index) => (
-              <motion.div
-                key={folder.fileId}
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.3, delay: index * 0.05 }}
-                className='group relative bg-linear-to-br from-primary/10 hover:from-primary/20 to-primary/5 hover:to-primary/10 rounded-lg aspect-square overflow-hidden cursor-pointer'
-                onClick={() => handleFolderClick(folder)}
-              >
-                <div className='flex flex-col justify-center items-center w-full h-full'>
-                  <div className='flex justify-center items-center bg-white shadow-md group-hover:shadow-lg mb-4 rounded-full w-20 h-20 transition-all duration-300'>
-                    <Folder className='w-10 h-10 text-primary' />
+            {folders.map((folder, index) => {
+              const previewImages = folderPreviews[folder.fileId] || []
+              const hasPreview = previewImages.length > 0
+
+              return (
+                <motion.div
+                  key={folder.fileId}
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.3, delay: index * 0.05 }}
+                  className='group relative border-2 border-primary/20 hover:border-primary/40 rounded-lg aspect-square overflow-hidden transition-all duration-300 cursor-pointer'
+                  onClick={() => handleFolderClick(folder)}
+                >
+                  {hasPreview ? (
+                    // Preview Grid: Show up to 4 images in a 2x2 grid
+                    <div className='relative bg-gray-100 w-full h-full'>
+                      {previewImages.length === 1 ? (
+                        // Single image preview
+                        <div className='relative w-full h-full'>
+                          <CustomImage
+                            src={previewImages[0].thumbnail || previewImages[0].url || ''}
+                            alt={folder.name}
+                            fill
+                            className='object-cover'
+                            sizes='(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, (max-width: 1280px) 25vw, 20vw'
+                          />
+                        </div>
+                      ) : (
+                        // Grid preview (2x2)
+                        <div className='gap-0.5 grid grid-cols-2 w-full h-full'>
+                          {previewImages.slice(0, 4).map((img, idx) => (
+                            <div key={idx} className='relative bg-gray-200 w-full h-full'>
+                              <CustomImage
+                                src={img.thumbnail || img.url || ''}
+                                alt={`${folder.name} preview ${idx + 1}`}
+                                fill
+                                className='object-cover'
+                                sizes='(max-width: 640px) 50vw, (max-width: 768px) 25vw, (max-width: 1024px) 16vw, (max-width: 1280px) 12vw, 10vw'
+                              />
+                            </div>
+                          ))}
+                        </div>
+                      )}
+
+                      {/* Overlay gradient */}
+                      <div className='absolute inset-0 bg-linear-to-t from-black/70 via-black/20 to-transparent' />
+                    </div>
+                  ) : (
+                    // Default folder icon when no preview available
+                    <div className='flex flex-col justify-center items-center bg-linear-to-br from-primary/10 group-hover:from-primary/20 to-primary/5 group-hover:to-primary/10 w-full h-full transition-all duration-300'>
+                      <div className='flex justify-center items-center bg-white shadow-md group-hover:shadow-lg rounded-full w-20 h-20 transition-all duration-300'>
+                        <Folder className='w-10 h-10 text-primary' />
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Folder Name Label */}
+                  <div className='right-0 bottom-0 left-0 absolute bg-linear-to-t from-black/80 to-transparent p-3'>
+                    <div className='flex items-center gap-2'>
+                      <Folder className='w-4 h-4 text-white/90 shrink-0' />
+                      <Typography
+                        variant='body2'
+                        weight='medium'
+                        className='text-white truncate'
+                        title={folder.name}
+                      >
+                        {folder.name}
+                      </Typography>
+                    </div>
+                    {hasPreview && (
+                      <Typography variant='body2' className='mt-0.5 text-white/70 text-xs'>
+                        {previewImages.length} {previewImages.length === 1 ? 'image' : 'images'}
+                      </Typography>
+                    )}
                   </div>
-                  <Typography
-                    variant='body2'
-                    weight='medium'
-                    className='px-4 text-gray-800 text-center truncate'
-                    title={folder.name}
-                  >
-                    {folder.name}
-                  </Typography>
-                </div>
-              </motion.div>
-            ))}
+
+                  {/* Hover overlay */}
+                  <div className='absolute inset-0 bg-primary/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300' />
+                </motion.div>
+              )
+            })}
 
             {/* Images */}
             {images.map((image, index) => (
