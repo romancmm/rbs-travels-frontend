@@ -50,9 +50,8 @@ function GalleryContent({ params }: { params: { pathname?: string[] } }) {
 
   // Convert pathname array to folder path
   // e.g., ['folder1', 'folder2'] -> '/folder1/folder2'
-  const folderPath = !params.pathname || params.pathname.length === 0
-    ? '/'
-    : `/${params.pathname.join('/')}`
+  const folderPath =
+    !params.pathname || params.pathname.length === 0 ? '/' : `/${params.pathname.join('/')}`
 
   // Get display name (last segment of path)
   const displayName = (() => {
@@ -223,10 +222,12 @@ function GalleryContent({ params }: { params: { pathname?: string[] } }) {
             </Typography>
             <Typography variant='body1' className='opacity-90 mx-auto max-w-2xl'>
               {folders.length > 0 && images.length > 0
-                ? `${folders.length} ${folders.length === 1 ? 'folder' : 'folders'} • ${images.length} ${images.length === 1 ? 'image' : 'images'}`
+                ? `${folders.length} ${folders.length === 1 ? 'folder' : 'folders'} • ${
+                    images.length
+                  } ${images.length === 1 ? 'image' : 'images'}`
                 : folders.length > 0
-                  ? `${folders.length} ${folders.length === 1 ? 'folder' : 'folders'}`
-                  : `${images.length} ${images.length === 1 ? 'image' : 'images'}`}
+                ? `${folders.length} ${folders.length === 1 ? 'folder' : 'folders'}`
+                : `${images.length} ${images.length === 1 ? 'image' : 'images'}`}
             </Typography>
           </motion.div>
         </Container>
