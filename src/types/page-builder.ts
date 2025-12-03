@@ -156,6 +156,7 @@ export type PropertyFieldType =
   | 'multi-select'
   | 'repeater'
   | 'datetime'
+  | 'grid-items'
 
 /**
  * Property field configuration

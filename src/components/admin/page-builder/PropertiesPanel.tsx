@@ -9,7 +9,13 @@ import FileUploader from '@/components/common/FileUploader'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from '@/components/ui/select'
 import { Separator } from '@/components/ui/separator'
 import {
   Sheet,
@@ -25,11 +31,15 @@ import { Textarea } from '@/components/ui/textarea'
 import { useBuilderStore } from '@/lib/page-builder/builder-store'
 import { findElementById } from '@/lib/page-builder/builder-utils'
 import type { FlexConfig, GridConfig, VisualConfig } from '@/lib/page-builder/tailwind-generator'
-import { parseClassNameToConfig, updateClassNameAspect } from '@/lib/page-builder/tailwind-generator'
+import {
+  parseClassNameToConfig,
+  updateClassNameAspect
+} from '@/lib/page-builder/tailwind-generator'
 import { componentRegistry } from '@/lib/page-builder/widgets'
 import type { BaseComponent, PropertyField, PropertyPanel } from '@/types/page-builder'
 import { Settings } from 'lucide-react'
 import { useEffect, useState } from 'react'
+import { GridItemsManager } from './GridItemsManager'
 import {
   BackgroundControl,
   BorderControl,
@@ -89,7 +99,9 @@ export function PropertiesPanel() {
       case 'column':
         return 'Column Properties'
       case 'component':
-        return `${componentRegistry.get(selectedElement.element.type)?.label || 'Component'} Properties`
+        return `${
+          componentRegistry.get(selectedElement.element.type)?.label || 'Component'
+        } Properties`
       default:
         return 'Properties'
     }
@@ -104,7 +116,6 @@ export function PropertiesPanel() {
               <Settings className='w-5 h-5 text-primary' />
               <SheetTitle>{getTitle()}</SheetTitle>
             </div>
-
           </div>
           <SheetDescription>
             Use visual tools to configure styling with Tailwind CSS classes
@@ -168,14 +179,19 @@ export function PropertiesPanel() {
           </Button>
         </SheetFooter>
       </SheetContent>
-
     </Sheet>
   )
 }
 
 // ==================== SECTION PROPERTIES ====================
 
-function SectionProperties({ section, onUpdate }: { section: any; onUpdate: (updates: any) => void }) {
+function SectionProperties({
+  section,
+  onUpdate
+}: {
+  section: any
+  onUpdate: (updates: any) => void
+}) {
   const [currentClassName, setCurrentClassName] = useState(section.settings?.className || '')
   const parsedConfig = parseClassNameToConfig(currentClassName)
 
@@ -527,16 +543,31 @@ interface DynamicPropertyFieldsProps {
 function DynamicPropertyFields({ panels, props, onChange }: DynamicPropertyFieldsProps) {
   if (panels.length === 0) return null
 
+  // Filter panels based on dataSource for grid component
+  const filteredPanels = panels.filter((panel) => {
+    // For grid component, conditionally show panels based on dataSource
+    if (props.dataSource === 'api' && panel.id === 'manual-items') {
+      return false // Hide manual items panel in API mode
+    }
+    if (props.dataSource === 'manual' && panel.id === 'api-settings') {
+      return false // Hide API settings panel in manual mode
+    }
+    return true
+  })
+
+  if (filteredPanels.length === 0) return null
+
   // If only one panel, render fields directly
-  if (panels.length === 1) {
+  if (filteredPanels.length === 1) {
     return (
       <div className='space-y-4'>
-        {panels[0].fields.map((field) => (
+        {filteredPanels[0].fields.map((field) => (
           <PropertyFieldRenderer
             key={field.name}
             field={field}
             value={props[field.name]}
             onChange={(value) => onChange(field.name, value)}
+            allProps={props}
           />
         ))}
       </div>
@@ -546,7 +577,7 @@ function DynamicPropertyFields({ panels, props, onChange }: DynamicPropertyField
   // Multiple panels - use accordion or sections
   return (
     <div className='space-y-6'>
-      {panels.map((panel) => (
+      {filteredPanels.map((panel) => (
         <div key={panel.id} className='space-y-4'>
           <div className='pb-2 border-b'>
             <h4 className='font-medium text-sm'>{panel.label}</h4>
@@ -557,6 +588,7 @@ function DynamicPropertyFields({ panels, props, onChange }: DynamicPropertyField
               field={field}
               value={props[field.name]}
               onChange={(value) => onChange(field.name, value)}
+              allProps={props}
             />
           ))}
         </div>
@@ -571,9 +603,15 @@ interface PropertyFieldRendererProps {
   field: PropertyField
   value: any
   onChange: (value: any) => void
+  allProps?: Record<string, any>
 }
 
-function PropertyFieldRenderer({ field, value, onChange }: PropertyFieldRendererProps) {
+function PropertyFieldRenderer({
+  field,
+  value,
+  onChange,
+  allProps = {}
+}: PropertyFieldRendererProps) {
   const renderField = () => {
     switch (field.type) {
       case 'text':
@@ -614,19 +652,17 @@ function PropertyFieldRenderer({ field, value, onChange }: PropertyFieldRenderer
       case 'toggle':
         return (
           <div className='flex items-center gap-2'>
-            <Switch
-              checked={value ?? field.defaultValue ?? false}
-              onCheckedChange={onChange}
-            />
-            <span className='text-muted-foreground text-sm'>
-              {value ? 'Enabled' : 'Disabled'}
-            </span>
+            <Switch checked={value ?? field.defaultValue ?? false} onCheckedChange={onChange} />
+            <span className='text-muted-foreground text-sm'>{value ? 'Enabled' : 'Disabled'}</span>
           </div>
         )
 
       case 'select':
         return (
-          <Select value={value?.toString() || field.defaultValue?.toString()} onValueChange={onChange}>
+          <Select
+            value={value?.toString() || field.defaultValue?.toString()}
+            onValueChange={onChange}
+          >
             <SelectTrigger>
               <SelectValue placeholder={field.placeholder || 'Select option'} />
             </SelectTrigger>
@@ -707,6 +743,15 @@ function PropertyFieldRenderer({ field, value, onChange }: PropertyFieldRenderer
           </div>
         )
 
+      case 'grid-items':
+        return (
+          <GridItemsManager
+            value={value || []}
+            onChange={onChange}
+            columns={allProps.columns || 3}
+          />
+        )
+
       default:
         return (
           <Input
@@ -725,9 +770,7 @@ function PropertyFieldRenderer({ field, value, onChange }: PropertyFieldRenderer
         {field.required && <span className='ml-1 text-destructive'>*</span>}
       </Label>
       {renderField()}
-      {field.description && (
-        <p className='text-muted-foreground text-xs'>{field.description}</p>
-      )}
+      {field.description && <p className='text-muted-foreground text-xs'>{field.description}</p>}
     </div>
   )
 }

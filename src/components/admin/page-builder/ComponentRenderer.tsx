@@ -11,6 +11,7 @@ import { componentRegistry } from '@/lib/page-builder/widgets'
 import { cn } from '@/lib/utils'
 import type { BaseComponent } from '@/types/page-builder'
 import { useDndContext } from '@dnd-kit/core'
+import { GridItemRenderer } from './GridItemRenderer'
 
 interface ComponentRendererProps {
   component: BaseComponent
@@ -69,10 +70,10 @@ export function ComponentRenderer({
         isSelected && 'ring-2 ring-orange-500 ring-offset-2',
         isHovered && !isSelected && 'ring-2 ring-orange-300 ring-offset-2'
       )}
-      onClick={(e) => {
-        e.stopPropagation()
-        selectElement(component.id, 'component')
-      }}
+      // onClick={(e) => {
+      //   e.stopPropagation()
+      //   selectElement(component.id, 'component')
+      // }}
       onMouseEnter={(e) => {
         e.stopPropagation()
         hoverElement(component.id, 'component')
@@ -162,7 +163,13 @@ export function ComponentRenderer({
       {/* Component Content Preview */}
       <div className={cn('bg-white p-4 rounded', component.settings?.className)}>
         {componentDef ? (
-          <ComponentPreview component={component} definition={componentDef} />
+          <ComponentPreview
+            component={component}
+            definition={componentDef}
+            sectionId={sectionId}
+            rowId={rowId}
+            columnId={columnId}
+          />
         ) : (
           <div className='text-gray-500 text-sm'>Unknown component: {component.type}</div>
         )}
@@ -177,10 +184,16 @@ export function ComponentRenderer({
  */
 function ComponentPreview({
   component,
-  definition
+  definition,
+  sectionId,
+  rowId,
+  columnId
 }: {
   component: BaseComponent
   definition: ReturnType<typeof componentRegistry.get>
+  sectionId: string
+  rowId: string
+  columnId: string
 }) {
   if (!definition) return null
 
@@ -439,14 +452,14 @@ function ComponentPreview({
               <div className='text-muted-foreground text-xs'>
                 {dataSource === 'api'
                   ? `API Mode: ${cardType}`
-                  : `Manual Mode: ${gridItems.length} items - Click to edit grid items in Properties Panel`}
+                  : `Manual Mode: ${gridItems.length} items - Drag & drop or click + to add components`}
               </div>
             </div>
             <div className='bg-blue-200 px-2 py-1 rounded font-medium text-blue-700 text-xs'>
               {columns} columns
             </div>
           </div>
-          <div className={cn('gap-4 grid', `grid-cols-${Math.min(columns, 3)}`)}>
+          <div className={cn('gap-4 grid', `grid-cols-${Math.min(columns, 4)}`)}>
             {dataSource === 'api'
               ? // API Mode Preview
                 [1, 2, 3].map((i) => (
@@ -458,30 +471,17 @@ function ComponentPreview({
                     <div className='text-muted-foreground text-xs'>Preview from API...</div>
                   </div>
                 ))
-              : // Manual Mode Preview
-                gridItems.slice(0, 3).map((item: any, i: number) => (
-                  <div key={i} className='space-y-2 bg-white p-3 border rounded min-h-[100px]'>
-                    <div className='flex justify-between items-center'>
-                      <div className='font-medium text-sm'>Grid Item {i + 1}</div>
-                      <div className='bg-blue-100 px-2 py-0.5 rounded font-medium text-[10px] text-blue-700'>
-                        {item.components?.length || 0} components
-                      </div>
-                    </div>
-                    {item.components && item.components.length > 0 ? (
-                      <div className='space-y-1 text-[10px] text-muted-foreground'>
-                        {item.components.slice(0, 3).map((comp: any, idx: number) => (
-                          <div key={idx} className='bg-gray-100 px-2 py-1 rounded truncate'>
-                            {comp.type}
-                          </div>
-                        ))}
-                        {item.components.length > 3 && (
-                          <div className='text-center'>+{item.components.length - 3} more</div>
-                        )}
-                      </div>
-                    ) : (
-                      <div className='py-4 text-muted-foreground text-xs text-center'>Empty</div>
-                    )}
-                  </div>
+              : // Manual Mode - Use GridItemRenderer for full functionality
+                gridItems.map((item: any, i: number) => (
+                  <GridItemRenderer
+                    key={item.id || i}
+                    gridItem={item}
+                    gridItemIndex={i}
+                    gridComponentId={component.id}
+                    sectionId={sectionId}
+                    rowId={rowId}
+                    columnId={columnId}
+                  />
                 ))}
           </div>
         </div>

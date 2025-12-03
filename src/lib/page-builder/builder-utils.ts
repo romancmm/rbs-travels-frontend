@@ -52,10 +52,23 @@ export const findElementById = (
           return { type: 'column', element: column, parent: row }
         }
 
-        // Search components
+        // Search components in column
         for (const component of column.components) {
           if (component.id === id) {
             return { type: 'component', element: component, parent: column }
+          }
+
+          // Search components inside grid items (for grid components)
+          if (component.type === 'grid' && component.props?.gridItems) {
+            for (const gridItem of component.props.gridItems) {
+              if (gridItem.components) {
+                for (const gridComponent of gridItem.components) {
+                  if (gridComponent.id === id) {
+                    return { type: 'component', element: gridComponent, parent: component }
+                  }
+                }
+              }
+            }
           }
         }
       }
@@ -500,9 +513,39 @@ export const updateComponent = (
         ...row,
         columns: row.columns.map((column) => ({
           ...column,
-          components: column.components.map((component) =>
-            component.id === componentId ? { ...component, ...updates } : component
-          )
+          components: column.components.map((component) => {
+            // Update component if ID matches
+            if (component.id === componentId) {
+              return { ...component, ...updates }
+            }
+
+            // Update components inside grid items (for grid components)
+            if (component.type === 'grid' && component.props?.gridItems) {
+              const updatedGridItems = component.props.gridItems.map((gridItem: any) => {
+                if (gridItem.components) {
+                  return {
+                    ...gridItem,
+                    components: gridItem.components.map((gridComponent: any) =>
+                      gridComponent.id === componentId
+                        ? { ...gridComponent, ...updates }
+                        : gridComponent
+                    )
+                  }
+                }
+                return gridItem
+              })
+
+              return {
+                ...component,
+                props: {
+                  ...component.props,
+                  gridItems: updatedGridItems
+                }
+              }
+            }
+
+            return component
+          })
         }))
       }))
     }))
@@ -598,31 +641,99 @@ export const moveComponent = (
 export const duplicateComponent = (content: PageContent, componentId: string): PageContent => {
   let columnId: string | null = null
   let componentIndex: number = -1
+  let gridComponentId: string | null = null
+  let gridItemIndex: number = -1
 
   // Find the component and its parent column
   for (const section of content.sections) {
     for (const row of section.rows) {
       for (const column of row.columns) {
+        // Check direct components in column
         const index = column.components.findIndex((c) => c.id === componentId)
         if (index !== -1) {
           columnId = column.id
           componentIndex = index
           break
         }
+
+        // Check components inside grid items
+        for (const component of column.components) {
+          if (component.type === 'grid' && component.props?.gridItems) {
+            for (let i = 0; i < component.props.gridItems.length; i++) {
+              const gridItem = component.props.gridItems[i]
+              if (gridItem.components) {
+                const gridCompIndex = gridItem.components.findIndex(
+                  (c: any) => c.id === componentId
+                )
+                if (gridCompIndex !== -1) {
+                  gridComponentId = component.id
+                  gridItemIndex = i
+                  componentIndex = gridCompIndex
+                  break
+                }
+              }
+            }
+            if (gridComponentId) break
+          }
+        }
+        if (gridComponentId) break
       }
-      if (columnId) break
+      if (columnId || gridComponentId) break
     }
-    if (columnId) break
+    if (columnId || gridComponentId) break
   }
 
-  if (!columnId || componentIndex === -1) return content
+  if (!columnId && !gridComponentId) return content
+  if (componentIndex === -1) return content
 
   const result = findElementById(content, componentId)
   if (!result) return content
 
   const duplicatedComponent = deepCloneWithNewIds(result.element) as Component
 
-  return addComponent(content, columnId, duplicatedComponent, componentIndex + 1)
+  // If component is in a grid item, add it to the same grid item
+  if (gridComponentId && gridItemIndex !== -1) {
+    return {
+      ...content,
+      sections: content.sections.map((section) => ({
+        ...section,
+        rows: section.rows.map((row) => ({
+          ...row,
+          columns: row.columns.map((column) => ({
+            ...column,
+            components: column.components.map((component) => {
+              if (component.id === gridComponentId && component.props?.gridItems) {
+                const updatedGridItems = component.props.gridItems.map(
+                  (gridItem: any, idx: number) => {
+                    if (idx === gridItemIndex && gridItem.components) {
+                      const newComponents = [...gridItem.components]
+                      newComponents.splice(componentIndex + 1, 0, duplicatedComponent)
+                      return {
+                        ...gridItem,
+                        components: newComponents
+                      }
+                    }
+                    return gridItem
+                  }
+                )
+                return {
+                  ...component,
+                  props: {
+                    ...component.props,
+                    gridItems: updatedGridItems
+                  }
+                }
+              }
+              return component
+            })
+          }))
+        }))
+      }))
+    }
+  }
+
+  // Otherwise add it to column
+  return addComponent(content, columnId!, duplicatedComponent, componentIndex + 1)
 }
 
 // ==================== UTILITY FUNCTIONS ====================

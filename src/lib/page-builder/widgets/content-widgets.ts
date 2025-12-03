@@ -170,6 +170,18 @@ componentRegistry.register({
       ]
     },
     {
+      id: 'manual-items',
+      label: 'Grid Items (Manual Mode)',
+      fields: [
+        {
+          name: 'gridItems',
+          label: 'Grid Items',
+          type: 'grid-items',
+          description: 'Add and manage grid items. Each item can contain multiple components.'
+        }
+      ]
+    },
+    {
       id: 'card-style',
       label: 'Card Styling',
       fields: [
