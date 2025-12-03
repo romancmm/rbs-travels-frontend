@@ -422,35 +422,65 @@ function ComponentPreview({
       )
 
     // ==================== CONTENT WIDGETS ====================
-    case 'blog-grid':
+    case 'grid': {
+      const {
+        title = 'Grid Section',
+        dataSource = 'api',
+        cardType = 'BlogCard',
+        columns = 3,
+        gridItems = []
+      } = (component.props || {}) as any
+
+      return (
+        <div className='space-y-4 bg-blue-50 p-6 border-2 border-blue-300 border-dashed rounded-lg'>
+          <div className='flex justify-between items-center'>
+            <div>
+              <div className='font-semibold text-lg'>{title}</div>
+              <div className='text-muted-foreground text-xs'>
+                {dataSource === 'api'
+                  ? `API Mode: ${cardType}`
+                  : `Manual Mode: ${gridItems.length} items`}
+              </div>
+            </div>
+            <div className='bg-blue-200 px-2 py-1 rounded font-medium text-blue-700 text-xs'>
+              {columns} columns
+            </div>
+          </div>
+          <div className={cn('gap-4 grid', `grid-cols-${Math.min(columns, 3)}`)}>
+            {dataSource === 'api'
+              ? // API Mode Preview
+                [1, 2, 3].map((i) => (
+                  <div key={i} className='space-y-2 bg-white p-3 border rounded'>
+                    <div className='bg-gray-200 rounded aspect-video'></div>
+                    <div className='font-medium text-sm'>
+                      {cardType} {i}
+                    </div>
+                    <div className='text-muted-foreground text-xs'>Preview from API...</div>
+                  </div>
+                ))
+              : // Manual Mode Preview
+                gridItems.slice(0, 3).map((item: any, i: number) => (
+                  <div key={i} className='space-y-2 bg-white p-3 border rounded'>
+                    <div className='bg-gray-200 rounded aspect-video'></div>
+                    <div className='font-medium text-sm'>{item.cardType}</div>
+                    <div className='text-muted-foreground text-xs'>Custom item {i + 1}</div>
+                  </div>
+                ))}
+          </div>
+        </div>
+      )
+    }
+
     case 'blog-carousel':
       return (
         <div className='space-y-4 bg-blue-50 p-6 border-2 border-blue-300 border-dashed rounded-lg'>
-          <div className='font-semibold text-lg'>
-            {component.type === 'blog-grid' ? 'Blog Grid' : 'Blog Carousel'}
-          </div>
+          <div className='font-semibold text-lg'>Blog Carousel</div>
           <div className='gap-4 grid grid-cols-3'>
             {[1, 2, 3].map((i) => (
               <div key={i} className='space-y-2 bg-white p-3 border rounded'>
                 <div className='bg-gray-200 rounded aspect-video'></div>
                 <div className='font-medium text-sm'>Blog Post {i}</div>
                 <div className='text-muted-foreground text-xs'>Preview text...</div>
-              </div>
-            ))}
-          </div>
-        </div>
-      )
-
-    case 'product-grid':
-      return (
-        <div className='space-y-4 bg-green-50 p-6 border-2 border-green-300 border-dashed rounded-lg'>
-          <div className='font-semibold text-lg'>Product Grid</div>
-          <div className='gap-4 grid grid-cols-3'>
-            {[1, 2, 3].map((i) => (
-              <div key={i} className='space-y-2 bg-white p-3 border rounded'>
-                <div className='bg-gray-200 rounded aspect-square'></div>
-                <div className='font-medium text-sm'>Product {i}</div>
-                <div className='font-bold text-green-600 text-sm'>$99.00</div>
               </div>
             ))}
           </div>

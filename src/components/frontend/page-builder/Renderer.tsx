@@ -348,10 +348,53 @@ function renderComponent(component: BaseComponent) {
     }
 
     // ==================== CONTENT WIDGETS ====================
-    case 'blog-grid':
-    case 'blog-carousel': {
-      const { title, subtitle, showTitle = true, columns = 3 } = props as any
-      const isCarousel = component.type === 'blog-carousel'
+    case 'grid': {
+      const {
+        title,
+        subtitle,
+        showTitle = true,
+        columns = 3,
+        gap = '24',
+        dataSource = 'api',
+        apiEndpoint,
+        cardType = 'BlogCard',
+        gridItems = [],
+        cardStyle = 'default',
+        hoverEffect = 'lift'
+      } = props as any
+
+      // TODO: Implement API fetching with useAsync hook
+      // For now, show preview/placeholder
+      const items = dataSource === 'api' ? [] : gridItems
+
+      const getHoverClass = () => {
+        switch (hoverEffect) {
+          case 'lift':
+            return 'hover:-translate-y-2 hover:shadow-xl'
+          case 'zoom':
+            return 'hover:scale-105'
+          case 'glow':
+            return 'hover:shadow-2xl hover:shadow-primary/20'
+          default:
+            return ''
+        }
+      }
+
+      const getCardClass = () => {
+        const base = 'bg-white rounded-lg overflow-hidden transition-all duration-300'
+        const hover = getHoverClass()
+        switch (cardStyle) {
+          case 'minimal':
+            return `${base} ${hover}`
+          case 'bordered':
+            return `${base} border-2 ${hover}`
+          case 'elevated':
+            return `${base} shadow-lg ${hover}`
+          default:
+            return `${base} border ${hover}`
+        }
+      }
+
       return (
         <div key={component.id} className={cn('space-y-6', componentClassName)}>
           {showTitle && title && (
@@ -366,36 +409,56 @@ function renderComponent(component: BaseComponent) {
               )}
             </div>
           )}
-          <div className={cn('gap-6 grid', !isCarousel && `grid-cols-1 md:grid-cols-${columns}`)}>
-            {[1, 2, 3].map((i) => (
-              <div
-                key={i}
-                className='bg-white hover:shadow-lg border rounded-lg overflow-hidden transition-shadow'
-              >
-                <div className='bg-gray-200 aspect-video' />
-                <div className='space-y-2 p-4'>
-                  <Typography variant='h5' weight='semibold'>
-                    Blog Post Title {i}
-                  </Typography>
-                  <Typography variant='body2' className='text-gray-600'>
-                    Preview excerpt of the blog post content goes here...
-                  </Typography>
-                  <CustomLink href='#' className='text-primary text-sm hover:underline'>
-                    Read More →
-                  </CustomLink>
-                </div>
+          <div
+            className={cn('grid')}
+            style={{
+              gap: `${gap}px`,
+              gridTemplateColumns: `repeat(auto-fill, minmax(min(300px, 100%), 1fr))`,
+              ...(columns && {
+                gridTemplateColumns: `repeat(${columns}, 1fr)`
+              })
+            }}
+          >
+            {dataSource === 'api' ? (
+              // API Mode - Show placeholder or fetch from API
+              <div className='col-span-full py-12 text-gray-500 text-center'>
+                <Typography variant='body1'>
+                  API Mode: {cardType} from {apiEndpoint || 'API endpoint'}
+                </Typography>
+                <Typography variant='body2' className='mt-2 text-xs'>
+                  Data will be fetched from API in production
+                </Typography>
               </div>
-            ))}
+            ) : // Manual Mode - Render custom grid items
+            items.length > 0 ? (
+              items.map((item: any, i: number) => (
+                <div key={item.id || i} className={getCardClass()}>
+                  {/* Render card based on cardType */}
+                  <div className='space-y-2 p-4'>
+                    <Typography variant='h5' weight='semibold'>
+                      {item.props?.title || `${item.cardType} ${i + 1}`}
+                    </Typography>
+                    <Typography variant='body2' className='text-gray-600'>
+                      {item.props?.description || 'Custom grid item content'}
+                    </Typography>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <div className='col-span-full py-12 text-gray-500 text-center'>
+                <Typography variant='body1'>No grid items added yet</Typography>
+              </div>
+            )}
           </div>
         </div>
       )
     }
 
-    case 'product-grid': {
-      const { title, subtitle, columns = 3 } = props as any
+    case 'blog-carousel': {
+      const { title, subtitle, showTitle = true, columns = 3, cardType = 'BlogCard' } = props as any
       return (
         <div key={component.id} className={cn('space-y-6', componentClassName)}>
-          {title && (
+          {showTitle && title && (
             <div className='space-y-2 text-center'>
               <Typography variant='h3' weight='bold'>
                 {title}
@@ -407,23 +470,23 @@ function renderComponent(component: BaseComponent) {
               )}
             </div>
           )}
-          <div className={cn('gap-6 grid', `grid-cols-1 md:grid-cols-${columns}`)}>
+          <div className='gap-6 grid grid-cols-1 md:grid-cols-3'>
             {[1, 2, 3].map((i) => (
               <div
                 key={i}
                 className='bg-white hover:shadow-lg border rounded-lg overflow-hidden transition-shadow'
               >
-                <div className='bg-gray-200 aspect-square' />
+                <div className='bg-gray-200 aspect-video' />
                 <div className='space-y-2 p-4'>
                   <Typography variant='h5' weight='semibold'>
-                    Product Name {i}
+                    {cardType} {i}
                   </Typography>
-                  <Typography variant='h4' weight='bold' className='text-green-600'>
-                    $99.00
+                  <Typography variant='body2' className='text-gray-600'>
+                    Preview excerpt of the content goes here...
                   </Typography>
-                  <button className='bg-primary hover:bg-primary/90 py-2 rounded-lg w-full text-white'>
-                    Add to Cart
-                  </button>
+                  <CustomLink href='#' className='text-primary text-sm hover:underline'>
+                    Read More →
+                  </CustomLink>
                 </div>
               </div>
             ))}

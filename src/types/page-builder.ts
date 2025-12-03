@@ -39,9 +39,8 @@ export type ComponentType =
   | 'tabs'
   | 'carousel'
   // Dynamic Content
-  | 'blog-grid'
+  | 'grid' // Unified grid component (replaces blog-grid, product-grid)
   | 'blog-carousel'
-  | 'product-grid'
   | 'tour-packages'
   | 'testimonials'
   | 'team-members'
@@ -578,4 +577,70 @@ export interface PageTemplate {
   content: PageContent
   tags: string[]
   previewUrl?: string
+}
+
+// ==================== GRID COMPONENT TYPES ====================
+
+/**
+ * Grid data source types
+ */
+export type GridDataSource = 'api' | 'manual'
+
+/**
+ * Card/Component types that can be rendered in grid items
+ */
+export type GridCardType =
+  | 'BlogCard'
+  | 'ProductCard'
+  | 'ServiceCard'
+  | 'TourPackageCard'
+  | 'TestimonialCard'
+  | 'TeamMemberCard'
+  | 'PricingCard'
+  | 'IconBox'
+  | 'FeatureCard'
+  | 'PortfolioCard'
+  | 'custom'
+
+/**
+ * Grid item for manual mode
+ */
+export interface GridItem {
+  id: string
+  order: number
+  cardType: GridCardType
+  props: Record<string, any>
+}
+
+/**
+ * Grid component props
+ */
+export interface GridComponentProps {
+  // Display
+  title?: string
+  subtitle?: string
+  showTitle?: boolean
+
+  // Layout
+  columns: number // 1-6
+  gap?: string // spacing
+  layout?: 'grid' | 'masonry'
+
+  // Data Source
+  dataSource: GridDataSource
+
+  // API Mode
+  apiEndpoint?: string
+  apiParams?: Record<string, any>
+  itemsPerPage?: number
+  enablePagination?: boolean
+  cardType?: GridCardType // Which card component to use for API data
+
+  // Manual Mode
+  gridItems?: GridItem[]
+
+  // Card Display Options (passed to card components)
+  cardProps?: Record<string, any>
+  cardStyle?: 'default' | 'minimal' | 'bordered' | 'elevated'
+  hoverEffect?: 'none' | 'lift' | 'zoom' | 'glow'
 }
