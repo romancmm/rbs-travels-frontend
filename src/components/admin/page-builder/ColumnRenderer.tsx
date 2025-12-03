@@ -208,6 +208,10 @@ export function ColumnRenderer({ column, sectionId, rowId }: ColumnRendererProps
             )}
           >
             <div
+              onClick={(e) => {
+                e.stopPropagation()
+                selectElement(column.id, 'column')
+              }}
               className={cn(
                 'flex flex-col items-center gap-2 p-6 border-2 border-dashed rounded-lg min-h-20 text-center transition-all',
                 isOver ? 'bg-blue-50 border-blue-400 scale-105' : 'bg-gray-50 border-gray-300'

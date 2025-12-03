@@ -14,6 +14,7 @@ import type {
   Row as RowType,
   Section as SectionType
 } from '@/types/page-builder'
+import parse from 'html-react-parser'
 
 // Global col-span map
 const COL_SPAN: Record<number, string> = {
@@ -78,7 +79,13 @@ function renderComponent(component: BaseComponent) {
       )
     }
     case 'text': {
-      const { text = '', alignment = 'left', variant = 'body1', weight = 'normal' } = props as any
+      const {
+        text = '',
+        alignment = 'left',
+        variant = 'body1',
+        weight = 'normal',
+        isRichText = false
+      } = props as any
       return (
         <Typography
           key={component.id}
@@ -87,7 +94,7 @@ function renderComponent(component: BaseComponent) {
           align={alignment as any}
           className={componentClassName}
         >
-          {text}
+          {isRichText ? parse(text) : text}
         </Typography>
       )
     }

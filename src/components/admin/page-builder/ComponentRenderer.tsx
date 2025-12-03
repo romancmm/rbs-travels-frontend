@@ -2,6 +2,7 @@
 
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
+import parse from 'html-react-parser'
 import { Copy, GripVertical, Settings, Trash2 } from 'lucide-react'
 
 import { Typography } from '@/components/common/typography'
@@ -161,7 +162,13 @@ export function ComponentRenderer({
       </div>
 
       {/* Component Content Preview */}
-      <div className={cn('bg-white p-4 rounded', component.settings?.className)}>
+      <div
+        className={cn('bg-white p-4 rounded', component.settings?.className)}
+        onClick={(e) => {
+          e.stopPropagation()
+          selectElement(component.id, 'component')
+        }}
+      >
         {componentDef ? (
           <ComponentPreview
             component={component}
@@ -226,7 +233,8 @@ function ComponentPreview({
         text = 'Lorem ipsum dolor sit amet...',
         alignment = 'left',
         variant = 'body1',
-        weight = 'normal'
+        weight = 'normal',
+        isRichText = false
       } = component.props as any
       const componentClassName = component.settings?.className || ''
 
@@ -237,7 +245,7 @@ function ComponentPreview({
           align={alignment as any}
           className={componentClassName}
         >
-          {text}
+          {isRichText ? parse(text) : text}
         </Typography>
       )
     }
@@ -461,12 +469,12 @@ function ComponentPreview({
           </div>
           <div className={cn('gap-4 grid', `grid-cols-${Math.min(columns, 4)}`)}>
             {dataSource === 'api'
-              ? // API Mode Preview
-                [1, 2, 3].map((i) => (
+              ? // API Mode Preview - Render items matching columns count
+                Array.from({ length: columns }, (_, i) => (
                   <div key={i} className='space-y-2 bg-white p-3 border rounded'>
                     <div className='bg-gray-200 rounded aspect-video'></div>
                     <div className='font-medium text-sm'>
-                      {cardType} {i}
+                      {cardType} {i + 1}
                     </div>
                     <div className='text-muted-foreground text-xs'>Preview from API...</div>
                   </div>

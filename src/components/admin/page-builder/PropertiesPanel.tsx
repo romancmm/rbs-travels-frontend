@@ -5,6 +5,7 @@
 
 'use client'
 
+import TextEditor from '@/components/admin/common/TextEditor'
 import FileUploader from '@/components/common/FileUploader'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -568,6 +569,7 @@ function DynamicPropertyFields({ panels, props, onChange }: DynamicPropertyField
             value={props[field.name]}
             onChange={(value) => onChange(field.name, value)}
             allProps={props}
+            onPropChange={onChange}
           />
         ))}
       </div>
@@ -589,6 +591,7 @@ function DynamicPropertyFields({ panels, props, onChange }: DynamicPropertyField
               value={props[field.name]}
               onChange={(value) => onChange(field.name, value)}
               allProps={props}
+              onPropChange={onChange}
             />
           ))}
         </div>
@@ -604,14 +607,26 @@ interface PropertyFieldRendererProps {
   value: any
   onChange: (value: any) => void
   allProps?: Record<string, any>
+  onPropChange?: (key: string, value: any) => void
 }
 
 function PropertyFieldRenderer({
   field,
   value,
   onChange,
-  allProps = {}
+  allProps = {},
+  onPropChange
 }: PropertyFieldRendererProps) {
+  const [isRichText, setIsRichText] = useState(allProps.isRichText || false)
+
+  const handleToggleRichText = (checked: boolean) => {
+    setIsRichText(checked)
+    // Update the isRichText prop in parent
+    if (onPropChange) {
+      onPropChange('isRichText', checked)
+    }
+  }
+
   const renderField = () => {
     switch (field.type) {
       case 'text':
@@ -626,6 +641,40 @@ function PropertyFieldRenderer({
 
       case 'textarea':
       case 'rich-text':
+        // Special handling for text content field - add rich text toggle
+        if (field.name === 'text') {
+          return (
+            <div className='space-y-3'>
+              <div className='flex justify-between items-center'>
+                <span className='text-muted-foreground text-xs'>
+                  {isRichText ? 'Rich Text Mode' : 'Plain Text Mode'}
+                </span>
+                <Switch checked={isRichText} onCheckedChange={handleToggleRichText} />
+              </div>
+              {isRichText ? (
+                <TextEditor
+                  value={value || ''}
+                  onChange={onChange}
+                  placeholder='Enter rich text content'
+                  height={300}
+                />
+              ) : (
+                <Textarea
+                  value={value || ''}
+                  onChange={(e) => onChange(e.target.value)}
+                  placeholder={field.placeholder || 'Enter plain text'}
+                  rows={6}
+                />
+              )}
+              <p className='text-muted-foreground text-xs'>
+                {isRichText
+                  ? 'Rich text mode: Use the editor toolbar for formatting'
+                  : 'Plain text mode: No HTML formatting'}
+              </p>
+            </div>
+          )
+        }
+        // Default textarea rendering for other fields
         return (
           <Textarea
             value={value || ''}
@@ -930,15 +979,47 @@ function HeadingProperties({ props, onChange }: any) {
 }
 
 function TextProperties({ props, onChange }: any) {
+  const [isRichText, setIsRichText] = useState(props.isRichText || false)
+
+  const handleToggleRichText = (checked: boolean) => {
+    setIsRichText(checked)
+    onChange('isRichText', checked)
+  }
+
   return (
     <div className='space-y-4'>
-      <div className='space-y-2'>
+      <div className='flex justify-between items-center'>
         <Label>Text Content</Label>
-        <Input
-          value={props.text || ''}
-          onChange={(e) => onChange('text', e.target.value)}
-          placeholder='Enter text'
-        />
+        <div className='flex items-center gap-2'>
+          <span className='text-muted-foreground text-xs'>
+            {isRichText ? 'Rich Text' : 'Plain Text'}
+          </span>
+          <Switch checked={isRichText} onCheckedChange={handleToggleRichText} />
+        </div>
+      </div>
+
+      <div className='space-y-2'>
+        {isRichText ? (
+          <Textarea
+            value={props.text || ''}
+            onChange={(e) => onChange('text', e.target.value)}
+            placeholder='Enter rich text content (HTML supported)'
+            rows={8}
+            className='font-mono text-sm'
+          />
+        ) : (
+          <Textarea
+            value={props.text || ''}
+            onChange={(e) => onChange('text', e.target.value)}
+            placeholder='Enter plain text'
+            rows={6}
+          />
+        )}
+        <p className='text-muted-foreground text-xs'>
+          {isRichText
+            ? 'Rich text mode: HTML tags are supported'
+            : 'Plain text mode: No HTML formatting'}
+        </p>
       </div>
     </div>
   )
