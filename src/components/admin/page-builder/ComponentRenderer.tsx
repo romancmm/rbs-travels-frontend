@@ -5,6 +5,7 @@ import { CSS } from '@dnd-kit/utilities'
 import parse from 'html-react-parser'
 import { Copy, GripVertical, Settings, Trash2 } from 'lucide-react'
 
+import { IconOrImage } from '@/components/common/IconOrImage'
 import { Typography } from '@/components/common/typography'
 import { Button } from '@/components/ui/button'
 import { useBuilderStore } from '@/lib/page-builder/builder-store'
@@ -238,6 +239,22 @@ function ComponentPreview({
       } = component.props as any
       const componentClassName = component.settings?.className || ''
 
+      if (isRichText) {
+        return (
+          <div
+            className={cn(
+              'max-w-none prose prose-sm',
+              alignment === 'center' && 'text-center',
+              alignment === 'right' && 'text-right',
+              alignment === 'justify' && 'text-justify',
+              componentClassName
+            )}
+          >
+            {parse(text)}
+          </div>
+        )
+      }
+
       return (
         <Typography
           variant={variant as any}
@@ -245,7 +262,7 @@ function ComponentPreview({
           align={alignment as any}
           className={componentClassName}
         >
-          {isRichText ? parse(text) : text}
+          {text}
         </Typography>
       )
     }
@@ -690,20 +707,58 @@ function ComponentPreview({
         </div>
       )
 
-    case 'icon-box':
+    case 'icon-box': {
+      const {
+        icon = 'Star',
+        iconType = 'icon',
+        title = 'Icon Box Title',
+        description = 'Description text here',
+        iconSize = 'large',
+        iconColor = 'primary',
+        layout = 'vertical',
+        alignment = 'center'
+      } = component.props as any
+
+      const sizeMap = {
+        small: 'md',
+        medium: 'lg',
+        large: 'xl',
+        xlarge: '2xl'
+      } as const
+
       return (
-        <div className='bg-amber-50 p-6 border-2 border-amber-300 border-dashed rounded-lg'>
-          <div className='flex items-center gap-4'>
-            <div className='flex justify-center items-center bg-blue-100 rounded-full w-16 h-16'>
-              <span className='text-2xl'>📦</span>
-            </div>
+        <div
+          className={cn(
+            'bg-amber-50 p-6 border-2 border-amber-300 border-dashed rounded-lg',
+            alignment === 'center' && 'text-center',
+            alignment === 'right' && 'text-right'
+          )}
+        >
+          <div
+            className={cn(
+              'flex items-center gap-4',
+              layout === 'vertical' && 'flex-col',
+              layout === 'horizontal' && 'flex-row',
+              alignment === 'center' && layout === 'vertical' && 'items-center',
+              alignment === 'left' && 'items-start',
+              alignment === 'right' && 'items-end'
+            )}
+          >
+            <IconOrImage
+              icon={icon}
+              alt={title}
+              size={sizeMap[iconSize as keyof typeof sizeMap] || 'lg'}
+              variant='contained'
+              color={iconColor as any}
+            />
             <div className='flex-1'>
-              <div className='font-bold'>Icon Box Title</div>
-              <p className='text-muted-foreground text-sm'>Description text here</p>
+              <div className='font-bold'>{title}</div>
+              <p className='text-muted-foreground text-sm'>{description}</p>
             </div>
           </div>
         </div>
       )
+    }
 
     default:
       return <div className='text-gray-500 text-sm'>Component: {component.type}</div>

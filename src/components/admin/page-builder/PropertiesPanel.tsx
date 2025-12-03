@@ -5,6 +5,7 @@
 
 'use client'
 
+import IconPickerModal from '@/components/admin/common/IconPickerModal'
 import TextEditor from '@/components/admin/common/TextEditor'
 import FileUploader from '@/components/common/FileUploader'
 import { Button } from '@/components/ui/button'
@@ -752,6 +753,23 @@ function PropertyFieldRenderer({
             size='medium'
           />
         )
+
+      case 'icon-picker': {
+        const iconType = allProps?.iconType || 'icon'
+        return (
+          <div className='space-y-2'>
+            {iconType === 'image' ? (
+              <FileUploader
+                value={value || ''}
+                onChangeAction={(val: string | string[]) => onChange(val)}
+                size='small'
+              />
+            ) : (
+              <IconPickerModal value={value || ''} onChange={(val) => onChange(val)} />
+            )}
+          </div>
+        )
+      }
 
       case 'multi-select':
         return (

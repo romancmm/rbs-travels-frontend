@@ -3,6 +3,7 @@
 import { Container } from '@/components/common/container'
 import CustomImage from '@/components/common/CustomImage'
 import CustomLink from '@/components/common/CustomLink'
+import { IconOrImage } from '@/components/common/IconOrImage'
 import { Section } from '@/components/common/section'
 import { Typography } from '@/components/common/typography'
 import GridWithAPI from '@/components/frontend/page-builder/GridWithAPI'
@@ -86,6 +87,24 @@ function renderComponent(component: BaseComponent) {
         weight = 'normal',
         isRichText = false
       } = props as any
+
+      if (isRichText) {
+        return (
+          <div
+            key={component.id}
+            className={cn(
+              'max-w-none prose prose-sm',
+              alignment === 'center' && 'text-center',
+              alignment === 'right' && 'text-right',
+              alignment === 'justify' && 'text-justify',
+              componentClassName
+            )}
+          >
+            {parse(text)}
+          </div>
+        )
+      }
+
       return (
         <Typography
           key={component.id}
@@ -94,7 +113,7 @@ function renderComponent(component: BaseComponent) {
           align={alignment as any}
           className={componentClassName}
         >
-          {isRichText ? parse(text) : text}
+          {text}
         </Typography>
       )
     }
@@ -957,29 +976,68 @@ function renderComponent(component: BaseComponent) {
 
     case 'icon-box': {
       const {
-        icon = '📦',
+        icon = 'Star',
+        iconType = 'icon',
         title = 'Icon Box Title',
         description = 'Description text goes here',
-        layout = 'horizontal'
+        iconSize = 'large',
+        iconColor = 'primary',
+        layout = 'horizontal',
+        alignment = 'center',
+        link = '',
+        linkText = 'Learn More'
       } = props as any
-      return (
+
+      const sizeMap = {
+        small: 'md',
+        medium: 'lg',
+        large: 'xl',
+        xlarge: '2xl'
+      } as const
+
+      const content = (
         <div
-          key={component.id}
           className={cn(
-            'bg-white p-6 border rounded-lg',
-            layout === 'horizontal' ? 'flex items-center gap-4' : 'space-y-4 text-center',
-            componentClassName
+            'flex items-center gap-4',
+            layout === 'vertical' && 'flex-col',
+            layout === 'horizontal' && 'flex-row',
+            alignment === 'center' && layout === 'vertical' && 'items-center text-center',
+            alignment === 'left' && 'items-start text-left',
+            alignment === 'right' && 'items-end text-right'
           )}
         >
-          <div className='text-5xl shrink-0'>{icon}</div>
-          <div className='space-y-2'>
+          <IconOrImage
+            icon={icon}
+            alt={title}
+            size={sizeMap[iconSize as keyof typeof sizeMap] || 'lg'}
+            variant='contained'
+            color={iconColor as any}
+          />
+          <div className='flex-1 space-y-2'>
             <Typography variant='h4' weight='bold'>
               {title}
             </Typography>
             <Typography variant='body2' className='text-gray-600'>
               {description}
             </Typography>
+            {link && linkText && (
+              <CustomLink
+                href={link}
+                className='inline-flex items-center gap-1 text-primary text-sm hover:underline'
+              >
+                {linkText}
+              </CustomLink>
+            )}
           </div>
+        </div>
+      )
+
+      return (
+        <div
+          key={component.id}
+          className={cn('bg-white p-6 border rounded-lg', componentClassName)}
+        >
+          {content}
         </div>
       )
     }
