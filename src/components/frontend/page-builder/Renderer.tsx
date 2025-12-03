@@ -3,8 +3,10 @@
 import { Container } from '@/components/common/container'
 import CustomImage from '@/components/common/CustomImage'
 import CustomLink from '@/components/common/CustomLink'
+import { IconOrImage } from '@/components/common/IconOrImage'
 import { Section } from '@/components/common/section'
 import { Typography } from '@/components/common/typography'
+import GridWithAPI from '@/components/frontend/page-builder/GridWithAPI'
 import { cn } from '@/lib/utils'
 import type {
   BaseComponent,
@@ -13,6 +15,7 @@ import type {
   Row as RowType,
   Section as SectionType
 } from '@/types/page-builder'
+import parse from 'html-react-parser'
 
 // Global col-span map
 const COL_SPAN: Record<number, string> = {
@@ -77,7 +80,31 @@ function renderComponent(component: BaseComponent) {
       )
     }
     case 'text': {
-      const { text = '', alignment = 'left', variant = 'body1', weight = 'normal' } = props as any
+      const {
+        text = '',
+        alignment = 'left',
+        variant = 'body1',
+        weight = 'normal',
+        isRichText = false
+      } = props as any
+
+      if (isRichText) {
+        return (
+          <div
+            key={component.id}
+            className={cn(
+              'max-w-none prose prose-sm',
+              alignment === 'center' && 'text-center',
+              alignment === 'right' && 'text-right',
+              alignment === 'justify' && 'text-justify',
+              componentClassName
+            )}
+          >
+            {parse(text)}
+          </div>
+        )
+      }
+
       return (
         <Typography
           key={component.id}
@@ -348,10 +375,84 @@ function renderComponent(component: BaseComponent) {
     }
 
     // ==================== CONTENT WIDGETS ====================
-    case 'blog-grid':
-    case 'blog-carousel': {
-      const { title, subtitle, showTitle = true, columns = 3 } = props as any
-      const isCarousel = component.type === 'blog-carousel'
+    case 'grid': {
+      const {
+        title,
+        subtitle,
+        showTitle = true,
+        columns = 3,
+        gap = '24',
+        dataSource = 'api',
+        apiEndpoint,
+        apiParams = {},
+        apiResponsePath = 'data.items',
+        cardType = 'BlogCard',
+        gridItems = [],
+        cardStyle = 'default',
+        hoverEffect = 'lift',
+        enablePagination = false,
+        itemsPerPage = 10,
+        columnsMobile = 1,
+        columnsTablet = 2,
+        columnsDesktop = 3
+      } = props as any
+
+      // API Mode - Use GridWithAPI component
+      if (dataSource === 'api') {
+        return (
+          <GridWithAPI
+            key={component.id}
+            title={title}
+            subtitle={subtitle}
+            showTitle={showTitle}
+            gap={gap}
+            apiEndpoint={apiEndpoint}
+            apiParams={apiParams}
+            apiResponsePath={apiResponsePath}
+            cardType={cardType}
+            cardStyle={cardStyle}
+            hoverEffect={hoverEffect}
+            enablePagination={enablePagination}
+            itemsPerPage={itemsPerPage}
+            columnsMobile={columnsMobile}
+            columnsTablet={columnsTablet}
+            columnsDesktop={columnsDesktop}
+            className={componentClassName}
+          />
+        )
+      }
+
+      // Manual Mode - Render components in each grid item
+      const getHoverClass = () => {
+        switch (hoverEffect) {
+          case 'lift':
+            return 'hover:-translate-y-2 hover:shadow-xl'
+          case 'zoom':
+            return 'hover:scale-105'
+          case 'glow':
+            return 'hover:shadow-2xl hover:shadow-primary/20'
+          default:
+            return ''
+        }
+      }
+
+      const getCardClass = () => {
+        const base = 'bg-white rounded-lg overflow-hidden transition-all duration-300'
+        const hover = getHoverClass()
+        switch (cardStyle) {
+          case 'minimal':
+            return `${base} ${hover}`
+          case 'bordered':
+            return `${base} border-2 ${hover}`
+          case 'elevated':
+            return `${base} shadow-lg ${hover}`
+          default:
+            return `${base} border ${hover}`
+        }
+      }
+
+      const items = gridItems
+
       return (
         <div key={component.id} className={cn('space-y-6', componentClassName)}>
           {showTitle && title && (
@@ -366,36 +467,57 @@ function renderComponent(component: BaseComponent) {
               )}
             </div>
           )}
-          <div className={cn('gap-6 grid', !isCarousel && `grid-cols-1 md:grid-cols-${columns}`)}>
-            {[1, 2, 3].map((i) => (
-              <div
-                key={i}
-                className='bg-white hover:shadow-lg border rounded-lg overflow-hidden transition-shadow'
-              >
-                <div className='bg-gray-200 aspect-video' />
-                <div className='space-y-2 p-4'>
-                  <Typography variant='h5' weight='semibold'>
-                    Blog Post Title {i}
-                  </Typography>
-                  <Typography variant='body2' className='text-gray-600'>
-                    Preview excerpt of the blog post content goes here...
-                  </Typography>
-                  <CustomLink href='#' className='text-primary text-sm hover:underline'>
-                    Read More →
-                  </CustomLink>
+          <div
+            className={cn('grid')}
+            style={{
+              gap: `${gap}px`,
+              gridTemplateColumns: `repeat(auto-fill, minmax(min(300px, 100%), 1fr))`,
+              ...(columns && {
+                gridTemplateColumns: `repeat(${columns}, 1fr)`
+              })
+            }}
+          >
+            {items.length > 0 ? (
+              items.map((item: any, i: number) => (
+                <div
+                  key={item.id || i}
+                  className={cn(
+                    getCardClass(),
+                    item.settings?.className,
+                    // Alignment classes
+                    item.settings?.verticalAlign === 'center' && 'flex items-center',
+                    item.settings?.verticalAlign === 'bottom' && 'flex items-end',
+                    item.settings?.horizontalAlign === 'center' && 'justify-center text-center',
+                    item.settings?.horizontalAlign === 'right' && 'justify-end text-right'
+                  )}
+                >
+                  {/* Render components in this grid item */}
+                  {item.components && item.components.length > 0 ? (
+                    <div className='space-y-4 w-full'>
+                      {item.components.map((comp: any) => renderComponent(comp))}
+                    </div>
+                  ) : (
+                    <div className='p-4 text-gray-400 text-center'>
+                      <Typography variant='body2'>Empty grid item</Typography>
+                    </div>
+                  )}
                 </div>
+              ))
+            ) : (
+              <div className='col-span-full py-12 text-gray-500 text-center'>
+                <Typography variant='body1'>No grid items added yet</Typography>
               </div>
-            ))}
+            )}
           </div>
         </div>
       )
     }
 
-    case 'product-grid': {
-      const { title, subtitle, columns = 3 } = props as any
+    case 'blog-carousel': {
+      const { title, subtitle, showTitle = true, cardType = 'BlogCard' } = props as any
       return (
         <div key={component.id} className={cn('space-y-6', componentClassName)}>
-          {title && (
+          {showTitle && title && (
             <div className='space-y-2 text-center'>
               <Typography variant='h3' weight='bold'>
                 {title}
@@ -407,23 +529,23 @@ function renderComponent(component: BaseComponent) {
               )}
             </div>
           )}
-          <div className={cn('gap-6 grid', `grid-cols-1 md:grid-cols-${columns}`)}>
+          <div className='gap-6 grid grid-cols-1 md:grid-cols-3'>
             {[1, 2, 3].map((i) => (
               <div
                 key={i}
                 className='bg-white hover:shadow-lg border rounded-lg overflow-hidden transition-shadow'
               >
-                <div className='bg-gray-200 aspect-square' />
+                <div className='bg-gray-200 aspect-video' />
                 <div className='space-y-2 p-4'>
                   <Typography variant='h5' weight='semibold'>
-                    Product Name {i}
+                    {cardType} {i}
                   </Typography>
-                  <Typography variant='h4' weight='bold' className='text-green-600'>
-                    $99.00
+                  <Typography variant='body2' className='text-gray-600'>
+                    Preview excerpt of the content goes here...
                   </Typography>
-                  <button className='bg-primary hover:bg-primary/90 py-2 rounded-lg w-full text-white'>
-                    Add to Cart
-                  </button>
+                  <CustomLink href='#' className='text-primary text-sm hover:underline'>
+                    Read More →
+                  </CustomLink>
                 </div>
               </div>
             ))}
@@ -854,29 +976,68 @@ function renderComponent(component: BaseComponent) {
 
     case 'icon-box': {
       const {
-        icon = '📦',
+        icon = 'Star',
+        iconType = 'icon',
         title = 'Icon Box Title',
         description = 'Description text goes here',
-        layout = 'horizontal'
+        iconSize = 'large',
+        iconColor = 'primary',
+        layout = 'horizontal',
+        alignment = 'center',
+        link = '',
+        linkText = 'Learn More'
       } = props as any
-      return (
+
+      const sizeMap = {
+        small: 'md',
+        medium: 'lg',
+        large: 'xl',
+        xlarge: '2xl'
+      } as const
+
+      const content = (
         <div
-          key={component.id}
           className={cn(
-            'bg-white p-6 border rounded-lg',
-            layout === 'horizontal' ? 'flex items-center gap-4' : 'space-y-4 text-center',
-            componentClassName
+            'flex items-center gap-4',
+            layout === 'vertical' && 'flex-col',
+            layout === 'horizontal' && 'flex-row',
+            alignment === 'center' && layout === 'vertical' && 'items-center text-center',
+            alignment === 'left' && 'items-start text-left',
+            alignment === 'right' && 'items-end text-right'
           )}
         >
-          <div className='text-5xl shrink-0'>{icon}</div>
-          <div className='space-y-2'>
+          <IconOrImage
+            icon={icon}
+            alt={title}
+            size={sizeMap[iconSize as keyof typeof sizeMap] || 'lg'}
+            variant='contained'
+            color={iconColor as any}
+          />
+          <div className='flex-1 space-y-2'>
             <Typography variant='h4' weight='bold'>
               {title}
             </Typography>
             <Typography variant='body2' className='text-gray-600'>
               {description}
             </Typography>
+            {link && linkText && (
+              <CustomLink
+                href={link}
+                className='inline-flex items-center gap-1 text-primary text-sm hover:underline'
+              >
+                {linkText}
+              </CustomLink>
+            )}
           </div>
+        </div>
+      )
+
+      return (
+        <div
+          key={component.id}
+          className={cn('bg-white p-6 border rounded-lg', componentClassName)}
+        >
+          {content}
         </div>
       )
     }

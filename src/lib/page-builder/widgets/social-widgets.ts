@@ -285,7 +285,7 @@ componentRegistry.register({
 
   defaultProps: {
     icon: 'Star',
-    iconType: 'lucide', // lucide | custom | emoji
+    iconType: 'icon', // icon | image
     iconSize: 'large',
     iconColor: 'primary',
     iconStyle: 'default', // default | circle | square | outline
@@ -300,7 +300,7 @@ componentRegistry.register({
 
   propsSchema: z.object({
     icon: z.string(),
-    iconType: z.enum(['lucide', 'custom', 'emoji']).optional(),
+    iconType: z.enum(['icon', 'image']).optional(),
     iconSize: z.enum(['small', 'medium', 'large', 'xlarge']).optional(),
     iconColor: z.string().optional(),
     iconStyle: z.string().optional(),
@@ -318,7 +318,16 @@ componentRegistry.register({
       id: 'content',
       label: 'Content',
       fields: [
-        { name: 'icon', label: 'Icon Name', type: 'icon-picker' },
+        {
+          name: 'iconType',
+          label: 'Icon Type',
+          type: 'select',
+          options: [
+            { label: 'Icon', value: 'icon' },
+            { label: 'Image', value: 'image' }
+          ]
+        },
+        { name: 'icon', label: 'Icon', type: 'icon-picker' },
         { name: 'title', label: 'Title', type: 'text', required: true },
         { name: 'description', label: 'Description', type: 'textarea', required: true },
         { name: 'link', label: 'Link URL', type: 'url' },

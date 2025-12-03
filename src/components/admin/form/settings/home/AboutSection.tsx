@@ -96,7 +96,9 @@ const AboutSection = ({ settingsKey, initialValues, refetch }: TProps) => {
   const prevStatsIconTypeRef = useRef(statsIconType)
   const [showFacilitiesAlert, setShowFacilitiesAlert] = useState(false)
   const [showStatsAlert, setShowStatsAlert] = useState(false)
-  const [pendingFacilitiesIconType, setPendingFacilitiesIconType] = useState<'icon' | 'image' | null>(null)
+  const [pendingFacilitiesIconType, setPendingFacilitiesIconType] = useState<
+    'icon' | 'image' | null
+  >(null)
   const [pendingStatsIconType, setPendingStatsIconType] = useState<'icon' | 'image' | null>(null)
 
   // Handle facilities icon type change
@@ -139,18 +141,26 @@ const AboutSection = ({ settingsKey, initialValues, refetch }: TProps) => {
 
   // Reset facilities icons when type changes
   useEffect(() => {
-    if (prevFacilitiesIconTypeRef.current !== facilitiesIconType && prevFacilitiesIconTypeRef.current !== undefined) {
+    if (
+      prevFacilitiesIconTypeRef.current !== facilitiesIconType &&
+      prevFacilitiesIconTypeRef.current !== undefined
+    ) {
       facilitiesFields.forEach((_, index) => {
         setValue(`about.facilities.${index}.icon`, '')
       })
-      toast.info(`Facilities icon type changed to ${facilitiesIconType}. All icons have been reset.`)
+      toast.info(
+        `Facilities icon type changed to ${facilitiesIconType}. All icons have been reset.`
+      )
     }
     prevFacilitiesIconTypeRef.current = facilitiesIconType
   }, [facilitiesIconType, facilitiesFields, setValue])
 
   // Reset stats icons when type changes
   useEffect(() => {
-    if (prevStatsIconTypeRef.current !== statsIconType && prevStatsIconTypeRef.current !== undefined) {
+    if (
+      prevStatsIconTypeRef.current !== statsIconType &&
+      prevStatsIconTypeRef.current !== undefined
+    ) {
       statisticsFields.forEach((_, index) => {
         setValue(`about.stats.${index}.icon`, '')
       })
@@ -386,7 +396,12 @@ const AboutSection = ({ settingsKey, initialValues, refetch }: TProps) => {
                 </div>
               )}
 
-              {facilitiesFields.length < 4 && <AddItemButton label="Add Facility" onClick={() => appendFacility({ title: '', desc: '', icon: '' })} />}
+              {facilitiesFields.length < 4 && (
+                <AddItemButton
+                  label='Add Facility'
+                  onClick={() => appendFacility({ title: '', desc: '', icon: '' })}
+                />
+              )}
             </div>
 
             {/* <div className='space-y-2 lg:col-span-2'>
@@ -620,7 +635,12 @@ const AboutSection = ({ settingsKey, initialValues, refetch }: TProps) => {
                 </div>
               )}
 
-              {statisticsFields.length < 4 && <AddItemButton label="Add Statistic" onClick={() => appendStatistic({ value: '', label: '', icon: '' })} />}
+              {statisticsFields.length < 4 && (
+                <AddItemButton
+                  label='Add Statistic'
+                  onClick={() => appendStatistic({ value: '', label: '', icon: '' })}
+                />
+              )}
             </div>
           </div>
         </CardContent>
@@ -644,7 +664,9 @@ const AboutSection = ({ settingsKey, initialValues, refetch }: TProps) => {
             <AlertDialogCancel onClick={() => setPendingFacilitiesIconType(null)}>
               Cancel
             </AlertDialogCancel>
-            <AlertDialogAction onClick={confirmFacilitiesIconTypeChange}>Continue</AlertDialogAction>
+            <AlertDialogAction onClick={confirmFacilitiesIconTypeChange}>
+              Continue
+            </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
@@ -660,7 +682,9 @@ const AboutSection = ({ settingsKey, initialValues, refetch }: TProps) => {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel onClick={() => setPendingStatsIconType(null)}>Cancel</AlertDialogCancel>
+            <AlertDialogCancel onClick={() => setPendingStatsIconType(null)}>
+              Cancel
+            </AlertDialogCancel>
             <AlertDialogAction onClick={confirmStatsIconTypeChange}>Continue</AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

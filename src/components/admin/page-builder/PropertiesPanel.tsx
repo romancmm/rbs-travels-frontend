@@ -5,11 +5,19 @@
 
 'use client'
 
+import IconPickerModal from '@/components/admin/common/IconPickerModal'
+import TextEditor from '@/components/admin/common/TextEditor'
 import FileUploader from '@/components/common/FileUploader'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from '@/components/ui/select'
 import { Separator } from '@/components/ui/separator'
 import {
   Sheet,
@@ -25,11 +33,15 @@ import { Textarea } from '@/components/ui/textarea'
 import { useBuilderStore } from '@/lib/page-builder/builder-store'
 import { findElementById } from '@/lib/page-builder/builder-utils'
 import type { FlexConfig, GridConfig, VisualConfig } from '@/lib/page-builder/tailwind-generator'
-import { parseClassNameToConfig, updateClassNameAspect } from '@/lib/page-builder/tailwind-generator'
+import {
+  parseClassNameToConfig,
+  updateClassNameAspect
+} from '@/lib/page-builder/tailwind-generator'
 import { componentRegistry } from '@/lib/page-builder/widgets'
 import type { BaseComponent, PropertyField, PropertyPanel } from '@/types/page-builder'
 import { Settings } from 'lucide-react'
 import { useEffect, useState } from 'react'
+import { GridItemsManager } from './GridItemsManager'
 import {
   BackgroundControl,
   BorderControl,
@@ -89,7 +101,9 @@ export function PropertiesPanel() {
       case 'column':
         return 'Column Properties'
       case 'component':
-        return `${componentRegistry.get(selectedElement.element.type)?.label || 'Component'} Properties`
+        return `${
+          componentRegistry.get(selectedElement.element.type)?.label || 'Component'
+        } Properties`
       default:
         return 'Properties'
     }
@@ -104,7 +118,6 @@ export function PropertiesPanel() {
               <Settings className='w-5 h-5 text-primary' />
               <SheetTitle>{getTitle()}</SheetTitle>
             </div>
-
           </div>
           <SheetDescription>
             Use visual tools to configure styling with Tailwind CSS classes
@@ -168,14 +181,19 @@ export function PropertiesPanel() {
           </Button>
         </SheetFooter>
       </SheetContent>
-
     </Sheet>
   )
 }
 
 // ==================== SECTION PROPERTIES ====================
 
-function SectionProperties({ section, onUpdate }: { section: any; onUpdate: (updates: any) => void }) {
+function SectionProperties({
+  section,
+  onUpdate
+}: {
+  section: any
+  onUpdate: (updates: any) => void
+}) {
   const [currentClassName, setCurrentClassName] = useState(section.settings?.className || '')
   const parsedConfig = parseClassNameToConfig(currentClassName)
 
@@ -527,16 +545,32 @@ interface DynamicPropertyFieldsProps {
 function DynamicPropertyFields({ panels, props, onChange }: DynamicPropertyFieldsProps) {
   if (panels.length === 0) return null
 
+  // Filter panels based on dataSource for grid component
+  const filteredPanels = panels.filter((panel) => {
+    // For grid component, conditionally show panels based on dataSource
+    if (props.dataSource === 'api' && panel.id === 'manual-items') {
+      return false // Hide manual items panel in API mode
+    }
+    if (props.dataSource === 'manual' && panel.id === 'api-settings') {
+      return false // Hide API settings panel in manual mode
+    }
+    return true
+  })
+
+  if (filteredPanels.length === 0) return null
+
   // If only one panel, render fields directly
-  if (panels.length === 1) {
+  if (filteredPanels.length === 1) {
     return (
       <div className='space-y-4'>
-        {panels[0].fields.map((field) => (
+        {filteredPanels[0].fields.map((field) => (
           <PropertyFieldRenderer
             key={field.name}
             field={field}
             value={props[field.name]}
             onChange={(value) => onChange(field.name, value)}
+            allProps={props}
+            onPropChange={onChange}
           />
         ))}
       </div>
@@ -546,7 +580,7 @@ function DynamicPropertyFields({ panels, props, onChange }: DynamicPropertyField
   // Multiple panels - use accordion or sections
   return (
     <div className='space-y-6'>
-      {panels.map((panel) => (
+      {filteredPanels.map((panel) => (
         <div key={panel.id} className='space-y-4'>
           <div className='pb-2 border-b'>
             <h4 className='font-medium text-sm'>{panel.label}</h4>
@@ -557,6 +591,8 @@ function DynamicPropertyFields({ panels, props, onChange }: DynamicPropertyField
               field={field}
               value={props[field.name]}
               onChange={(value) => onChange(field.name, value)}
+              allProps={props}
+              onPropChange={onChange}
             />
           ))}
         </div>
@@ -571,9 +607,27 @@ interface PropertyFieldRendererProps {
   field: PropertyField
   value: any
   onChange: (value: any) => void
+  allProps?: Record<string, any>
+  onPropChange?: (key: string, value: any) => void
 }
 
-function PropertyFieldRenderer({ field, value, onChange }: PropertyFieldRendererProps) {
+function PropertyFieldRenderer({
+  field,
+  value,
+  onChange,
+  allProps = {},
+  onPropChange
+}: PropertyFieldRendererProps) {
+  const [isRichText, setIsRichText] = useState(allProps.isRichText || false)
+
+  const handleToggleRichText = (checked: boolean) => {
+    setIsRichText(checked)
+    // Update the isRichText prop in parent
+    if (onPropChange) {
+      onPropChange('isRichText', checked)
+    }
+  }
+
   const renderField = () => {
     switch (field.type) {
       case 'text':
@@ -588,6 +642,40 @@ function PropertyFieldRenderer({ field, value, onChange }: PropertyFieldRenderer
 
       case 'textarea':
       case 'rich-text':
+        // Special handling for text content field - add rich text toggle
+        if (field.name === 'text') {
+          return (
+            <div className='space-y-3'>
+              <div className='flex justify-between items-center'>
+                <span className='text-muted-foreground text-xs'>
+                  {isRichText ? 'Rich Text Mode' : 'Plain Text Mode'}
+                </span>
+                <Switch checked={isRichText} onCheckedChange={handleToggleRichText} />
+              </div>
+              {isRichText ? (
+                <TextEditor
+                  value={value || ''}
+                  onChange={onChange}
+                  placeholder='Enter rich text content'
+                  height={300}
+                />
+              ) : (
+                <Textarea
+                  value={value || ''}
+                  onChange={(e) => onChange(e.target.value)}
+                  placeholder={field.placeholder || 'Enter plain text'}
+                  rows={6}
+                />
+              )}
+              <p className='text-muted-foreground text-xs'>
+                {isRichText
+                  ? 'Rich text mode: Use the editor toolbar for formatting'
+                  : 'Plain text mode: No HTML formatting'}
+              </p>
+            </div>
+          )
+        }
+        // Default textarea rendering for other fields
         return (
           <Textarea
             value={value || ''}
@@ -614,19 +702,17 @@ function PropertyFieldRenderer({ field, value, onChange }: PropertyFieldRenderer
       case 'toggle':
         return (
           <div className='flex items-center gap-2'>
-            <Switch
-              checked={value ?? field.defaultValue ?? false}
-              onCheckedChange={onChange}
-            />
-            <span className='text-muted-foreground text-sm'>
-              {value ? 'Enabled' : 'Disabled'}
-            </span>
+            <Switch checked={value ?? field.defaultValue ?? false} onCheckedChange={onChange} />
+            <span className='text-muted-foreground text-sm'>{value ? 'Enabled' : 'Disabled'}</span>
           </div>
         )
 
       case 'select':
         return (
-          <Select value={value?.toString() || field.defaultValue?.toString()} onValueChange={onChange}>
+          <Select
+            value={value?.toString() || field.defaultValue?.toString()}
+            onValueChange={onChange}
+          >
             <SelectTrigger>
               <SelectValue placeholder={field.placeholder || 'Select option'} />
             </SelectTrigger>
@@ -668,6 +754,23 @@ function PropertyFieldRenderer({ field, value, onChange }: PropertyFieldRenderer
           />
         )
 
+      case 'icon-picker': {
+        const iconType = allProps?.iconType || 'icon'
+        return (
+          <div className='space-y-2'>
+            {iconType === 'image' ? (
+              <FileUploader
+                value={value || ''}
+                onChangeAction={(val: string | string[]) => onChange(val)}
+                size='small'
+              />
+            ) : (
+              <IconPickerModal value={value || ''} onChange={(val) => onChange(val)} />
+            )}
+          </div>
+        )
+      }
+
       case 'multi-select':
         return (
           <div className='space-y-2'>
@@ -707,6 +810,15 @@ function PropertyFieldRenderer({ field, value, onChange }: PropertyFieldRenderer
           </div>
         )
 
+      case 'grid-items':
+        return (
+          <GridItemsManager
+            value={value || []}
+            onChange={onChange}
+            columns={allProps.columns || 3}
+          />
+        )
+
       default:
         return (
           <Input
@@ -725,9 +837,7 @@ function PropertyFieldRenderer({ field, value, onChange }: PropertyFieldRenderer
         {field.required && <span className='ml-1 text-destructive'>*</span>}
       </Label>
       {renderField()}
-      {field.description && (
-        <p className='text-muted-foreground text-xs'>{field.description}</p>
-      )}
+      {field.description && <p className='text-muted-foreground text-xs'>{field.description}</p>}
     </div>
   )
 }
@@ -887,15 +997,47 @@ function HeadingProperties({ props, onChange }: any) {
 }
 
 function TextProperties({ props, onChange }: any) {
+  const [isRichText, setIsRichText] = useState(props.isRichText || false)
+
+  const handleToggleRichText = (checked: boolean) => {
+    setIsRichText(checked)
+    onChange('isRichText', checked)
+  }
+
   return (
     <div className='space-y-4'>
-      <div className='space-y-2'>
+      <div className='flex justify-between items-center'>
         <Label>Text Content</Label>
-        <Input
-          value={props.text || ''}
-          onChange={(e) => onChange('text', e.target.value)}
-          placeholder='Enter text'
-        />
+        <div className='flex items-center gap-2'>
+          <span className='text-muted-foreground text-xs'>
+            {isRichText ? 'Rich Text' : 'Plain Text'}
+          </span>
+          <Switch checked={isRichText} onCheckedChange={handleToggleRichText} />
+        </div>
+      </div>
+
+      <div className='space-y-2'>
+        {isRichText ? (
+          <Textarea
+            value={props.text || ''}
+            onChange={(e) => onChange('text', e.target.value)}
+            placeholder='Enter rich text content (HTML supported)'
+            rows={8}
+            className='font-mono text-sm'
+          />
+        ) : (
+          <Textarea
+            value={props.text || ''}
+            onChange={(e) => onChange('text', e.target.value)}
+            placeholder='Enter plain text'
+            rows={6}
+          />
+        )}
+        <p className='text-muted-foreground text-xs'>
+          {isRichText
+            ? 'Rich text mode: HTML tags are supported'
+            : 'Plain text mode: No HTML formatting'}
+        </p>
       </div>
     </div>
   )

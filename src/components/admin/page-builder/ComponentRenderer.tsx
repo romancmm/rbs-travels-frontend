@@ -2,8 +2,10 @@
 
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
+import parse from 'html-react-parser'
 import { Copy, GripVertical, Settings, Trash2 } from 'lucide-react'
 
+import { IconOrImage } from '@/components/common/IconOrImage'
 import { Typography } from '@/components/common/typography'
 import { Button } from '@/components/ui/button'
 import { useBuilderStore } from '@/lib/page-builder/builder-store'
@@ -11,6 +13,7 @@ import { componentRegistry } from '@/lib/page-builder/widgets'
 import { cn } from '@/lib/utils'
 import type { BaseComponent } from '@/types/page-builder'
 import { useDndContext } from '@dnd-kit/core'
+import { GridItemRenderer } from './GridItemRenderer'
 
 interface ComponentRendererProps {
   component: BaseComponent
@@ -69,10 +72,10 @@ export function ComponentRenderer({
         isSelected && 'ring-2 ring-orange-500 ring-offset-2',
         isHovered && !isSelected && 'ring-2 ring-orange-300 ring-offset-2'
       )}
-      onClick={(e) => {
-        e.stopPropagation()
-        selectElement(component.id, 'component')
-      }}
+      // onClick={(e) => {
+      //   e.stopPropagation()
+      //   selectElement(component.id, 'component')
+      // }}
       onMouseEnter={(e) => {
         e.stopPropagation()
         hoverElement(component.id, 'component')
@@ -160,9 +163,21 @@ export function ComponentRenderer({
       </div>
 
       {/* Component Content Preview */}
-      <div className={cn('bg-white p-4 rounded', component.settings?.className)}>
+      <div
+        className={cn('bg-white p-4 rounded', component.settings?.className)}
+        onClick={(e) => {
+          e.stopPropagation()
+          selectElement(component.id, 'component')
+        }}
+      >
         {componentDef ? (
-          <ComponentPreview component={component} definition={componentDef} />
+          <ComponentPreview
+            component={component}
+            definition={componentDef}
+            sectionId={sectionId}
+            rowId={rowId}
+            columnId={columnId}
+          />
         ) : (
           <div className='text-gray-500 text-sm'>Unknown component: {component.type}</div>
         )}
@@ -177,10 +192,16 @@ export function ComponentRenderer({
  */
 function ComponentPreview({
   component,
-  definition
+  definition,
+  sectionId,
+  rowId,
+  columnId
 }: {
   component: BaseComponent
   definition: ReturnType<typeof componentRegistry.get>
+  sectionId: string
+  rowId: string
+  columnId: string
 }) {
   if (!definition) return null
 
@@ -213,9 +234,26 @@ function ComponentPreview({
         text = 'Lorem ipsum dolor sit amet...',
         alignment = 'left',
         variant = 'body1',
-        weight = 'normal'
+        weight = 'normal',
+        isRichText = false
       } = component.props as any
       const componentClassName = component.settings?.className || ''
+
+      if (isRichText) {
+        return (
+          <div
+            className={cn(
+              'max-w-none prose prose-sm',
+              alignment === 'center' && 'text-center',
+              alignment === 'right' && 'text-right',
+              alignment === 'justify' && 'text-justify',
+              componentClassName
+            )}
+          >
+            {parse(text)}
+          </div>
+        )
+      }
 
       return (
         <Typography
@@ -422,35 +460,69 @@ function ComponentPreview({
       )
 
     // ==================== CONTENT WIDGETS ====================
-    case 'blog-grid':
+    case 'grid': {
+      const {
+        title = 'Grid Section',
+        dataSource = 'api',
+        cardType = 'BlogCard',
+        columns = 3,
+        gridItems = []
+      } = (component.props || {}) as any
+
+      return (
+        <div className='space-y-4 bg-blue-50 p-6 border-2 border-blue-300 border-dashed rounded-lg'>
+          <div className='flex justify-between items-center'>
+            <div>
+              <div className='font-semibold text-lg'>{title}</div>
+              <div className='text-muted-foreground text-xs'>
+                {dataSource === 'api'
+                  ? `API Mode: ${cardType}`
+                  : `Manual Mode: ${gridItems.length} items - Drag & drop or click + to add components`}
+              </div>
+            </div>
+            <div className='bg-blue-200 px-2 py-1 rounded font-medium text-blue-700 text-xs'>
+              {columns} columns
+            </div>
+          </div>
+          <div className={cn('gap-4 grid', `grid-cols-${Math.min(columns, 4)}`)}>
+            {dataSource === 'api'
+              ? // API Mode Preview - Render items matching columns count
+                Array.from({ length: columns }, (_, i) => (
+                  <div key={i} className='space-y-2 bg-white p-3 border rounded'>
+                    <div className='bg-gray-200 rounded aspect-video'></div>
+                    <div className='font-medium text-sm'>
+                      {cardType} {i + 1}
+                    </div>
+                    <div className='text-muted-foreground text-xs'>Preview from API...</div>
+                  </div>
+                ))
+              : // Manual Mode - Use GridItemRenderer for full functionality
+                gridItems.map((item: any, i: number) => (
+                  <GridItemRenderer
+                    key={item.id || i}
+                    gridItem={item}
+                    gridItemIndex={i}
+                    gridComponentId={component.id}
+                    sectionId={sectionId}
+                    rowId={rowId}
+                    columnId={columnId}
+                  />
+                ))}
+          </div>
+        </div>
+      )
+    }
+
     case 'blog-carousel':
       return (
         <div className='space-y-4 bg-blue-50 p-6 border-2 border-blue-300 border-dashed rounded-lg'>
-          <div className='font-semibold text-lg'>
-            {component.type === 'blog-grid' ? 'Blog Grid' : 'Blog Carousel'}
-          </div>
+          <div className='font-semibold text-lg'>Blog Carousel</div>
           <div className='gap-4 grid grid-cols-3'>
             {[1, 2, 3].map((i) => (
               <div key={i} className='space-y-2 bg-white p-3 border rounded'>
                 <div className='bg-gray-200 rounded aspect-video'></div>
                 <div className='font-medium text-sm'>Blog Post {i}</div>
                 <div className='text-muted-foreground text-xs'>Preview text...</div>
-              </div>
-            ))}
-          </div>
-        </div>
-      )
-
-    case 'product-grid':
-      return (
-        <div className='space-y-4 bg-green-50 p-6 border-2 border-green-300 border-dashed rounded-lg'>
-          <div className='font-semibold text-lg'>Product Grid</div>
-          <div className='gap-4 grid grid-cols-3'>
-            {[1, 2, 3].map((i) => (
-              <div key={i} className='space-y-2 bg-white p-3 border rounded'>
-                <div className='bg-gray-200 rounded aspect-square'></div>
-                <div className='font-medium text-sm'>Product {i}</div>
-                <div className='font-bold text-green-600 text-sm'>$99.00</div>
               </div>
             ))}
           </div>
@@ -635,20 +707,58 @@ function ComponentPreview({
         </div>
       )
 
-    case 'icon-box':
+    case 'icon-box': {
+      const {
+        icon = 'Star',
+        iconType = 'icon',
+        title = 'Icon Box Title',
+        description = 'Description text here',
+        iconSize = 'large',
+        iconColor = 'primary',
+        layout = 'vertical',
+        alignment = 'center'
+      } = component.props as any
+
+      const sizeMap = {
+        small: 'md',
+        medium: 'lg',
+        large: 'xl',
+        xlarge: '2xl'
+      } as const
+
       return (
-        <div className='bg-amber-50 p-6 border-2 border-amber-300 border-dashed rounded-lg'>
-          <div className='flex items-center gap-4'>
-            <div className='flex justify-center items-center bg-blue-100 rounded-full w-16 h-16'>
-              <span className='text-2xl'>📦</span>
-            </div>
+        <div
+          className={cn(
+            'bg-amber-50 p-6 border-2 border-amber-300 border-dashed rounded-lg',
+            alignment === 'center' && 'text-center',
+            alignment === 'right' && 'text-right'
+          )}
+        >
+          <div
+            className={cn(
+              'flex items-center gap-4',
+              layout === 'vertical' && 'flex-col',
+              layout === 'horizontal' && 'flex-row',
+              alignment === 'center' && layout === 'vertical' && 'items-center',
+              alignment === 'left' && 'items-start',
+              alignment === 'right' && 'items-end'
+            )}
+          >
+            <IconOrImage
+              icon={icon}
+              alt={title}
+              size={sizeMap[iconSize as keyof typeof sizeMap] || 'lg'}
+              variant='contained'
+              color={iconColor as any}
+            />
             <div className='flex-1'>
-              <div className='font-bold'>Icon Box Title</div>
-              <p className='text-muted-foreground text-sm'>Description text here</p>
+              <div className='font-bold'>{title}</div>
+              <p className='text-muted-foreground text-sm'>{description}</p>
             </div>
           </div>
         </div>
       )
+    }
 
     default:
       return <div className='text-gray-500 text-sm'>Component: {component.type}</div>

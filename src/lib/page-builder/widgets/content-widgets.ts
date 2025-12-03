@@ -1,69 +1,95 @@
 /**
- * Content Display Widgets - Blog, Products, Services, Packages, etc.
+ * Content Display Widgets - Grid, Blog, Products, Services, Packages, etc.
  */
 
 import { z } from 'zod'
 import { componentRegistry } from '../component-registry'
 
 /**
- * BLOG/ARTICLES GRID WIDGET
+ * UNIFIED GRID WIDGET
+ * Flexible grid that can:
+ * 1. Fetch data from API and render with specified card type
+ * 2. Manually define grid items with different card components
  */
 componentRegistry.register({
-  type: 'blog-grid',
-  label: 'Blog Grid',
-  icon: 'Newspaper',
-  category: 'dynamic',
-  description: 'Display blog posts in grid layout',
-  tags: ['blog', 'articles', 'posts', 'news', 'grid'],
+  type: 'grid',
+  label: 'Grid',
+  icon: 'Grid3x3',
+  category: 'layout',
+  description: 'Flexible grid layout - API-driven or manual items with custom card components',
+  tags: ['grid', 'layout', 'cards', 'dynamic', 'api', 'blog', 'products', 'services'],
 
   defaultProps: {
-    title: 'Latest Blog Posts',
-    subtitle: 'Read our latest articles and insights',
+    title: 'Grid Section',
+    subtitle: '',
     showTitle: true,
-    layout: 'grid', // grid | list | masonry
-    columns: 3, // 2 | 3 | 4
-    postsPerPage: 6,
-    showFeaturedImage: true,
-    showExcerpt: true,
-    showAuthor: true,
-    showDate: true,
-    showCategory: true,
-    showReadMore: true,
-    readMoreText: 'Read More',
-    imageAspectRatio: '16:9', // 16:9 | 4:3 | 1:1 | 3:2
-    excerptLength: 150,
+
+    // Layout
+    columns: 3,
+    gap: '24',
+    layout: 'grid', // grid | masonry
+
+    // Data Source
+    dataSource: 'api', // api | manual
+
+    // API Mode
     apiEndpoint: '/api/blog',
-    categoryFilter: '', // empty = all, or specific category slug
-    sortBy: 'date-desc', // date-desc | date-asc | title | views
+    apiParams: {},
+    apiResponsePath: 'data.items', // Path to extract items from response (e.g., 'data.items', 'data.data.items', 'items')
+    itemsPerPage: 6,
     enablePagination: true,
-    enableLoadMore: false,
+    cardType: 'BlogCard', // Which card component to render
+
+    // Manual Mode
+    gridItems: [],
+
+    // Card Display
+    cardProps: {},
     cardStyle: 'default', // default | minimal | bordered | elevated
-    hoverEffect: 'lift' // none | lift | zoom
+    hoverEffect: 'lift', // none | lift | zoom | glow
+
+    // Responsive
+    columnsMobile: 1,
+    columnsTablet: 2,
+    columnsDesktop: 3
   },
 
   propsSchema: z.object({
     title: z.string().optional(),
     subtitle: z.string().optional(),
     showTitle: z.boolean().optional(),
-    layout: z.enum(['grid', 'list', 'masonry']).optional(),
-    columns: z.number().min(1).max(4).optional(),
-    postsPerPage: z.number().min(1),
-    showFeaturedImage: z.boolean().optional(),
-    showExcerpt: z.boolean().optional(),
-    showAuthor: z.boolean().optional(),
-    showDate: z.boolean().optional(),
-    showCategory: z.boolean().optional(),
-    showReadMore: z.boolean().optional(),
-    readMoreText: z.string().optional(),
-    imageAspectRatio: z.string().optional(),
-    excerptLength: z.number().optional(),
-    apiEndpoint: z.string(),
-    categoryFilter: z.string().optional(),
-    sortBy: z.string().optional(),
+    columns: z.number().min(1).max(6),
+    gap: z.string().optional(),
+    layout: z.enum(['grid', 'masonry']).optional(),
+    dataSource: z.enum(['api', 'manual']),
+    apiEndpoint: z.string().optional(),
+    apiParams: z.record(z.string(), z.any()).optional(),
+    apiResponsePath: z.string().optional(),
+    itemsPerPage: z.number().optional(),
     enablePagination: z.boolean().optional(),
-    enableLoadMore: z.boolean().optional(),
+    cardType: z.string().optional(),
+    gridItems: z
+      .array(
+        z.object({
+          id: z.string(),
+          order: z.number(),
+          components: z.array(z.any()), // Array of BaseComponent
+          settings: z
+            .object({
+              className: z.string().optional(),
+              verticalAlign: z.enum(['top', 'center', 'bottom', 'stretch']).optional(),
+              horizontalAlign: z.enum(['left', 'center', 'right']).optional()
+            })
+            .optional()
+        })
+      )
+      .optional(),
+    cardProps: z.record(z.string(), z.any()).optional(),
     cardStyle: z.string().optional(),
-    hoverEffect: z.string().optional()
+    hoverEffect: z.string().optional(),
+    columnsMobile: z.number().optional(),
+    columnsTablet: z.number().optional(),
+    columnsDesktop: z.number().optional()
   }),
 
   propertyPanels: [
@@ -71,9 +97,57 @@ componentRegistry.register({
       id: 'content',
       label: 'Content',
       fields: [
-        { name: 'title', label: 'Widget Title', type: 'text' },
+        { name: 'title', label: 'Section Title', type: 'text' },
         { name: 'subtitle', label: 'Subtitle', type: 'text' },
         { name: 'showTitle', label: 'Show Title', type: 'toggle' }
+      ]
+    },
+    {
+      id: 'data-source',
+      label: 'Data Source',
+      fields: [
+        {
+          name: 'dataSource',
+          label: 'Data Source',
+          type: 'select',
+          options: [
+            { label: 'API (Dynamic)', value: 'api' },
+            { label: 'Manual (Custom Items)', value: 'manual' }
+          ]
+        }
+      ]
+    },
+    {
+      id: 'api-settings',
+      label: 'API Settings',
+      fields: [
+        { name: 'apiEndpoint', label: 'API Endpoint', type: 'text', placeholder: '/api/blog' },
+        {
+          name: 'apiResponsePath',
+          label: 'Response Path',
+          type: 'text',
+          placeholder: 'data.items',
+          description: 'Path to extract items from API response (e.g., data.items, data.data.items)'
+        },
+        { name: 'itemsPerPage', label: 'Items Per Page', type: 'number' },
+        { name: 'enablePagination', label: 'Enable Pagination', type: 'toggle' },
+        {
+          name: 'cardType',
+          label: 'Card Type',
+          type: 'select',
+          options: [
+            { label: 'Blog Card', value: 'BlogCard' },
+            { label: 'Product Card', value: 'ProductCard' },
+            { label: 'Service Card', value: 'ServiceCard' },
+            { label: 'Tour Package Card', value: 'TourPackageCard' },
+            { label: 'Testimonial Card', value: 'TestimonialCard' },
+            { label: 'Team Member Card', value: 'TeamMemberCard' },
+            { label: 'Pricing Card', value: 'PricingCard' },
+            { label: 'Icon Box', value: 'IconBox' },
+            { label: 'Feature Card', value: 'FeatureCard' },
+            { label: 'Portfolio Card', value: 'PortfolioCard' }
+          ]
+        }
       ]
     },
     {
@@ -82,24 +156,35 @@ componentRegistry.register({
       fields: [
         {
           name: 'layout',
-          label: 'Layout Style',
+          label: 'Layout Type',
           type: 'select',
           options: [
             { label: 'Grid', value: 'grid' },
-            { label: 'List', value: 'list' },
             { label: 'Masonry', value: 'masonry' }
           ]
         },
+        { name: 'columns', label: 'Columns (Desktop)', type: 'number', min: 1, max: 6 },
+        { name: 'columnsTablet', label: 'Columns (Tablet)', type: 'number', min: 1, max: 4 },
+        { name: 'columnsMobile', label: 'Columns (Mobile)', type: 'number', min: 1, max: 2 },
+        { name: 'gap', label: 'Gap (px)', type: 'text', placeholder: '24' }
+      ]
+    },
+    {
+      id: 'manual-items',
+      label: 'Grid Items (Manual Mode)',
+      fields: [
         {
-          name: 'columns',
-          label: 'Columns',
-          type: 'select',
-          options: [
-            { label: '2 Columns', value: 2 },
-            { label: '3 Columns', value: 3 },
-            { label: '4 Columns', value: 4 }
-          ]
-        },
+          name: 'gridItems',
+          label: 'Grid Items',
+          type: 'grid-items',
+          description: 'Add and manage grid items. Each item can contain multiple components.'
+        }
+      ]
+    },
+    {
+      id: 'card-style',
+      label: 'Card Styling',
+      fields: [
         {
           name: 'cardStyle',
           label: 'Card Style',
@@ -110,39 +195,18 @@ componentRegistry.register({
             { label: 'Bordered', value: 'bordered' },
             { label: 'Elevated', value: 'elevated' }
           ]
-        }
-      ]
-    },
-    {
-      id: 'display',
-      label: 'Display Options',
-      fields: [
-        { name: 'showFeaturedImage', label: 'Show Featured Image', type: 'toggle' },
-        { name: 'showExcerpt', label: 'Show Excerpt', type: 'toggle' },
-        { name: 'showAuthor', label: 'Show Author', type: 'toggle' },
-        { name: 'showDate', label: 'Show Date', type: 'toggle' },
-        { name: 'showCategory', label: 'Show Category', type: 'toggle' },
-        { name: 'showReadMore', label: 'Show Read More', type: 'toggle' }
-      ]
-    },
-    {
-      id: 'query',
-      label: 'Query Settings',
-      fields: [
-        { name: 'postsPerPage', label: 'Posts Per Page', type: 'number' },
-        { name: 'categoryFilter', label: 'Category Filter', type: 'text' },
+        },
         {
-          name: 'sortBy',
-          label: 'Sort By',
+          name: 'hoverEffect',
+          label: 'Hover Effect',
           type: 'select',
           options: [
-            { label: 'Newest First', value: 'date-desc' },
-            { label: 'Oldest First', value: 'date-asc' },
-            { label: 'Title (A-Z)', value: 'title' },
-            { label: 'Most Viewed', value: 'views' }
+            { label: 'None', value: 'none' },
+            { label: 'Lift', value: 'lift' },
+            { label: 'Zoom', value: 'zoom' },
+            { label: 'Glow', value: 'glow' }
           ]
-        },
-        { name: 'apiEndpoint', label: 'API Endpoint', type: 'text' }
+        }
       ]
     }
   ]
@@ -175,7 +239,8 @@ componentRegistry.register({
     showCategory: true,
     imageAspectRatio: '16:9',
     apiEndpoint: '/api/blog',
-    categoryFilter: ''
+    categoryFilter: '',
+    cardType: 'BlogCard'
   },
 
   propsSchema: z.object({
@@ -194,7 +259,8 @@ componentRegistry.register({
     showCategory: z.boolean().optional(),
     imageAspectRatio: z.string().optional(),
     apiEndpoint: z.string(),
-    categoryFilter: z.string().optional()
+    categoryFilter: z.string().optional(),
+    cardType: z.string().optional()
   }),
 
   propertyPanels: [
@@ -203,7 +269,17 @@ componentRegistry.register({
       label: 'Content',
       fields: [
         { name: 'title', label: 'Widget Title', type: 'text' },
-        { name: 'postsToShow', label: 'Number of Posts', type: 'number' }
+        { name: 'postsToShow', label: 'Number of Posts', type: 'number' },
+        {
+          name: 'cardType',
+          label: 'Card Type',
+          type: 'select',
+          options: [
+            { label: 'Blog Card', value: 'BlogCard' },
+            { label: 'Product Card', value: 'ProductCard' },
+            { label: 'Service Card', value: 'ServiceCard' }
+          ]
+        }
       ]
     },
     {
@@ -217,113 +293,13 @@ componentRegistry.register({
         { name: 'showNavigation', label: 'Show Navigation Arrows', type: 'toggle' },
         { name: 'showPagination', label: 'Show Pagination Dots', type: 'toggle' }
       ]
-    }
-  ]
-})
-
-/**
- * PRODUCTS/SERVICES GRID WIDGET
- */
-componentRegistry.register({
-  type: 'product-grid',
-  label: 'Product Grid',
-  icon: 'ShoppingBag',
-  category: 'dynamic',
-  description: 'Display products/services in grid',
-  tags: ['product', 'service', 'shop', 'ecommerce', 'grid'],
-
-  defaultProps: {
-    title: 'Our Products',
-    subtitle: 'Browse our collection',
-    contentType: 'products', // products | services | packages
-    layout: 'grid',
-    columns: 3,
-    itemsPerPage: 9,
-    showImage: true,
-    showTitle: true,
-    showPrice: true,
-    showDescription: true,
-    showRating: true,
-    showAddToCart: true,
-    addToCartText: 'Add to Cart',
-    imageAspectRatio: '1:1',
-    apiEndpoint: '/api/products',
-    categoryFilter: '',
-    priceFilter: '', // all | 0-100 | 100-500 | 500+
-    sortBy: 'featured',
-    cardStyle: 'default',
-    hoverEffect: 'lift'
-  },
-
-  propsSchema: z.object({
-    title: z.string().optional(),
-    subtitle: z.string().optional(),
-    contentType: z.enum(['products', 'services', 'packages']),
-    layout: z.enum(['grid', 'list']).optional(),
-    columns: z.number().min(1).max(4),
-    itemsPerPage: z.number().min(1),
-    showImage: z.boolean().optional(),
-    showTitle: z.boolean().optional(),
-    showPrice: z.boolean().optional(),
-    showDescription: z.boolean().optional(),
-    showRating: z.boolean().optional(),
-    showAddToCart: z.boolean().optional(),
-    addToCartText: z.string().optional(),
-    imageAspectRatio: z.string().optional(),
-    apiEndpoint: z.string(),
-    categoryFilter: z.string().optional(),
-    priceFilter: z.string().optional(),
-    sortBy: z.string().optional(),
-    cardStyle: z.string().optional(),
-    hoverEffect: z.string().optional()
-  }),
-
-  propertyPanels: [
-    {
-      id: 'content',
-      label: 'Content',
-      fields: [
-        { name: 'title', label: 'Widget Title', type: 'text' },
-        { name: 'subtitle', label: 'Subtitle', type: 'text' },
-        {
-          name: 'contentType',
-          label: 'Content Type',
-          type: 'select',
-          options: [
-            { label: 'Products', value: 'products' },
-            { label: 'Services', value: 'services' },
-            { label: 'Packages', value: 'packages' }
-          ]
-        }
-      ]
     },
     {
-      id: 'layout',
-      label: 'Layout',
+      id: 'api',
+      label: 'API Settings',
       fields: [
-        {
-          name: 'columns',
-          label: 'Columns',
-          type: 'select',
-          options: [
-            { label: '2 Columns', value: 2 },
-            { label: '3 Columns', value: 3 },
-            { label: '4 Columns', value: 4 }
-          ]
-        },
-        { name: 'itemsPerPage', label: 'Items Per Page', type: 'number' }
-      ]
-    },
-    {
-      id: 'display',
-      label: 'Display Options',
-      fields: [
-        { name: 'showImage', label: 'Show Image', type: 'toggle' },
-        { name: 'showTitle', label: 'Show Title', type: 'toggle' },
-        { name: 'showPrice', label: 'Show Price', type: 'toggle' },
-        { name: 'showDescription', label: 'Show Description', type: 'toggle' },
-        { name: 'showRating', label: 'Show Rating', type: 'toggle' },
-        { name: 'showAddToCart', label: 'Show Add to Cart', type: 'toggle' }
+        { name: 'apiEndpoint', label: 'API Endpoint', type: 'text' },
+        { name: 'categoryFilter', label: 'Category Filter', type: 'text' }
       ]
     }
   ]
