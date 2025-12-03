@@ -439,7 +439,7 @@ function ComponentPreview({
               <div className='text-muted-foreground text-xs'>
                 {dataSource === 'api'
                   ? `API Mode: ${cardType}`
-                  : `Manual Mode: ${gridItems.length} items`}
+                  : `Manual Mode: ${gridItems.length} items - Click to edit grid items in Properties Panel`}
               </div>
             </div>
             <div className='bg-blue-200 px-2 py-1 rounded font-medium text-blue-700 text-xs'>
@@ -460,10 +460,27 @@ function ComponentPreview({
                 ))
               : // Manual Mode Preview
                 gridItems.slice(0, 3).map((item: any, i: number) => (
-                  <div key={i} className='space-y-2 bg-white p-3 border rounded'>
-                    <div className='bg-gray-200 rounded aspect-video'></div>
-                    <div className='font-medium text-sm'>{item.cardType}</div>
-                    <div className='text-muted-foreground text-xs'>Custom item {i + 1}</div>
+                  <div key={i} className='space-y-2 bg-white p-3 border rounded min-h-[100px]'>
+                    <div className='flex justify-between items-center'>
+                      <div className='font-medium text-sm'>Grid Item {i + 1}</div>
+                      <div className='bg-blue-100 px-2 py-0.5 rounded font-medium text-[10px] text-blue-700'>
+                        {item.components?.length || 0} components
+                      </div>
+                    </div>
+                    {item.components && item.components.length > 0 ? (
+                      <div className='space-y-1 text-[10px] text-muted-foreground'>
+                        {item.components.slice(0, 3).map((comp: any, idx: number) => (
+                          <div key={idx} className='bg-gray-100 px-2 py-1 rounded truncate'>
+                            {comp.type}
+                          </div>
+                        ))}
+                        {item.components.length > 3 && (
+                          <div className='text-center'>+{item.components.length - 3} more</div>
+                        )}
+                      </div>
+                    ) : (
+                      <div className='py-4 text-muted-foreground text-xs text-center'>Empty</div>
+                    )}
                   </div>
                 ))}
           </div>

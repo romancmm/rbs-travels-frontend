@@ -5,6 +5,7 @@ import CustomImage from '@/components/common/CustomImage'
 import CustomLink from '@/components/common/CustomLink'
 import { Section } from '@/components/common/section'
 import { Typography } from '@/components/common/typography'
+import GridWithAPI from '@/components/frontend/page-builder/GridWithAPI'
 import { cn } from '@/lib/utils'
 import type {
   BaseComponent,
@@ -357,16 +358,45 @@ function renderComponent(component: BaseComponent) {
         gap = '24',
         dataSource = 'api',
         apiEndpoint,
+        apiParams = {},
+        apiResponsePath = 'data.items',
         cardType = 'BlogCard',
         gridItems = [],
         cardStyle = 'default',
-        hoverEffect = 'lift'
+        hoverEffect = 'lift',
+        enablePagination = false,
+        itemsPerPage = 10,
+        columnsMobile = 1,
+        columnsTablet = 2,
+        columnsDesktop = 3
       } = props as any
 
-      // TODO: Implement API fetching with useAsync hook
-      // For now, show preview/placeholder
-      const items = dataSource === 'api' ? [] : gridItems
+      // API Mode - Use GridWithAPI component
+      if (dataSource === 'api') {
+        return (
+          <GridWithAPI
+            key={component.id}
+            title={title}
+            subtitle={subtitle}
+            showTitle={showTitle}
+            gap={gap}
+            apiEndpoint={apiEndpoint}
+            apiParams={apiParams}
+            apiResponsePath={apiResponsePath}
+            cardType={cardType}
+            cardStyle={cardStyle}
+            hoverEffect={hoverEffect}
+            enablePagination={enablePagination}
+            itemsPerPage={itemsPerPage}
+            columnsMobile={columnsMobile}
+            columnsTablet={columnsTablet}
+            columnsDesktop={columnsDesktop}
+            className={componentClassName}
+          />
+        )
+      }
 
+      // Manual Mode - Render components in each grid item
       const getHoverClass = () => {
         switch (hoverEffect) {
           case 'lift':
@@ -395,6 +425,8 @@ function renderComponent(component: BaseComponent) {
         }
       }
 
+      const items = gridItems
+
       return (
         <div key={component.id} className={cn('space-y-6', componentClassName)}>
           {showTitle && title && (
@@ -419,29 +451,30 @@ function renderComponent(component: BaseComponent) {
               })
             }}
           >
-            {dataSource === 'api' ? (
-              // API Mode - Show placeholder or fetch from API
-              <div className='col-span-full py-12 text-gray-500 text-center'>
-                <Typography variant='body1'>
-                  API Mode: {cardType} from {apiEndpoint || 'API endpoint'}
-                </Typography>
-                <Typography variant='body2' className='mt-2 text-xs'>
-                  Data will be fetched from API in production
-                </Typography>
-              </div>
-            ) : // Manual Mode - Render custom grid items
-            items.length > 0 ? (
+            {items.length > 0 ? (
               items.map((item: any, i: number) => (
-                <div key={item.id || i} className={getCardClass()}>
-                  {/* Render card based on cardType */}
-                  <div className='space-y-2 p-4'>
-                    <Typography variant='h5' weight='semibold'>
-                      {item.props?.title || `${item.cardType} ${i + 1}`}
-                    </Typography>
-                    <Typography variant='body2' className='text-gray-600'>
-                      {item.props?.description || 'Custom grid item content'}
-                    </Typography>
-                  </div>
+                <div
+                  key={item.id || i}
+                  className={cn(
+                    getCardClass(),
+                    item.settings?.className,
+                    // Alignment classes
+                    item.settings?.verticalAlign === 'center' && 'flex items-center',
+                    item.settings?.verticalAlign === 'bottom' && 'flex items-end',
+                    item.settings?.horizontalAlign === 'center' && 'justify-center text-center',
+                    item.settings?.horizontalAlign === 'right' && 'justify-end text-right'
+                  )}
+                >
+                  {/* Render components in this grid item */}
+                  {item.components && item.components.length > 0 ? (
+                    <div className='space-y-4 w-full'>
+                      {item.components.map((comp: any) => renderComponent(comp))}
+                    </div>
+                  ) : (
+                    <div className='p-4 text-gray-400 text-center'>
+                      <Typography variant='body2'>Empty grid item</Typography>
+                    </div>
+                  )}
                 </div>
               ))
             ) : (
@@ -455,7 +488,7 @@ function renderComponent(component: BaseComponent) {
     }
 
     case 'blog-carousel': {
-      const { title, subtitle, showTitle = true, columns = 3, cardType = 'BlogCard' } = props as any
+      const { title, subtitle, showTitle = true, cardType = 'BlogCard' } = props as any
       return (
         <div key={component.id} className={cn('space-y-6', componentClassName)}>
           {showTitle && title && (

@@ -604,12 +604,17 @@ export type GridCardType =
 
 /**
  * Grid item for manual mode
+ * Similar to Column structure - can contain multiple components
  */
 export interface GridItem {
   id: string
   order: number
-  cardType: GridCardType
-  props: Record<string, any>
+  components: BaseComponent[] // Array of components in this grid item
+  settings?: {
+    className?: string
+    verticalAlign?: 'top' | 'center' | 'bottom' | 'stretch'
+    horizontalAlign?: 'left' | 'center' | 'right'
+  }
 }
 
 /**
@@ -636,10 +641,8 @@ export interface GridComponentProps {
   enablePagination?: boolean
   cardType?: GridCardType // Which card component to use for API data
 
-  // Manual Mode
-  gridItems?: GridItem[]
-
-  // Card Display Options (passed to card components)
+  // Manual Mode (each grid item contains components like a column)
+  gridItems?: GridItem[] // Card Display Options (passed to card components)
   cardProps?: Record<string, any>
   cardStyle?: 'default' | 'minimal' | 'bordered' | 'elevated'
   hoverEffect?: 'none' | 'lift' | 'zoom' | 'glow'

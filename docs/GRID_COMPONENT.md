@@ -148,7 +148,7 @@ type GridCardType =
 }
 ```
 
-### Example 3: Manual Mode - Mixed Cards
+### Example 3: Manual Mode - Mixed Components
 
 ```json
 {
@@ -162,32 +162,59 @@ type GridCardType =
       {
         "id": "item-1",
         "order": 0,
-        "cardType": "IconBox",
-        "props": {
-          "icon": "Package",
-          "title": "Fast Delivery",
-          "description": "Quick and reliable shipping"
-        }
+        "components": [
+          {
+            "id": "comp-1",
+            "type": "icon",
+            "props": { "icon": "Package", "size": "large" }
+          },
+          {
+            "id": "comp-2",
+            "type": "heading",
+            "props": { "text": "Fast Delivery", "level": 3 }
+          },
+          {
+            "id": "comp-3",
+            "type": "text",
+            "props": { "content": "Quick and reliable shipping" }
+          }
+        ]
       },
       {
         "id": "item-2",
         "order": 1,
-        "cardType": "IconBox",
-        "props": {
-          "icon": "Shield",
-          "title": "Secure Payment",
-          "description": "100% secure transactions"
-        }
+        "components": [
+          {
+            "id": "comp-4",
+            "type": "icon",
+            "props": { "icon": "Shield", "size": "large" }
+          },
+          {
+            "id": "comp-5",
+            "type": "heading",
+            "props": { "text": "Secure Payment", "level": 3 }
+          },
+          {
+            "id": "comp-6",
+            "type": "text",
+            "props": { "content": "100% secure transactions" }
+          }
+        ]
       },
       {
         "id": "item-3",
         "order": 2,
-        "cardType": "PricingCard",
-        "props": {
-          "title": "Premium Plan",
-          "price": "$99/mo",
-          "features": ["Feature 1", "Feature 2", "Feature 3"]
-        }
+        "components": [
+          {
+            "id": "comp-7",
+            "type": "pricing",
+            "props": {
+              "title": "Premium Plan",
+              "price": "$99/mo",
+              "features": ["Feature 1", "Feature 2"]
+            }
+          }
+        ]
       }
     ],
     "cardStyle": "elevated",
@@ -210,26 +237,78 @@ type GridCardType =
       {
         "id": "pkg-1",
         "order": 0,
-        "cardType": "TourPackageCard",
-        "props": {
-          "title": "Bali Adventure",
-          "duration": "7 Days / 6 Nights",
-          "price": "$1,299",
-          "image": "/images/bali.jpg",
-          "destination": "Bali, Indonesia"
-        }
+        "components": [
+          {
+            "id": "img-1",
+            "type": "image",
+            "props": {
+              "src": "/images/bali.jpg",
+              "alt": "Bali"
+            }
+          },
+          {
+            "id": "heading-1",
+            "type": "heading",
+            "props": {
+              "text": "Bali Adventure",
+              "level": 3
+            }
+          },
+          {
+            "id": "text-1",
+            "type": "text",
+            "props": {
+              "content": "7 Days / 6 Nights"
+            }
+          },
+          {
+            "id": "price-1",
+            "type": "heading",
+            "props": {
+              "text": "$1,299",
+              "level": 4,
+              "className": "text-green-600"
+            }
+          }
+        ]
       },
       {
         "id": "pkg-2",
         "order": 1,
-        "cardType": "TourPackageCard",
-        "props": {
-          "title": "Paris Romance",
-          "duration": "5 Days / 4 Nights",
-          "price": "$1,899",
-          "image": "/images/paris.jpg",
-          "destination": "Paris, France"
-        }
+        "components": [
+          {
+            "id": "img-2",
+            "type": "image",
+            "props": {
+              "src": "/images/paris.jpg",
+              "alt": "Paris"
+            }
+          },
+          {
+            "id": "heading-2",
+            "type": "heading",
+            "props": {
+              "text": "Paris Romance",
+              "level": 3
+            }
+          },
+          {
+            "id": "text-2",
+            "type": "text",
+            "props": {
+              "content": "5 Days / 4 Nights"
+            }
+          },
+          {
+            "id": "price-2",
+            "type": "heading",
+            "props": {
+              "text": "$1,899",
+              "level": 4,
+              "className": "text-green-600"
+            }
+          }
+        ]
       }
     ]
   }
@@ -246,10 +325,16 @@ When using **Manual Mode**, each grid item has this structure:
 interface GridItem {
   id: string // Unique identifier
   order: number // Sort order
-  cardType: GridCardType // Which card component to use
-  props: Record<string, any> // Props for the card component
+  components: BaseComponent[] // Array of components in this grid item
+  settings?: {
+    className?: string // Custom CSS classes
+    verticalAlign?: 'top' | 'center' | 'bottom' | 'stretch'
+    horizontalAlign?: 'left' | 'center' | 'right'
+  }
 }
 ```
+
+**Key Concept:** Grid items work like columns - they can contain multiple components. This allows you to build complex layouts within each grid cell.
 
 ---
 

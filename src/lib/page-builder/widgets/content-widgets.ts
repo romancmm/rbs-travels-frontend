@@ -35,6 +35,7 @@ componentRegistry.register({
     // API Mode
     apiEndpoint: '/api/blog',
     apiParams: {},
+    apiResponsePath: 'data.items', // Path to extract items from response (e.g., 'data.items', 'data.data.items', 'items')
     itemsPerPage: 6,
     enablePagination: true,
     cardType: 'BlogCard', // Which card component to render
@@ -63,6 +64,7 @@ componentRegistry.register({
     dataSource: z.enum(['api', 'manual']),
     apiEndpoint: z.string().optional(),
     apiParams: z.record(z.string(), z.any()).optional(),
+    apiResponsePath: z.string().optional(),
     itemsPerPage: z.number().optional(),
     enablePagination: z.boolean().optional(),
     cardType: z.string().optional(),
@@ -71,8 +73,14 @@ componentRegistry.register({
         z.object({
           id: z.string(),
           order: z.number(),
-          cardType: z.string(),
-          props: z.record(z.string(), z.any())
+          components: z.array(z.any()), // Array of BaseComponent
+          settings: z
+            .object({
+              className: z.string().optional(),
+              verticalAlign: z.enum(['top', 'center', 'bottom', 'stretch']).optional(),
+              horizontalAlign: z.enum(['left', 'center', 'right']).optional()
+            })
+            .optional()
         })
       )
       .optional(),
@@ -114,6 +122,13 @@ componentRegistry.register({
       label: 'API Settings',
       fields: [
         { name: 'apiEndpoint', label: 'API Endpoint', type: 'text', placeholder: '/api/blog' },
+        {
+          name: 'apiResponsePath',
+          label: 'Response Path',
+          type: 'text',
+          placeholder: 'data.items',
+          description: 'Path to extract items from API response (e.g., data.items, data.data.items)'
+        },
         { name: 'itemsPerPage', label: 'Items Per Page', type: 'number' },
         { name: 'enablePagination', label: 'Enable Pagination', type: 'toggle' },
         {
