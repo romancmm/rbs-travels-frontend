@@ -8,6 +8,7 @@
 export type MenuItemType =
   | 'category-articles'
   | 'single-article'
+  | 'gallery'
   | 'page'
   | 'custom-link'
   | 'external-link'
@@ -90,7 +91,7 @@ export interface UpdateMenuInput extends Partial<CreateMenuInput> {
  * Check if menu item is an entity reference type (single reference)
  */
 export function isEntityMenuItem(item: MenuItem): boolean {
-  return ['single-article', 'page'].includes(item.type)
+  return ['single-article', 'page', 'gallery'].includes(item.type)
 }
 
 /**
@@ -152,7 +153,7 @@ export function validateMenuItem(item: CreateMenuItemInput | UpdateMenuItemInput
 }
 
 function isEntityMenuItemType(type?: MenuItemType): boolean {
-  return type ? ['single-article', 'page'].includes(type) : false
+  return type ? ['single-article', 'page', 'gallery'].includes(type) : false
 }
 
 function isLinkMenuItemType(type?: MenuItemType): boolean {
@@ -197,36 +198,28 @@ export function flattenMenuItems(items: MenuItem[]): MenuItem[] {
 /**
  * Get menu item URL with fallback
  */
-export function getMenuItemUrl(item: MenuItem): string {
-  // Return existing URL if set (for custom-link and external-link)
-  if (item.url) return item.url
+// export function getMenuItemUrl(item: MenuItem): string {
+//   // Return existing URL if set (for custom-link and external-link)
+//   if (item.url) return item.url
 
-  // Handle category-articles type (array of categories)
-  if (item.type === 'category-articles' && Array.isArray(item.reference)) {
-    if (item.reference.length > 0) {
-      // Multiple categories: /articles/category/slug1/slug2
-      return `/articles/category/${item.reference.join('/')}`
-    }
-    // No categories: default article listing
-    return '/articles'
-  }
+//   // Handle category-articles type (array of categories)
+//   if (item.type === 'category-articles' && Array.isArray(item.reference)) {
+//     if (item.reference.length > 0) {
+//       // Multiple categories: /articles/category/slug1/slug2
+//       return `/articles/category/${item.reference.join('/')}`
+//     }
+//     // No categories: default article listing
+//     return '/articles'
+//   }
 
-  // Handle single-article type
-  if (item.type === 'single-article' && typeof item.reference === 'string') {
-    // Clean double-quoted strings (e.g., \"about\" -> about)
-    const cleanReference = item.reference.replace(/^"+|"+$/g, '')
-    return `/articles/${cleanReference}`
-  }
+//   // For all entity types (single-article, page, gallery), use the menu item slug
+//   // The centralized route handler will determine the content type
+//   if (['single-article', 'page', 'gallery'].includes(item.type)) {
+//     return `/${item.slug}`
+//   }
 
-  // Handle page type
-  if (item.type === 'page' && typeof item.reference === 'string') {
-    // Clean double-quoted strings (e.g., \"about\" -> about)
-    const cleanReference = item.reference.replace(/^"+|"+$/g, '')
-    return `/page/${cleanReference}`
-  }
-
-  return '#'
-}
+//   return '#'
+// }
 
 /**
  * Create breadcrumb from menu item
@@ -259,6 +252,7 @@ export function createBreadcrumb(items: MenuItem[], targetId: string): MenuItem[
 export const MENU_ITEM_TYPE_LABELS: Record<MenuItemType, string> = {
   'category-articles': 'Category Articles',
   'single-article': 'Single Article',
+  gallery: 'Gallery',
   page: 'Page',
   'custom-link': 'Custom Link',
   'external-link': 'External Link'
@@ -267,6 +261,7 @@ export const MENU_ITEM_TYPE_LABELS: Record<MenuItemType, string> = {
 export const MENU_ITEM_TYPE_DESCRIPTIONS: Record<MenuItemType, string> = {
   'category-articles': 'Article listing from selected categories',
   'single-article': 'Link to a specific article',
+  gallery: 'Link to a gallery folder',
   page: 'Link to a CMS page',
   'custom-link': 'Custom internal or external link',
   'external-link': 'External website link (validated)'

@@ -5,18 +5,17 @@ import ContentRenderer from '@/components/frontend/content-renderers/ContentRend
 import { Skeleton } from '@/components/ui/skeleton'
 import { CONTENT_TYPE_CONFIG, type ContentType } from '@/config/contentTypes'
 import useAsync from '@/hooks/useAsync'
-import { notFound, useParams } from 'next/navigation'
+import { notFound } from 'next/navigation'
 
-export default function DynamicPage() {
-  const params = useParams()
-  const slug = params.slug as string
+export default function DynamicPage({ pageSlug }: { pageSlug: string }) {
 
   // Unified endpoint that returns content with type information
   const { data, loading } = useAsync<{
     data: any
     type?: ContentType
-  }>(() => `/pages/${slug}`, true)
-  console.log('data', data)
+  }>(() => `/pages/${pageSlug}`, true)
+  console.log('pageData', pageSlug, data)
+
   if (loading) {
     return (
       <>

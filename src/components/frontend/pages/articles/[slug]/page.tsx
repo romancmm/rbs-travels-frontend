@@ -7,9 +7,14 @@ import { Calendar, Clock, Tag, User } from 'lucide-react'
 import { notFound } from 'next/navigation'
 
 
-export default async function ArticlePage({ params }: { params: Promise<{ slug: string }> }) {
-    const { slug } = await params
-    const articleData = await fetchOnServer(`/articles/posts/slug/${slug}`, 300)
+export default async function ArticlePage({ slug, params }: { slug?: string; params?: Promise<{ slug: string }> }) {
+    const resolvedSlug = slug || (params ? (await params).slug : null)
+
+    if (!resolvedSlug) {
+        notFound()
+    }
+
+    const articleData = await fetchOnServer(`/articles/posts/slug/${resolvedSlug}`, 300)
 
     if (!articleData?.data) {
         notFound()

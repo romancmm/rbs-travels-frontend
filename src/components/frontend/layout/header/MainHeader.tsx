@@ -7,7 +7,6 @@ import { Typography } from '@/components/common/typography'
 // import { siteConfig } from '@/data/siteConfig'
 import { useSiteConfig } from '@/components/providers/store-provider'
 import { cn } from '@/lib/utils'
-import { getMenuItemUrl } from '@/types/menu.types'
 import { ChevronDown, Phone } from 'lucide-react'
 import { useRef, useState } from 'react'
 import MobileNav from './MobileNav'
@@ -71,7 +70,7 @@ export default function MainHeader({ data }: { data: any }) {
                   onMouseLeave={() => setHoveredItem(null)}
                 >
                   <CustomLink
-                    href={getMenuItemUrl(item)}
+                    href={item?.slug || '#'}
                     className='group flex items-center gap-1 hover:bg-white/10 px-3 py-2 rounded-lg transition-all duration-300'
                   >
                     <Typography
@@ -83,9 +82,8 @@ export default function MainHeader({ data }: { data: any }) {
                     </Typography>
                     {publishedChildren.length > 0 && (
                       <ChevronDown
-                        className={`w-4 h-4 transition-transform duration-300 ${
-                          hoveredItem === index ? 'rotate-180' : ''
-                        }`}
+                        className={`w-4 h-4 transition-transform duration-300 ${hoveredItem === index ? 'rotate-180' : ''
+                          }`}
                       />
                     )}
                   </CustomLink>
@@ -115,7 +113,7 @@ export default function MainHeader({ data }: { data: any }) {
                               onMouseLeave={() => setHoveredChild(null)}
                             >
                               <CustomLink
-                                href={getMenuItemUrl(child)}
+                                href={child?.slug || '#'}
                                 className='group flex justify-between items-center hover:bg-linear-to-r hover:from-primary/10 hover:to-primary/5 mx-2 px-4 py-3 rounded-xl text-header-color hover:text-primary transition-all duration-200'
                               >
                                 <Typography
@@ -144,7 +142,7 @@ export default function MainHeader({ data }: { data: any }) {
                                       (grandChild: any, grandChildIndex: number) => (
                                         <CustomLink
                                           key={grandChild.id ?? grandChildIndex}
-                                          href={getMenuItemUrl(grandChild)}
+                                          href={grandChild?.slug || '#'}
                                           className='group flex items-center hover:bg-linear-to-r hover:from-primary/10 hover:to-primary/5 mx-2 px-4 py-3 rounded-xl text-header-color hover:text-primary transition-all duration-200'
                                         >
                                           <Typography
@@ -159,13 +157,15 @@ export default function MainHeader({ data }: { data: any }) {
                                     )}
                                   </div>
                                 </div>
-                              )}
+                              )
+                              }
                             </div>
                           )
                         })}
                       </div>
                     </div>
-                  )}
+                  )
+                  }
                 </div>
               )
             })}
@@ -190,9 +190,8 @@ export default function MainHeader({ data }: { data: any }) {
                     More
                   </Typography>
                   <ChevronDown
-                    className={`w-4 h-4 transition-transform duration-300 ${
-                      isMoreHovered ? 'rotate-180' : ''
-                    }`}
+                    className={`w-4 h-4 transition-transform duration-300 ${isMoreHovered ? 'rotate-180' : ''
+                      }`}
                   />
                 </button>
                 {isMoreHovered && (
@@ -219,7 +218,7 @@ export default function MainHeader({ data }: { data: any }) {
                             onMouseLeave={() => setHoveredChild(null)}
                           >
                             <CustomLink
-                              href={getMenuItemUrl(item)}
+                              href={item?.slug || '#'}
                               className='group flex justify-between items-center hover:bg-linear-to-r hover:from-primary/10 hover:to-primary/5 mx-2 px-4 py-3 rounded-xl text-header-color hover:text-primary transition-all duration-200'
                             >
                               <Typography
@@ -261,7 +260,7 @@ export default function MainHeader({ data }: { data: any }) {
                                         onMouseLeave={() => setHoveredChild(null)}
                                       >
                                         <CustomLink
-                                          href={getMenuItemUrl(child)}
+                                          href={child?.slug || '#'}
                                           className='group flex justify-between items-center hover:bg-linear-to-r hover:from-primary/10 hover:to-primary/5 mx-2 px-4 py-3 rounded-xl text-header-color hover:text-primary transition-all duration-200'
                                         >
                                           <Typography
@@ -292,7 +291,7 @@ export default function MainHeader({ data }: { data: any }) {
                                                   (grandChild: any, grandChildIndex: number) => (
                                                     <CustomLink
                                                       key={grandChild.id ?? grandChildIndex}
-                                                      href={getMenuItemUrl(grandChild)}
+                                                      href={grandChild?.slug || '#'}
                                                       className='group flex items-center hover:bg-linear-to-r hover:from-primary/10 hover:to-primary/5 mx-2 px-4 py-3 rounded-xl text-header-color hover:text-primary transition-all duration-200'
                                                     >
                                                       <Typography
@@ -353,6 +352,6 @@ export default function MainHeader({ data }: { data: any }) {
         {/* Mobile Navigation */}
         <MobileNav items={data} />
       </div>
-    </div>
+    </div >
   )
 }

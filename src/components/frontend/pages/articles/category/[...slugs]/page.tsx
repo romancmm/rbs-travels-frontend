@@ -41,12 +41,13 @@ async function getMenuItemDetails(categorySlugs: string[]) {
 }
 
 export default async function CategoryArticlesPage({
+    slugs,
     params
 }: {
-    params: Promise<{ slugs: string[] }>
+    slugs?: string[]
+    params?: Promise<{ slugs: string[] }>
 }) {
-    const { slugs } = await params
-    const categorySlugs = slugs ?? []
+    const categorySlugs = slugs || (params ? (await params).slugs : [])
 
     const [articlesData, menuItem] = await Promise.all([
         getArticlesByCategories(categorySlugs),

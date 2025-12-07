@@ -8,7 +8,7 @@
 import CustomLink from '@/components/common/CustomLink'
 import { cn } from '@/lib/utils'
 import type { MenuItem } from '@/types/menu.types'
-import { getMenuItemUrl, hasChildren } from '@/types/menu.types'
+import { hasChildren } from '@/types/menu.types'
 import { ChevronDown, ExternalLink as ExternalLinkIcon } from 'lucide-react'
 import { useState } from 'react'
 
@@ -93,7 +93,7 @@ function MenuItemLink({
   isSubmenu = false,
   showIcons = false
 }: MenuItemLinkProps) {
-  const url = getMenuItemUrl(item)
+  const url = item?.url
   const isExternal = item.type === 'external-link'
 
   const content = (
@@ -224,7 +224,7 @@ function MobileMenuItem({
   level = 0
 }: MobileMenuItemProps) {
   const children = hasChildren(item) ? item.children! : []
-  const url = getMenuItemUrl(item)
+  const url = item?.url
   const isExternal = item.type === 'external-link'
 
   const content = (
