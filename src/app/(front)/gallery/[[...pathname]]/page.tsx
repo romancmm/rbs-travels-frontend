@@ -11,23 +11,26 @@ import { cn } from '@/lib/utils'
 import { Eye, Folder, Image as ImageIcon } from 'lucide-react'
 import { motion } from 'motion/react'
 import { useRouter } from 'next/navigation'
-import React, { use, useState } from 'react'
+import { use, useState } from 'react'
 
 interface FileItem {
   type: 'file' | 'folder'
   name: string
   createdAt: string
-  updatedAt: string
-  fileId: string
+  updatedAt?: string
+  fileId?: string
+  folderId?: string
   url?: string
   thumbnail?: string
   fileType?: 'image' | 'non-image'
-  filePath: string
+  filePath?: string
+  folderPath?: string
   height?: number
   width?: number
   size?: number
   mime?: string
-  children?: FileItem[]
+  tags?: string[] | null
+  items?: FileItem[]
 }
 
 interface GalleryPageProps {
@@ -46,7 +49,6 @@ function GalleryContent({ params }: { params: { pathname?: string[] } }) {
   const router = useRouter()
   const [lightboxOpen, setLightboxOpen] = useState(false)
   const [selectedImageIndex, setSelectedImageIndex] = useState(0)
-  const [folderPreviews, setFolderPreviews] = useState<Record<string, FileItem[]>>({})
 
   // Convert pathname array to folder path
   // e.g., ['folder1', 'folder2'] -> '/folder1/folder2'
@@ -65,27 +67,40 @@ function GalleryContent({ params }: { params: { pathname?: string[] } }) {
   })()
 
   // Build API path for the gallery folder
-  const encodedPath = encodeURIComponent(folderPath)
-  const apiPath = `/media?path=${encodedPath}&page=1&perPage=100`
+  const encodedPath = encodeURIComponent(folderPath) ?? 'gallery'
+  const apiPath = `/media?path=${encodedPath}&page=1&perPage=100&withItems=true`
 
   const { data, loading } = useAsync<{
-    items: FileItem[]
-    files: FileItem[]
-    folders: FileItem[]
-    page: string
-    perPage: string
-    hasMore: boolean
-    totalEstimate: number
-    currentPath: string
+    items?: FileItem[]
+    files?: FileItem[]
+    folders?: FileItem[]
+    page?: string
+    perPage?: string
+    hasMore?: boolean
+    totalEstimate?: number
+    currentPath?: string
+    type?: string
+    name?: string
+    folderPath?: string
+    folderId?: string
+    createdAt?: string
   }>(apiPath, true)
 
   // Filter folders and images from items
   const folders = (() => {
+    // Handle both array response and single folder response
+    if (data?.type === 'folder' && data?.items) {
+      return data.items.filter((item) => item.type === 'folder')
+    }
     const itemsArray = data?.items || data?.files || []
     return itemsArray.filter((item) => item.type === 'folder')
   })()
 
   const images = (() => {
+    // Handle both array response and single folder response
+    if (data?.type === 'folder' && data?.items) {
+      return data.items.filter((item) => item.type === 'file' && item.fileType === 'image')
+    }
     const itemsArray = data?.items || data?.files || []
     return itemsArray.filter((item) => item.type === 'file' && item.fileType === 'image')
   })()
@@ -99,54 +114,8 @@ function GalleryContent({ params }: { params: { pathname?: string[] } }) {
   }
 
   const handleFolderClick = (folder: FileItem) => {
-    router.push(`/gallery/${folder.filePath}`)
+    router.push(`/gallery/${folder.folderPath?.substring(1) || folder.name}`)
   }
-
-  // Load folder previews when folders change
-  React.useEffect(() => {
-    const fetchFolderPreviews = async () => {
-      if (!folders.length) return
-
-      const previews: Record<string, FileItem[]> = {}
-
-      await Promise.all(
-        folders.map(async (folder) => {
-          try {
-            const encodedFolderPath = encodeURIComponent(folder.filePath)
-            const previewUrl = `/media?path=${encodedFolderPath}&page=1&perPage=4`
-            console.log('Fetching preview for folder:', folder.name, 'URL:', previewUrl)
-
-            const response = await fetch(previewUrl)
-
-            if (!response.ok) {
-              console.error(`Failed to fetch preview for ${folder.name}:`, response.status)
-              return
-            }
-
-            const folderData = await response.json()
-            console.log('Preview data for', folder.name, ':', folderData)
-
-            const folderImages = (folderData?.items || folderData?.files || [])
-              .filter((item: FileItem) => item.type === 'file' && item.fileType === 'image')
-              .slice(0, 4)
-
-            if (folderImages.length > 0) {
-              previews[folder.fileId] = folderImages
-            }
-          } catch (error) {
-            console.error(`Failed to fetch preview for ${folder.name}:`, error)
-          }
-        })
-      )
-
-      setFolderPreviews(previews)
-    }
-
-    if (folders.length > 0 && !loading) {
-      fetchFolderPreviews()
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [folders.length, loading])
 
   if (loading) {
     return (
@@ -222,12 +191,11 @@ function GalleryContent({ params }: { params: { pathname?: string[] } }) {
             </Typography>
             <Typography variant='body1' className='opacity-90 mx-auto max-w-2xl'>
               {folders.length > 0 && images.length > 0
-                ? `${folders.length} ${folders.length === 1 ? 'folder' : 'folders'} • ${
-                    images.length
-                  } ${images.length === 1 ? 'image' : 'images'}`
+                ? `${folders.length} ${folders.length === 1 ? 'folder' : 'folders'} • ${images.length
+                } ${images.length === 1 ? 'image' : 'images'}`
                 : folders.length > 0
-                ? `${folders.length} ${folders.length === 1 ? 'folder' : 'folders'}`
-                : `${images.length} ${images.length === 1 ? 'image' : 'images'}`}
+                  ? `${folders.length} ${folders.length === 1 ? 'folder' : 'folders'}`
+                  : `${images.length} ${images.length === 1 ? 'image' : 'images'}`}
             </Typography>
           </motion.div>
         </Container>
@@ -239,7 +207,9 @@ function GalleryContent({ params }: { params: { pathname?: string[] } }) {
           <div className='gap-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5'>
             {/* Folders */}
             {folders.map((folder, index) => {
-              const previewImages = folderPreviews[folder.fileId] || []
+              const previewImages = folder?.items?.filter(
+                (item) => item.type === 'file' && item.fileType === 'image'
+              ) || []
               const hasPreview = previewImages.length > 0
 
               return (
@@ -252,43 +222,47 @@ function GalleryContent({ params }: { params: { pathname?: string[] } }) {
                   onClick={() => handleFolderClick(folder)}
                 >
                   {hasPreview ? (
-                    // Preview Grid: Show up to 4 images in a 2x2 grid
-                    <div className='relative bg-gray-100 w-full h-full'>
-                      {previewImages.length === 1 ? (
-                        // Single image preview
-                        <div className='relative w-full h-full'>
-                          <CustomImage
-                            src={previewImages[0].thumbnail || previewImages[0].url || ''}
-                            alt={folder.name}
-                            fill
-                            className='object-cover'
-                            sizes='(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, (max-width: 1280px) 25vw, 20vw'
-                          />
-                        </div>
-                      ) : (
-                        // Grid preview (2x2)
-                        <div className='gap-0.5 grid grid-cols-2 w-full h-full'>
-                          {previewImages.slice(0, 4).map((img, idx) => (
-                            <div key={idx} className='relative bg-gray-200 w-full h-full'>
+                    // Stacked images preview (like paper stack)
+                    <div className='relative flex justify-center items-center bg-gray-100 group-hover:shadow-lg w-full h-full overflow-hidden transition-shadow duration-300'>
+                      {previewImages.slice(0, 5).map((img, idx) => {
+                        const totalImages = Math.min(previewImages.length, 5)
+                        const rotation = (idx - (totalImages - 1) / 2) * 5 // -10, -5, 0, 5, 10 degrees
+                        const zIndex = idx
+                        const offsetY = idx * -2 // Stack offset
+                        const offsetX = idx * 1
+
+                        return (
+                          <div
+                            key={idx}
+                            className='absolute inset-0 flex justify-center items-center transition-transform group-hover:translate-y-0 duration-300'
+                            style={{
+                              transform: `rotate(${rotation}deg) translateY(${offsetY}px) translateX(${offsetX}px)`,
+                              zIndex,
+                              transformOrigin: 'center bottom',
+                            }}
+                          >
+                            <div className='relative shadow-lg mx-auto w-[65%] h-[65%]'>
                               <CustomImage
                                 src={img.thumbnail || img.url || ''}
                                 alt={`${folder.name} preview ${idx + 1}`}
                                 fill
-                                className='object-cover'
-                                sizes='(max-width: 640px) 50vw, (max-width: 768px) 25vw, (max-width: 1024px) 16vw, (max-width: 1280px) 12vw, 10vw'
+                                className='rounded-sm w-full h-full object-cover'
+                                sizes='(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, (max-width: 1280px) 25vw, 20vw'
                               />
+                              {/* Border effect */}
+                              <div className='absolute inset-0 border-2 border-white/30 rounded-sm' />
                             </div>
-                          ))}
-                        </div>
-                      )}
+                          </div>
+                        )
+                      })}
 
                       {/* Overlay gradient */}
-                      <div className='absolute inset-0 bg-linear-to-t from-black/70 via-black/20 to-transparent' />
+                      {/* <div className='absolute inset-0 bg-linear-to-t from-black/70 via-transparent to-transparent pointer-events-none' /> */}
                     </div>
                   ) : (
                     // Default folder icon when no preview available
                     <div className='flex flex-col justify-center items-center bg-linear-to-br from-primary/10 group-hover:from-primary/20 to-primary/5 group-hover:to-primary/10 w-full h-full transition-all duration-300'>
-                      <div className='flex justify-center items-center bg-white shadow-md group-hover:shadow-lg rounded-full w-20 h-20 transition-all duration-300'>
+                      <div className='flex justify-center items-center w-20 h-20 transition-all duration-300'>
                         <Folder className='w-10 h-10 text-primary' />
                       </div>
                     </div>
