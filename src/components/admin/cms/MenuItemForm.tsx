@@ -38,6 +38,11 @@ const MENU_TYPE_CONFIG: Record<
     frontendBase: '/',
     label: 'Page'
   },
+  gallery: {
+    adminEndpoint: '/media?page=1&perPage=50',
+    frontendBase: '/gallery',
+    label: 'Gallery Folder'
+  }
   // service: {
   //   adminEndpoint: '/admin/services',
   //   frontendBase: '/services',
@@ -57,6 +62,7 @@ const MenuItemSchema = z
     type: z.enum([
       'category-articles',
       'single-article',
+      'gallery',
       'page',
       'custom-link',
       'external-link'
@@ -87,11 +93,11 @@ const MenuItemSchema = z
     }
 
     // Entity types require single string reference
-    if (['single-article', 'page'].includes(data.type)) {
+    if (['single-article', 'page', 'gallery'].includes(data.type)) {
       if (!data.reference || typeof data.reference !== 'string') {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
-          message: `Reference (slug) is required for ${data.type} type`,
+          message: `Reference (${data.type === 'gallery' ? 'path' : 'slug'}) is required for ${data.type} type`,
           path: ['reference']
         })
       }
@@ -167,7 +173,7 @@ export default function MenuItemForm({ item, onSave, onCancel }: MenuItemEditorP
   const watchIconType = watch('iconType')
 
   const isCategoryArticles = watchType === 'category-articles'
-  const isEntityType = ['single-article', 'page'].includes(watchType)
+  const isEntityType = ['single-article', 'page', 'gallery'].includes(watchType)
   const isLinkType = ['custom-link', 'external-link'].includes(watchType)
 
   // Get configuration for current type
@@ -242,6 +248,7 @@ export default function MenuItemForm({ item, onSave, onCancel }: MenuItemEditorP
                     options={[
                       { value: 'category-articles', label: MENU_ITEM_TYPE_LABELS['category-articles'] },
                       { value: 'single-article', label: MENU_ITEM_TYPE_LABELS['single-article'] },
+                      { value: 'gallery', label: MENU_ITEM_TYPE_LABELS.gallery },
                       { value: 'page', label: MENU_ITEM_TYPE_LABELS.page },
                       { value: 'custom-link', label: MENU_ITEM_TYPE_LABELS['custom-link'] },
                       { value: 'external-link', label: MENU_ITEM_TYPE_LABELS['external-link'] }
@@ -317,6 +324,16 @@ export default function MenuItemForm({ item, onSave, onCancel }: MenuItemEditorP
                           value={field.value || undefined}
                           url={typeConfig?.adminEndpoint || `/admin/${watchType}s`}
                           options={(data) => {
+                            // Handle gallery folders differently - use folderPath
+                            if (watchType === 'gallery') {
+                              return (
+                                data?.folders?.map((item: any) => ({
+                                  value: item.folderPath || item.path,
+                                  label: item.name || item.folderPath
+                                })) || []
+                              )
+                            }
+                            // Handle other entity types
                             const items =
                               data?.data?.items?.map((item: any) => ({
                                 value: item.slug,

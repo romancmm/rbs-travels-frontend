@@ -7,7 +7,7 @@ import { CONTENT_TYPE_CONFIG, type ContentType } from '@/config/contentTypes'
 import useAsync from '@/hooks/useAsync'
 import { notFound } from 'next/navigation'
 
-export default function DynamicPage({ pageSlug }: { pageSlug: string }) {
+export default function PageDetails({ pageSlug }: { pageSlug: string }) {
 
   // Unified endpoint that returns content with type information
   const { data, loading } = useAsync<{

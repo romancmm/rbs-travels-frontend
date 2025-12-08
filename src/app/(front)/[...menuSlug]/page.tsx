@@ -9,9 +9,10 @@ import { notFound, useRouter } from 'next/navigation'
 import { use } from 'react'
 
 // Import page components
-import ArticlePage from '@/components/frontend/pages/articles/[slug]/page'
+import ArticlePage from '@/components/frontend/pages/articles/ArticleDetails'
 import ArticleCategoryPage from '@/components/frontend/pages/articles/category/[...slugs]/page'
-import DynamicPage from '@/components/frontend/pages/page/[slug]/page'
+import GalleryDetails from '@/components/frontend/pages/GalleryDetails'
+import PageDetails from '@/components/frontend/pages/PageDetails'
 
 interface MenuSlugPageProps {
     params: Promise<{
@@ -36,7 +37,6 @@ function MenuSlugContent({ params }: { params: { menuSlug: string[] } }) {
     )
 
     const menuItem = response?.data
-
     if (loading) {
         return (
             <>
@@ -64,17 +64,12 @@ function MenuSlugContent({ params }: { params: { menuSlug: string[] } }) {
 
     if (!menuItem) {
         notFound()
-        return null
     }
 
     // Route based on menu item type
     switch (menuItem.type) {
         case 'single-article':
-            if (typeof menuItem.reference === 'string') {
-                return <ArticlePage slug={menuItem.reference} />
-            }
-            notFound()
-            return null
+            return <ArticlePage slug={menuItem.reference as string} />
 
         case 'category-articles': {
             const slugs: string[] = Array.isArray(menuItem.reference)
@@ -85,27 +80,24 @@ function MenuSlugContent({ params }: { params: { menuSlug: string[] } }) {
 
             if (slugs.length === 0) {
                 notFound()
-                return null
             }
 
             return <ArticleCategoryPage slugs={slugs} />
         }
 
         case 'gallery':
-            if (typeof menuItem.reference === 'string') {
-                const pathname = menuItem.reference.split('/').filter(Boolean)
-                router.push(`/gallery/${pathname.join('/')}`)
-                return null
-            }
-            router.push('/gallery')
-            return null
+            return <GalleryDetails path={menuItem.reference as string} />
+        // if (typeof menuItem.reference === 'string') {
+        //     const pathname = menuItem.reference.split('/').filter(Boolean)
+        //     router.push(`/gallery/${pathname.join('/')}`)
+        // }
+        // router.push('/gallery')
 
         case 'page':
             if (typeof menuItem.reference === 'string') {
-                return <DynamicPage pageSlug={menuItem.reference} />
+                return <PageDetails pageSlug={menuItem.reference} />
             }
             notFound()
-            return null
 
         case 'custom-link':
         case 'external-link':
@@ -121,6 +113,5 @@ function MenuSlugContent({ params }: { params: { menuSlug: string[] } }) {
 
         default:
             notFound()
-            return null
     }
 }

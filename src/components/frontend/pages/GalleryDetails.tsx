@@ -11,7 +11,7 @@ import { cn } from '@/lib/utils'
 import { Eye, Folder, Image as ImageIcon } from 'lucide-react'
 import { motion } from 'motion/react'
 import { useRouter } from 'next/navigation'
-import { use, useState } from 'react'
+import { useState } from 'react'
 
 interface FileItem {
   type: 'file' | 'folder'
@@ -33,16 +33,10 @@ interface FileItem {
   items?: FileItem[]
 }
 
-interface GalleryPageProps {
-  params: Promise<{
-    pathname?: string[]
-  }>
-}
 
-export default function GalleryPage({ params }: GalleryPageProps) {
-  const resolvedParams = use(params)
-
-  return <GalleryContent params={resolvedParams} />
+export default function GalleryDetails({ path }: { path: string }) {
+  console.log('GalleryDetails path:', path)
+  return <GalleryContent params={path as any} />
 }
 
 function GalleryContent({ params }: { params: { pathname?: string[] } }) {
