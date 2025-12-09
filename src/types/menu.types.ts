@@ -197,29 +197,23 @@ export function flattenMenuItems(items: MenuItem[]): MenuItem[] {
 
 /**
  * Get menu item URL with fallback
+ * Priority: url (for custom-link/external-link) > slug-based URL for all other types
  */
-// export function getMenuItemUrl(item: MenuItem): string {
-//   // Return existing URL if set (for custom-link and external-link)
-//   if (item.url) return item.url
+export function getMenuItemUrl(item: MenuItem): string {
+  // Priority 1: Return existing URL if set (for custom-link and external-link)
+  if (item.type === 'custom-link' || item.type === 'external-link') {
+    return item.url || '#'
+  }
 
-//   // Handle category-articles type (array of categories)
-//   if (item.type === 'category-articles' && Array.isArray(item.reference)) {
-//     if (item.reference.length > 0) {
-//       // Multiple categories: /articles/category/slug1/slug2
-//       return `/articles/category/${item.reference.join('/')}`
-//     }
-//     // No categories: default article listing
-//     return '/articles'
-//   }
+  // Priority 2: All other types use slug
+  // This includes: category-articles, single-article, page, gallery
+  if (item.slug) {
+    return `/${item.slug}`
+  }
 
-//   // For all entity types (single-article, page, gallery), use the menu item slug
-//   // The centralized route handler will determine the content type
-//   if (['single-article', 'page', 'gallery'].includes(item.type)) {
-//     return `/${item.slug}`
-//   }
-
-//   return '#'
-// }
+  // Fallback
+  return '#'
+}
 
 /**
  * Create breadcrumb from menu item
