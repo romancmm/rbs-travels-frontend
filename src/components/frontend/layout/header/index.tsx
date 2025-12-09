@@ -1,7 +1,6 @@
 import { cn } from '@/lib/utils'
 import { use } from 'react'
 import MainHeader from './MainHeader'
-import TopBar from './TopBar'
 
 export default function Header({ data }: { data: any }) {
   const res: any = use(data)
@@ -9,7 +8,7 @@ export default function Header({ data }: { data: any }) {
   return (
     <>
       {/* Top announcement bar */}
-      <TopBar />
+      {/* <TopBar /> */}
 
       {/* Main header */}
       <header
