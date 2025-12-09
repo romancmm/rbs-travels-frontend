@@ -1,67 +1,48 @@
-import { fetchOnServer } from '@/action/data'
+'use client'
 import BlogCard from '@/components/card/BlogCard'
 import { Container } from '@/components/common/container'
 import { Typography } from '@/components/common/typography'
-import { Layers } from 'lucide-react'
+import { Skeleton } from '@/components/ui/skeleton'
+import useAsync from '@/hooks/useAsync'
 
-// Fetch articles by category slugs
-async function getArticlesByCategories(categorySlugs: string[]) {
-    // Construct query string with multiple categorySlugs parameters
-    const queryParams = categorySlugs.map(slug => `categorySlugs=${slug}`).join('&')
 
-    const { data, error } = await fetchOnServer(
-        `/articles/posts?${queryParams}`,
-        300 // Revalidate every 300 seconds
-    )
+export default function CategoryArticlesPage({ slugs }: { slugs: string[] }) {
+    const { data, loading } = useAsync(() => slugs ? `/articles/posts?categorySlugs=${'jobs'}` : null, true)
+    const articlesData = data?.data?.items
 
-    if (error || !data) {
-        return { items: [], total: 0 }
+    if (loading) {
+        return (
+            <div className='bg-background py-12 md:py-20'>
+                <Container>
+                    {/* Loading Header */}
+                    <div className='mb-12 text-center'>
+                        <Skeleton className='mx-auto mb-4 w-48 h-8' />
+                        <Skeleton className='mx-auto mb-4 w-64 h-10' />
+                        <Skeleton className='mx-auto w-32 h-6' />
+                    </div>
+
+                    {/* Loading Grid */}
+                    <div className='gap-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3'>
+                        {Array.from({ length: 6 }).map((_, i) => (
+                            <div key={i} className='space-y-4'>
+                                <Skeleton className='rounded-xl w-full h-64' />
+                                <Skeleton className='w-3/4 h-6' />
+                                <Skeleton className='w-full h-4' />
+                                <Skeleton className='w-full h-4' />
+                                <Skeleton className='w-1/2 h-4' />
+                            </div>
+                        ))}
+                    </div>
+                </Container>
+            </div>
+        )
     }
-
-    return {
-        items: data?.items || [],
-        total: data?.total || 0
-    }
-}
-
-// Fetch menu item details for display
-async function getMenuItemDetails(categorySlugs: string[]) {
-    // Use the first slug to get menu item details
-    const menuSlug = categorySlugs[0]
-    const { data, error } = await fetchOnServer(
-        `/menu-items/${menuSlug}`,
-        300
-    )
-
-    if (error || !data) {
-        return null
-    }
-
-    return data
-}
-
-export default async function CategoryArticlesPage({
-    slugs,
-    params
-}: {
-    slugs?: string[]
-    params?: Promise<{ slugs: string[] }>
-}) {
-    const categorySlugs = slugs || (params ? (await params).slugs : [])
-
-    const [articlesData, menuItem] = await Promise.all([
-        getArticlesByCategories(categorySlugs),
-        getMenuItemDetails(categorySlugs)
-    ])
-
-    const pageTitle = menuItem?.title || menuItem?.name || 'Articles'
-    const pageDescription = menuItem?.description || menuItem?.excerpt
 
     return (
         <div className='bg-background py-12 md:py-20'>
             <Container>
                 {/* Header Section */}
-                <div className='mb-12 text-center'>
+                {/* <div className='mb-12 text-center'>
                     <div className='inline-flex items-center gap-2 bg-primary/10 mb-4 px-4 py-2 rounded-full font-semibold text-primary text-sm'>
                         <Layers className='w-4 h-4' />
                         {categorySlugs.length > 1 ? 'Multiple Categories' : 'Category'}
@@ -82,17 +63,17 @@ export default async function CategoryArticlesPage({
                             ? `${articlesData.total} article${articlesData.total === 1 ? '' : 's'} found`
                             : 'No articles found'}
                     </Typography>
-                </div>
+                </div> */}
 
                 {/* Articles Grid */}
-                {articlesData.items.length > 0 ? (
+                {articlesData?.length > 0 ? (
                     <div className='gap-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3'>
-                        {articlesData.items.map((article: any, index: number) => (
+                        {articlesData?.map((article: any, index: number) => (
                             <BlogCard key={article.id || index} post={article} index={index} />
                         ))}
                     </div>
                 ) : (
-                    <div className='bg-muted/50 py-20 rounded-2xl text-center'>
+                    <div className='bg-muted/20 py-20 rounded-2xl text-center'>
                         <Typography variant='h5' className='mb-2 text-muted-foreground'>
                             No Articles Found
                         </Typography>

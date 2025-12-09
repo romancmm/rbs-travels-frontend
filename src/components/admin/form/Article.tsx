@@ -204,7 +204,7 @@ export default function ArticleForm({ initialData }: TProps) {
                 <CustomInput
                   label='Excerpt'
                   type='textarea'
-                  placeholder='Brief description of the blog post'
+                  placeholder='Brief description of the content'
                   value={field.value}
                   onChange={field.onChange}
                   error={errors.excerpt?.message}
@@ -220,9 +220,14 @@ export default function ArticleForm({ initialData }: TProps) {
                 <TextEditor
                   label='Content'
                   value={field.value || ''}
-                  onChange={field.onChange}
-                  placeholder='Write your blog content here'
+                  onChange={(newContent) => {
+                    field.onChange(newContent)
+                    // Also manually trigger validation
+                    setValue('content', newContent, { shouldValidate: true })
+                  }}
+                  placeholder='Write your content here'
                   error={errors.content?.message}
+                  required
                 />
               )}
             />

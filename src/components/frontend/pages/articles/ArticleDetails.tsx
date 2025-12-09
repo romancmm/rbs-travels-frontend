@@ -1,24 +1,20 @@
-import { fetchOnServer } from '@/action/data'
+'use client'
 import { Container } from '@/components/common/container'
 import CustomImage from '@/components/common/CustomImage'
 import { Typography } from '@/components/common/typography'
+import useAsync from '@/hooks/useAsync'
 import { format } from 'date-fns'
 import { Calendar, Clock, Tag, User } from 'lucide-react'
 import { notFound } from 'next/navigation'
 
-
-export default async function ArticlePage({ slug, params }: { slug?: string; params?: Promise<{ slug: string }> }) {
-    const resolvedSlug = slug || (params ? (await params).slug : null)
+export default function ArticlePage({ slug }: { slug?: string }) {
+    const resolvedSlug = slug
 
     if (!resolvedSlug) {
         notFound()
     }
 
-    const articleData = await fetchOnServer(`/articles/posts/slug/${resolvedSlug}`, 300)
-
-    if (!articleData?.data) {
-        notFound()
-    }
+    const { data: articleData } = useAsync(() => resolvedSlug ? `/articles/posts/slug/${resolvedSlug}` : null, false)
 
     return (
         <div className='bg-background py-12 md:py-20'>

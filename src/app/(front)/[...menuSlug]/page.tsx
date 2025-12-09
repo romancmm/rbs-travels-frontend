@@ -37,6 +37,7 @@ function MenuSlugContent({ params }: { params: { menuSlug: string[] } }) {
     )
 
     const menuItem = response?.data
+
     if (loading) {
         return (
             <>
