@@ -1,6 +1,5 @@
 'use client'
 
-import { Container } from '@/components/common/container'
 import { Section } from '@/components/common/section'
 import { Button } from '@/components/ui/button'
 import {
@@ -81,10 +80,11 @@ const BannerCarousel = ({ data }: BannerCarouselProps) => {
             <CarouselItem key={index}>
               <div
                 className={cn(
-                  'relative flex justify-start items-center w-screen',
+                  'relative flex justify-center items-center w-screen',
                   'bg-cover bg-no-repeat bg-center',
-                  'h-[calc(100vh-7rem)] lg:h-[calc(80vh-7rem)]',
-                  'transition-all duration-1000 ease-out'
+                  'h-[calc(100vh-7rem)]',
+                  'transition-all duration-1000 ease-out',
+                  '-mx-4 sm:-mx-6 md:-mx-8'
                 )}
                 style={{
                   backgroundImage: `url(${banner.bgImage})`,
@@ -103,99 +103,97 @@ const BannerCarousel = ({ data }: BannerCarouselProps) => {
                 </div>
 
                 {/* Content with enhanced animations */}
-
-                <Container variant={'wide'}>
-                  <AnimatePresence mode='wait'>
-                    {current === index && (
+                <AnimatePresence mode='wait'>
+                  {current === index && (
+                    <motion.div
+                      key={`banner-${index}`}
+                      initial={{ opacity: 0, y: 60, scale: 0.9 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: -30, scale: 1.1 }}
+                      transition={{
+                        duration: 0.8,
+                        ease: [0.6, -0.05, 0.01, 0.99]
+                      }}
+                      className='z-10 relative mx-auto px-2 lg:px-6 max-w-4xl text-white text-center'
+                    >
+                      {/* Subtitle with enhanced animation */}
                       <motion.div
-                        key={`banner-${index}`}
-                        initial={{ opacity: 0, y: 60, scale: 0.9 }}
-                        animate={{ opacity: 1, y: 0, scale: 1 }}
-                        exit={{ opacity: 0, y: -30, scale: 1.1 }}
-                        transition={{
-                          duration: 0.8,
-                          ease: [0.6, -0.05, 0.01, 0.99]
-                        }}
-                        className='z-10 relative lg:px-6 max-w-2xl text-white'
+                        initial={{ opacity: 0, x: -30 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: 0.2, duration: 0.6 }}
+                        className='mb-3'
                       >
-                        {/* Subtitle with enhanced animation */}
+                        <span className='inline-flex items-center gap-2 bg-primary/20 backdrop-blur-sm px-4 py-1.5 border border-white/20 rounded-full font-semibold text-xs md:text-sm uppercase tracking-wider'>
+                          {banner.subTitle}
+                        </span>
+                      </motion.div>
+
+                      {/* Title with staggered letter animation */}
+                      <motion.h1
+                        className='mb-4 font-bold text-4xl md:text-7xl 2xl:text-8xl'
+                        initial={{ opacity: 0, y: 30 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.3, duration: 0.8 }}
+                      >
+                        {banner.title}
+                      </motion.h1>
+
+                      {/* Description with typewriter effect */}
+                      <motion.p
+                        className='mx-auto mb-8 max-w-2xl text-gray-100 text-lg md:text-xl leading-relaxed'
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.6, duration: 0.6 }}
+                      >
+                        {banner.desc}
+                      </motion.p>
+
+                      {/* Enhanced buttons with hover effects */}
+                      {banner.buttons && banner.buttons.length > 0 && (
                         <motion.div
-                          initial={{ opacity: 0, x: -30 }}
-                          animate={{ opacity: 1, x: 0 }}
-                          transition={{ delay: 0.2, duration: 0.6 }}
-                          className='mb-3'
+                          initial={{ opacity: 0, y: 30, scale: 0.8 }}
+                          animate={{ opacity: 1, y: 0, scale: 1 }}
+                          transition={{ delay: 0.8, duration: 0.5 }}
+                          className='flex justify-center items-center gap-3 sm:gap-6'
                         >
-                          <span className='inline-flex items-center gap-2 bg-primary/20 backdrop-blur-sm px-4 py-1.5 border border-white/20 rounded-full font-semibold text-xs md:text-sm uppercase tracking-wider'>
-                            {banner.subTitle}
-                          </span>
-                        </motion.div>
-
-                        {/* Title with staggered letter animation */}
-                        <motion.h1
-                          className='mb-4 font-extrabold text-3xl md:text-4xl 2xl:text-5xl'
-                          initial={{ opacity: 0, y: 30 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{ delay: 0.3, duration: 0.8 }}
-                        >
-                          {banner.title}
-                        </motion.h1>
-
-                        {/* Description with typewriter effect */}
-                        <motion.p
-                          className='mb-8 text-gray-100 text-lg md:text-xl leading-relaxed'
-                          initial={{ opacity: 0, y: 20 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{ delay: 0.6, duration: 0.6 }}
-                        >
-                          {banner.desc}
-                        </motion.p>
-
-                        {/* Enhanced buttons with hover effects */}
-                        {banner.buttons && banner.buttons.length > 0 && (
-                          <motion.div
-                            initial={{ opacity: 0, y: 30, scale: 0.8 }}
-                            animate={{ opacity: 1, y: 0, scale: 1 }}
-                            transition={{ delay: 0.8, duration: 0.5 }}
-                            className='flex justify-start items-center gap-3 sm:gap-6'
-                          >
-                            {banner.buttons.map((button, btnIndex) => (
-                              <Button
-                                key={btnIndex}
-                                asChild
-                                size='lg'
-                                variant={btnIndex === 0 ? 'default' : 'outline'}
-                                className={cn(
-                                  'group relative overflow-hidden transition-all duration-500',
-                                  'px-4 lg:px-6 py-2.5 lg:py-5 font-medium text-sm lg:text-base',
-                                  'hover:scale-105 hover:-translate-y-1 active:scale-95 rounded-full',
-                                  btnIndex === 0
-                                    ? 'bg-primary hover:bg-primary/90 text-white border-2 border-primary hover:border-primary/70 shadow-2xl hover:shadow-3xl hover:shadow-primary/30'
-                                    : 'bg-white/10 backdrop-blur-md border border-white/40 text-white hover:bg-white/20 hover:border-white/60 hover:text-white shadow-lg hover:shadow-xl hover:shadow-white/10'
+                          {banner.buttons.map((button, btnIndex) => (
+                            <Button
+                              key={btnIndex}
+                              asChild
+                              size='lg'
+                              variant={btnIndex === 0 ? 'default' : 'outline'}
+                              className={cn(
+                                'group relative overflow-hidden transition-all duration-500',
+                                'px-8 lg:px-10 py-2.5 lg:py-5 font-medium text-sm lg:text-base',
+                                'hover:scale-105 hover:-translate-y-1 active:scale-95 rounded-full',
+                                btnIndex === 0
+                                  ? 'bg-primary hover:bg-primary/90 text-white border-2 border-primary hover:border-primary/70 shadow-2xl hover:shadow-3xl hover:shadow-primary/30'
+                                  : 'bg-white/10 backdrop-blur-md border border-white/40 text-white hover:bg-white/20 hover:border-white/60 hover:text-white shadow-lg hover:shadow-xl hover:shadow-white/10'
+                              )}
+                            >
+                              <a href={button.url}>
+                                <span className='z-10 relative flex justify-center items-center gap-3'>
+                                  {button.title}
+                                </span>
+                                {/* Animated gradient overlay for primary */}
+                                {btnIndex === 0 && (
+                                  <>
+                                    <div className='absolute inset-0 bg-linear-to-r from-primary/60 via-primary to-primary/60 opacity-0 group-hover:opacity-100 transition-opacity duration-500' />
+                                    <div className='absolute inset-0 bg-linear-to-r from-transparent via-white/20 to-transparent transition-transform -translate-x-full group-hover:translate-x-full duration-700' />
+                                  </>
                                 )}
-                              >
-                                <a href={button.url}>
-                                  <span className='z-10 relative flex justify-center items-center gap-3'>
-                                    {button.title}
-                                  </span>
-                                  {/* Animated gradient overlay for primary */}
-                                  {btnIndex === 0 && (
-                                    <>
-                                      <div className='absolute inset-0 bg-linear-to-r from-primary/60 via-primary to-primary/60 opacity-0 group-hover:opacity-100 transition-opacity duration-500' />
-                                      <div className='absolute inset-0 bg-linear-to-r from-transparent via-white/20 to-transparent transition-transform -translate-x-full group-hover:translate-x-full duration-700' />
-                                    </>
-                                  )}
-                                  {/* Glassmorphism for secondary */}
-                                  {btnIndex !== 0 && (
-                                    <div className='absolute inset-0 bg-linear-to-r from-white/5 to-white/10 opacity-0 group-hover:opacity-100 rounded-full transition-opacity duration-300' />
-                                  )}
-                                </a>
-                              </Button>
-                            ))}
-                          </motion.div>
-                        )}
+                                {/* Glassmorphism for secondary */}
+                                {btnIndex !== 0 && (
+                                  <div className='absolute inset-0 bg-linear-to-r from-white/5 to-white/10 opacity-0 group-hover:opacity-100 rounded-full transition-opacity duration-300' />
+                                )}
+                              </a>
+                            </Button>
+                          ))}
+                        </motion.div>
+                      )}
 
-                        {/* Additional Action Elements */}
-                        {/* <motion.div
+                      {/* Additional Action Elements */}
+                      {/* <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 1.0, duration: 0.6 }}
@@ -226,10 +224,9 @@ const BannerCarousel = ({ data }: BannerCarouselProps) => {
                           <span className='hidden sm:inline'>Join 10,000+ happy travelers</span>
                         </div>
                       </motion.div> */}
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                </Container>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </div>
             </CarouselItem>
           ))}
