@@ -83,7 +83,7 @@ const BannerCarousel = ({ data }: BannerCarouselProps) => {
                 className={cn(
                   'relative flex justify-start items-center w-screen',
                   'bg-cover bg-no-repeat bg-center',
-                  'h-[calc(100vh-7rem)] lg:h-[calc(80vh-7rem)]',
+                  'h-[calc(100vh-8rem)] lg:h-[calc(75vh)]',
                   'transition-all duration-1000 ease-out'
                 )}
                 style={{

@@ -86,6 +86,13 @@ export const buildSiteMetadata = (data: SiteSettings | null): Metadata => {
     },
     verification: {
       google: data?.analytics?.googleAnalyticsId
+    },
+    themeColor: data?.theme?.color?.primary || '#0ea5e9',
+    manifest: '/site.webmanifest',
+    appleWebApp: {
+      capable: true,
+      statusBarStyle: 'default',
+      title: siteName
     }
   }
 }
