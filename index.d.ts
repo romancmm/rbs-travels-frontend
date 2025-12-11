@@ -1487,7 +1487,7 @@ export type {
   ArticleFilters,
   AuditLog,
   BaseEntity,
-  BaseQuery,
+  // BaseQuery, // Commented out - already globally available via declare global
   CartItem,
   Category,
   CheckoutData,
