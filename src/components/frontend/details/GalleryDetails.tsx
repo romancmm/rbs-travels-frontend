@@ -33,7 +33,6 @@ interface FileItem {
   items?: FileItem[]
 }
 
-
 export default function GalleryDetails({ path }: { path: string }) {
   console.log('GalleryDetails path:', path)
   return <GalleryContent params={path as any} />
@@ -185,11 +184,12 @@ function GalleryContent({ params }: { params: { pathname?: string[] } }) {
             </Typography>
             <Typography variant='body1' className='opacity-90 mx-auto max-w-2xl'>
               {folders.length > 0 && images.length > 0
-                ? `${folders.length} ${folders.length === 1 ? 'folder' : 'folders'} • ${images.length
-                } ${images.length === 1 ? 'image' : 'images'}`
+                ? `${folders.length} ${folders.length === 1 ? 'folder' : 'folders'} • ${
+                    images.length
+                  } ${images.length === 1 ? 'image' : 'images'}`
                 : folders.length > 0
-                  ? `${folders.length} ${folders.length === 1 ? 'folder' : 'folders'}`
-                  : `${images.length} ${images.length === 1 ? 'image' : 'images'}`}
+                ? `${folders.length} ${folders.length === 1 ? 'folder' : 'folders'}`
+                : `${images.length} ${images.length === 1 ? 'image' : 'images'}`}
             </Typography>
           </motion.div>
         </Container>
@@ -201,14 +201,15 @@ function GalleryContent({ params }: { params: { pathname?: string[] } }) {
           <div className='gap-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5'>
             {/* Folders */}
             {folders.map((folder, index) => {
-              const previewImages = folder?.items?.filter(
-                (item) => item.type === 'file' && item.fileType === 'image'
-              ) || []
+              const previewImages =
+                folder?.items?.filter(
+                  (item) => item.type === 'file' && item.fileType === 'image'
+                ) || []
               const hasPreview = previewImages.length > 0
 
               return (
                 <motion.div
-                  key={folder.fileId}
+                  key={index}
                   initial={{ opacity: 0, scale: 0.9 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ duration: 0.3, delay: index * 0.05 }}
@@ -232,7 +233,7 @@ function GalleryContent({ params }: { params: { pathname?: string[] } }) {
                             style={{
                               transform: `rotate(${rotation}deg) translateY(${offsetY}px) translateX(${offsetX}px)`,
                               zIndex,
-                              transformOrigin: 'center bottom',
+                              transformOrigin: 'center bottom'
                             }}
                           >
                             <div className='relative shadow-lg mx-auto w-[65%] h-[65%]'>
@@ -291,7 +292,7 @@ function GalleryContent({ params }: { params: { pathname?: string[] } }) {
             {/* Images */}
             {images.map((image, index) => (
               <motion.div
-                key={image.fileId}
+                key={index}
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.3, delay: index * 0.05 }}

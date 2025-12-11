@@ -1,4 +1,4 @@
-import PackageDetailRenderer from '@/components/frontend/details/PackageDetailRenderer'
+import PackageDetailRenderer from '@/components/frontend/details/content-renderers/PackageDetailRenderer'
 import PageBuilderRenderer from '@/components/frontend/page-builder/Renderer'
 import type { ContentTypeConfig } from '@/config/contentTypes'
 import ArticleDetailRenderer from './ArticleDetailRenderer'

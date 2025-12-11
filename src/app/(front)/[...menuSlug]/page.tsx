@@ -9,10 +9,10 @@ import { notFound, useRouter } from 'next/navigation'
 import { use } from 'react'
 
 // Import page components
-import ArticlePage from '@/components/frontend/pages/articles/ArticleDetails'
-import ArticleCategoryPage from '@/components/frontend/pages/articles/category/[...slugs]/page'
-import GalleryDetails from '@/components/frontend/pages/GalleryDetails'
-import PageDetails from '@/components/frontend/pages/PageDetails'
+import ArticlePage from '@/components/frontend/details/ArticleDetails'
+import ArticleCategoryPage from '@/components/frontend/details/articles/category/[...slugs]/page'
+import GalleryDetails from '@/components/frontend/details/GalleryDetails'
+import PageDetails from '@/components/frontend/details/PageDetails'
 
 interface MenuSlugPageProps {
   params: Promise<{

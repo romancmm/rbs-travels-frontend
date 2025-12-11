@@ -1,20 +1,17 @@
 'use client'
 import { Container } from '@/components/common/container'
 import { Section } from '@/components/common/section'
-import ContentRenderer from '@/components/frontend/content-renderers/ContentRenderer'
+import ContentRenderer from '@/components/frontend/details/content-renderers/ContentRenderer'
 import { Skeleton } from '@/components/ui/skeleton'
 import { CONTENT_TYPE_CONFIG, type ContentType } from '@/config/contentTypes'
 import useAsync from '@/hooks/useAsync'
 import { notFound } from 'next/navigation'
 
 export default function PageDetails({ pageSlug }: { pageSlug: string }) {
-
-  // Unified endpoint that returns content with type information
   const { data, loading } = useAsync<{
     data: any
     type?: ContentType
-  }>(() => `/pages/${pageSlug}`, true)
-  console.log('pageData', pageSlug, data)
+  }>(() => (pageSlug ? `/pages/${pageSlug}` : null), true)
 
   if (loading) {
     return (
