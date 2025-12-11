@@ -68,6 +68,7 @@ export interface UploadOptions {
   deletes?: string[]
   multiple?: boolean
   maxAllow?: number
+  uploadPath?: string // Current folder path for upload
 }
 
 // File validation utilities
@@ -144,7 +145,8 @@ export const updateFileListWithPreviews = (fileList: FileType[]): FileType[] => 
 export const createUploadFormData = (
   files: FileType[],
   existing: string[] = [],
-  deletes: string[] = []
+  deletes: string[] = [],
+  uploadPath?: string
 ): FormData => {
   const formData = new FormData()
 
@@ -160,6 +162,11 @@ export const createUploadFormData = (
   // TODO:::
   // deletes.filter(Boolean).forEach((url) => formData.append('deletes', url))
   // formData.append('deletes', deletes)
+
+  // Add uploadPath if provided
+  if (uploadPath) {
+    formData.append('parentPath', uploadPath)
+  }
 
   return formData
 }
@@ -277,7 +284,12 @@ export const processFileUpload = async (
   const validFiles = validateFiles(newFiles)
 
   // Create form data even if there are no new files (for deletes)
-  const formData = createUploadFormData(validFiles, options.existing, options.deletes)
+  const formData = createUploadFormData(
+    validFiles,
+    options.existing,
+    options.deletes,
+    options.uploadPath
+  )
 
   try {
     const urls = await uploadImages(formData, options)

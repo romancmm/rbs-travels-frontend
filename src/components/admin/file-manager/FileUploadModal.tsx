@@ -60,6 +60,7 @@ export function FileUploadModal({
             multiple={true}
             maxAllow={10}
             size='extra-large'
+            uploadPath={currentPath}
           />
         </div>
 

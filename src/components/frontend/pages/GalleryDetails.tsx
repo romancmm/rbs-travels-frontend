@@ -34,12 +34,19 @@ interface FileItem {
 }
 
 
-export default function GalleryDetails({ path }: { path: string }) {
+export default function GalleryDetails({ path, menuSlug }: { path: string; menuSlug: string }) {
   console.log('GalleryDetails path:', path)
-  return <GalleryContent params={path as any} />
+
+  // Convert string path to pathname array
+  // e.g., '/folder1/folder2' or 'folder1/folder2' -> ['folder1', 'folder2']
+  const pathname = path
+    ? path.split('/').filter(Boolean)
+    : []
+
+  return <GalleryContent pathname={pathname} menuSlug={menuSlug} />
 }
 
-function GalleryContent({ params }: { params: { pathname?: string[] } }) {
+function GalleryContent({ pathname, menuSlug }: { pathname: string[]; menuSlug: string }) {
   const router = useRouter()
   const [lightboxOpen, setLightboxOpen] = useState(false)
   const [selectedImageIndex, setSelectedImageIndex] = useState(0)
@@ -47,21 +54,21 @@ function GalleryContent({ params }: { params: { pathname?: string[] } }) {
   // Convert pathname array to folder path
   // e.g., ['folder1', 'folder2'] -> '/folder1/folder2'
   const folderPath =
-    !params.pathname || params.pathname.length === 0 ? '/' : `/${params.pathname.join('/')}`
+    !pathname || pathname.length === 0 ? '/' : `/${pathname.join('/')}`
 
   // Get display name (last segment of path)
   const displayName = (() => {
-    if (!params.pathname || params.pathname.length === 0) {
+    if (!pathname || pathname.length === 0) {
       return 'Gallery'
     }
-    const lastName = params.pathname[params.pathname.length - 1]
+    const lastName = pathname[pathname.length - 1]
     return decodeURIComponent(lastName)
       .replace(/-/g, ' ')
       .replace(/\b\w/g, (l) => l.toUpperCase())
   })()
 
   // Build API path for the gallery folder
-  const encodedPath = encodeURIComponent(folderPath) ?? 'gallery'
+  const encodedPath = encodeURIComponent(folderPath)
   const apiPath = `/media?path=${encodedPath}&page=1&perPage=100&withItems=true`
 
   const { data, loading } = useAsync<{
@@ -108,7 +115,9 @@ function GalleryContent({ params }: { params: { pathname?: string[] } }) {
   }
 
   const handleFolderClick = (folder: FileItem) => {
-    router.push(`/gallery/${folder.folderPath?.substring(1) || folder.name}`)
+    // Build the new path using the current menu slug
+    const folderPath = folder.folderPath?.substring(1) || folder.name
+    router.push(`/${menuSlug}/${folderPath}`)
   }
 
   if (loading) {

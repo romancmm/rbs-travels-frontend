@@ -116,6 +116,7 @@ type TProps = {
   maxAllow?: number
   isCustomer?: boolean
   size?: 'small' | 'medium' | 'large' | 'extra-large'
+  uploadPath?: string // Current folder path for upload context
 }
 
 type UploadButtonProps = {
@@ -191,15 +192,17 @@ export default function FileUploader({
   multiple = false,
   maxAllow = 5,
   isCustomer = false,
-  size = 'medium'
+  size = 'medium',
+  uploadPath
 }: TProps) {
   const { fileLists, uploadState, handleChange, handleFileRemove, onPreview, closePreview } =
     useImageUploader({
       value,
-      onChange: (url) => onChangeAction(url),
+      onChange: onChangeAction,
       multiple,
       maxAllow,
-      isCustomer
+      isCustomer,
+      uploadPath
     })
 
   const hasFiles = fileLists.length > 0
@@ -232,8 +235,7 @@ export default function FileUploader({
           // Reduce to available slots and show warning
           newFileList = newFileList.slice(0, availableSlots)
           toast.warning(
-            `Only ${availableSlots} more file${
-              availableSlots === 1 ? '' : 's'
+            `Only ${availableSlots} more file${availableSlots === 1 ? '' : 's'
             } allowed. Maximum limit is ${maxAllow}.`
           )
         }
@@ -278,10 +280,10 @@ export default function FileUploader({
               >
                 {/* Check if file is an image */}
                 {(file.url || file.preview) &&
-                (file.originFileObj?.type?.startsWith('image/') ||
-                  file.url?.match(/\.(jpg|jpeg|png|gif|svg|webp)$/i) ||
-                  file.preview?.startsWith('data:image/') ||
-                  file.preview?.startsWith('blob:')) ? (
+                  (file.originFileObj?.type?.startsWith('image/') ||
+                    file.url?.match(/\.(jpg|jpeg|png|gif|svg|webp)$/i) ||
+                    file.preview?.startsWith('data:image/') ||
+                    file.preview?.startsWith('blob:')) ? (
                   <CustomImage
                     src={file.url || file.preview}
                     alt={file.name}
@@ -305,16 +307,16 @@ export default function FileUploader({
                     file.url?.match(/\.(jpg|jpeg|png|gif|svg|webp)$/i) ||
                     file.preview?.startsWith('data:image/') ||
                     file.preview?.startsWith('blob:')) && (
-                    <Button
-                      type='button'
-                      size={size === 'extra-large' ? 'default' : 'sm'}
-                      variant='ghost'
-                      className='hover:bg-white/20 text-white hover:text-white'
-                      onClick={() => onPreview(file)}
-                    >
-                      <Eye className={size === 'extra-large' ? 'w-5 h-5' : sizeClasses.icon} />
-                    </Button>
-                  )}
+                      <Button
+                        type='button'
+                        size={size === 'extra-large' ? 'default' : 'sm'}
+                        variant='ghost'
+                        className='hover:bg-white/20 text-white hover:text-white'
+                        onClick={() => onPreview(file)}
+                      >
+                        <Eye className={size === 'extra-large' ? 'w-5 h-5' : sizeClasses.icon} />
+                      </Button>
+                    )}
 
                   {/* Remove Item */}
                   <Button

@@ -29,6 +29,7 @@ export default function MenuSlugPage({ params }: MenuSlugPageProps) {
 function MenuSlugContent({ params }: { params: { menuSlug: string[] } }) {
   const router = useRouter()
   const menuSlug = params.menuSlug[0] // First segment is the menu slug
+  const additionalPath = params.menuSlug.slice(1) // Remaining segments for gallery/article subpaths
 
   // Fetch menu item by slug
   const { data: response, loading } = useAsync<{ data: MenuItem }>(`/menus/item/${menuSlug}`, true)
@@ -36,6 +37,7 @@ function MenuSlugContent({ params }: { params: { menuSlug: string[] } }) {
   const menuItem = response?.data
 
   console.log('menuItem', menuItem)
+  console.log('additionalPath', additionalPath)
 
   if (loading) {
     return (
@@ -75,8 +77,8 @@ function MenuSlugContent({ params }: { params: { menuSlug: string[] } }) {
       const slugs: string[] = Array.isArray(menuItem.reference)
         ? menuItem.reference
         : typeof menuItem.reference === 'string'
-        ? menuItem.reference.split('/').filter(Boolean)
-        : []
+          ? menuItem.reference.split('/').filter(Boolean)
+          : []
 
       if (slugs.length === 0) {
         notFound()
@@ -85,13 +87,15 @@ function MenuSlugContent({ params }: { params: { menuSlug: string[] } }) {
       return <ArticleCategoryPage slugs={slugs} />
     }
 
-    case 'gallery':
-      return <GalleryDetails path={menuItem.reference as string} />
-    // if (typeof menuItem.reference === 'string') {
-    //     const pathname = menuItem.reference.split('/').filter(Boolean)
-    //     router.push(`/gallery/${pathname.join('/')}`)
-    // }
-    // router.push('/gallery')
+    case 'gallery': {
+      // Combine the menu reference path with any additional path segments
+      const basePath = menuItem.reference as string
+      const fullPath = additionalPath.length > 0
+        ? `${basePath}/${additionalPath.join('/')}`
+        : basePath
+
+      return <GalleryDetails path={fullPath} menuSlug={menuSlug} />
+    }
 
     case 'page':
       if (typeof menuItem.reference === 'string') {
