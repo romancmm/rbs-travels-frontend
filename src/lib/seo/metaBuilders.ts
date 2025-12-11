@@ -1,4 +1,4 @@
-import type { Metadata } from 'next'
+import type { Metadata, Viewport } from 'next'
 import { SiteSettings } from '../validations/schemas/siteSettings'
 
 export const buildSiteMetadata = (data: SiteSettings | null): Metadata => {
@@ -87,13 +87,23 @@ export const buildSiteMetadata = (data: SiteSettings | null): Metadata => {
     verification: {
       google: data?.analytics?.googleAnalyticsId
     },
-    themeColor: data?.theme?.color?.primary || '#0ea5e9',
     manifest: '/site.webmanifest',
     appleWebApp: {
       capable: true,
       statusBarStyle: 'default',
       title: siteName
     }
+  }
+}
+
+/**
+ * Build viewport configuration
+ */
+export const buildViewport = (data: SiteSettings | null): Viewport => {
+  return {
+    themeColor: data?.theme?.color?.primary || '#0ea5e9',
+    width: 'device-width',
+    initialScale: 1
   }
 }
 

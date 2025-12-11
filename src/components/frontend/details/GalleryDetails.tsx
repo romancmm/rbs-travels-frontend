@@ -210,14 +210,15 @@ function GalleryContent({ pathname, menuSlug }: { pathname: string[]; menuSlug: 
           <div className='gap-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5'>
             {/* Folders */}
             {folders.map((folder, index) => {
-              const previewImages = folder?.items?.filter(
-                (item) => item.type === 'file' && item.fileType === 'image'
-              ) || []
+              const previewImages =
+                folder?.items?.filter(
+                  (item) => item.type === 'file' && item.fileType === 'image'
+                ) || []
               const hasPreview = previewImages.length > 0
 
               return (
                 <motion.div
-                  key={folder.fileId}
+                  key={index}
                   initial={{ opacity: 0, scale: 0.9 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ duration: 0.3, delay: index * 0.05 }}
@@ -241,7 +242,7 @@ function GalleryContent({ pathname, menuSlug }: { pathname: string[]; menuSlug: 
                             style={{
                               transform: `rotate(${rotation}deg) translateY(${offsetY}px) translateX(${offsetX}px)`,
                               zIndex,
-                              transformOrigin: 'center bottom',
+                              transformOrigin: 'center bottom'
                             }}
                           >
                             <div className='relative shadow-lg mx-auto w-[65%] h-[65%]'>
@@ -300,7 +301,7 @@ function GalleryContent({ pathname, menuSlug }: { pathname: string[]; menuSlug: 
             {/* Images */}
             {images.map((image, index) => (
               <motion.div
-                key={image.fileId}
+                key={index}
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.3, delay: index * 0.05 }}

@@ -1,7 +1,7 @@
 'use client'
 import { Container } from '@/components/common/container'
 import { Section } from '@/components/common/section'
-import ContentRenderer from '@/components/frontend/content-renderers/ContentRenderer'
+import ContentRenderer from '@/components/frontend/details/content-renderers/ContentRenderer'
 import { Skeleton } from '@/components/ui/skeleton'
 import { buildContentUrl, CONTENT_TYPE_CONFIG, type ContentType } from '@/config/contentTypes'
 import useAsync from '@/hooks/useAsync'

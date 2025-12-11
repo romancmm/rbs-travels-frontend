@@ -1,7 +1,7 @@
 import { getSiteConfig } from '@/action/data'
 import { SiteProvider } from '@/components/providers/store-provider'
-import { buildSiteMetadata } from '@/lib/seo/metaBuilders'
-import { Metadata } from 'next'
+import { buildSiteMetadata, buildViewport } from '@/lib/seo/metaBuilders'
+import { Metadata, Viewport } from 'next'
 import { Manrope } from 'next/font/google'
 import './globals.css'
 
@@ -13,6 +13,11 @@ const manrope = Manrope({
 export async function generateMetadata(): Promise<Metadata> {
   const data = await getSiteConfig()
   return buildSiteMetadata(data)
+}
+
+export async function generateViewport(): Promise<Viewport> {
+  const data = await getSiteConfig()
+  return buildViewport(data)
 }
 
 // export const metadata: Metadata = {

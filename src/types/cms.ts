@@ -6,6 +6,8 @@
 
 // ==================== MENU SYSTEM ====================
 // Import from new refactored menu types
+import type { MenuItem as RefactoredMenuItem } from './menu.types'
+
 export type {
   CreateMenuItemInput as CreateMenuItemPayload,
   CreateMenuInput as CreateMenuPayload,
@@ -16,10 +18,9 @@ export type {
   UpdateMenuItemInput as UpdateMenuItemPayload,
   UpdateMenuInput as UpdateMenuPayload
 } from './menu.types'
-export type { RefactoredMenuItem }
 
 // Re-export for backward compatibility
-import type { MenuItem as RefactoredMenuItem } from './menu.types'
+export type { RefactoredMenuItem }
 
 // Menu-related types now imported from menu.types.ts above
 
