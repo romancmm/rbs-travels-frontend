@@ -1,7 +1,7 @@
 import type { NextRequest, NextResponse } from 'next/server'
 import { handleMiddlewares } from './middlewares'
 
-export async function middleware(request: NextRequest, response: NextResponse) {
+export async function proxy(request: NextRequest, response: NextResponse) {
   return handleMiddlewares(request, response)
 }
 
