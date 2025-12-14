@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "rm -rf .next && next build",
+    "build": "next build --profile",
     "start": "next start",
     "lint": "eslint",
     "check": "bun tsc --noEmit --skipLibCheck"
