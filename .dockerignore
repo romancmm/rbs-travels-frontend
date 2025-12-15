@@ -10,7 +10,7 @@ coverage
 *.lcov
 
 # Next.js
-.next/
+# .next/
 out/
 
 # Production
