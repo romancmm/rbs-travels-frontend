@@ -14,3 +14,12 @@ services:
     environment:
       - NODE_ENV=production
     restart: unless-stopped
+    # Add memory limit for Postgres
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+          cpus: '1.5'
+        reservations:
+          memory: 1G
+          cpus: '1'
