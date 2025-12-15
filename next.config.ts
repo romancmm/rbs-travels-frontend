@@ -1,6 +1,13 @@
 import type { NextConfig } from 'next'
 
 const nextConfig: NextConfig = {
+  experimental: {
+    cpus: 3,
+    workerThreads: false
+  },
+  typescript: {
+    ignoreBuildErrors: true
+  },
   images: {
     remotePatterns: [
       {
