@@ -18,9 +18,6 @@ RUN bun install
 # Copy all files (including pre-built .next from CI)
 COPY --chown=nextjs:nodejs . .
 
-# Ensure nextjs user owns the .next directory
-RUN chown -R nextjs:nodejs /app/.next
-
 USER nextjs
 
 EXPOSE 3000
