@@ -8,6 +8,7 @@ services:
     volumes:
       - ./.next:/app/.next:rw
       - ./public:/app/public:ro
+      - /app/.next/cache
     env_file:
       - .env.production
     environment:
