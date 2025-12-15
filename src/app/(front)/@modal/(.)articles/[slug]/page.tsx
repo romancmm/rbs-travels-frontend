@@ -24,7 +24,7 @@ export default function ModalArticlePage({ params }: ModalArticlePageProps) {
         }
       }}
     >
-      <DialogContent className='p-0 max-w-5xl max-h-[90vh] overflow-y-auto'>
+      <DialogContent className='min-w-[80vw] max-h-[90vh] overflow-y-auto'>
         <ArticleDetails slug={slug} />
       </DialogContent>
     </Dialog>
