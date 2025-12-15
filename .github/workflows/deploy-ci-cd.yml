@@ -23,15 +23,12 @@ jobs:
 
       - name: Create deployment archive
         run: |
-          FILES_TO_INCLUDE=".next public package.json .env.production bun.lock next.config.ts Dockerfile docker-compose.yml .dockerignore"
-
-          # Create cache directory structure to avoid runtime errors
-          mkdir -p .next/cache .next/trace 2>/dev/null || true
-
           tar -czf deployment.tar.gz \
-            --exclude='.next/cache/*' \
-            --exclude='.next/trace/*' \
-            $FILES_TO_INCLUDE
+            --exclude='.next/cache' \
+            --exclude='.next/trace' \
+            --exclude='node_modules' \
+            --exclude='.git' \
+            .next public package.json .env.production bun.lock next.config.ts Dockerfile docker-compose.yml .dockerignore
 
       - name: Upload to VPS
         uses: appleboy/scp-action@v0.1.7
