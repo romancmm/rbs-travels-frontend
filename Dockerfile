@@ -15,11 +15,11 @@ COPY .env.production package.json bun.lock* ./
 # Install dependencies
 RUN bun install
 
-# Copy configuration files
-COPY --chown=nextjs:nodejs next.config.ts ./
+# Copy all files (including pre-built .next from CI)
+COPY --chown=nextjs:nodejs . .
 
-# Set proper permissions
-RUN chown -R nextjs:nodejs /app
+# Ensure nextjs user owns the .next directory
+RUN chown -R nextjs:nodejs /app/.next
 
 USER nextjs
 
