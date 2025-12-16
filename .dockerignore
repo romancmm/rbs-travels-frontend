@@ -10,7 +10,7 @@ coverage
 *.lcov
 
 # Next.js
-.next/
+# .next/ (commented out - we need this for deployment)
 out/
 
 # Production
@@ -87,7 +87,9 @@ pids
 .parcel-cache
 
 # next.js build output
-.next
+# IMPORTANT: we ship a pre-built `.next/` from CI and run `next start` in the container,
+# so we must NOT ignore it.
+# .next
 
 # nuxt.js build output
 .nuxt

@@ -41,9 +41,9 @@ export const fetchOnServer = async <T = any>(
 }
 
 export const revalidateTags = async (tags: string) => {
-  revalidateTag(tags, 'layout')
+  revalidateTag(tags, 'max')
   revalidatePath('/', 'page')
-  revalidatePath('/', 'layout')
+  // revalidatePath('/', 'layout')
 }
 
 export const getSiteConfig = async (): Promise<any | null> => {

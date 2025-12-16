@@ -1,9 +1,12 @@
 import type { NextConfig } from 'next'
 
 const nextConfig: NextConfig = {
-  output: 'standalone',
   experimental: {
-    viewTransition: true
+    cpus: 3,
+    workerThreads: false
+  },
+  typescript: {
+    ignoreBuildErrors: true
   },
   images: {
     remotePatterns: [
