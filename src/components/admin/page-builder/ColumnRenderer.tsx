@@ -181,7 +181,6 @@ export function ColumnRenderer({ column, sectionId, rowId }: ColumnRendererProps
               onClick={(e) => {
                 e.stopPropagation()
                 e.preventDefault()
-                // console.log('[ColumnRenderer] Add component button clicked for column:', column.id)
                 setIsPickerOpen(true)
               }}
               title='Add component'

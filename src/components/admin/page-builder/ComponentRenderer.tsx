@@ -354,11 +354,11 @@ function ComponentPreview({
       // Convert aspectRatio to Tailwind classes
       const aspectClass =
         aspectRatio === '4/3'
-          ? 'aspect-[4/3]'
+          ? 'aspect-4/3'
           : aspectRatio === '1/1'
           ? 'aspect-square'
           : aspectRatio === '21/9'
-          ? 'aspect-[21/9]'
+          ? 'aspect-21/9'
           : 'aspect-video' // Default 16/9
 
       return (

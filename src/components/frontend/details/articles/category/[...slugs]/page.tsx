@@ -6,7 +6,6 @@ import { Skeleton } from '@/components/ui/skeleton'
 import useAsync from '@/hooks/useAsync'
 
 export default function CategoryArticlesPage({ slugs }: { slugs: string[] }) {
-  console.log('slugs', slugs?.join(','))
   const { data, loading } = useAsync(
     () => (slugs ? `/articles/posts?categorySlugs=${slugs?.join(',')}` : null),
     true

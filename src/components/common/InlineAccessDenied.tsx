@@ -84,7 +84,7 @@ export default function InlineAccessDenied({
           {/* Permission notice */}
           <div className='bg-amber-50 p-3 border border-amber-200 rounded-lg'>
             <div className='flex items-start gap-3'>
-              <div className='flex-shrink-0 bg-amber-100 p-1 rounded-full'>
+              <div className='shrink-0 bg-amber-100 p-1 rounded-full'>
                 <Shield className='w-4 h-4 text-amber-700' />
               </div>
               <div className='text-amber-900'>

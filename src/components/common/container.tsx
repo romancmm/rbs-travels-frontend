@@ -10,9 +10,9 @@ const containerVariants = cva('mx-auto w-full container', {
   variants: {
     variant: {
       full: 'max-w-full',
-      wide: 'max-w-screen-xl',
+      wide: 'max-w-(--breakpoint-xl)',
       boxed: 'max-w-7xl',
-      narrow: 'max-w-screen-md',
+      narrow: 'max-w-(--breakpoint-md)',
       none: 'max-w-none',
     },
     padding: {

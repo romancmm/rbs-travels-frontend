@@ -212,7 +212,6 @@ export const uploadImages = async (
   })
   const urls = response?.urls
 
-  console.log('Uploaded URLs:', response)
   if (!urls || (Array.isArray(urls) && urls.length === 0)) {
     throw new Error('No file URL returned')
   }

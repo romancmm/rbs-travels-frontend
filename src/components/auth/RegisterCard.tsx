@@ -76,7 +76,6 @@ export default function RegisterCard({
     setIsLoading(true)
     try {
       // Handle social sign up logic here
-      console.log(`${provider} sign up clicked`)
       onSuccess?.()
     } catch (error) {
       console.error(`${provider} sign up error:`, error)

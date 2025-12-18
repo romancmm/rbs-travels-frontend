@@ -33,15 +33,10 @@ interface FileItem {
   items?: FileItem[]
 }
 
-
 export default function GalleryDetails({ path, menuSlug }: { path: string; menuSlug: string }) {
-  console.log('GalleryDetails path:', path)
-
   // Convert string path to pathname array
   // e.g., '/folder1/folder2' or 'folder1/folder2' -> ['folder1', 'folder2']
-  const pathname = path
-    ? path.split('/').filter(Boolean)
-    : []
+  const pathname = path ? path.split('/').filter(Boolean) : []
 
   return <GalleryContent pathname={pathname} menuSlug={menuSlug} />
 }
@@ -53,8 +48,7 @@ function GalleryContent({ pathname, menuSlug }: { pathname: string[]; menuSlug: 
 
   // Convert pathname array to folder path
   // e.g., ['folder1', 'folder2'] -> '/folder1/folder2'
-  const folderPath =
-    !pathname || pathname.length === 0 ? '/' : `/${pathname.join('/')}`
+  const folderPath = !pathname || pathname.length === 0 ? '/' : `/${pathname.join('/')}`
 
   // Get display name (last segment of path)
   const displayName = (() => {
@@ -194,11 +188,12 @@ function GalleryContent({ pathname, menuSlug }: { pathname: string[]; menuSlug: 
             </Typography>
             <Typography variant='body1' className='opacity-90 mx-auto max-w-2xl'>
               {folders.length > 0 && images.length > 0
-                ? `${folders.length} ${folders.length === 1 ? 'folder' : 'folders'} • ${images.length
-                } ${images.length === 1 ? 'image' : 'images'}`
+                ? `${folders.length} ${folders.length === 1 ? 'folder' : 'folders'} • ${
+                    images.length
+                  } ${images.length === 1 ? 'image' : 'images'}`
                 : folders.length > 0
-                  ? `${folders.length} ${folders.length === 1 ? 'folder' : 'folders'}`
-                  : `${images.length} ${images.length === 1 ? 'image' : 'images'}`}
+                ? `${folders.length} ${folders.length === 1 ? 'folder' : 'folders'}`
+                : `${images.length} ${images.length === 1 ? 'image' : 'images'}`}
             </Typography>
           </motion.div>
         </Container>

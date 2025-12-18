@@ -24,8 +24,6 @@ export interface TableColumn<T = any> {
 export type ArticleActionType = 'view' | 'edit' | 'delete'
 
 const ActionsCell = ({ data, mutate }: { data: any; mutate?: () => void }) => {
-  console.log('article-columns loaded', data)
-
   // Define action configurations for confirmation modals
   const actionConfigs = {
     delete: {
@@ -110,9 +108,14 @@ export const blogColumns = (mutate?: () => void): TableColumn<any>[] => {
       render: (value, data) => (
         <div className='flex items-center gap-3 max-w-xs overflow-hidden'>
           <div className='relative bg-gray-100 rounded-md w-12 min-w-12 h-12 aspect-square overflow-hidden'>
-            <CustomImage src={data.thumbnail} alt='Thumbnail' fill className='w-full h-full object-cover' />
+            <CustomImage
+              src={data.thumbnail}
+              alt='Thumbnail'
+              fill
+              className='w-full h-full object-cover'
+            />
           </div>
-          <div className="max-w-60">
+          <div className='max-w-60'>
             <div className='font-medium truncate'>{value}</div>
             <div className='text-muted-foreground text-xs truncate'>/{data.slug}</div>
           </div>

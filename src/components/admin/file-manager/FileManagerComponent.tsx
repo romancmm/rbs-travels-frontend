@@ -129,7 +129,6 @@ export function FileManagerComponent({
     hasMore: boolean
   }>(apiPath)
 
-  console.log('data', data)
   // Path breadcrumbs
   const pathSegments = (() => {
     if (currentPath === '/') return [{ name: 'Root', path: '/' }]

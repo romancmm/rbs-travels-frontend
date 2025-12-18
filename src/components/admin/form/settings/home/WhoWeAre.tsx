@@ -106,8 +106,6 @@ const WhoWeAreSection = ({ settingsKey, initialValues, refetch }: TProps) => {
     prevIconTypeRef.current = iconType
   }, [iconType, featuresFields, setValue])
 
-  console.log('initialValues :>> ', initialValues)
-
   const onSubmit = handleSubmit(async (data) => {
     try {
       const res = await requests[initialValues ? 'put' : 'post'](

@@ -41,7 +41,7 @@ export const fetchOnServer = async <T = any>(
 }
 
 export const revalidateTags = async (tags: string) => {
-  revalidateTag(tags, { expire: 7000 })
+  revalidateTag(tags, 'max')
   revalidatePath('/')
 }
 
