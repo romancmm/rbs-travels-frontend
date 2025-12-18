@@ -33,11 +33,7 @@ function MenuSlugContent({ params }: { params: { menuSlug: string[] } }) {
 
   // Fetch menu item by slug
   const { data: response, loading } = useAsync<{ data: MenuItem }>(`/menus/item/${menuSlug}`, true)
-
   const menuItem = response?.data
-
-  console.log('menuItem', menuItem)
-  console.log('additionalPath', additionalPath)
 
   if (loading) {
     return (
@@ -77,8 +73,8 @@ function MenuSlugContent({ params }: { params: { menuSlug: string[] } }) {
       const slugs: string[] = Array.isArray(menuItem.reference)
         ? menuItem.reference
         : typeof menuItem.reference === 'string'
-          ? menuItem.reference.split('/').filter(Boolean)
-          : []
+        ? menuItem.reference.split('/').filter(Boolean)
+        : []
 
       if (slugs.length === 0) {
         notFound()
@@ -90,9 +86,8 @@ function MenuSlugContent({ params }: { params: { menuSlug: string[] } }) {
     case 'gallery': {
       // Combine the menu reference path with any additional path segments
       const basePath = menuItem.reference as string
-      const fullPath = additionalPath.length > 0
-        ? `${basePath}/${additionalPath.join('/')}`
-        : basePath
+      const fullPath =
+        additionalPath.length > 0 ? `${basePath}/${additionalPath.join('/')}` : basePath
 
       return <GalleryDetails path={fullPath} menuSlug={menuSlug} />
     }

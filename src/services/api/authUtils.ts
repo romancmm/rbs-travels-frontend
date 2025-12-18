@@ -7,7 +7,6 @@ export const getToken = (): string | null => {
 }
 
 export const clearSession = () => {
-  console.log('object :>> ', 'Clearing admin session')
   Cookies.remove('adminToken')
   Cookies.remove('permissions')
   Cookies.remove('userRole')

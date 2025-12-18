@@ -33,7 +33,6 @@ export default function UnifiedContentPage({
   })
 
   const { data, loading } = useAsync<{ data: any }>(() => apiUrl, true)
-  console.log('[[data]]', data, slug, apiUrl, contentType)
 
   if (loading) {
     return (
@@ -80,7 +79,6 @@ export default function UnifiedContentPage({
   }
 
   const content = data.data
-  console.log('content', content)
   // For listing pages, render appropriate list component
   if (isListing && config.hasListing) {
     return (

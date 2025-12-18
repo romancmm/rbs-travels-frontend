@@ -71,7 +71,6 @@ export default function LoginCard({ className = '', onSuccess, compact = false }
     setIsLoading(true)
     try {
       // Handle social login logic here
-      console.log(`${provider} login clicked`)
       onSuccess?.()
     } catch (error) {
       console.error(`${provider} login error:`, error)

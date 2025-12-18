@@ -66,7 +66,6 @@ export default function GridWithAPI({
     return appendQueryParams(apiEndpoint, params)
   }
   const { data, loading, error } = useAsync<any>(apiEndpoint ? buildApiUrl : null)
-  console.log('data', data)
   const getHoverClass = () => {
     switch (hoverEffect) {
       case 'lift':

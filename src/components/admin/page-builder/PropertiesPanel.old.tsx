@@ -41,14 +41,6 @@ export function PropertiesPanel() {
   // Find the selected element
   const selectedElement = selectedId ? findElementById(content, selectedId) : null
 
-  console.log('[PropertiesPanel] Selected element:', {
-    selectedId,
-    selectedType,
-    selectedElement,
-    elementType: selectedElement?.type,
-    hasElement: !!selectedElement?.element
-  })
-
   const handleOpenChange = (open: boolean) => {
     if (!open) {
       // Close the sheet and clear selection
@@ -587,12 +579,7 @@ function ComponentProperties({ component, onUpdate }: ComponentPropertiesProps) 
               ...(component.settings || {}),
               className: e.target.value
             }
-            console.log('[ComponentProperties] Updating className:', {
-              componentId: component.id,
-              oldSettings: component.settings,
-              newSettings,
-              className: e.target.value
-            })
+
             onUpdate({ settings: newSettings })
           }}
           placeholder='custom-class another-class'

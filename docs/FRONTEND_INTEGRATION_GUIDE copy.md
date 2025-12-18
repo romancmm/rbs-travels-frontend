@@ -235,7 +235,6 @@ const handleSubmit = async (formData: CreateMenuItemInput) => {
     }
 
     const newItem = await response.json()
-    console.log('Created menu item:', newItem)
 
     // Refresh menu or navigate
   } catch (error) {

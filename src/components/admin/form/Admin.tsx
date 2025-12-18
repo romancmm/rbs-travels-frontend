@@ -62,8 +62,6 @@ const AdminForm = ({ initialData, onClose, onSuccess }: AdminFormProps) => {
     }
   }
 
-  console.log('errors :>> ', errors);
-
   return (
     <form onSubmit={handleSubmit(onSubmit)} className='space-y-6'>
       {/* Basic Information */}
@@ -179,7 +177,6 @@ const AdminForm = ({ initialData, onClose, onSuccess }: AdminFormProps) => {
         </div>
       </div>
 
-
       {/* Form Actions */}
       <div className='flex gap-3 pt-4'>
         <Button type='submit' disabled={loading}>
@@ -188,8 +185,8 @@ const AdminForm = ({ initialData, onClose, onSuccess }: AdminFormProps) => {
               ? 'Updating...'
               : 'Creating...'
             : initialData?.id
-              ? 'Update Admin'
-              : 'Create Admin'}
+            ? 'Update Admin'
+            : 'Create Admin'}
         </Button>
         <Button
           type='button'
