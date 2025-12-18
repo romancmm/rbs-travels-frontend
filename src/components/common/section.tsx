@@ -24,7 +24,7 @@ const sectionVariants = cva('block w-full', {
     },
     fullWidth: {
       true: 'w-full',
-      false: 'max-w-screen-xl mx-auto'
+      false: 'max-w-(--breakpoint-xl) mx-auto'
     }
   },
   defaultVariants: {

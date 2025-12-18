@@ -122,7 +122,7 @@ const ArticleLoadingSkeleton = ({ count = 6 }: { count?: number }) => {
         {Array.from({ length: count }).map((_, index) => (
           <div key={index} className='border border-border/20 rounded-3xl overflow-hidden'>
             {/* Image skeleton */}
-            <Skeleton className='w-full aspect-[16/10]' />
+            <Skeleton className='w-full aspect-16/10' />
 
             {/* Content skeleton */}
             <div className='space-y-4 p-6'>

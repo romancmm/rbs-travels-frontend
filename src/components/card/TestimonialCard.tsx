@@ -108,7 +108,7 @@ const UserAvatar = ({
   return (
     <div
       className={cn(
-        'inline-flex flex-shrink-0 bg-primary/10 rounded-full aspect-square overflow-hidden text-primary',
+        'inline-flex shrink-0 bg-primary/10 rounded-full aspect-square overflow-hidden text-primary',
         sizeClasses[size],
         className
       )}

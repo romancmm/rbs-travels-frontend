@@ -15,7 +15,7 @@ export default function DashboardLayout({ children }: TProps) {
       {/* <SiteHeader /> */}
       <div className='relative flex-1'>
         <SidebarProvider
-          className='[&_[data-slot=sidebar-container]]:!top-[64px]'
+          className='**:data-[slot=sidebar-container]:top-[64px]!'
           style={
             {
               '--sidebar-width': 'calc(var(--spacing) * 72)'

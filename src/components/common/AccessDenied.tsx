@@ -90,7 +90,7 @@ export default function AccessDenied({
             {/* Permission notice with improved styling */}
             <div className='bg-linear-to-r from-amber-50 to-orange-50 shadow-sm p-5 border border-amber-200 rounded-xl'>
               <div className='flex items-start gap-4'>
-                <div className='flex-shrink-0 bg-amber-100 p-2 rounded-full'>
+                <div className='shrink-0 bg-amber-100 p-2 rounded-full'>
                   <Shield className='w-5 h-5 text-amber-700' />
                 </div>
                 <div className='text-amber-900'>

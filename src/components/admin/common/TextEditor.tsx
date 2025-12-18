@@ -152,23 +152,23 @@ const TextEditor = forwardRef<any, TextEditorProps>(
           className={`
             rounded-md border border-input 
             ${theme === 'dark' ? 'bg-background' : 'bg-background'}
-            [&_.jodit-toolbar__box]:!bg-foreground
-            [&_.jodit-container]:!bg-transparent
-            [&_.jodit-workplace]:!bg-transparent  
-            [&_.jodit-wysiwyg]:!bg-transparent
-            [&_.jodit-wysiwyg]:!text-gray-900
+            [&_.jodit-toolbar__box]:bg-foreground!
+            [&_.jodit-container]:bg-transparent!
+            [&_.jodit-workplace]:bg-transparent!  
+            [&_.jodit-wysiwyg]:bg-transparent!
+            [&_.jodit-wysiwyg]:text-gray-900!
             [&_.jodit-wysiwyg]:${
-              theme === 'dark' ? '!bg-background !text-foreground' : '!bg-white !text-black'
+              theme === 'dark' ? 'bg-background! text-foreground!' : 'bg-white! text-black!'
             }
-            [&_.jodit-toolbar]:!bg-muted/30
-            [&_.jodit-toolbar]:!text-muted-foreground
+            [&_.jodit-toolbar]:bg-muted/30!
+            [&_.jodit-toolbar]:text-muted-foreground!
             [&_.jodit-toolbar]:border-b
             [&_.jodit-toolbar]:border-border
-            [&_.jodit-toolbar-button]:!bg-transparent
-            [&_.jodit-toolbar-button]:hover:!bg-muted/80
-            [&_.jodit-toolbar-button]:!border-transparent
-            [&_.jodit-status-bar]:!bg-muted/30
-            [&_.jodit-status-bar]:!text-muted-foreground
+            [&_.jodit-toolbar-button]:bg-transparent!
+            [&_.jodit-toolbar-button]:hover:bg-muted/80!
+            [&_.jodit-toolbar-button]:border-transparent!
+            [&_.jodit-status-bar]:bg-muted/30!
+            [&_.jodit-status-bar]:text-muted-foreground!
             [&_.jodit-status-bar]:border-t
             [&_.jodit-status-bar]:border-border
           `}
