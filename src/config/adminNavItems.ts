@@ -143,6 +143,10 @@ export const navItems: NavItem[] = [
         title: 'Top Countries',
         href: '/admin/homepage-settings/top-countries'
       },
+      {
+        title: 'Sister Concern',
+        href: '/admin/homepage-settings/sister-concern'
+      },
       // {
       //   title: 'News & Events',
       //   href: '/admin/homepage-settings/news-and-events'
