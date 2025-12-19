@@ -11,12 +11,11 @@ import WhoWeAre from '@/components/frontend/homepage/WhoWeAre'
 
 export default async function HomePage() {
   const homeData = await getHomepageData()
-  const homeFaqs = await fetchOnServer('/settings/home_faq_settings', 300)
-  const homepageTestimonials = await fetchOnServer('/settings/home_testimonial_settings', 300)
-  const featuredArticle = await fetchOnServer('/articles/posts?categorySlugs=blogs', 300)
-  const sisterConcerns = await fetchOnServer('/settings/home_sister_concern_settings', 300)
+  const homeFaqs = fetchOnServer('/settings/home_faq_settings', 300)
+  const homepageTestimonials = fetchOnServer('/settings/home_testimonial_settings', 300)
+  const featuredArticle = fetchOnServer('/articles/posts?categorySlugs=blogs', 300)
+  const sisterConcerns = fetchOnServer('/settings/home_sister_concern_settings', 300)
   // const featuredCategories = fetchOnServer('/categories?isFeatured=true', 300)
-
   return (
     <>
       <BannerCarousel data={homeData?.banners} />
@@ -24,7 +23,7 @@ export default async function HomePage() {
       <Stats data={homeData?.about?.stats} />
       <WhoWeAre data={homeData?.whoWeAre} />
       <TopDestinations data={homeData?.topCountries} />
-      <SisterConcern data={sisterConcerns?.data?.value} />
+      <SisterConcern data={sisterConcerns} />
       <Testimonials data={homepageTestimonials} />
       <Blog data={featuredArticle} />
       <FAQ data={homeFaqs} />
