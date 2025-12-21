@@ -1,15 +1,23 @@
 'use server'
 import { HomepageSettings } from '@/lib/validations/schemas/homepageSettings'
-import { revalidatePath, revalidateTag } from 'next/cache'
+import { revalidateTag } from 'next/cache'
 import { cookies } from 'next/headers'
 
 const baseURL = process.env.NEXT_PUBLIC_APP_ROOT_API
 
-export const fetchOnServer = async <T = any>(
-  path: string,
-  rev?: number,
+type FetchOnServerParams<T = any> = {
+  path: string
+  rev?: number
   token?: 'token' | 'adminToken'
-): Promise<{ data: T | null; error: string | null }> => {
+  tag?: string
+}
+
+export const fetchOnServer = async <T = any>({
+  path,
+  rev,
+  token,
+  tag
+}: FetchOnServerParams<T>): Promise<{ data: T | null; error: string | null }> => {
   const options: RequestInit = {}
 
   if (token) {
@@ -25,7 +33,7 @@ export const fetchOnServer = async <T = any>(
       headers: options.headers,
       method: 'GET',
       ...(rev
-        ? { cache: 'force-cache', next: { revalidate: rev, tags: [path] } }
+        ? { cache: 'force-cache', next: { revalidate: rev, ...(tag ? { tags: [tag] } : {}) } }
         : { cache: 'no-store' })
     })
 
@@ -42,11 +50,11 @@ export const fetchOnServer = async <T = any>(
 
 export const revalidateTags = async (tags: string) => {
   revalidateTag(tags, { expire: 86400 })
-  revalidatePath('/')
+  // revalidatePath('/')
 }
 
 export const getSiteConfig = async (): Promise<any | null> => {
-  const data = await fetchOnServer('/settings/system_site_settings', 3600) // 1 hour revalidation
+  const data = await fetchOnServer({ path: '/settings/system_site_settings', rev: 3600 }) // 1 hour revalidation
   if (data.error) {
     return null
   }
@@ -55,7 +63,7 @@ export const getSiteConfig = async (): Promise<any | null> => {
 }
 
 export const getHomepageData = async (): Promise<HomepageSettings | null> => {
-  const data = await fetchOnServer('/settings/homepage_settings', 3600) // 1 hour revalidation
+  const data = await fetchOnServer({ path: '/settings/homepage_settings', rev: 3600 }) // 1 hour revalidation
   if (data.error) {
     return null
   }
@@ -63,7 +71,7 @@ export const getHomepageData = async (): Promise<HomepageSettings | null> => {
 }
 
 export const getFooterNav = async (): Promise<any | null> => {
-  const data = await fetchOnServer('/settings/key/footer_menus', 3600) // 1 hour revalidation
+  const data = await fetchOnServer({ path: '/settings/key/footer_menus', rev: 3600 }) // 1 hour revalidation
   if (data.error) {
     return null
   }
@@ -71,7 +79,11 @@ export const getFooterNav = async (): Promise<any | null> => {
 }
 
 export const getMainNav = async (): Promise<any | null> => {
-  const data = await fetchOnServer('/settings/key/main_menus', 3600) // 1 hour revalidation
+  const data = await fetchOnServer({
+    path: '/settings/key/main_menus',
+    rev: 3600,
+    tag: 'main_menus'
+  }) // 1 hour revalidation
   if (data.error) {
     return null
   }
