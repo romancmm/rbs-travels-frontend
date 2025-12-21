@@ -3,151 +3,195 @@
 import { Container } from '@/components/common/container'
 import { Section } from '@/components/common/section'
 import { Typography } from '@/components/common/typography'
-import {
-  Carousel,
-  CarouselApi,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious
-} from '@/components/ui/carousel'
+import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
-import { SisterConcernSettings } from '@/lib/validations/schemas/sisterConcernSettings'
-import Autoplay from 'embla-carousel-autoplay'
-import { Building, ExternalLink } from 'lucide-react'
+import { Building, ChevronRight, ExternalLink } from 'lucide-react'
 import { motion } from 'motion/react'
 import Image from 'next/image'
 import Link from 'next/link'
-import { useEffect, useState } from 'react'
+import { use, useState } from 'react'
 
 interface SisterConcernProps {
-  data?: SisterConcernSettings
+  data?: any
   isLoading?: boolean
   className?: string
 }
 
 const SisterConcern = ({ data, isLoading = false, className }: SisterConcernProps) => {
-  if (!data?.companies?.length) {
+  const res: any = use(data)
+  const sectionData = res?.data?.value
+
+  if (!sectionData?.companies?.length) {
     return null
   }
 
   // Filter only active companies
-  const activeCompanies = data.companies.filter((company) => company.isActive)
+  const activeCompanies = sectionData?.companies.filter((company: any) => company.isActive)
 
   if (!activeCompanies.length) {
     return null
   }
 
   return (
-    <Section variant='xl' className={cn('bg-muted/30', className)}>
+    <Section variant='xl' className={cn('bg-background', className)}>
       <Container>
-        <Header data={data} />
-        <CarouselContainer companies={activeCompanies} />
+        <div className="flex items-center gap-12">
+          <Header data={sectionData} />
+          <PartnersGrid companies={activeCompanies} />
+        </div>
       </Container>
     </Section>
   )
 }
 
 // Header
-const Header = ({ data }: { data: SisterConcernSettings }) => (
-  <div className='mb-12 text-center'>
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.6 }}
-      className='space-y-4'
-    >
-      {data.subtitle && (
-        <Typography
-          variant='subtitle1'
-          className='font-semibold text-primary uppercase tracking-wide'
-        >
-          {data.subtitle}
-        </Typography>
-      )}
-
-      {data.title && (
-        <Typography
-          variant='h2'
-          as='h2'
-          weight='bold'
-          className='mx-auto max-w-3xl text-foreground leading-tight'
-        >
-          {data.title}
-        </Typography>
-      )}
-    </motion.div>
-  </div>
-)
-
-// Carousel Container
-const CarouselContainer = ({ companies }: { companies: any[] }) => {
-  const [api, setApi] = useState<CarouselApi>()
-  const [current, setCurrent] = useState(0)
-
-  useEffect(() => {
-    if (!api) return
-    setCurrent(api.selectedScrollSnap())
-    api.on('select', () => setCurrent(api.selectedScrollSnap()))
-  }, [api])
-
+const Header = ({ data }: { data: any }) => {
   return (
-    <div className='relative'>
-      <Carousel
-        setApi={setApi}
-        opts={{
-          align: 'start',
-          loop: true
-        }}
-        plugins={[
-          Autoplay({
-            delay: 3000,
-            stopOnInteraction: true,
-            stopOnMouseEnter: true
-          })
-        ]}
-        className='w-full'
+    <div className='max-w-lg'>
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+        className='space-y-6'
       >
-        <CarouselContent className='-ml-4'>
-          {companies.map((company, index) => (
-            <CarouselItem key={index} className='pl-4 md:basis-1/2 lg:basis-1/3 xl:basis-1/4'>
-              <CompanyCard company={company} index={index} />
-            </CarouselItem>
-          ))}
-        </CarouselContent>
+        {data?.subtitle && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, delay: 0.1 }}
+          >
+            <Typography
+              variant='subtitle1'
+              className='font-semibold text-primary text-sm uppercase tracking-widest'
+            >
+              {data.subtitle}
+            </Typography>
+          </motion.div>
+        )}
 
-        {/* Navigation Arrows */}
-        <CarouselPrevious className='max-md:hidden left-0 -translate-x-1/2' />
-        <CarouselNext className='max-md:hidden right-0 translate-x-1/2' />
-      </Carousel>
+        {data?.title && (
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+          >
+            <Typography
+              variant='h3'
+              as='h2'
+              weight='bold'
+              className='text-foreground leading-tight tracking-tight'
+            >
+              {data.title}
+            </Typography>
+          </motion.div>
+        )}
 
-      {/* Dots indicator */}
-      <div className='flex justify-center items-center gap-2 mt-8'>
-        {companies.map((_, index) => (
-          <button
-            key={index}
-            onClick={() => api?.scrollTo(index)}
-            className={cn(
-              'rounded-full w-2 h-2 transition-all duration-300',
-              current === index
-                ? 'bg-primary scale-125 w-8'
-                : 'bg-muted-foreground/30 hover:bg-muted-foreground/50'
-            )}
-            aria-label={`Go to slide ${index + 1}`}
-          />
-        ))}
-      </div>
+        {data?.description && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, delay: 0.3 }}
+          >
+            <Typography
+              variant='body1'
+              className='mx-auto max-w-2xl text-muted-foreground leading-relaxed'
+            >
+              {data.description}
+            </Typography>
+          </motion.div>
+        )}
+      </motion.div>
     </div>
   )
 }
 
-// Company Card
-const CompanyCard = ({ company, index }: { company: any; index: number }) => {
+// Partners Grid Container
+const PartnersGrid = ({ companies }: { companies: any[] }) => {
+  const [showAll, setShowAll] = useState(false)
+  const displayCompanies = showAll ? companies : companies.slice(0, 8)
+
+  return (
+    <div className='relative w-full'>
+      <div className='gap-3 md:gap-5 grid grid-cols-2 lg:grid-cols-3'>
+        {displayCompanies.map((company, index) => (
+          <PartnerCard key={company.id || index} company={company} index={index} />
+        ))}
+      </div>
+
+      {companies.length > 8 && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6, delay: 0.3 }}
+          className='flex justify-center mt-12'
+        >
+          <Button
+            variant='default'
+            size='lg'
+            onClick={() => setShowAll(!showAll)}
+            className='group shadow-lg hover:shadow-xl font-medium transition-all'
+          >
+            {showAll ? 'Show Less Partners' : 'View All Partners'}
+            <ChevronRight
+              className={cn(
+                'ml-2 w-4 h-4 transition-transform duration-300',
+                showAll ? 'rotate-90' : 'group-hover:translate-x-1'
+              )}
+            />
+          </Button>
+        </motion.div>
+      )}
+    </div>
+  )
+}
+
+// Partner Card
+const PartnerCard = ({ company, index }: { company: any; index: number }) => {
+  const cardClasses = cn(
+    'group relative flex justify-center items-center',
+    'bg-card hover:bg-accent/5',
+    'border border-border/50 hover:border-primary/20',
+    'rounded-2xl p-4 aspect-4/3',
+    'transition-all duration-500 ease-out',
+    'hover:shadow-lg hover:shadow-primary/5',
+    'hover:-translate-y-1',
+    company.url && 'cursor-pointer',
+    'overflow-hidden'
+  )
+
+  const cardContent = (
+    <>
+      <LogoContent company={company} />
+
+      {company.url && (
+        <motion.div
+          initial={{ opacity: 0, scale: 0.8 }}
+          whileHover={{ opacity: 1, scale: 1 }}
+          className='top-3 right-3 absolute opacity-0 group-hover:opacity-100 transition-opacity duration-300'
+        >
+          <div className='flex justify-center items-center bg-primary/10 backdrop-blur-sm rounded-full w-7 h-7'>
+            <ExternalLink className='w-3.5 h-3.5 text-primary' />
+          </div>
+        </motion.div>
+      )}
+    </>
+  )
+
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5, delay: index * 0.1 }}
+      initial={{ opacity: 0, y: 20, scale: 0.9 }}
+      whileInView={{ opacity: 1, y: 0, scale: 1 }}
+      viewport={{ once: true }}
+      transition={{
+        duration: 0.5,
+        delay: index * 0.05,
+        ease: [0.22, 1, 0.36, 1]
+      }}
       className='h-full'
     >
       {company.url ? (
@@ -155,69 +199,36 @@ const CompanyCard = ({ company, index }: { company: any; index: number }) => {
           href={company.url}
           target='_blank'
           rel='noopener noreferrer'
-          className={cn(
-            'group relative flex flex-col justify-center items-center bg-background hover:bg-accent/5 shadow-sm hover:shadow-lg p-8 border rounded-xl w-full h-full transition-all duration-300 cursor-pointer'
-          )}
+          className={cardClasses}
         >
-          <CardContent company={company} />
+          {cardContent}
         </Link>
       ) : (
-        <div
-          className={cn(
-            'group relative flex flex-col justify-center items-center bg-background hover:bg-accent/5 shadow-sm hover:shadow-lg p-8 border rounded-xl w-full h-full transition-all duration-300'
-          )}
-        >
-          <CardContent company={company} />
-        </div>
+        <div className={cardClasses}>{cardContent}</div>
       )}
     </motion.div>
   )
 }
 
-// Card Content Component
-const CardContent = ({ company }: { company: any }) => {
+// Logo Content Component
+const LogoContent = ({ company }: { company: any }) => {
   return (
-    <>
-      {/* Logo Container */}
-      <div className='relative flex justify-center items-center mb-4 rounded-lg w-full h-32 overflow-hidden'>
-        {company.logo ? (
+    <div className='relative flex justify-center items-center w-full h-full'>
+      {company.logo ? (
+        <div className='relative w-full h-full'>
           <Image
             src={company.logo}
-            alt={company.name || 'Company logo'}
+            alt={company.name || 'Partner logo'}
             fill
-            className='p-4 object-contain group-hover:scale-110 transition-transform duration-300'
+            className='opacity-60 group-hover:opacity-100 grayscale group-hover:grayscale-0 object-contain group-hover:scale-105 transition-all duration-500 filter'
           />
-        ) : (
-          <Building className='w-16 h-16 text-muted-foreground' />
-        )}
-      </div>
-
-      {/* Company Name */}
-      {company.name && (
-        <Typography
-          variant='h6'
-          as='h3'
-          weight='semibold'
-          className='mb-2 text-foreground group-hover:text-primary text-center transition-colors'
-        >
-          {company.name}
-        </Typography>
-      )}
-
-      {/* Description */}
-      {company.description && (
-        <Typography variant='body2' className='text-muted-foreground text-center line-clamp-2'>
-          {company.description}
-        </Typography>
-      )}
-
-      {/* External Link Icon */}
-      {company.url && (
-        <div className='top-4 right-4 absolute opacity-0 group-hover:opacity-100 transition-opacity'>
-          <ExternalLink className='w-4 h-4 text-primary' />
+        </div>
+      ) : (
+        <div className='flex justify-center items-center'>
+          <Building className='w-12 h-12 text-muted-foreground/40 group-hover:text-primary/60 transition-colors duration-300' />
         </div>
       )}
-    </>
+    </div>
   )
 }
 

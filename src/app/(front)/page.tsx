@@ -11,26 +11,15 @@ import WhoWeAre from '@/components/frontend/homepage/WhoWeAre'
 
 export default async function HomePage() {
   const homeData = await getHomepageData()
+  const homeFaqs = fetchOnServer({ path: '/settings/home_faq_settings', rev: 300 })
 
-  const homeFaqs = await fetchOnServer({ path: '/settings/home_faq_settings', rev: 300 })
-
-  const homepageTestimonials = await fetchOnServer({
+  const homepageTestimonials = fetchOnServer({
     path: '/settings/home_testimonial_settings',
     rev: 300
   })
 
-  // TODO: Fetch on client side to improve performance
-  const featuredArticle = await fetchOnServer({
-    path: '/articles/posts?categorySlugs=blogs',
-    rev: 300
-  })
-
-  const sisterConcerns = await fetchOnServer({
-    path: '/settings/home_sister_concern_settings',
-    rev: 300
-  })
-
-  // const featuredCategories = fetchOnServer({ path: '/categories?isFeatured=true', rev: 300 })
+  const featuredArticle = fetchOnServer({ path: '/articles/posts?categorySlugs=blogs', rev: 300 })
+  const sisterConcerns = fetchOnServer({ path: '/settings/home_sister_concern_settings', rev: 300 })
 
   return (
     <>
@@ -39,7 +28,7 @@ export default async function HomePage() {
       <Stats data={homeData?.about?.stats} />
       <WhoWeAre data={homeData?.whoWeAre} />
       <TopDestinations data={homeData?.topCountries} />
-      <SisterConcern data={sisterConcerns?.data?.value} />
+      <SisterConcern data={sisterConcerns} />
       <Testimonials data={homepageTestimonials} />
       <Blog data={featuredArticle} />
       <FAQ data={homeFaqs} />
