@@ -90,10 +90,13 @@ const SocialLinksForm = ({ settingsKey, initialValues, refetch }: TProps) => {
 
   const onSubmit = handleSubmit(async (data) => {
     try {
-      const res = await requests[initialValues ? 'put' : 'post'](`/admin/setting/settings/${initialValues ? `key/${settingsKey}` : ''}`, {
-        key: settingsKey,
-        value: data
-      })
+      const res = await requests[initialValues ? 'put' : 'post'](
+        `/admin/setting/settings/${initialValues ? `key/${settingsKey}` : ''}`,
+        {
+          key: settingsKey,
+          value: data
+        }
+      )
       if (res?.success) {
         await revalidateTags(SITE_CONFIG)
         toast.success('Social links updated successfully!')

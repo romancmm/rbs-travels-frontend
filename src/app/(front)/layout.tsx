@@ -10,13 +10,13 @@ export default async function FrontLayout({
   children: React.ReactNode
   modal: React.ReactNode
 }>) {
-  const mainMenus = fetchOnServer('/menus/main-menu', 300)
-  const footerMenus = fetchOnServer('/menus/footer-menu', 300)
+  const mainMenus = fetchOnServer({ path: '/menus/main-menu', rev: 300 })
+  const footerMenus = fetchOnServer({ path: '/menus/footer-menu', rev: 300 })
 
   return (
     <SiteThemeProvider>
       <Header data={mainMenus} />
-      <main className='min-h-[500px]'>{children}</main>
+      <main className='min-h-125'>{children}</main>
       <Footer data={footerMenus} />
       {modal}
     </SiteThemeProvider>

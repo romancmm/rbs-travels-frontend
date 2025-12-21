@@ -38,10 +38,13 @@ const LogoManagement = ({ settingsKey, initialValues, refetch }: TProps) => {
 
   const onSubmit = handleSubmit(async (data) => {
     try {
-      const res = await requests[initialValues ? 'put' : 'post'](`/admin/setting/settings/${initialValues ? `key/${settingsKey}` : ''}`, {
-        key: settingsKey,
-        value: data
-      })
+      const res = await requests[initialValues ? 'put' : 'post'](
+        `/admin/setting/settings/${initialValues ? `key/${settingsKey}` : ''}`,
+        {
+          key: settingsKey,
+          value: data
+        }
+      )
       if (res?.success) {
         await revalidateTags(SITE_CONFIG)
         toast.success('Settings updated successfully!')
@@ -77,12 +80,14 @@ const LogoManagement = ({ settingsKey, initialValues, refetch }: TProps) => {
 
           <CardContent className='relative'>
             <div className='space-y-3'>
-              <div className={cn(
-                'relative flex justify-center items-center p-2 rounded-xl transition-all duration-500',
-                'bg-linear-to-br from-muted/50 via-muted/30 to-background',
-                'border-2 border-dashed border-muted-foreground/20',
-                'group-hover:border-blue-500/40'
-              )}>
+              <div
+                className={cn(
+                  'relative flex justify-center items-center p-2 rounded-xl transition-all duration-500',
+                  'bg-linear-to-br from-muted/50 via-muted/30 to-background',
+                  'border-2 border-dashed border-muted-foreground/20',
+                  'group-hover:border-blue-500/40'
+                )}
+              >
                 <Controller
                   control={control}
                   name='logo.default'
@@ -133,12 +138,14 @@ const LogoManagement = ({ settingsKey, initialValues, refetch }: TProps) => {
 
           <CardContent className='relative'>
             <div className='space-y-3'>
-              <div className={cn(
-                'relative flex justify-center items-center p-2 rounded-xl transition-all duration-500',
-                'bg-linear-to-br from-muted/50 via-muted/30 to-background',
-                'border-2 border-dashed border-muted-foreground/20',
-                'group-hover:border-gray-700/40'
-              )}>
+              <div
+                className={cn(
+                  'relative flex justify-center items-center p-2 rounded-xl transition-all duration-500',
+                  'bg-linear-to-br from-muted/50 via-muted/30 to-background',
+                  'border-2 border-dashed border-muted-foreground/20',
+                  'group-hover:border-gray-700/40'
+                )}
+              >
                 <Controller
                   control={control}
                   name='logo.dark'
@@ -188,12 +195,14 @@ const LogoManagement = ({ settingsKey, initialValues, refetch }: TProps) => {
 
           <CardContent className='relative'>
             <div className='space-y-3'>
-              <div className={cn(
-                'relative flex justify-center items-center p-2 rounded-xl transition-all duration-500',
-                'bg-linear-to-br from-muted/50 via-muted/30 to-background',
-                'border-2 border-dashed border-muted-foreground/20',
-                'group-hover:border-amber-500/40'
-              )}>
+              <div
+                className={cn(
+                  'relative flex justify-center items-center p-2 rounded-xl transition-all duration-500',
+                  'bg-linear-to-br from-muted/50 via-muted/30 to-background',
+                  'border-2 border-dashed border-muted-foreground/20',
+                  'group-hover:border-amber-500/40'
+                )}
+              >
                 <Controller
                   control={control}
                   name='favicon'
@@ -216,11 +225,9 @@ const LogoManagement = ({ settingsKey, initialValues, refetch }: TProps) => {
                 <span className='text-red-500 text-xs'>{errors.favicon.message}</span>
               )}
             </div>
-
           </CardContent>
           {/* Hover effect bar */}
           <div className='right-0 bottom-0 left-0 absolute bg-linear-to-r from-amber-500/0 via-amber-500 to-amber-500/0 h-1 scale-x-0 group-hover:scale-x-100 transition-transform duration-500' />
-
         </Card>
       </div>
 

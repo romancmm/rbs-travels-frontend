@@ -11,11 +11,26 @@ import WhoWeAre from '@/components/frontend/homepage/WhoWeAre'
 
 export default async function HomePage() {
   const homeData = await getHomepageData()
-  const homeFaqs = await fetchOnServer('/settings/home_faq_settings', 300)
-  const homepageTestimonials = await fetchOnServer('/settings/home_testimonial_settings', 300)
-  const featuredArticle = await fetchOnServer('/articles/posts?categorySlugs=blogs', 300)
-  const sisterConcerns = await fetchOnServer('/settings/home_sister_concern_settings', 300)
-  // const featuredCategories = fetchOnServer('/categories?isFeatured=true', 300)
+
+  const homeFaqs = await fetchOnServer({ path: '/settings/home_faq_settings', rev: 300 })
+
+  const homepageTestimonials = await fetchOnServer({
+    path: '/settings/home_testimonial_settings',
+    rev: 300
+  })
+
+  // TODO: Fetch on client side to improve performance
+  const featuredArticle = await fetchOnServer({
+    path: '/articles/posts?categorySlugs=blogs',
+    rev: 300
+  })
+
+  const sisterConcerns = await fetchOnServer({
+    path: '/settings/home_sister_concern_settings',
+    rev: 300
+  })
+
+  // const featuredCategories = fetchOnServer({ path: '/categories?isFeatured=true', rev: 300 })
 
   return (
     <>
