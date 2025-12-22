@@ -7,7 +7,7 @@ export const metadata = {
 
 const AdminLoginPage = () => {
   return (
-    <div className='space-y-10 bg-foreground-foreground shadow-xl p-6 sm:p-10 rounded-lg w-full max-w-md'>
+    <div className='space-y-12 bg-foreground-foreground shadow-xl p-6 sm:p-10 rounded-lg w-full max-w-md'>
       <div className='flex flex-col items-center gap-2'>
         <Typography variant='h3' as='h3' weight='medium'>
           Admin Login
