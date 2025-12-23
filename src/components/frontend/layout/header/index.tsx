@@ -4,7 +4,6 @@ import MainHeader from './MainHeader'
 
 export default function Header({ data }: { data: any }) {
   const res: any = use(data)
-
   return (
     <>
       {/* Top announcement bar */}

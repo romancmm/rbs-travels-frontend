@@ -178,10 +178,12 @@ export default function ArticleForm({ initialData }: TProps) {
                       return (
                         data?.data?.items?.map((item: any) => ({
                           value: item.id,
-                          label: item.title || item.name
+                          label: item.title || item.name,
+                          title: item.title || item.name
                         })) || []
                       )
                     }}
+                    searchMode='server'
                     onChange={(value) => {
                       // CustomSelect already handles toggle logic, just update the field
                       field.onChange(value)

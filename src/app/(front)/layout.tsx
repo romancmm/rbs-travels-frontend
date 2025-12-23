@@ -10,8 +10,8 @@ export default async function FrontLayout({
   children: React.ReactNode
   modal: React.ReactNode
 }>) {
-  const mainMenus = fetchOnServer({ path: '/menus/main-menu', rev: 300 })
-  const footerMenus = fetchOnServer({ path: '/menus/footer-menu', rev: 300 })
+  const mainMenus = fetchOnServer({ path: '/menus/main-menu', rev: 300, tag: 'main_menus' })
+  const footerMenus = fetchOnServer({ path: '/menus/footer-menu', rev: 300, tag: 'footer_menus' })
 
   return (
     <SiteThemeProvider>

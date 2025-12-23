@@ -18,6 +18,7 @@ import {
 import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
 
+import { revalidateTags } from '@/action/data'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Sheet, SheetClose, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet'
@@ -135,6 +136,7 @@ export function MenuItemsBuilder({
     if (editingItem) {
       // Edit existing item
       await updateItem(editingItem.id, updates)
+      await revalidateTags('main_menus')
     } else {
       // Add new item
       await addItem(parentItemId, updates)
