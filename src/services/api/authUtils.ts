@@ -10,5 +10,5 @@ export const clearSession = () => {
   Cookies.remove('adminToken')
   Cookies.remove('permissions')
   Cookies.remove('userRole')
-  window.location.href = '/admin/login' // Redirect to login
+  // window.location.href = '/admin/login' // Redirect to login
 }
