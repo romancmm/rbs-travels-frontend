@@ -45,9 +45,9 @@ jobs:
       - name: Deploy with Docker on VPS
         uses: appleboy/ssh-action@v1.0.3
         with:
-          host: ${{ secrets.HOST }}
+          host: ${{ secrets.HOST_2 }}
           username: ${{ secrets.USER }}
-          key: ${{ secrets.SSH_KEY }}
+          key: ${{ secrets.SSH_KEY_2 }}
           port: ${{  '22' }}
           timeout: 60s
           command_timeout: 10m
