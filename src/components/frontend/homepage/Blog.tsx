@@ -5,9 +5,9 @@ import { EmptyState } from '@/components/common/EmptyState'
 import { Section } from '@/components/common/section'
 import { ArticleLoadingSkeleton } from '@/components/common/Skeleton'
 import { Typography } from '@/components/common/typography'
+import useAsync from '@/hooks/useAsync'
 import { TrendingUp } from 'lucide-react'
 import { motion } from 'motion/react'
-import { use } from 'react'
 import BlogCard from '../../card/BlogCard'
 
 interface ArticleProps {
@@ -16,15 +16,14 @@ interface ArticleProps {
   className?: string
 }
 
-const Article = ({ data, isLoading = false, className }: ArticleProps) => {
-  const res: any = use(data)
-  const blogData = res?.data?.items
+const Blogs = ({ className }: ArticleProps) => {
+  const { data, loading } = useAsync(() => '/articles/posts?categorySlugs=blogs')
 
-  if (isLoading) {
+  if (loading) {
     return <ArticleLoadingSkeleton />
   }
 
-  if (!blogData || !blogData?.length) {
+  if (!data || !data?.data?.items?.length) {
     return (
       <Section variant='xl' className={className}>
         <Container>
@@ -84,7 +83,7 @@ const Article = ({ data, isLoading = false, className }: ArticleProps) => {
 
         {/* Article Grid */}
         <div className='gap-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 mb-12'>
-          {blogData.slice(0, 3)?.map((post: any, index: number) => (
+          {data?.data?.items?.slice(0, 3)?.map((post: any, index: number) => (
             <BlogCard key={post.id} post={post} index={index} />
           ))}
         </div>
@@ -176,4 +175,4 @@ const Article = ({ data, isLoading = false, className }: ArticleProps) => {
   )
 }
 
-export default Article
+export default Blogs
