@@ -1,6 +1,7 @@
 'use client'
 
 import { Button } from '@/components/ui/button'
+import { Checkbox } from '@/components/ui/checkbox'
 import {
   Table,
   TableBody,
@@ -24,6 +25,7 @@ interface FileListProps {
   onFileDelete: (file: FileItem) => void
   onFileRename: (file: FileItem) => void
   selectedFiles: FileItem[]
+  selectionMode?: boolean
   getFileIcon: (file: FileItem) => any
 }
 
@@ -35,9 +37,15 @@ export function FileList({
   onFileDelete,
   onFileRename,
   selectedFiles,
+  selectionMode = false,
   getFileIcon
 }: FileListProps) {
-  const isSelected = (file: FileItem) => selectedFiles.some((f) => f.fileId === file.fileId)
+  // Helper to get unique ID for both files and folders
+  const getItemId = (item: FileItem) => {
+    return item.type === 'file' ? item.fileId : item.folderId
+  }
+
+  const isSelected = (file: FileItem) => selectedFiles.some((f) => getItemId(f) === getItemId(file))
 
   const formatFileSize = (bytes?: number) => {
     if (!bytes) return ''
@@ -58,7 +66,9 @@ export function FileList({
   }
 
   const handleClick = (file: FileItem) => {
-    if (file.type === 'folder') {
+    if (selectionMode) {
+      onFileSelect(file)
+    } else if (file.type === 'folder') {
       onFolderClick(file)
     } else {
       onFileSelect(file)
@@ -71,12 +81,15 @@ export function FileList({
         <Table>
           <TableHeader>
             <TableRow className='bg-linear-to-r from-gray-50 hover:from-gray-50 to-gray-50/50 hover:to-gray-50/50 border-gray-100 border-b-2'>
+              {selectionMode && <TableHead className='w-12 font-bold text-gray-600'></TableHead>}
               <TableHead className='w-12 font-bold text-gray-600'></TableHead>
               <TableHead className='font-bold text-gray-700'>Name</TableHead>
               <TableHead className='w-32 font-bold text-gray-700'>Type</TableHead>
               <TableHead className='w-28 font-bold text-gray-700'>Size</TableHead>
               <TableHead className='w-40 font-bold text-gray-700'>Modified</TableHead>
-              <TableHead className='w-24 font-bold text-gray-700 text-right'>Actions</TableHead>
+              {!selectionMode && (
+                <TableHead className='w-24 font-bold text-gray-700 text-right'>Actions</TableHead>
+              )}
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -99,11 +112,20 @@ export function FileList({
                   onDoubleClick={(e) => {
                     e.preventDefault()
                     e.stopPropagation()
-                    if (file.type === 'file') {
+                    if (file.type === 'file' && !selectionMode) {
                       onFilePreview(file)
                     }
                   }}
                 >
+                  {selectionMode && (
+                    <TableCell>
+                      <Checkbox
+                        checked={selected}
+                        onCheckedChange={() => onFileSelect(file)}
+                        onClick={(e) => e.stopPropagation()}
+                      />
+                    </TableCell>
+                  )}
                   <TableCell>
                     <div className='relative flex justify-center items-center w-11 h-11'>
                       {file.type === 'folder' ? (
@@ -178,32 +200,34 @@ export function FileList({
                     </span>
                   </TableCell>
 
-                  <TableCell>
-                    <div className='flex justify-end gap-2'>
-                      {file.type === 'file' && (
-                        <Button
-                          variant='ghost'
-                          size='sm'
+                  {!selectionMode && (
+                    <TableCell>
+                      <div className='flex justify-end gap-2'>
+                        {file.type === 'file' && (
+                          <Button
+                            variant='ghost'
+                            size='sm'
+                            className='hover:bg-primary/10 opacity-0 group-hover:opacity-100 shadow-sm hover:shadow-md p-0 rounded-lg w-9 h-9 hover:scale-110 transition-all duration-200'
+                            onClick={(e) => {
+                              e.preventDefault()
+                              e.stopPropagation()
+                              onFilePreview(file)
+                            }}
+                          >
+                            <Eye className='w-4 h-4 text-primary' />
+                          </Button>
+                        )}
+                        <FileContextMenu
+                          file={file}
+                          onPreview={onFilePreview}
+                          onRename={onFileRename}
+                          onDelete={onFileDelete}
+                          onFolderOpen={onFolderClick}
                           className='hover:bg-primary/10 opacity-0 group-hover:opacity-100 shadow-sm hover:shadow-md p-0 rounded-lg w-9 h-9 hover:scale-110 transition-all duration-200'
-                          onClick={(e) => {
-                            e.preventDefault()
-                            e.stopPropagation()
-                            onFilePreview(file)
-                          }}
-                        >
-                          <Eye className='w-4 h-4 text-primary' />
-                        </Button>
-                      )}
-                      <FileContextMenu
-                        file={file}
-                        onPreview={onFilePreview}
-                        onRename={onFileRename}
-                        onDelete={onFileDelete}
-                        onFolderOpen={onFolderClick}
-                        className='hover:bg-primary/10 opacity-0 group-hover:opacity-100 shadow-sm hover:shadow-md p-0 rounded-lg w-9 h-9 hover:scale-110 transition-all duration-200'
-                      />
-                    </div>
-                  </TableCell>
+                        />
+                      </div>
+                    </TableCell>
+                  )}
                 </TableRow>
               )
             })}

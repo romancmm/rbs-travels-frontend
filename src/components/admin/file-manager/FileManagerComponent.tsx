@@ -1,14 +1,17 @@
 'use client'
 
+import { Pagination } from '@/components/common/Pagination'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { useIsMobile } from '@/hooks/use-mobile'
 import useAsync from '@/hooks/useAsync'
 import { useConfirmationModal } from '@/hooks/useConfirmationModal'
+import { useFilter } from '@/hooks/useFilter'
 import { cn } from '@/lib/utils'
 import requests from '@/services/network/http'
 import {
   AlertTriangle,
+  CheckSquare,
   ChevronRight,
   FileAudio,
   FileImage,
@@ -21,7 +24,9 @@ import {
   List,
   Plus,
   Search,
-  Upload
+  Trash2,
+  Upload,
+  X
 } from 'lucide-react'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { useState } from 'react'
@@ -44,6 +49,7 @@ export interface FileItem {
   thumbnail?: string
   fileType?: 'image' | 'non-image'
   filePath: string
+  folderPath: string
   height?: number
   width?: number
   size?: number
@@ -71,6 +77,7 @@ export function FileManagerComponent({
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
+  const { page, limit } = useFilter(50)
 
   // Extract current path from URL pathname
   // /admin/file-manager/folder1/folder2 -> /folder1/folder2
@@ -80,6 +87,7 @@ export function FileManagerComponent({
 
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
   const [selectedFiles, setSelectedFiles] = useState<FileItem[]>([])
+  const [selectionMode, setSelectionMode] = useState(false)
   const [showUploadModal, setShowUploadModal] = useState(false)
   const [showCreateFolderModal, setShowCreateFolderModal] = useState(false)
   const [selectedFile, setSelectedFile] = useState<FileItem | null>(null)
@@ -87,11 +95,26 @@ export function FileManagerComponent({
   const [renameFile, setRenameFile] = useState<FileItem | null>(null)
   const isMobile = useIsMobile()
 
+  // Helper function to get unique ID for files and folders
+  const getItemId = (item: FileItem) => {
+    return item.type === 'file' ? item.fileId : item.folderId
+  }
+
   // Confirmation modal for deletion
   const deleteConfirmModal = useConfirmationModal({
     title: 'Confirm Deletion',
     description: 'Are you sure you want to delete this item? This action cannot be undone.',
     confirmText: 'Delete',
+    cancelText: 'Cancel',
+    variant: 'destructive',
+    icon: AlertTriangle
+  })
+
+  // Confirmation modal for bulk deletion
+  const bulkDeleteConfirmModal = useConfirmationModal({
+    title: 'Confirm Bulk Deletion',
+    description: `Are you sure you want to delete ${selectedFiles.length} item(s)? This action cannot be undone.`,
+    confirmText: 'Delete All',
     cancelText: 'Cancel',
     variant: 'destructive',
     icon: AlertTriangle
@@ -131,16 +154,15 @@ export function FileManagerComponent({
   const apiPath = `/admin/media?${new URLSearchParams({
     fileType: 'all',
     path: currentPath,
+    page: page.toString(),
+    perPage: limit.toString(),
     ...(searchQuery && { search: searchQuery })
   }).toString()}`
 
   const { data, loading, mutate } = useAsync<{
     items: FileItem[]
-    page: number
-    perPage: number
-    hasMore: boolean
+    pagination: any
   }>(apiPath)
-
   // Path breadcrumbs
   const pathSegments = (() => {
     if (currentPath === '/') return [{ name: 'Root', path: '/' }]
@@ -193,20 +215,26 @@ export function FileManagerComponent({
 
   // Handle folder navigation
   const handleFolderClick = (folder: FileItem) => {
-    navigateToPath(folder.filePath)
+    console.log('folder', folder)
+    navigateToPath(folder.folderPath)
     setSelectedFile(null)
   }
 
   // Handle file selection
   const handleFileSelect = (file: FileItem) => {
+    if (selectionMode) {
+      toggleFileSelection(file)
+      return
+    }
+
     if (mode === 'modal' && onFileSelect) {
       if (maxFiles === 1) {
         onFileSelect(file)
       } else {
         // Multi-select logic
-        const isSelected = selectedFiles.some((f) => f.fileId === file.fileId)
+        const isSelected = selectedFiles.some((f) => getItemId(f) === getItemId(file))
         if (isSelected) {
-          setSelectedFiles((prev) => prev.filter((f) => f.fileId !== file.fileId))
+          setSelectedFiles((prev) => prev.filter((f) => getItemId(f) !== getItemId(file)))
         } else if (selectedFiles.length < maxFiles) {
           setSelectedFiles((prev) => [...prev, file])
         }
@@ -230,7 +258,7 @@ export function FileManagerComponent({
         await requests.delete(`/admin/media/${id}`)
 
         // Clear selection if deleted file was selected
-        if (selectedFile?.fileId === file.fileId) {
+        if (selectedFile && getItemId(selectedFile) === getItemId(file)) {
           setSelectedFile(null)
         }
 
@@ -241,6 +269,57 @@ export function FileManagerComponent({
         throw error // Re-throw to keep modal open on error
       }
     })
+  }
+
+  // Handle bulk delete
+  const handleBulkDelete = () => {
+    bulkDeleteConfirmModal.openModal(async () => {
+      try {
+        const fileIds = selectedFiles.map((file) => getItemId(file))
+
+        await requests.post('/admin/media/bulk/delete', { fileIds })
+
+        // Clear selections
+        setSelectedFiles([])
+        setSelectionMode(false)
+        if (selectedFile && selectedFiles.some((f) => getItemId(f) === getItemId(selectedFile))) {
+          setSelectedFile(null)
+        }
+
+        // Refetch data after successful deletion
+        mutate()
+      } catch (error) {
+        console.error('Error bulk deleting files/folders:', error)
+        throw error // Re-throw to keep modal open on error
+      }
+    })
+  }
+
+  // Toggle file selection
+  const toggleFileSelection = (file: FileItem) => {
+    setSelectedFiles((prev) => {
+      const isSelected = prev.some((f) => getItemId(f) === getItemId(file))
+      if (isSelected) {
+        return prev.filter((f) => getItemId(f) !== getItemId(file))
+      } else {
+        return [...prev, file]
+      }
+    })
+  }
+
+  // Select all files
+  const handleSelectAll = () => {
+    if (selectedFiles.length === filteredFiles.length) {
+      setSelectedFiles([])
+    } else {
+      setSelectedFiles(filteredFiles)
+    }
+  }
+
+  // Cancel selection mode
+  const handleCancelSelection = () => {
+    setSelectionMode(false)
+    setSelectedFiles([])
   }
 
   // Handle file/folder rename
@@ -255,7 +334,7 @@ export function FileManagerComponent({
       })
 
       mutate()
-      if (selectedFile?.fileId === file.fileId) {
+      if (selectedFile && getItemId(selectedFile) === getItemId(file)) {
         setSelectedFile({ ...selectedFile, name: newName })
       }
     } catch (error) {
@@ -284,6 +363,35 @@ export function FileManagerComponent({
 
   return (
     <div className={cn('flex flex-col bg-background rounded-xl h-full', className)}>
+      {/* Bulk Selection Toolbar */}
+      {selectionMode && (
+        <div className='flex justify-between items-center gap-4 bg-primary/5 px-4 py-3 border-primary/20 border-b'>
+          <div className='flex items-center gap-3'>
+            <Button variant='outline' size='sm' onClick={handleCancelSelection} className='h-8'>
+              <X className='mr-1 w-4 h-4' />
+              Cancel
+            </Button>
+            <Button variant='outline' size='sm' onClick={handleSelectAll} className='h-8'>
+              <CheckSquare className='mr-1 w-4 h-4' />
+              {selectedFiles.length === filteredFiles.length ? 'Deselect All' : 'Select All'}
+            </Button>
+            <span className='font-medium text-sm'>
+              {selectedFiles.length} item{selectedFiles.length !== 1 ? 's' : ''} selected
+            </span>
+          </div>
+          <Button
+            variant='destructive'
+            size='sm'
+            onClick={handleBulkDelete}
+            disabled={selectedFiles.length === 0}
+            className='h-8'
+          >
+            <Trash2 className='mr-1 w-4 h-4' />
+            Delete Selected
+          </Button>
+        </div>
+      )}
+
       {/* Toolbar */}
       <div className='flex lg:flex-row flex-col justify-between gap-4 p-4 border-b'>
         {/* Breadcrumb */}
@@ -323,15 +431,31 @@ export function FileManagerComponent({
 
           <div className='flex items-center gap-2'>
             {/* Action Buttons */}
-            <Button variant='outline' size='sm' onClick={() => setShowCreateFolderModal(true)}>
-              <Plus className='w-4 h-4' />
-              {!isMobile && 'New Folder'}
-            </Button>
+            {!selectionMode && (
+              <>
+                <Button
+                  variant='outline'
+                  size='sm'
+                  onClick={() => {
+                    setSelectionMode(true)
+                    setSelectedFiles([])
+                  }}
+                >
+                  <CheckSquare className='w-4 h-4' />
+                  {!isMobile && 'Select'}
+                </Button>
 
-            <Button size='sm' onClick={() => setShowUploadModal(true)}>
-              <Upload className='w-4 h-4' />
-              {!isMobile && 'Upload'}
-            </Button>
+                <Button variant='outline' size='sm' onClick={() => setShowCreateFolderModal(true)}>
+                  <Plus className='w-4 h-4' />
+                  {!isMobile && 'New Folder'}
+                </Button>
+
+                <Button size='sm' onClick={() => setShowUploadModal(true)}>
+                  <Upload className='w-4 h-4' />
+                  {!isMobile && 'Upload'}
+                </Button>
+              </>
+            )}
 
             {/* View Toggle */}
             <div className='flex items-center p-0 border border-primary rounded-lg'>
@@ -384,6 +508,7 @@ export function FileManagerComponent({
               onFileDelete={handleDelete}
               onFileRename={setRenameFile}
               selectedFiles={selectedFiles}
+              selectionMode={selectionMode}
               getFileIcon={getFileIcon}
             />
           ) : (
@@ -395,7 +520,19 @@ export function FileManagerComponent({
               onFileDelete={handleDelete}
               onFileRename={setRenameFile}
               selectedFiles={selectedFiles}
+              selectionMode={selectionMode}
               getFileIcon={getFileIcon}
+            />
+          )}
+
+          {/* Pagination */}
+          {data && (
+            <Pagination
+              paginationData={data?.pagination}
+              pageSizeOptions={[10, 20, 30, 50]}
+              showRowsPerPage={true}
+              showPageInfo={true}
+              showFirstLastButtons={true}
             />
           )}
         </div>
@@ -443,7 +580,10 @@ export function FileManagerComponent({
 
       <CreateFolderModal
         open={showCreateFolderModal}
-        onClose={() => setShowCreateFolderModal(false)}
+        onClose={() => {
+          mutate()
+          setShowCreateFolderModal(false)
+        }}
         currentPath={currentPath}
         existingFolders={existingFolders}
         onFolderCreated={() => {
@@ -460,7 +600,10 @@ export function FileManagerComponent({
 
       <RenameModal
         open={renameFile !== null}
-        onClose={() => setRenameFile(null)}
+        onClose={() => {
+          mutate()
+          setRenameFile(null)
+        }}
         file={renameFile}
         existingNames={existingNames}
         onRename={handleRename}
@@ -468,6 +611,9 @@ export function FileManagerComponent({
 
       {/* Delete Confirmation Modal */}
       <deleteConfirmModal.ModalComponent />
+
+      {/* Bulk Delete Confirmation Modal */}
+      <bulkDeleteConfirmModal.ModalComponent />
     </div>
   )
 }

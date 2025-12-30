@@ -2,6 +2,7 @@
 
 import CustomImage from '@/components/common/CustomImage'
 import { Button } from '@/components/ui/button'
+import { Checkbox } from '@/components/ui/checkbox'
 import { cn } from '@/lib/utils'
 import { Eye } from 'lucide-react'
 import { FileContextMenu } from './FileContextMenu'
@@ -15,9 +16,9 @@ interface FileGridProps {
   onFileDelete: (file: FileItem) => void
   onFileRename: (file: FileItem) => void
   selectedFiles: FileItem[]
+  selectionMode?: boolean
   getFileIcon: (file: FileItem) => any
 }
-
 export function FileGrid({
   files,
   onFileSelect,
@@ -26,9 +27,15 @@ export function FileGrid({
   onFileDelete,
   onFileRename,
   selectedFiles,
+  selectionMode = false,
   getFileIcon
 }: FileGridProps) {
-  const isSelected = (file: FileItem) => selectedFiles.some((f) => f.fileId === file.fileId)
+  // Helper to get unique ID for both files and folders
+  const getItemId = (item: FileItem) => {
+    return item.type === 'file' ? item.fileId : item.folderId
+  }
+
+  const isSelected = (file: FileItem) => selectedFiles.some((f) => getItemId(f) === getItemId(file))
 
   const formatFileSize = (bytes?: number) => {
     if (!bytes) return ''
@@ -38,7 +45,9 @@ export function FileGrid({
   }
 
   const handleClick = (file: FileItem) => {
-    if (file.type === 'folder') {
+    if (selectionMode) {
+      onFileSelect(file)
+    } else if (file.type === 'folder') {
       onFolderClick(file)
     } else {
       onFileSelect(file)
@@ -66,11 +75,23 @@ export function FileGrid({
               onDoubleClick={(e) => {
                 e.preventDefault()
                 e.stopPropagation()
-                if (file.type === 'file') {
+                if (file.type === 'file' && !selectionMode) {
                   onFilePreview(file)
                 }
               }}
             >
+              {/* Selection Checkbox */}
+              {selectionMode && (
+                <div className='top-3 left-3 z-10 absolute'>
+                  <Checkbox
+                    checked={selected}
+                    onCheckedChange={() => onFileSelect(file)}
+                    onClick={(e) => e.stopPropagation()}
+                    className='bg-white shadow-lg border-2 w-5 h-5'
+                  />
+                </div>
+              )}
+
               {/* File Preview */}
               <div className='relative flex flex-col flex-1 justify-center items-center bg-linear-to-br from-gray-50 via-gray-50/50 to-white px-4'>
                 {file.type === 'folder' ? (
@@ -120,33 +141,35 @@ export function FileGrid({
               </div>
 
               {/* Actions Menu */}
-              <div className='top-3 right-3 absolute flex gap-2 opacity-0 group-hover:opacity-100 transition-all duration-200'>
-                {file.type === 'file' && (
-                  <Button
-                    variant='ghost'
-                    size='sm'
+              {!selectionMode && (
+                <div className='top-3 right-3 absolute flex gap-2 opacity-0 group-hover:opacity-100 transition-all duration-200'>
+                  {file.type === 'file' && (
+                    <Button
+                      variant='ghost'
+                      size='sm'
+                      className='bg-white/98 hover:bg-white shadow-lg hover:shadow-xl backdrop-blur-md p-0 border border-gray-200/50 rounded-xl w-8 h-8 hover:scale-110 transition-all duration-200'
+                      onClick={(e) => {
+                        e.preventDefault()
+                        e.stopPropagation()
+                        onFilePreview(file)
+                      }}
+                    >
+                      <Eye className='w-4 h-4 text-primary' />
+                    </Button>
+                  )}
+                  <FileContextMenu
+                    file={file}
+                    onPreview={onFilePreview}
+                    onRename={onFileRename}
+                    onDelete={onFileDelete}
+                    onFolderOpen={onFolderClick}
                     className='bg-white/98 hover:bg-white shadow-lg hover:shadow-xl backdrop-blur-md p-0 border border-gray-200/50 rounded-xl w-8 h-8 hover:scale-110 transition-all duration-200'
-                    onClick={(e) => {
-                      e.preventDefault()
-                      e.stopPropagation()
-                      onFilePreview(file)
-                    }}
-                  >
-                    <Eye className='w-4 h-4 text-primary' />
-                  </Button>
-                )}
-                <FileContextMenu
-                  file={file}
-                  onPreview={onFilePreview}
-                  onRename={onFileRename}
-                  onDelete={onFileDelete}
-                  onFolderOpen={onFolderClick}
-                  className='bg-white/98 hover:bg-white shadow-lg hover:shadow-xl backdrop-blur-md p-0 border border-gray-200/50 rounded-xl w-8 h-8 hover:scale-110 transition-all duration-200'
-                />
-              </div>
+                  />
+                </div>
+              )}
 
               {/* Selection Indicator */}
-              {selected && (
+              {selected && !selectionMode && (
                 <div className='top-3 left-3 absolute flex justify-center items-center bg-primary shadow-lg rounded-full ring-2 ring-white w-6 h-6 animate-in duration-200 zoom-in-50'>
                   <div className='bg-white rounded-full w-2.5 h-2.5' />
                 </div>
