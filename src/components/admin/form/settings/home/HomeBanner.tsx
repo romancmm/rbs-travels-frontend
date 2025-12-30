@@ -2,7 +2,7 @@
 
 import { revalidateTags } from '@/action/data'
 import CustomInput from '@/components/common/CustomInput'
-import FileUploader from '@/components/common/FileUploader'
+import FilePicker from '@/components/common/FilePicker'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { showError } from '@/lib/errMsg'
@@ -242,13 +242,13 @@ function BannerCard({
             render={({ field }) => (
               <div className='space-y-2'>
                 <label className='font-medium text-sm'>Banner Image</label>
-                <FileUploader
+                <FilePicker
                   value={field.value || ''}
                   onChangeAction={field.onChange}
                   multiple={false}
                   maxAllow={1}
                   size='large'
-                  uploadPath='banners'
+                  allowedTypes={['image']}
                 />
                 {errors?.[bannerIndex]?.bgImage && (
                   <span className='font-medium text-red-500 text-xs'>
