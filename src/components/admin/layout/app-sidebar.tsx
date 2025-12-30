@@ -24,30 +24,27 @@ const mapNavItems = (
   pathname: string,
   hasPermission?: (resource: string, action?: string) => boolean
 ) => {
-  return (
-    items
-      // .filter((it) => {
-      //   if (!it.permission) return true
-      //   return hasPermission ? hasPermission(it.permission.resource, it.permission.action) : false
-      // })
-      .map((it) => {
-        const children =
-          it?.children?.map((child) => ({ title: child.title, url: child.href })) || []
+  return items
+    .filter((it) => {
+      if (!it.permission) return true
+      return hasPermission ? hasPermission(it.permission.resource, it.permission.action) : false
+    })
+    .map((it) => {
+      const children = it?.children?.map((child) => ({ title: child.title, url: child.href })) || []
 
-        const isActive =
-          (!!it.href && pathname.startsWith(it.href)) ||
-          children.some((c) => pathname.startsWith(c.url))
+      const isActive =
+        (!!it.href && pathname.startsWith(it.href)) ||
+        children.some((c) => pathname.startsWith(c.url))
 
-        return {
-          title: it.title,
-          url: it.href || '',
-          icon: it.icon,
-          isActive,
-          // Only include items property if there are actually children
-          ...(children.length > 0 && { items: children })
-        }
-      })
-  )
+      return {
+        title: it.title,
+        url: it.href || '',
+        icon: it.icon,
+        isActive,
+        // Only include items property if there are actually children
+        ...(children.length > 0 && { items: children })
+      }
+    })
 }
 
 // Admin-centric data builder (user from cookie)
