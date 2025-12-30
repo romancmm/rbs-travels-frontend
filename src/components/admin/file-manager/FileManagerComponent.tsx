@@ -4,9 +4,11 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { useIsMobile } from '@/hooks/use-mobile'
 import useAsync from '@/hooks/useAsync'
+import { useConfirmationModal } from '@/hooks/useConfirmationModal'
 import { cn } from '@/lib/utils'
 import requests from '@/services/network/http'
 import {
+  AlertTriangle,
   ChevronRight,
   FileAudio,
   FileImage,
@@ -85,6 +87,16 @@ export function FileManagerComponent({
   const [renameFile, setRenameFile] = useState<FileItem | null>(null)
   const isMobile = useIsMobile()
 
+  // Confirmation modal for deletion
+  const deleteConfirmModal = useConfirmationModal({
+    title: 'Confirm Deletion',
+    description: 'Are you sure you want to delete this item? This action cannot be undone.',
+    confirmText: 'Delete',
+    cancelText: 'Cancel',
+    variant: 'destructive',
+    icon: AlertTriangle
+  })
+
   // Navigate to path
   const navigateToPath = (path: string, search?: string) => {
     const params = new URLSearchParams()
@@ -96,7 +108,7 @@ export function FileManagerComponent({
     }
 
     // Build URL with pathname
-    const targetPath = path === '/' ? basePath : `${basePath}${path}`
+    const targetPath = path === '/' ? basePath : `${basePath}/${path}`
     const queryString = params.toString()
     const fullPath = queryString ? `${targetPath}?${queryString}` : targetPath
 
@@ -210,21 +222,25 @@ export function FileManagerComponent({
   }
 
   // Handle file/folder delete
-  const handleDelete = async (file: FileItem) => {
-    const id = file.type === 'file' ? file.fileId : file.folderId
+  const handleDelete = (file: FileItem) => {
+    deleteConfirmModal.openModal(async () => {
+      const id = file.type === 'file' ? file.fileId : file.folderId
 
-    try {
-      await requests.delete(`/admin/media/file/${id}`)
+      try {
+        await requests.delete(`/admin/media/${id}`)
 
-      mutate()
-      if (selectedFile?.fileId === file.fileId) {
-        setSelectedFile(null)
+        // Clear selection if deleted file was selected
+        if (selectedFile?.fileId === file.fileId) {
+          setSelectedFile(null)
+        }
+
+        // Refetch data after successful deletion
+        mutate()
+      } catch (error) {
+        console.error('Error deleting file/folder:', error)
+        throw error // Re-throw to keep modal open on error
       }
-    } catch (error) {
-      console.error('Error deleting file/folder:', error)
-    } finally {
-      mutate()
-    }
+    })
   }
 
   // Handle file/folder rename
@@ -449,6 +465,9 @@ export function FileManagerComponent({
         existingNames={existingNames}
         onRename={handleRename}
       />
+
+      {/* Delete Confirmation Modal */}
+      <deleteConfirmModal.ModalComponent />
     </div>
   )
 }

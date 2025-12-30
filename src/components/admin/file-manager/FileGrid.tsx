@@ -1,7 +1,6 @@
 'use client'
 
 import CustomImage from '@/components/common/CustomImage'
-import CustomLink from '@/components/common/CustomLink'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { Eye } from 'lucide-react'
@@ -21,6 +20,7 @@ interface FileGridProps {
 
 export function FileGrid({
   files,
+  onFileSelect,
   onFolderClick,
   onFilePreview,
   onFileDelete,
@@ -37,13 +37,13 @@ export function FileGrid({
     return `${(bytes / Math.pow(1024, i)).toFixed(1)} ${sizes[i]}`
   }
 
-  // const handleClick = (file: FileItem) => {
-  //   if (file.type === 'folder') {
-  //     onFolderClick(file)
-  //   } else {
-  //     onFileSelect(file)
-  //   }
-  // }
+  const handleClick = (file: FileItem) => {
+    if (file.type === 'folder') {
+      onFolderClick(file)
+    } else {
+      onFileSelect(file)
+    }
+  }
 
   return (
     <div className='bg-gray-50/30 p-6'>
@@ -53,7 +53,7 @@ export function FileGrid({
           const selected = isSelected(file)
 
           return (
-            <CustomLink
+            <div
               key={index}
               className={cn(
                 'group relative hover:shadow-2xl border hover:scale-[1.03] transition-all duration-300 cursor-pointer',
@@ -62,8 +62,10 @@ export function FileGrid({
                   ? 'ring-2 ring-primary ring-offset-2 border-primary bg-primary/5 shadow-xl'
                   : 'border-gray-200/80 hover:border-primary/40 shadow-sm'
               )}
-              href={`/admin/file-manager/${file.name}`}
-              onDoubleClick={() => {
+              onClick={() => handleClick(file)}
+              onDoubleClick={(e) => {
+                e.preventDefault()
+                e.stopPropagation()
                 if (file.type === 'file') {
                   onFilePreview(file)
                 }
@@ -125,6 +127,7 @@ export function FileGrid({
                     size='sm'
                     className='bg-white/98 hover:bg-white shadow-lg hover:shadow-xl backdrop-blur-md p-0 border border-gray-200/50 rounded-xl w-8 h-8 hover:scale-110 transition-all duration-200'
                     onClick={(e) => {
+                      e.preventDefault()
                       e.stopPropagation()
                       onFilePreview(file)
                     }}
@@ -148,7 +151,7 @@ export function FileGrid({
                   <div className='bg-white rounded-full w-2.5 h-2.5' />
                 </div>
               )}
-            </CustomLink>
+            </div>
           )
         })}
       </div>

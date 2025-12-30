@@ -92,8 +92,13 @@ export function FileList({
                     selected &&
                       'bg-linear-to-r from-primary/10 to-primary/5 border-l-4 border-l-primary shadow-md ring-1 ring-primary/20'
                   )}
-                  onClick={() => handleClick(file)}
-                  onDoubleClick={() => {
+                  onClick={(e) => {
+                    e.preventDefault()
+                    handleClick(file)
+                  }}
+                  onDoubleClick={(e) => {
+                    e.preventDefault()
+                    e.stopPropagation()
                     if (file.type === 'file') {
                       onFilePreview(file)
                     }
@@ -181,6 +186,7 @@ export function FileList({
                           size='sm'
                           className='hover:bg-primary/10 opacity-0 group-hover:opacity-100 shadow-sm hover:shadow-md p-0 rounded-lg w-9 h-9 hover:scale-110 transition-all duration-200'
                           onClick={(e) => {
+                            e.preventDefault()
                             e.stopPropagation()
                             onFilePreview(file)
                           }}

@@ -9,6 +9,7 @@ import {
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
 import { Copy, Download, Edit3, Eye, FolderOpen, MoreVertical, Trash2 } from 'lucide-react'
+import { useState } from 'react'
 import { FileItem } from './FileManagerComponent'
 
 interface FileContextMenuProps {
@@ -28,6 +29,8 @@ export function FileContextMenu({
   onFolderOpen,
   className
 }: FileContextMenuProps) {
+  const [open, setOpen] = useState(false)
+
   const handleDownload = () => {
     if (file.url) {
       const link = document.createElement('a')
@@ -44,41 +47,71 @@ export function FileContextMenu({
     // You can add a toast notification here
   }
 
-  const handleDelete = () => {
-    const confirmMessage =
-      file.type === 'folder'
-        ? `Are you sure you want to delete the folder "${file.name}" and all its contents? This action cannot be undone.`
-        : `Are you sure you want to delete "${file.name}"? This action cannot be undone.`
-
-    if (confirm(confirmMessage) && onDelete) {
-      onDelete(file)
-    }
+  const handleDelete = (e: React.MouseEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    setOpen(false) // Close the dropdown
+    onDelete?.(file)
   }
 
   return (
-    <DropdownMenu>
+    <DropdownMenu open={open} onOpenChange={setOpen}>
       <DropdownMenuTrigger asChild>
-        <Button variant='ghost' size='sm' className={className}>
+        <Button
+          variant='ghost'
+          size='sm'
+          className={className}
+          onClick={(e) => {
+            e.preventDefault()
+            e.stopPropagation()
+          }}
+        >
           <MoreVertical className='w-4 h-4' />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align='end' className='w-48'>
         {file.type === 'folder' ? (
-          <DropdownMenuItem onClick={() => onFolderOpen?.(file)}>
+          <DropdownMenuItem
+            onClick={(e) => {
+              e.preventDefault()
+              e.stopPropagation()
+              onFolderOpen?.(file)
+            }}
+          >
             <FolderOpen className='mr-2 w-4 h-4' />
             Open Folder
           </DropdownMenuItem>
         ) : (
           <>
-            <DropdownMenuItem onClick={() => onPreview?.(file)}>
+            <DropdownMenuItem
+              onClick={(e) => {
+                e.preventDefault()
+                e.stopPropagation()
+                onPreview?.(file)
+              }}
+            >
               <Eye className='mr-2 w-4 h-4' />
               Preview
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={handleDownload} disabled={!file.url}>
+            <DropdownMenuItem
+              onClick={(e) => {
+                e.preventDefault()
+                e.stopPropagation()
+                handleDownload()
+              }}
+              disabled={!file.url}
+            >
               <Download className='mr-2 w-4 h-4' />
               Download
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => copyToClipboard(file.url || '')} disabled={!file.url}>
+            <DropdownMenuItem
+              onClick={(e) => {
+                e.preventDefault()
+                e.stopPropagation()
+                copyToClipboard(file.url || '')
+              }}
+              disabled={!file.url}
+            >
               <Copy className='mr-2 w-4 h-4' />
               Copy URL
             </DropdownMenuItem>
@@ -87,7 +120,13 @@ export function FileContextMenu({
 
         <DropdownMenuSeparator />
 
-        <DropdownMenuItem onClick={() => onRename?.(file)}>
+        <DropdownMenuItem
+          onClick={(e) => {
+            e.preventDefault()
+            e.stopPropagation()
+            onRename?.(file)
+          }}
+        >
           <Edit3 className='mr-2 w-4 h-4' />
           Rename
         </DropdownMenuItem>
