@@ -90,7 +90,6 @@ export function FileManagerComponent({
   const [showUploadModal, setShowUploadModal] = useState(false)
   const [showCreateFolderModal, setShowCreateFolderModal] = useState(false)
   const [selectedFile, setSelectedFile] = useState<FileItem | null>(null)
-  const [previewFile, setPreviewFile] = useState<FileItem | null>(null)
   const [renameFile, setRenameFile] = useState<FileItem | null>(null)
   const isMobile = useIsMobile()
 
@@ -239,13 +238,9 @@ export function FileManagerComponent({
         }
       }
     } else {
+      // Show file preview in sidebar
       setSelectedFile(file)
     }
-  }
-
-  // Handle file preview
-  const handleFilePreview = (file: FileItem) => {
-    setPreviewFile(file)
   }
 
   // Handle file/folder delete
@@ -503,7 +498,6 @@ export function FileManagerComponent({
               files={filteredFiles}
               onFileSelect={handleFileSelect}
               onFolderClick={handleFolderClick}
-              onFilePreview={handleFilePreview}
               onFileDelete={handleDelete}
               onFileRename={setRenameFile}
               selectedFiles={selectedFiles}
@@ -515,7 +509,6 @@ export function FileManagerComponent({
               files={filteredFiles}
               onFileSelect={handleFileSelect}
               onFolderClick={handleFolderClick}
-              onFilePreview={handleFilePreview}
               onFileDelete={handleDelete}
               onFileRename={setRenameFile}
               selectedFiles={selectedFiles}

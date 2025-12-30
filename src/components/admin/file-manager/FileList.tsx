@@ -1,6 +1,5 @@
 'use client'
 
-import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import {
   Table,
@@ -12,7 +11,6 @@ import {
 } from '@/components/ui/table'
 import { cn } from '@/lib/utils'
 import { formatDistanceToNow } from 'date-fns'
-import { Eye } from 'lucide-react'
 import Image from 'next/image'
 import { FileContextMenu } from './FileContextMenu'
 import { FileItem } from './FileManagerComponent'
@@ -21,7 +19,6 @@ interface FileListProps {
   files: FileItem[]
   onFileSelect: (file: FileItem) => void
   onFolderClick: (folder: FileItem) => void
-  onFilePreview: (file: FileItem) => void
   onFileDelete: (file: FileItem) => void
   onFileRename: (file: FileItem) => void
   selectedFiles: FileItem[]
@@ -33,7 +30,6 @@ export function FileList({
   files,
   onFileSelect,
   onFolderClick,
-  onFilePreview,
   onFileDelete,
   onFileRename,
   selectedFiles,
@@ -112,8 +108,8 @@ export function FileList({
                   onDoubleClick={(e) => {
                     e.preventDefault()
                     e.stopPropagation()
-                    if (file.type === 'file' && !selectionMode) {
-                      onFilePreview(file)
+                    if (file.type === 'folder' && !selectionMode) {
+                      onFolderClick(file)
                     }
                   }}
                 >
@@ -203,23 +199,8 @@ export function FileList({
                   {!selectionMode && (
                     <TableCell>
                       <div className='flex justify-end gap-2'>
-                        {file.type === 'file' && (
-                          <Button
-                            variant='ghost'
-                            size='sm'
-                            className='hover:bg-primary/10 opacity-0 group-hover:opacity-100 shadow-sm hover:shadow-md p-0 rounded-lg w-9 h-9 hover:scale-110 transition-all duration-200'
-                            onClick={(e) => {
-                              e.preventDefault()
-                              e.stopPropagation()
-                              onFilePreview(file)
-                            }}
-                          >
-                            <Eye className='w-4 h-4 text-primary' />
-                          </Button>
-                        )}
                         <FileContextMenu
                           file={file}
-                          onPreview={onFilePreview}
                           onRename={onFileRename}
                           onDelete={onFileDelete}
                           onFolderOpen={onFolderClick}

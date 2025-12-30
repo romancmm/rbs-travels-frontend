@@ -8,13 +8,12 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
-import { Copy, Download, Edit3, Eye, FolderOpen, MoreVertical, Trash2 } from 'lucide-react'
+import { Copy, Download, Edit3, FolderOpen, MoreVertical, Trash2 } from 'lucide-react'
 import { useState } from 'react'
 import { FileItem } from './FileManagerComponent'
 
 interface FileContextMenuProps {
   file: FileItem
-  onPreview?: (file: FileItem) => void
   onRename?: (file: FileItem) => void
   onDelete?: (file: FileItem) => void
   onFolderOpen?: (folder: FileItem) => void
@@ -23,7 +22,6 @@ interface FileContextMenuProps {
 
 export function FileContextMenu({
   file,
-  onPreview,
   onRename,
   onDelete,
   onFolderOpen,
@@ -83,16 +81,6 @@ export function FileContextMenu({
           </DropdownMenuItem>
         ) : (
           <>
-            <DropdownMenuItem
-              onClick={(e) => {
-                e.preventDefault()
-                e.stopPropagation()
-                onPreview?.(file)
-              }}
-            >
-              <Eye className='mr-2 w-4 h-4' />
-              Preview
-            </DropdownMenuItem>
             <DropdownMenuItem
               onClick={(e) => {
                 e.preventDefault()

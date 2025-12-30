@@ -1,10 +1,8 @@
 'use client'
 
 import CustomImage from '@/components/common/CustomImage'
-import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import { cn } from '@/lib/utils'
-import { Eye } from 'lucide-react'
 import { FileContextMenu } from './FileContextMenu'
 import { FileItem } from './FileManagerComponent'
 
@@ -12,7 +10,6 @@ interface FileGridProps {
   files: FileItem[]
   onFileSelect: (file: FileItem) => void
   onFolderClick: (folder: FileItem) => void
-  onFilePreview: (file: FileItem) => void
   onFileDelete: (file: FileItem) => void
   onFileRename: (file: FileItem) => void
   selectedFiles: FileItem[]
@@ -23,7 +20,6 @@ export function FileGrid({
   files,
   onFileSelect,
   onFolderClick,
-  onFilePreview,
   onFileDelete,
   onFileRename,
   selectedFiles,
@@ -65,18 +61,18 @@ export function FileGrid({
             <div
               key={index}
               className={cn(
-                'group relative hover:shadow-2xl border hover:scale-[1.03] transition-all duration-300 cursor-pointer',
-                'flex flex-col overflow-hidden rounded-2xl bg-white',
+                'group relative hover:shadow-xl border hover:scale-[1.03] transition-all duration-300 cursor-pointer',
+                'flex flex-col overflow-hidden rounded-xl bg-white',
                 selected
                   ? 'ring-2 ring-primary ring-offset-2 border-primary bg-primary/5 shadow-xl'
-                  : 'border-gray-200/80 hover:border-primary/40 shadow-sm'
+                  : 'border-gray-200/90 hover:border-primary/40'
               )}
               onClick={() => handleClick(file)}
               onDoubleClick={(e) => {
                 e.preventDefault()
                 e.stopPropagation()
-                if (file.type === 'file' && !selectionMode) {
-                  onFilePreview(file)
+                if (file.type === 'folder' && !selectionMode) {
+                  onFolderClick(file)
                 }
               }}
             >
@@ -91,9 +87,8 @@ export function FileGrid({
                   />
                 </div>
               )}
-
               {/* File Preview */}
-              <div className='relative flex flex-col flex-1 justify-center items-center bg-linear-to-br from-gray-50 via-gray-50/50 to-white px-4'>
+              <div className='relative flex flex-col flex-1 justify-center items-center bg-linear-to-br from-gray-50 via-gray-50/50 to-white'>
                 {file.type === 'folder' ? (
                   <div className='flex flex-col justify-center items-center p-4'>
                     <div className='flex justify-center items-center bg-linear-to-br from-primary/10 group-hover:from-primary/20 to-primary/5 group-hover:to-primary/10 shadow-sm mb-2 rounded-3xl w-20 h-20 transition-all duration-300'>
@@ -101,12 +96,12 @@ export function FileGrid({
                     </div>
                   </div>
                 ) : file.fileType === 'image' && file.thumbnail ? (
-                  <div className='relative shadow-sm rounded-xl w-full h-full min-h-32 overflow-hidden'>
+                  <div className='relative w-full h-full min-h-32 overflow-hidden'>
                     <CustomImage
                       src={file.thumbnail}
                       alt={file.name}
                       fill
-                      className='rounded-xl h-full object-cover group-hover:scale-110 transition-transform duration-500'
+                      className='h-full object-cover group-hover:scale-110 transition-transform duration-500'
                       // sizes='(max-width: 768px) 50vw, (max-width: 1200px) 25vw, 12.5vw'
                     />
                     <div className='absolute inset-0 bg-linear-to-t from-black/30 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300' />
@@ -119,9 +114,8 @@ export function FileGrid({
                   </div>
                 )}
               </div>
-
               {/* File Info */}
-              <div className='bg-white/95 backdrop-blur-sm px-4 py-2 border-gray-100 border-t'>
+              <div className='bg-white/95 backdrop-blur-sm px-2.5 py-2 border-gray-100 border-t'>
                 <div
                   className='font-semibold text-gray-800 group-hover:text-primary text-xs truncate transition-colors duration-200'
                   title={file.name}
@@ -139,35 +133,18 @@ export function FileGrid({
                   )}
                 </div>
               </div>
-
               {/* Actions Menu */}
               {!selectionMode && (
                 <div className='top-3 right-3 absolute flex gap-2 opacity-0 group-hover:opacity-100 transition-all duration-200'>
-                  {file.type === 'file' && (
-                    <Button
-                      variant='ghost'
-                      size='sm'
-                      className='bg-white/98 hover:bg-white shadow-lg hover:shadow-xl backdrop-blur-md p-0 border border-gray-200/50 rounded-xl w-8 h-8 hover:scale-110 transition-all duration-200'
-                      onClick={(e) => {
-                        e.preventDefault()
-                        e.stopPropagation()
-                        onFilePreview(file)
-                      }}
-                    >
-                      <Eye className='w-4 h-4 text-primary' />
-                    </Button>
-                  )}
                   <FileContextMenu
                     file={file}
-                    onPreview={onFilePreview}
                     onRename={onFileRename}
                     onDelete={onFileDelete}
                     onFolderOpen={onFolderClick}
                     className='bg-white/98 hover:bg-white shadow-lg hover:shadow-xl backdrop-blur-md p-0 border border-gray-200/50 rounded-xl w-8 h-8 hover:scale-110 transition-all duration-200'
                   />
                 </div>
-              )}
-
+              )}{' '}
               {/* Selection Indicator */}
               {selected && !selectionMode && (
                 <div className='top-3 left-3 absolute flex justify-center items-center bg-primary shadow-lg rounded-full ring-2 ring-white w-6 h-6 animate-in duration-200 zoom-in-50'>
