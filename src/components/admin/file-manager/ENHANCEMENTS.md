@@ -10,7 +10,6 @@
 
 ### 2. **File Preview System**
 
-- ✅ Created `FilePreviewModal` component for comprehensive file previews
 - ✅ Support for multiple file types:
   - **Images**: Full preview with responsive sizing
   - **Videos**: HTML5 video player with controls
@@ -59,9 +58,8 @@
 
 ### New Components:
 
-1. **FilePreviewModal** - Comprehensive file preview with actions
-2. **FileContextMenu** - Right-click context menu for files/folders
-3. **RenameModal** - Modal for renaming files and folders
+1. **FileContextMenu** - Right-click context menu for files/folders
+2. **RenameModal** - Modal for renaming files and folders
 
 ### Enhanced Components:
 

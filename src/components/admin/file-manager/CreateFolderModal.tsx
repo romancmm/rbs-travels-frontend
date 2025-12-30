@@ -58,7 +58,7 @@ export function CreateFolderModal({
     try {
       await requests.post('/admin/media/folder', {
         folderName: folderName.trim(),
-        path: currentPath
+        parentPath: currentPath
       })
 
       onFolderCreated()

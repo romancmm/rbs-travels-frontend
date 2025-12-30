@@ -751,6 +751,7 @@ function PropertyFieldRenderer({
             value={value || ''}
             onChangeAction={(val: string | string[]) => onChange(val)}
             size='medium'
+            uploadPath='pages'
           />
         )
 
@@ -763,6 +764,7 @@ function PropertyFieldRenderer({
                 value={value || ''}
                 onChangeAction={(val: string | string[]) => onChange(val)}
                 size='small'
+                uploadPath='pages/icons'
               />
             ) : (
               <IconPickerModal value={value || ''} onChange={(val) => onChange(val)} />

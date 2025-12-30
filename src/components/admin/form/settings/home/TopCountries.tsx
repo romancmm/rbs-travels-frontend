@@ -144,8 +144,6 @@ const TopCountriesSection = ({ settingsKey, initialValues, refetch }: TProps) =>
                             )}
                           />
 
-
-
                           <Controller
                             control={control}
                             name={`topCountries.destinations.${index}.visaType`}
@@ -153,7 +151,9 @@ const TopCountriesSection = ({ settingsKey, initialValues, refetch }: TProps) =>
                               <CustomInput
                                 label='Visa Type'
                                 placeholder='e.g., Work Visa, Student Visa'
-                                error={errors.topCountries?.destinations?.[index]?.visaType?.message}
+                                error={
+                                  errors.topCountries?.destinations?.[index]?.visaType?.message
+                                }
                                 {...field}
                                 value={field.value ?? ''}
                               />
@@ -189,6 +189,7 @@ const TopCountriesSection = ({ settingsKey, initialValues, refetch }: TProps) =>
                                 <FileUploader
                                   value={field.value || ''}
                                   onChangeAction={field.onChange}
+                                  uploadPath='top-countries'
                                 />
                               )}
                             />

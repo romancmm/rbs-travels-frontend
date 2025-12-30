@@ -795,6 +795,7 @@ function ImageProperties({ props, onChange }: any) {
           multiple={false}
           maxAllow={1}
           size='large'
+          uploadPath='pages'
         />
         {props.src && (
           <div className='mt-2'>

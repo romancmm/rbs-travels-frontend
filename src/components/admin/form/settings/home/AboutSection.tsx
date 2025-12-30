@@ -274,7 +274,11 @@ const AboutSection = ({ settingsKey, initialValues, refetch }: TProps) => {
                 control={control}
                 name='about.image'
                 render={({ field }) => (
-                  <FileUploader value={field.value || ''} onChangeAction={field.onChange} />
+                  <FileUploader
+                    value={field.value || ''}
+                    onChangeAction={field.onChange}
+                    uploadPath='settings'
+                  />
                 )}
               />
               {errors.about?.image && (
@@ -380,6 +384,7 @@ const AboutSection = ({ settingsKey, initialValues, refetch }: TProps) => {
                                   value={field.value as string}
                                   onChangeAction={(val: string | string[]) => field.onChange(val)}
                                   size='small'
+                                  uploadPath='settings'
                                 />
                               ) : (
                                 <IconPickerModal
@@ -619,6 +624,7 @@ const AboutSection = ({ settingsKey, initialValues, refetch }: TProps) => {
                                   value={field.value as string}
                                   onChangeAction={(val: string | string[]) => field.onChange(val)}
                                   size='small'
+                                  uploadPath='settings'
                                 />
                               ) : (
                                 <IconPickerModal

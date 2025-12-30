@@ -275,6 +275,7 @@ export default function ArticleForm({ initialData }: TProps) {
                     multiple={false}
                     maxAllow={1}
                     size='extra-large'
+                    uploadPath='content'
                   />
                 )}
               />
@@ -295,6 +296,7 @@ export default function ArticleForm({ initialData }: TProps) {
                     value={field.value || ''}
                     onChangeAction={field.onChange}
                     size='extra-large'
+                    uploadPath='content'
                   />
                 )}
               />

@@ -159,7 +159,7 @@ function BannerCard({
         <div className='flex justify-between items-center'>
           <CardTitle>Banner {bannerIndex + 1}</CardTitle>
 
-          <div className="flex items-center gap-3">
+          <div className='flex items-center gap-3'>
             {/* Active Status Switch */}
             <Controller
               control={control}
@@ -184,7 +184,6 @@ function BannerCard({
               </Button>
             )}
           </div>
-
         </div>
       </CardHeader>
       <CardContent>
@@ -236,8 +235,6 @@ function BannerCard({
             )}
           />
 
-
-
           {/* Background Image */}
           <Controller
             control={control}
@@ -251,6 +248,7 @@ function BannerCard({
                   multiple={false}
                   maxAllow={1}
                   size='large'
+                  uploadPath='banners'
                 />
                 {errors?.[bannerIndex]?.bgImage && (
                   <span className='font-medium text-red-500 text-xs'>
@@ -272,9 +270,7 @@ function BannerCard({
                   <label className='font-semibold text-gray-900 text-sm'>
                     Call-to-Action Buttons
                   </label>
-                  <p className='text-gray-500 text-xs'>
-                    Add up to 2 buttons for banner actions
-                  </p>
+                  <p className='text-gray-500 text-xs'>Add up to 2 buttons for banner actions</p>
                 </div>
               </div>
               {buttonFields?.length < 2 && (
@@ -299,7 +295,7 @@ function BannerCard({
                     className='relative bg-white shadow-sm hover:shadow-md p-4 border border-gray-200 rounded-lg transition-shadow'
                   >
                     <div className='flex items-center gap-3 w-full'>
-                      <div className="flex flex-1 *:flex-1 gap-4">
+                      <div className='flex flex-1 *:flex-1 gap-4'>
                         <Controller
                           control={control}
                           name={`banners.${bannerIndex}.buttons.${buttonIndex}.title`}

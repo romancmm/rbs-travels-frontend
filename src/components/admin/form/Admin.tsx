@@ -149,6 +149,7 @@ const AdminForm = ({ initialData, onClose, onSuccess }: AdminFormProps) => {
                 multiple={false}
                 maxAllow={1}
                 size='small'
+                uploadPath='avatars'
               />
             )}
           />

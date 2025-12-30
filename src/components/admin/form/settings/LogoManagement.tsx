@@ -98,6 +98,7 @@ const LogoManagement = ({ settingsKey, initialValues, refetch }: TProps) => {
                       multiple={false}
                       maxAllow={1}
                       size='large'
+                      uploadPath='logo'
                     />
                   )}
                 />
@@ -156,6 +157,7 @@ const LogoManagement = ({ settingsKey, initialValues, refetch }: TProps) => {
                       multiple={false}
                       maxAllow={1}
                       size='large'
+                      uploadPath='logo'
                     />
                   )}
                 />
@@ -213,6 +215,7 @@ const LogoManagement = ({ settingsKey, initialValues, refetch }: TProps) => {
                       multiple={false}
                       maxAllow={1}
                       size='large'
+                      uploadPath='logo'
                     />
                   )}
                 />

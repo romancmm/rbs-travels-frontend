@@ -97,7 +97,9 @@ const MenuItemSchema = z
       if (!data.reference || typeof data.reference !== 'string') {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
-          message: `Reference (${data.type === 'gallery' ? 'path' : 'slug'}) is required for ${data.type} type`,
+          message: `Reference (${data.type === 'gallery' ? 'path' : 'slug'}) is required for ${
+            data.type
+          } type`,
           path: ['reference']
         })
       }
@@ -246,7 +248,10 @@ export default function MenuItemForm({ item, onSave, onCancel }: MenuItemEditorP
                     onValueChange={field.onChange}
                     required
                     options={[
-                      { value: 'category-articles', label: MENU_ITEM_TYPE_LABELS['category-articles'] },
+                      {
+                        value: 'category-articles',
+                        label: MENU_ITEM_TYPE_LABELS['category-articles']
+                      },
                       { value: 'single-article', label: MENU_ITEM_TYPE_LABELS['single-article'] },
                       { value: 'gallery', label: MENU_ITEM_TYPE_LABELS.gallery },
                       { value: 'page', label: MENU_ITEM_TYPE_LABELS.page },
@@ -264,14 +269,18 @@ export default function MenuItemForm({ item, onSave, onCancel }: MenuItemEditorP
             <Card>
               <CardHeader>
                 <CardTitle>
-                  {isCategoryArticles ? 'Select Categories' : isEntityType ? 'Select Content' : 'URL Configuration'}
+                  {isCategoryArticles
+                    ? 'Select Categories'
+                    : isEntityType
+                    ? 'Select Content'
+                    : 'URL Configuration'}
                 </CardTitle>
                 <CardDescription>
                   {isCategoryArticles
                     ? 'Choose one or more categories for the article listing'
                     : isEntityType
-                      ? `Choose the ${watchType} to link to`
-                      : 'Enter the destination URL'}
+                    ? `Choose the ${watchType} to link to`
+                    : 'Enter the destination URL'}
                 </CardDescription>
               </CardHeader>
               <CardContent className='space-y-4'>
@@ -366,7 +375,9 @@ export default function MenuItemForm({ item, onSave, onCancel }: MenuItemEditorP
                       <CustomInput
                         label='URL'
                         placeholder={
-                          watchType === 'external-link' ? 'https://example.com' : '/about or /contact'
+                          watchType === 'external-link'
+                            ? 'https://example.com'
+                            : '/about or /contact'
                         }
                         error={errors.url?.message}
                         required
@@ -499,6 +510,7 @@ export default function MenuItemForm({ item, onSave, onCancel }: MenuItemEditorP
                             value={field.value as string}
                             onChangeAction={(val: string | string[]) => field.onChange(val)}
                             size='small'
+                            uploadPath='icons'
                           />
                         ) : (
                           <IconPickerModal

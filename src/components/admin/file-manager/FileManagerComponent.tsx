@@ -34,7 +34,6 @@ import { CreateFolderModal } from './CreateFolderModal'
 import { FileDetailsPanel } from './FileDetailsPanel'
 import { FileGrid } from './FileGrid'
 import { FileList } from './FileList'
-import { FilePreviewModal } from './FilePreviewModal'
 import { FileUploadModal } from './FileUploadModal'
 import { RenameModal } from './RenameModal'
 
@@ -590,12 +589,6 @@ export function FileManagerComponent({
           mutate()
           setShowCreateFolderModal(false)
         }}
-      />
-
-      <FilePreviewModal
-        open={previewFile !== null}
-        onClose={() => setPreviewFile(null)}
-        file={previewFile}
       />
 
       <RenameModal

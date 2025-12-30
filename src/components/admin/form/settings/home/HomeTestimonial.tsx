@@ -134,7 +134,8 @@ const HomeTestimonial = ({ settingsKey, initialValues, refetch }: TProps) => {
             Add and manage customer reviews and testimonials
             {testimonialsFields.length > 0 && (
               <span className='ml-2 font-medium text-primary'>
-                ({testimonialsFields.length} {testimonialsFields.length === 1 ? 'testimonial' : 'testimonials'})
+                ({testimonialsFields.length}{' '}
+                {testimonialsFields.length === 1 ? 'testimonial' : 'testimonials'})
               </span>
             )}
           </CardDescription>
@@ -271,10 +272,11 @@ const HomeTestimonial = ({ settingsKey, initialValues, refetch }: TProps) => {
                               {Array.from({ length: 5 }).map((_, i) => (
                                 <Star
                                   key={i}
-                                  className={`w-4 h-4 ${i < (field.value || 0)
-                                    ? 'text-yellow-400 fill-yellow-400'
-                                    : 'text-gray-300'
-                                    }`}
+                                  className={`w-4 h-4 ${
+                                    i < (field.value || 0)
+                                      ? 'text-yellow-400 fill-yellow-400'
+                                      : 'text-gray-300'
+                                  }`}
                                 />
                               ))}
                               <span className='ml-2 text-muted-foreground text-sm'>
@@ -296,6 +298,7 @@ const HomeTestimonial = ({ settingsKey, initialValues, refetch }: TProps) => {
                               value={field.value || ''}
                               onChangeAction={field.onChange}
                               size='small'
+                              uploadPath='testimonials'
                             />
                           )}
                         />
@@ -313,16 +316,19 @@ const HomeTestimonial = ({ settingsKey, initialValues, refetch }: TProps) => {
                 </Card>
               ))}
 
-              {testimonialsFields.length < 10 &&
+              {testimonialsFields.length < 10 && (
                 <AddItemButton
-                  onClick={() => appendTestimonial({
-                    name: '',
-                    avatar: '',
-                    rating: 5,
-                    review: '',
-                    designation: ''
-                  })} />
-              }
+                  onClick={() =>
+                    appendTestimonial({
+                      name: '',
+                      avatar: '',
+                      rating: 5,
+                      review: '',
+                      designation: ''
+                    })
+                  }
+                />
+              )}
             </div>
           )}
         </CardContent>

@@ -163,9 +163,9 @@ export const createUploadFormData = (
   // deletes.filter(Boolean).forEach((url) => formData.append('deletes', url))
   // formData.append('deletes', deletes)
 
-  // Add uploadPath if provided
+  // Add uploadPath as 'folder' for file uploads
   if (uploadPath) {
-    formData.append('parentPath', uploadPath)
+    formData.append('folder', uploadPath)
   }
 
   return formData

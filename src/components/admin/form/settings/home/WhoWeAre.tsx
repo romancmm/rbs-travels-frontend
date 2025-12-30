@@ -272,6 +272,7 @@ const WhoWeAreSection = ({ settingsKey, initialValues, refetch }: TProps) => {
                                   value={field.value as string}
                                   onChangeAction={(val: string | string[]) => field.onChange(val)}
                                   size='small'
+                                  uploadPath='settings'
                                 />
                               ) : (
                                 <IconPickerModal

@@ -45,7 +45,10 @@ interface SettingsModalProps {
 }
 
 export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
-  const { data, loading, mutate } = useAsync<AdminProfileResponse>(() => isOpen ? '/auth/admin/me' : '', false)
+  const { data, loading, mutate } = useAsync<AdminProfileResponse>(
+    () => (isOpen ? '/auth/admin/me' : ''),
+    false
+  )
 
   const adminInfo = data?.data
 
@@ -127,7 +130,7 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className='sm:max-w-[600px]'>
+      <DialogContent className='sm:max-w-150'>
         <DialogHeader>
           <DialogTitle className='text-xl'>Update Profile Settings</DialogTitle>
           <DialogDescription>Manage your account information and avatar</DialogDescription>
@@ -175,7 +178,6 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
                     )}
                   </div>
                 </div>
-
               </div>
 
               <Separator />
@@ -222,7 +224,6 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
                   )}
                 />
 
-
                 <Controller
                   name='avatar'
                   control={control}
@@ -235,6 +236,7 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
                         multiple={false}
                         maxAllow={1}
                         size='small'
+                        uploadPath='avatars'
                       />
                       {errors.avatar && (
                         <p className='text-destructive text-sm'>{errors.avatar.message}</p>
@@ -245,7 +247,6 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
                     </div>
                   )}
                 />
-
               </div>
             </>
           )}
