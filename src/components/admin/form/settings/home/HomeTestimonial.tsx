@@ -3,7 +3,7 @@
 import { revalidateTags } from '@/action/data'
 import { AddItemButton } from '@/components/admin/common/AddItemButton'
 import CustomInput from '@/components/common/CustomInput'
-import FileUploader from '@/components/common/FileUploader'
+import FilePicker from '@/components/common/FilePicker'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { showError } from '@/lib/errMsg'
@@ -272,11 +272,10 @@ const HomeTestimonial = ({ settingsKey, initialValues, refetch }: TProps) => {
                               {Array.from({ length: 5 }).map((_, i) => (
                                 <Star
                                   key={i}
-                                  className={`w-4 h-4 ${
-                                    i < (field.value || 0)
+                                  className={`w-4 h-4 ${i < (field.value || 0)
                                       ? 'text-yellow-400 fill-yellow-400'
                                       : 'text-gray-300'
-                                  }`}
+                                    }`}
                                 />
                               ))}
                               <span className='ml-2 text-muted-foreground text-sm'>
@@ -294,11 +293,10 @@ const HomeTestimonial = ({ settingsKey, initialValues, refetch }: TProps) => {
                           control={control}
                           name={`testimonials.${index}.avatar`}
                           render={({ field }) => (
-                            <FileUploader
+                            <FilePicker
                               value={field.value || ''}
                               onChangeAction={field.onChange}
                               size='small'
-                              uploadPath='testimonials'
                             />
                           )}
                         />

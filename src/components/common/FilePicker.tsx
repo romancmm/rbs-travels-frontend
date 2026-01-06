@@ -6,7 +6,7 @@ import CustomImage from '@/components/common/CustomImage'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { cva } from 'class-variance-authority'
-import { FileText, Trash2, Upload } from 'lucide-react'
+import { Trash2, Upload } from 'lucide-react'
 import { AnimatePresence, motion } from 'motion/react'
 import React, { useState } from 'react'
 
@@ -266,22 +266,22 @@ export default function FilePicker({
                   className={`group relative border-2 rounded-lg ${sizeClasses.thumbnail} overflow-hidden hover:border-primary/50 transition-colors`}
                 >
                   {/* Check if file is an image */}
-                  {file.type === 'image' || file.url?.match(/\.(jpg|jpeg|png|gif|svg|webp)$/i) ? (
-                    <CustomImage
-                      src={file.url}
-                      alt={file.name}
-                      fill
-                      className='p-1 rounded-md object-cover'
-                    />
-                  ) : (
-                    /* Non-image file display */
+                  {/* {file.type === 'image' || file.url?.match(/\.(jpg|jpeg|png|gif|svg|webp)$/i) ? ( */}
+                  <CustomImage
+                    src={file.url}
+                    alt={file.name}
+                    fill
+                    className='p-1 rounded-md object-cover'
+                  />
+                  {/* ) : (
+                     Non-image file display 
                     <div className='flex flex-col justify-center items-center bg-gray-50 p-2 w-full h-full'>
                       <FileText className='mb-1 w-8 h-8 text-gray-500' />
                       <span className='w-full text-gray-600 text-xs text-center truncate'>
                         {file.name}
                       </span>
                     </div>
-                  )}
+                  )} */}
 
                   {/* Overlay with actions */}
                   <div className='absolute inset-0 flex justify-center items-center gap-2 bg-black/50 opacity-0 group-hover:opacity-100 p-2 transition-opacity duration-200'>

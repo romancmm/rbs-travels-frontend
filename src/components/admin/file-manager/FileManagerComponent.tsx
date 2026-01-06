@@ -78,11 +78,20 @@ export function FileManagerComponent({
   const searchParams = useSearchParams()
   const { page, limit } = useFilter(50)
 
-  // Extract current path from URL pathname
-  // /admin/file-manager/folder1/folder2 -> /folder1/folder2
+  // Base route for route-driven browsing
   const basePath = '/admin/file-manager'
-  const currentPath = pathname.replace(basePath, '') || initialPath || '/'
-  const searchQuery = searchParams.get('search') || ''
+
+  // Local state used when in modal mode so browsing does NOT change app route
+  const [localPath, setLocalPath] = useState<string>(initialPath || '/')
+  const [localSearch, setLocalSearch] = useState<string>(searchParams.get('search') || '')
+
+  // Route-derived values for standalone mode
+  const routePath = pathname.replace(basePath, '') || initialPath || '/'
+  const routeSearch = searchParams.get('search') || ''
+
+  // Effective path/search used across the component
+  const currentPath = mode === 'modal' ? localPath : routePath
+  const searchQuery = mode === 'modal' ? localSearch : routeSearch
 
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
   const [selectedFiles, setSelectedFiles] = useState<FileItem[]>([])
@@ -120,6 +129,13 @@ export function FileManagerComponent({
 
   // Navigate to path
   const navigateToPath = (path: string, search?: string) => {
+    // In modal mode, update local state only (do not change route)
+    if (mode === 'modal') {
+      setLocalPath(path || '/')
+      if (search !== undefined) setLocalSearch(search)
+      return
+    }
+
     const params = new URLSearchParams()
 
     // Add search param if exists
@@ -138,6 +154,12 @@ export function FileManagerComponent({
 
   // Update search only
   const updateSearch = (search: string) => {
+    // In modal mode, update local search state only
+    if (mode === 'modal') {
+      setLocalSearch(search)
+      return
+    }
+
     const params = new URLSearchParams()
     if (search) {
       params.set('search', search)

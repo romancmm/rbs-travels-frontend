@@ -1,7 +1,7 @@
 'use client'
 
 import CustomInput from '@/components/common/CustomInput'
-import FileUploader from '@/components/common/FileUploader'
+import FilePicker from '@/components/common/FilePicker'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import {
@@ -230,13 +230,12 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
                   render={({ field }) => (
                     <div className='space-y-2'>
                       <Label className='font-medium text-sm'>Change Avatar</Label>
-                      <FileUploader
+                      <FilePicker
                         value={field.value || ''}
                         onChangeAction={field.onChange}
                         multiple={false}
                         maxAllow={1}
                         size='small'
-                        uploadPath='avatars'
                       />
                       {errors.avatar && (
                         <p className='text-destructive text-sm'>{errors.avatar.message}</p>

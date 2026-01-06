@@ -2,7 +2,7 @@
 
 import CustomInput from '@/components/common/CustomInput'
 import { CustomSelect } from '@/components/common/CustomSelect'
-import FileUploader from '@/components/common/FileUploader'
+import FilePicker from '@/components/common/FilePicker'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 import { showError } from '@/lib/errMsg'
@@ -269,13 +269,12 @@ export default function ArticleForm({ initialData }: TProps) {
                 control={control}
                 name='thumbnail'
                 render={({ field }) => (
-                  <FileUploader
+                  <FilePicker
                     value={field.value || ''}
                     onChangeAction={field.onChange}
                     multiple={false}
                     maxAllow={1}
                     size='extra-large'
-                    uploadPath='content'
                   />
                 )}
               />
@@ -290,13 +289,12 @@ export default function ArticleForm({ initialData }: TProps) {
                 control={control}
                 name='gallery'
                 render={({ field }) => (
-                  <FileUploader
+                  <FilePicker
                     multiple={true}
                     maxAllow={10}
                     value={field.value || ''}
                     onChangeAction={field.onChange}
                     size='extra-large'
-                    uploadPath='content'
                   />
                 )}
               />

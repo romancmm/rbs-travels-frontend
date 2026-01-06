@@ -3,7 +3,7 @@
 import { revalidateTags } from '@/action/data'
 import { AddItemButton } from '@/components/admin/common/AddItemButton'
 import CustomInput from '@/components/common/CustomInput'
-import FileUploader from '@/components/common/FileUploader'
+import FilePicker from '@/components/common/FilePicker'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { showError } from '@/lib/errMsg'
@@ -186,10 +186,9 @@ const TopCountriesSection = ({ settingsKey, initialValues, refetch }: TProps) =>
                               control={control}
                               name={`topCountries.destinations.${index}.image`}
                               render={({ field }) => (
-                                <FileUploader
+                                <FilePicker
                                   value={field.value || ''}
                                   onChangeAction={field.onChange}
-                                  uploadPath='top-countries'
                                 />
                               )}
                             />

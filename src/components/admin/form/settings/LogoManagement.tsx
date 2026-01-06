@@ -1,7 +1,7 @@
 'use client'
 
 import { revalidateTags } from '@/action/data'
-import FileUploader from '@/components/common/FileUploader'
+import FilePicker from '@/components/common/FilePicker'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { showError } from '@/lib/errMsg'
@@ -92,13 +92,12 @@ const LogoManagement = ({ settingsKey, initialValues, refetch }: TProps) => {
                   control={control}
                   name='logo.default'
                   render={({ field }) => (
-                    <FileUploader
+                    <FilePicker
                       value={field.value || ''}
                       onChangeAction={field.onChange}
                       multiple={false}
                       maxAllow={1}
                       size='large'
-                      uploadPath='logo'
                     />
                   )}
                 />
@@ -151,13 +150,12 @@ const LogoManagement = ({ settingsKey, initialValues, refetch }: TProps) => {
                   control={control}
                   name='logo.dark'
                   render={({ field }) => (
-                    <FileUploader
+                    <FilePicker
                       value={field.value || ''}
                       onChangeAction={field.onChange}
                       multiple={false}
                       maxAllow={1}
                       size='large'
-                      uploadPath='logo'
                     />
                   )}
                 />
@@ -209,13 +207,12 @@ const LogoManagement = ({ settingsKey, initialValues, refetch }: TProps) => {
                   control={control}
                   name='favicon'
                   render={({ field }) => (
-                    <FileUploader
+                    <FilePicker
                       value={field.value || ''}
                       onChangeAction={field.onChange}
                       multiple={false}
                       maxAllow={1}
                       size='large'
-                      uploadPath='logo'
                     />
                   )}
                 />

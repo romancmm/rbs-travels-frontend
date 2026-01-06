@@ -2,7 +2,7 @@
 
 import CustomInput from '@/components/common/CustomInput'
 import { CustomSelect } from '@/components/common/CustomSelect'
-import FileUploader from '@/components/common/FileUploader'
+import FilePicker from '@/components/common/FilePicker'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 import { showError } from '@/lib/errMsg'
@@ -143,13 +143,12 @@ const AdminForm = ({ initialData, onClose, onSuccess }: AdminFormProps) => {
             control={control}
             name='avatar'
             render={({ field }) => (
-              <FileUploader
+              <FilePicker
                 value={field.value || ''}
                 onChangeAction={field.onChange}
                 multiple={false}
                 maxAllow={1}
                 size='small'
-                uploadPath='avatars'
               />
             )}
           />
@@ -186,8 +185,8 @@ const AdminForm = ({ initialData, onClose, onSuccess }: AdminFormProps) => {
               ? 'Updating...'
               : 'Creating...'
             : initialData?.id
-            ? 'Update Admin'
-            : 'Create Admin'}
+              ? 'Update Admin'
+              : 'Create Admin'}
         </Button>
         <Button
           type='button'

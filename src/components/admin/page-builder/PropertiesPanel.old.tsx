@@ -3,7 +3,7 @@
 import { Settings } from 'lucide-react'
 import { useEffect, useState } from 'react'
 
-import FileUploader from '@/components/common/FileUploader'
+import FilePicker from '@/components/common/FilePicker'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import {
@@ -789,13 +789,13 @@ function ImageProperties({ props, onChange }: any) {
     <div className='space-y-4'>
       <div>
         <Label>Image</Label>
-        <FileUploader
+        <FilePicker
           value={props.src || ''}
           onChangeAction={(url) => onChange('src', url)}
           multiple={false}
           maxAllow={1}
           size='large'
-          uploadPath='pages'
+        // uploadPath='pages'
         />
         {props.src && (
           <div className='mt-2'>
@@ -934,10 +934,10 @@ function VideoProperties({ props, onChange }: any) {
                   props.aspectRatio === '4/3'
                     ? '75%'
                     : props.aspectRatio === '1/1'
-                    ? '100%'
-                    : props.aspectRatio === '21/9'
-                    ? '42.86%'
-                    : '56.25%' // Default 16/9
+                      ? '100%'
+                      : props.aspectRatio === '21/9'
+                        ? '42.86%'
+                        : '56.25%' // Default 16/9
               }}
               className='relative w-full'
             >

@@ -7,7 +7,7 @@
 
 import IconPickerModal from '@/components/admin/common/IconPickerModal'
 import TextEditor from '@/components/admin/common/TextEditor'
-import FileUploader from '@/components/common/FileUploader'
+import FilePicker from '@/components/common/FilePicker'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -101,9 +101,8 @@ export function PropertiesPanel() {
       case 'column':
         return 'Column Properties'
       case 'component':
-        return `${
-          componentRegistry.get(selectedElement.element.type)?.label || 'Component'
-        } Properties`
+        return `${componentRegistry.get(selectedElement.element.type)?.label || 'Component'
+          } Properties`
       default:
         return 'Properties'
     }
@@ -747,11 +746,11 @@ function PropertyFieldRenderer({
 
       case 'image-upload':
         return (
-          <FileUploader
+          <FilePicker
             value={value || ''}
             onChangeAction={(val: string | string[]) => onChange(val)}
             size='medium'
-            uploadPath='pages'
+          // uploadPath='pages'
           />
         )
 
@@ -760,11 +759,10 @@ function PropertyFieldRenderer({
         return (
           <div className='space-y-2'>
             {iconType === 'image' ? (
-              <FileUploader
+              <FilePicker
                 value={value || ''}
                 onChangeAction={(val: string | string[]) => onChange(val)}
                 size='small'
-                uploadPath='pages/icons'
               />
             ) : (
               <IconPickerModal value={value || ''} onChange={(val) => onChange(val)} />

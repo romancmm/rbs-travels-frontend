@@ -3,7 +3,7 @@
 import { revalidateTags } from '@/action/data'
 import { AddItemButton } from '@/components/admin/common/AddItemButton'
 import CustomInput from '@/components/common/CustomInput'
-import FileUploader from '@/components/common/FileUploader'
+import FilePicker from '@/components/common/FilePicker'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Label } from '@/components/ui/label'
@@ -150,11 +150,10 @@ const SisterConcern = ({ settingsKey, initialValues, refetch }: TProps) => {
                         control={control}
                         name={`companies.${index}.logo`}
                         render={({ field }) => (
-                          <FileUploader
+                          <FilePicker
                             value={field.value as string}
                             onChangeAction={(val: string | string[]) => field.onChange(val)}
                             size='small'
-                            uploadPath='sister-concerns'
                           />
                         )}
                       />

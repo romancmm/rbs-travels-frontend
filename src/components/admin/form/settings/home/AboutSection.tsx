@@ -4,7 +4,7 @@ import { revalidateTags } from '@/action/data'
 import { AddItemButton } from '@/components/admin/common/AddItemButton'
 import IconPickerModal from '@/components/admin/common/IconPickerModal'
 import CustomInput from '@/components/common/CustomInput'
-import FileUploader from '@/components/common/FileUploader'
+import FilePicker from '@/components/common/FilePicker'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -274,10 +274,9 @@ const AboutSection = ({ settingsKey, initialValues, refetch }: TProps) => {
                 control={control}
                 name='about.image'
                 render={({ field }) => (
-                  <FileUploader
+                  <FilePicker
                     value={field.value || ''}
                     onChangeAction={field.onChange}
-                    uploadPath='settings'
                   />
                 )}
               />
@@ -380,11 +379,10 @@ const AboutSection = ({ settingsKey, initialValues, refetch }: TProps) => {
                                 {facilitiesIconType === 'image' ? 'Image' : 'Icon'} (optional)
                               </label>
                               {facilitiesIconType === 'image' ? (
-                                <FileUploader
+                                <FilePicker
                                   value={field.value as string}
                                   onChangeAction={(val: string | string[]) => field.onChange(val)}
                                   size='small'
-                                  uploadPath='settings'
                                 />
                               ) : (
                                 <IconPickerModal
@@ -503,7 +501,7 @@ const AboutSection = ({ settingsKey, initialValues, refetch }: TProps) => {
                                 {statsIconType === 'image' ? 'Image' : 'Icon'} (optional)
                               </label>
                               {statsIconType === 'image' ? (
-                                <FileUploader
+                                <FilePicker
                                   value={field.value as string}
                                   onChangeAction={(val: string | string[]) => field.onChange(val)}
                                   size='small'
@@ -620,11 +618,10 @@ const AboutSection = ({ settingsKey, initialValues, refetch }: TProps) => {
                                 {statsIconType === 'image' ? 'Image' : 'Icon'} (optional)
                               </label>
                               {statsIconType === 'image' ? (
-                                <FileUploader
+                                <FilePicker
                                   value={field.value as string}
                                   onChangeAction={(val: string | string[]) => field.onChange(val)}
                                   size='small'
-                                  uploadPath='settings'
                                 />
                               ) : (
                                 <IconPickerModal

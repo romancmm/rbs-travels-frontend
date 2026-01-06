@@ -4,7 +4,7 @@ import { revalidateTags } from '@/action/data'
 import { AddItemButton } from '@/components/admin/common/AddItemButton'
 import IconPickerModal from '@/components/admin/common/IconPickerModal'
 import CustomInput from '@/components/common/CustomInput'
-import FileUploader from '@/components/common/FileUploader'
+import FilePicker from '@/components/common/FilePicker'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -268,11 +268,10 @@ const WhoWeAreSection = ({ settingsKey, initialValues, refetch }: TProps) => {
                                 {iconType === 'image' ? 'Image' : 'Icon'} (optional)
                               </label>
                               {iconType === 'image' ? (
-                                <FileUploader
+                                <FilePicker
                                   value={field.value as string}
                                   onChangeAction={(val: string | string[]) => field.onChange(val)}
                                   size='small'
-                                  uploadPath='settings'
                                 />
                               ) : (
                                 <IconPickerModal

@@ -1,6 +1,6 @@
 import CustomInput from '@/components/common/CustomInput'
 import { CustomSelect } from '@/components/common/CustomSelect'
-import FileUploader from '@/components/common/FileUploader'
+import FilePicker from '@/components/common/FilePicker'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Label } from '@/components/ui/label'
@@ -97,9 +97,8 @@ const MenuItemSchema = z
       if (!data.reference || typeof data.reference !== 'string') {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
-          message: `Reference (${data.type === 'gallery' ? 'path' : 'slug'}) is required for ${
-            data.type
-          } type`,
+          message: `Reference (${data.type === 'gallery' ? 'path' : 'slug'}) is required for ${data.type
+            } type`,
           path: ['reference']
         })
       }
@@ -272,15 +271,15 @@ export default function MenuItemForm({ item, onSave, onCancel }: MenuItemEditorP
                   {isCategoryArticles
                     ? 'Select Categories'
                     : isEntityType
-                    ? 'Select Content'
-                    : 'URL Configuration'}
+                      ? 'Select Content'
+                      : 'URL Configuration'}
                 </CardTitle>
                 <CardDescription>
                   {isCategoryArticles
                     ? 'Choose one or more categories for the article listing'
                     : isEntityType
-                    ? `Choose the ${watchType} to link to`
-                    : 'Enter the destination URL'}
+                      ? `Choose the ${watchType} to link to`
+                      : 'Enter the destination URL'}
                 </CardDescription>
               </CardHeader>
               <CardContent className='space-y-4'>
@@ -506,11 +505,14 @@ export default function MenuItemForm({ item, onSave, onCancel }: MenuItemEditorP
                     render={({ field }) => (
                       <>
                         {watchIconType === 'image' ? (
-                          <FileUploader
-                            value={field.value as string}
-                            onChangeAction={(val: string | string[]) => field.onChange(val)}
-                            size='small'
-                            uploadPath='icons'
+                          <FilePicker
+                            value={field.value || ''}
+                            onChangeAction={field.onChange}
+                            //   onChangeAction={(val: string | string[]) => field.onChange(val)}
+                            multiple={false}
+                            maxAllow={1}
+                            size='large'
+                            allowedTypes={['image']}
                           />
                         ) : (
                           <IconPickerModal
