@@ -72,8 +72,8 @@ export function FileList({
   }
 
   return (
-    <div className='bg-gray-50/30 p-6'>
-      <div className='bg-white shadow-md border border-gray-200/80 rounded-2xl overflow-hidden'>
+    <div className='bg-gray-50/30'>
+      <div className='bg-white shadow-md border_border-gray-200/80 rounded-2xl overflow-hidden'>
         <Table>
           <TableHeader>
             <TableRow className='bg-linear-to-r from-gray-50 hover:from-gray-50 to-gray-50/50 hover:to-gray-50/50 border-gray-100 border-b-2'>
@@ -99,7 +99,7 @@ export function FileList({
                   className={cn(
                     'group hover:bg-primary/5 hover:shadow-sm border-gray-100/50 border-b transition-all duration-200 cursor-pointer',
                     selected &&
-                      'bg-linear-to-r from-primary/10 to-primary/5 border-l-4 border-l-primary shadow-md ring-1 ring-primary/20'
+                    'bg-linear-to-r from-primary/10 to-primary/5 border-l-4 border-l-primary shadow-md ring-1 ring-primary/20'
                   )}
                   onClick={(e) => {
                     e.preventDefault()
@@ -129,13 +129,13 @@ export function FileList({
                           <Icon className='drop-shadow-sm w-5 h-5 text-primary' />
                         </div>
                       ) : file.fileType === 'image' && file.thumbnail ? (
-                        <div className='relative shadow-sm rounded-xl ring-1 ring-gray-200/50 w-full h-full overflow-hidden'>
+                        <div className='relative shadow-sm rounded-md ring-1 ring-gray-200/50 w-full h-full overflow-hidden'>
                           <Image
                             src={file.thumbnail}
                             alt={file.name}
                             width={44}
                             height={44}
-                            className='rounded-xl w-full h-full object-cover group-hover:scale-110 transition-transform duration-300'
+                            className='rounded-md w-full h-full object-cover group-hover:scale-110 transition-transform duration-300'
                           />
                         </div>
                       ) : (
@@ -155,7 +155,7 @@ export function FileList({
                   <TableCell>
                     <div className='flex flex-col gap-1'>
                       <span
-                        className='max-w-md font-bold text-gray-800 group-hover:text-primary text-sm truncate transition-colors duration-200'
+                        className='max-w-xs font-bold text-gray-800 group-hover:text-primary text-sm truncate transition-colors duration-200'
                         title={file.name}
                       >
                         {file.name}

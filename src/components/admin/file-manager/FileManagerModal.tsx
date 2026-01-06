@@ -35,13 +35,13 @@ export function FileManagerModal({
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className='flex flex-col max-w-6xl max-h-[90vh]'>
+      <DialogContent className='flex flex-col min-w-[90vw] max-h-[90vh] h-full overflow-hidden w-full'>
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
           <DialogDescription>{description}</DialogDescription>
         </DialogHeader>
 
-        <div className='flex-1 min-h-0'>
+        <div className='flex-1 min-h-0 h-full'>
           <FileManagerComponent
             mode='modal'
             onFileSelect={handleFileSelect}

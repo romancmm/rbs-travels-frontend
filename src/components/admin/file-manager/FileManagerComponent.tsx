@@ -378,7 +378,7 @@ export function FileManagerComponent({
   }
 
   return (
-    <div className={cn('flex flex-col bg-background rounded-xl h-full', className)}>
+    <div className={cn('flex flex-col bg-background rounded-xl', className)}>
       {/* Bulk Selection Toolbar */}
       {selectionMode && (
         <div className='flex justify-between items-center gap-4 bg-primary/5 px-4 py-3 border-primary/20 border-b'>
@@ -495,9 +495,9 @@ export function FileManagerComponent({
       </div>
 
       {/* Content Area */}
-      <div className='flex flex-1 overflow-hidden'>
+      <div className='flex flex-1 overflow-y-auto'>
         {/* File Browser */}
-        <div className='flex-1 overflow-auto'>
+        <div className='flex-1 h-full overflow-y-hidden h-full  overflow-y-scroll'>
           {loading ? (
             <div className='flex justify-center items-center h-64'>
               <div className='text-center'>
