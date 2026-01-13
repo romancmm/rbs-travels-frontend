@@ -125,7 +125,7 @@ const BannerCarousel = ({ data }: BannerCarouselProps) => {
                       duration: 0.6,
                       ease: [0.6, -0.05, 0.01, 0.99]
                     }}
-                    className='z-10 relative lg:px-6 max-w-2xl text-white'
+                    className='z-10 relative lg:px-6 max-w-xl text-white'
                   >
                     {/* Subtitle with enhanced animation */}
                     <motion.div
@@ -134,7 +134,7 @@ const BannerCarousel = ({ data }: BannerCarouselProps) => {
                       transition={{ delay: 0.2, duration: 0.6 }}
                       className='mb-3'
                     >
-                      <span className='inline-flex items-center gap-2 bg-primary/20 backdrop-blur-sm px-4 py-1.5 border border-white/20 rounded-full font-semibold text-xs md:text-sm uppercase tracking-wider'>
+                      <span className='inline-flex items-center gap-2 bg-primary/20 backdrop-blur-sm px-4 py-1.5 border border-white/20 rounded-full font-semibold text-xs uppercase tracking-wider'>
                         {banner.subTitle}
                       </span>
                     </motion.div>
@@ -151,7 +151,7 @@ const BannerCarousel = ({ data }: BannerCarouselProps) => {
 
                     {/* Description with typewriter effect */}
                     <motion.p
-                      className='mb-8 text-gray-100 text-lg md:text-xl leading-relaxed'
+                      className='mb-8 text-gray-100 text-lg leading-relaxed'
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 0.6, duration: 0.6 }}

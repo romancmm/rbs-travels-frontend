@@ -19,22 +19,24 @@ const FeatureCard = ({ icon, title, desc, index, className }: FeatureCardProps) 
         className
       )}
     >
-      {icon &&
-        <div className='flex flex-1 justify-center size-20! aspect-square! text-primary'>
-          <IconOrImage
-            icon={icon}
-            alt={title || 'Feature icon'}
-            size='xl'
-            color='primary'
-            iconClassName='group-hover:rotate-12 transition-transform duration-700 ease-in-out delay-200'
-            strokeWidth={1}
-          />
-        </div>
-      }
       <div className='space-y-2'>
-        <Typography weight={'bold'} variant={'subtitle1'}>
-          {title}
-        </Typography>
+        <div className='flex justify-start items-center gap-2'>
+          {icon && (
+            <div className='flex justify-center size-20! aspect-square! text-primary'>
+              <IconOrImage
+                icon={icon}
+                alt={title || 'Feature icon'}
+                size='xl'
+                color='primary'
+                iconClassName='group-hover:rotate-12 transition-transform duration-700 ease-in-out delay-200'
+                strokeWidth={1}
+              />
+            </div>
+          )}
+          <Typography weight={'bold'} variant={'subtitle1'}>
+            {title}
+          </Typography>
+        </div>
         <Typography className='text-gray-600'>{desc}</Typography>
       </div>
       {/* Subtle hover indicator */}

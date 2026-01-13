@@ -11,8 +11,8 @@ const StatItem = ({ value, label, icon, className, index = 0 }: StatItemProps) =
   return (
     <div
       className={cn(
-        'group flex items-center gap-4 lg:gap-6',
-        'px-6 py-8 lg:px-8 lg:py-10',
+        'group flex items-center gap-4',
+        'p-4 lg:p-4',
         'transition-all duration-300',
         'hover:bg-muted/10',
         className
@@ -35,7 +35,7 @@ const StatItem = ({ value, label, icon, className, index = 0 }: StatItemProps) =
 
       {/* Content */}
       <div className='flex-1 min-w-0'>
-        <Typography variant='h3' weight='bold' className='mb-1 text-foreground' aria-live='polite'>
+        <Typography variant='h5' weight='bold' className='mb-1 text-foreground' aria-live='polite'>
           <AnimatedCounter value={value ?? ''} />
         </Typography>
         <Typography id={`stat-${index}-label`} variant='body2' className='text-muted-foreground'>
