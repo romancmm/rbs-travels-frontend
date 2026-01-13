@@ -1,5 +1,6 @@
 'use client'
 
+import CustomImage from '@/components/common/CustomImage'
 import { Checkbox } from '@/components/ui/checkbox'
 import {
   Table,
@@ -11,7 +12,6 @@ import {
 } from '@/components/ui/table'
 import { cn } from '@/lib/utils'
 import { formatDistanceToNow } from 'date-fns'
-import Image from 'next/image'
 import { FileContextMenu } from './FileContextMenu'
 import { FileItem } from './FileManagerComponent'
 
@@ -129,13 +129,13 @@ export function FileList({
                           <Icon className='drop-shadow-sm w-5 h-5 text-primary' />
                         </div>
                       ) : file.fileType === 'image' && file.thumbnail ? (
-                        <div className='relative shadow-sm rounded-md ring-1 ring-gray-200/50 w-full h-full overflow-hidden'>
-                          <Image
+                        <div className='relative shadow-sm rounded-md ring-1 ring-gray-200/50 w-full h-full overflow-hidden '>
+                          <CustomImage
                             src={file.thumbnail}
                             alt={file.name}
                             width={44}
                             height={44}
-                            className='rounded-md w-full h-full object-cover group-hover:scale-110 transition-transform duration-300'
+                            className='rounded-md w-full h-full object-cover group-hover:scale-110 transition-transform duration-300 drop-shadow-sm'
                           />
                         </div>
                       ) : (
