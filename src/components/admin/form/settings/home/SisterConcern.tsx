@@ -36,6 +36,7 @@ const SisterConcern = ({ settingsKey, initialValues, refetch }: TProps) => {
     defaultValues: {
       title: initialValues?.title || '',
       subtitle: initialValues?.subtitle || '',
+      description: initialValues?.description || '',
       companies: initialValues?.companies || []
     }
   })
@@ -102,6 +103,20 @@ const SisterConcern = ({ settingsKey, initialValues, refetch }: TProps) => {
                 label='Subtitle'
                 placeholder='e.g., Companies Under Our Group'
                 error={errors.subtitle?.message}
+                {...field}
+                value={field.value ?? ''}
+              />
+            )}
+          />
+
+          <Controller
+            control={control}
+            name='description'
+            render={({ field }) => (
+              <CustomInput
+                label='Description'
+                placeholder='e.g., Companies Under Our Group'
+                error={errors.description?.message}
                 {...field}
                 value={field.value ?? ''}
               />

@@ -2,25 +2,23 @@
 
 import { Container } from '@/components/common/container'
 import { Section } from '@/components/common/section'
-import { Typography } from '@/components/common/typography'
+import { SectionHeading } from '@/components/common/SectionHeading'
 import { Button } from '@/components/ui/button'
+import useAsync from '@/hooks/useAsync'
 import { cn } from '@/lib/utils'
 import { Building, ChevronRight, ExternalLink } from 'lucide-react'
 import { motion } from 'motion/react'
 import Image from 'next/image'
 import Link from 'next/link'
-import { use, useState } from 'react'
+import { useState } from 'react'
 
 interface SisterConcernProps {
-  data?: any
-  isLoading?: boolean
   className?: string
 }
 
-const SisterConcern = ({ data, isLoading = false, className }: SisterConcernProps) => {
-  const res: any = use(data)
-  const sectionData = res?.data?.value
-
+const SisterConcern = ({ className }: SisterConcernProps) => {
+  const { data, loading } = useAsync(() => '/settings/home_sister_concern_settings')
+  const sectionData = data?.data?.value
   if (!sectionData?.companies?.length) {
     return null
   }
@@ -35,77 +33,19 @@ const SisterConcern = ({ data, isLoading = false, className }: SisterConcernProp
   return (
     <Section variant='xl' className={cn('bg-background', className)}>
       <Container>
-        <div className="flex items-center gap-12">
-          <Header data={sectionData} />
+        <div className='flex items-center gap-12'>
+          <SectionHeading
+            subtitle={sectionData.subtitle ?? ''}
+            title={sectionData.title ?? ''}
+            description={sectionData.description ?? ''}
+            variant='default'
+            alignment='left'
+            className='max-w-xl'
+          />
           <PartnersGrid companies={activeCompanies} />
         </div>
       </Container>
     </Section>
-  )
-}
-
-// Header
-const Header = ({ data }: { data: any }) => {
-  return (
-    <div className='max-w-lg'>
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-        className='space-y-6'
-      >
-        {data?.subtitle && (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.1 }}
-          >
-            <Typography
-              variant='subtitle1'
-              className='font-semibold text-primary text-sm uppercase tracking-widest'
-            >
-              {data.subtitle}
-            </Typography>
-          </motion.div>
-        )}
-
-        {data?.title && (
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-          >
-            <Typography
-              variant='h3'
-              as='h2'
-              weight='bold'
-              className='text-foreground leading-tight tracking-tight'
-            >
-              {data.title}
-            </Typography>
-          </motion.div>
-        )}
-
-        {data?.description && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.3 }}
-          >
-            <Typography
-              variant='body1'
-              className='mx-auto max-w-2xl text-muted-foreground leading-relaxed'
-            >
-              {data.description}
-            </Typography>
-          </motion.div>
-        )}
-      </motion.div>
-    </div>
   )
 }
 
@@ -195,12 +135,7 @@ const PartnerCard = ({ company, index }: { company: any; index: number }) => {
       className='h-full'
     >
       {company.url ? (
-        <Link
-          href={company.url}
-          target='_blank'
-          rel='noopener noreferrer'
-          className={cardClasses}
-        >
+        <Link href={company.url} target='_blank' rel='noopener noreferrer' className={cardClasses}>
           {cardContent}
         </Link>
       ) : (

@@ -51,7 +51,7 @@ const FeatureCard = ({ icon, title, desc, index, className }: FeatureCardProps) 
       </div>
 
       {/* Bottom shine effect */}
-      <div className='bottom-0 left-0 absolute bg-gradient-to-t from-primary/5 to-transparent opacity-0 group-hover:opacity-100 rounded-b-2xl w-full h-1/3 transition-opacity duration-500' />
+      <div className='bottom-0 left-0 absolute bg-linear-to-t from-primary/5 to-transparent opacity-0 group-hover:opacity-100 rounded-b-2xl w-full h-1/3 transition-opacity duration-500' />
     </div>
   )
 }

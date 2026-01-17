@@ -13,6 +13,7 @@ const sisterConcernItemSchema = z.object({
 export const sisterConcernSettingsSchema = z.object({
   title: z.string().optional(),
   subtitle: z.string().optional(),
+  description: z.string().optional(),
   companies: z.array(sisterConcernItemSchema).default([])
 })
 
