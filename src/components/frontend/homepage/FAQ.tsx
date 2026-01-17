@@ -3,10 +3,15 @@
 import { Container } from '@/components/common/container'
 import { Section } from '@/components/common/section'
 import { Typography } from '@/components/common/typography'
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion'
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger
+} from '@/components/ui/accordion'
+import useAsync from '@/hooks/useAsync'
 import { cn } from '@/lib/utils'
 import { motion } from 'motion/react'
-import { use } from 'react'
 
 interface FAQ {
   id: number
@@ -21,14 +26,12 @@ interface FAQData {
 }
 
 interface FAQProps {
-  data?: any // FAQData
   className?: string
 }
 
-
-const FAQ = ({ data, className }: FAQProps) => {
-  const res: any = use(data)
-  const faqData = res?.data?.value
+const FAQ = ({ className }: FAQProps) => {
+  const { data } = useAsync(() => '/settings/home_faq_settings')
+  const faqData = data?.data?.value
 
   return (
     <Section variant='xl' className={className}>
