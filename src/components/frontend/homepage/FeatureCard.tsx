@@ -15,32 +15,43 @@ const FeatureCard = ({ icon, title, desc, index, className }: FeatureCardProps) 
     <div
       key={index}
       className={cn(
-        'group flex items-start gap-4 bg-white hover:bg-yellow-50/80 shadow-lg hover:shadow-xl px-4 py-5 rounded-lg transition-all duration-300 ease-in-out',
+        'group relative bg-linear-to-br from-white to-gray-50/50 backdrop-blur-sm p-8 border border-gray-200/60 hover:border- rounded-2xl transition-all duration-300',
+        'hover:shadow-[0_8px_30px_rgb(0,0,0,0.12)] hover:scale-[1.02] overflow-hidden',
         className
       )}
     >
-      <div className='space-y-2'>
-        <div className='flex justify-start items-center gap-2'>
-          {icon && (
-            <div className='flex justify-center size-20! aspect-square! text-primary'>
-              <IconOrImage
-                icon={icon}
-                alt={title || 'Feature icon'}
-                size='xl'
-                color='primary'
-                iconClassName='group-hover:rotate-12 transition-transform duration-700 ease-in-out delay-200'
-                strokeWidth={1}
-              />
-            </div>
-          )}
-          <Typography weight={'bold'} variant={'subtitle1'}>
-            {title}
-          </Typography>
+      {/* Top corner accent */}
+      <div className='-top-16 group-hover:top-0 -right-16 group-hover:right-0 absolute bg-linear-to-bl from-primary/10 via-primary/5 to-transparent opacity-85 group-hover:opacity-100 rounded-tr-2xl rounded-bl-[60px] w-24 h-24 transition-all duration-500' />
+
+      {/* Icon - Centered at top */}
+      {icon && (
+        <div className='flex justify-center items-center bg-white shadow-lg group-hover:shadow-xl mx-auto mb-6 rounded-2xl ring ring-primary/10 group-hover:ring-primary/20 size-20 transition-all group-hover:-translate-y-2 duration-300'>
+          <IconOrImage
+            icon={icon}
+            alt={title || 'Feature icon'}
+            size='lg'
+            color='primary'
+            iconClassName='group-hover:scale-105 transition-transform duration-300'
+            strokeWidth={2}
+          />
         </div>
-        <Typography className='text-gray-600'>{desc}</Typography>
+      )}
+
+      {/* Content */}
+      <div className='z-10 relative space-y-3 text-center'>
+        <Typography
+          weight={'bold'}
+          variant={'h6'}
+          className='text-gray-800 group-hover:text-primary transition-colors duration-300'
+        >
+          {title}
+        </Typography>
+
+        <Typography className='text-gray-600 text-sm leading-relaxed'>{desc}</Typography>
       </div>
-      {/* Subtle hover indicator */}
-      <div className='bottom-0 left-1/2 absolute bg-linear-to-r from-primary to-primary/50 rounded-t-full w-0 group-hover:w-12 h-1 transition-all -translate-x-1/2 duration-300' />
+
+      {/* Bottom shine effect */}
+      <div className='bottom-0 left-0 absolute bg-gradient-to-t from-primary/5 to-transparent opacity-0 group-hover:opacity-100 rounded-b-2xl w-full h-1/3 transition-opacity duration-500' />
     </div>
   )
 }

@@ -1,6 +1,6 @@
 import { fetchOnServer, getHomepageData } from '@/action/data'
 import AboutUs from '@/components/frontend/homepage/AboutUs'
-import BannerCarousel from '@/components/frontend/homepage/BannerCarousel'
+import BannerCarousel from '@/components/frontend/homepage/BannerCarouselThree'
 import Blog from '@/components/frontend/homepage/Blog'
 import FAQ from '@/components/frontend/homepage/FAQ'
 import Stats from '@/components/frontend/homepage/Stats'

@@ -29,14 +29,14 @@ const WhoWeAre = ({ data, isLoading = false, className }: WhoWeAreProps) => {
           <>
             {/* Enhanced Header Section */}
             <div
-              className='slide-in-from-top-4 mb-12 text-center animate-in duration-700 fade-in'
+              className='slide-in-from-top-4 mx-auto mb-12 max-w-2xl text-center animate-in duration-700 fade-in'
               role='banner'
               aria-labelledby='whoweare-title'
             >
               {data.subTitle && (
                 <Typography
                   variant='subtitle1'
-                  className='mb-1 font-semibold text-primary uppercase tracking-wide animate-in duration-500 fade-in'
+                  className='font-semibold text-primary uppercase tracking-wide animate-in duration-500 fade-in'
                   style={{ animationDelay: '100ms', animationFillMode: 'both' }}
                 >
                   {data.subTitle}
@@ -48,7 +48,7 @@ const WhoWeAre = ({ data, isLoading = false, className }: WhoWeAreProps) => {
                   variant='h2'
                   as='h2'
                   weight='bold'
-                  className='slide-in-from-top-6 text-foreground leading-tight animate-in duration-600 fade-in'
+                  className='slide-in-from-top-6 text-foreground animate-in duration-600 fade-in'
                   style={{ animationDelay: '200ms', animationFillMode: 'both' }}
                 >
                   {data.title}
@@ -67,7 +67,7 @@ const WhoWeAre = ({ data, isLoading = false, className }: WhoWeAreProps) => {
 
             {/* Enhanced Features Grid */}
             <div
-              className='gap-6 lg:gap-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3'
+              className='gap-4 lg:gap-5 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3'
               role='region'
               aria-label='Company features and capabilities'
             >
@@ -78,7 +78,9 @@ const WhoWeAre = ({ data, isLoading = false, className }: WhoWeAreProps) => {
                   title={feature.title}
                   desc={feature.desc}
                   index={index}
-                  className={cn('max-md:items-center', { 'max-md:flex-row-reverse': index % 2 !== 0 })}
+                  className={cn('max-md:items-center', {
+                    'max-md:flex-row-reverse': index % 2 !== 0
+                  })}
                 />
               ))}
             </div>
