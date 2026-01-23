@@ -104,55 +104,58 @@ export default function Footer({ data }: { data: any }) {
                   })}
                 >
                   {siteConfig?.addresses?.map((office, index) => (
-                    <div key={index} className='space-y-3'>
+                    <div key={index} className='flex gap-2'>
                       {office.title && (
                         <Typography
                           variant='body1'
                           weight='semibold'
-                          className='text-primary uppercase tracking-wide'
+                          className='font-cursive text-primary uppercase tracking-wide rotate-90__ [writing-mode:vertical-lr]'
+                          // style={{ minWidth: 'max-content' 'writingMode':''}}
                         >
                           {office.title}
                         </Typography>
                       )}
 
-                      {/* Address */}
-                      {office.address && (
-                        <div className='flex items-start gap-3 text-slate-300 hover:text-white transition-colors'>
-                          <Typography variant='body2' className='leading-relaxed'>
-                            {office.address}
-                          </Typography>
-                        </div>
-                      )}
-
-                      {/* Phone */}
-                      {office.phone && (
-                        <div className='flex items-center gap-3 text-slate-300 hover:text-white transition-colors'>
-                          <div className='flex justify-center items-center bg-primary/20 rounded-lg w-8 h-8 shrink-0'>
-                            <Phone className='w-4 h-4' />
+                      <div className='space-y-2'>
+                        {/* Address */}
+                        {office.address && (
+                          <div className='flex items-start gap-3 text-slate-300 hover:text-white transition-colors'>
+                            <Typography variant='body2' className='leading-relaxed'>
+                              {office.address}
+                            </Typography>
                           </div>
-                          <CustomLink
-                            href={`tel:${office.phone.replace(/\s+/g, '')}`}
-                            className='hover:text-primary transition-colors'
-                          >
-                            <Typography variant='body2'>{office.phone}</Typography>
-                          </CustomLink>
-                        </div>
-                      )}
+                        )}
 
-                      {/* Email */}
-                      {office.email && (
-                        <div className='flex items-center gap-3 text-slate-300 hover:text-white transition-colors'>
-                          <div className='flex justify-center items-center bg-primary/20 rounded-lg w-8 h-8 shrink-0'>
-                            <Mail className='w-4 h-4' />
+                        {/* Phone */}
+                        {office.phone && (
+                          <div className='flex items-center gap-3 text-slate-300 hover:text-white transition-colors'>
+                            <div className='flex justify-center items-center bg-primary/20 rounded-lg w-8 h-8 shrink-0'>
+                              <Phone className='w-4 h-4' />
+                            </div>
+                            <CustomLink
+                              href={`tel:${office.phone.replace(/\s+/g, '')}`}
+                              className='hover:text-primary transition-colors'
+                            >
+                              <Typography variant='body2'>{office.phone}</Typography>
+                            </CustomLink>
                           </div>
-                          <CustomLink
-                            href={`mailto:${office.email}`}
-                            className='hover:text-primary transition-colors'
-                          >
-                            <Typography variant='body2'>{office.email}</Typography>
-                          </CustomLink>
-                        </div>
-                      )}
+                        )}
+
+                        {/* Email */}
+                        {office.email && (
+                          <div className='flex items-center gap-3 text-slate-300 hover:text-white transition-colors'>
+                            <div className='flex justify-center items-center bg-primary/20 rounded-lg w-8 h-8 shrink-0'>
+                              <Mail className='w-4 h-4' />
+                            </div>
+                            <CustomLink
+                              href={`mailto:${office.email}`}
+                              className='hover:text-primary transition-colors'
+                            >
+                              <Typography variant='body2'>{office.email}</Typography>
+                            </CustomLink>
+                          </div>
+                        )}
+                      </div>
                     </div>
                   ))}
                 </div>
