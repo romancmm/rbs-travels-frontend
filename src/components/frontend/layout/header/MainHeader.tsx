@@ -1,6 +1,5 @@
 'use client'
 
-import CustomLink from '@/components/common/CustomLink'
 import SiteLogo from '@/components/common/SiteLogo'
 import { containerVariants } from '@/components/common/container'
 import { Typography } from '@/components/common/typography'
@@ -70,17 +69,13 @@ export default function MainHeader({ data }: { data: any }) {
                   onMouseEnter={() => setHoveredItem(index)}
                   onMouseLeave={() => setHoveredItem(null)}
                 >
-                  <CustomLink
+                  <Typography
+                    variant='body1'
+                    weight='medium'
                     href={getMenuItemUrl(item)}
-                    className='group flex items-center gap-1 hover:bg-white/10 px-3 py-2 rounded-lg transition-all duration-300'
+                    className='group flex items-center gap-1 hover:bg-white/10 px-3 py-2 rounded-lg text-header-color group-hover:text-header-color/90 transition-all duration-300'
                   >
-                    <Typography
-                      variant='body1'
-                      weight='medium'
-                      className='text-header-color group-hover:text-header-color/90 transition-colors duration-300'
-                    >
-                      {item.title}
-                    </Typography>
+                    <span>{item.title}</span>
                     {publishedChildren.length > 0 && (
                       <ChevronDown
                         className={`w-4 h-4 transition-transform duration-300 ${
@@ -88,7 +83,7 @@ export default function MainHeader({ data }: { data: any }) {
                         }`}
                       />
                     )}
-                  </CustomLink>
+                  </Typography>
 
                   {/* Dropdown Menu for Services */}
                   {publishedChildren.length > 0 && hoveredItem === index && (
@@ -114,21 +109,17 @@ export default function MainHeader({ data }: { data: any }) {
                               onMouseEnter={() => setHoveredChild(childKey)}
                               onMouseLeave={() => setHoveredChild(null)}
                             >
-                              <CustomLink
+                              <Typography
                                 href={getMenuItemUrl(child)}
-                                className='group flex justify-between items-center hover:bg-linear-to-r hover:from-primary/10 hover:to-primary/5 mx-2 px-4 py-3 rounded-xl text-header-background hover:text-primary transition-all duration-200'
+                                variant='body2'
+                                weight='medium'
+                                className='group flex justify-between items-center hover:bg-linear-to-r hover:from-primary/10 hover:to-primary/5 mx-2 px-4 py-2 rounded-md font-semibold text-header-background hover:text-primary transition-transform hover:translate-x-1 duration-200'
                               >
-                                <Typography
-                                  variant='body2'
-                                  weight='medium'
-                                  className='transition-transform group-hover:translate-x-1 duration-200'
-                                >
-                                  {child.title}
-                                </Typography>
+                                <span>{child.title}</span>
                                 {childPublishedChildren.length > 0 && (
                                   <ChevronDown className='w-4 h-4 group-hover:text-primary -rotate-90 transition-colors' />
                                 )}
-                              </CustomLink>
+                              </Typography>
                               {/* Third Level Dropdown */}
                               {childPublishedChildren.length > 0 && hoveredChild === childKey && (
                                 <div
@@ -142,19 +133,15 @@ export default function MainHeader({ data }: { data: any }) {
                                   <div className='py-2'>
                                     {childPublishedChildren.map(
                                       (grandChild: any, grandChildIndex: number) => (
-                                        <CustomLink
+                                        <Typography
+                                          variant='body2'
+                                          weight='medium'
                                           key={grandChild.id ?? grandChildIndex}
                                           href={getMenuItemUrl(grandChild)}
-                                          className='group flex items-center hover:bg-linear-to-r hover:from-primary/10 hover:to-primary/5 mx-2 px-4 py-3 rounded-xl text-header-color hover:text-primary transition-all duration-200'
+                                          className='flex items-center hover:bg-linear-to-r hover:from-primary/10 hover:to-primary/5 mx-2 px-4 py-3 rounded-xl text-header-color hover:text-primary transition-transform group-hover:translate-x-1 duration-200'
                                         >
-                                          <Typography
-                                            variant='body2'
-                                            weight='medium'
-                                            className='transition-transform group-hover:translate-x-1 duration-200'
-                                          >
-                                            {grandChild.title}
-                                          </Typography>
-                                        </CustomLink>
+                                          {grandChild.title}
+                                        </Typography>
                                       )
                                     )}
                                   </div>
@@ -218,21 +205,17 @@ export default function MainHeader({ data }: { data: any }) {
                             onMouseEnter={() => setHoveredChild(moreItemKey)}
                             onMouseLeave={() => setHoveredChild(null)}
                           >
-                            <CustomLink
+                            <Typography
+                              variant='body2'
+                              weight='medium'
                               href={getMenuItemUrl(item)}
-                              className='group flex justify-between items-center hover:bg-linear-to-r hover:from-primary/10 hover:to-primary/5 mx-2 px-4 py-3 rounded-xl text-header-color hover:text-primary transition-all duration-200'
+                              className='group flex justify-between items-center hover:bg-linear-to-r hover:from-primary/10 hover:to-primary/5 mx-2 px-4 py-3 rounded-xl text-header-color hover:text-primary transition-all group-hover:translate-x-1 duration-200'
                             >
-                              <Typography
-                                variant='body2'
-                                weight='medium'
-                                className='transition-transform group-hover:translate-x-1 duration-200'
-                              >
-                                {item.title}
-                              </Typography>
+                              <span>{item.title}</span>
                               {publishedChildren.length > 0 && (
                                 <ChevronDown className='w-4 h-4 group-hover:text-primary -rotate-90 transition-colors' />
                               )}
-                            </CustomLink>
+                            </Typography>
 
                             {/* Second Level Dropdown from More */}
                             {publishedChildren.length > 0 && hoveredChild === moreItemKey && (
@@ -260,21 +243,17 @@ export default function MainHeader({ data }: { data: any }) {
                                         onMouseEnter={() => setHoveredChild(nestedKey)}
                                         onMouseLeave={() => setHoveredChild(null)}
                                       >
-                                        <CustomLink
+                                        <Typography
+                                          variant='body2'
+                                          weight='medium'
                                           href={getMenuItemUrl(child)}
-                                          className='group flex justify-between items-center hover:bg-linear-to-r hover:from-primary/10 hover:to-primary/5 mx-2 px-4 py-3 rounded-xl text-header-color hover:text-primary transition-all duration-200'
+                                          className='group flex justify-between items-center hover:bg-linear-to-r hover:from-primary/10 hover:to-primary/5 mx-2 px-4 py-3 rounded-xl text-header-color hover:text-primary transition-all group-hover:translate-x-1 duration-200'
                                         >
-                                          <Typography
-                                            variant='body2'
-                                            weight='medium'
-                                            className='transition-transform group-hover:translate-x-1 duration-200'
-                                          >
-                                            {child.title}
-                                          </Typography>
+                                          <span>{child.title}</span>
                                           {childPublishedChildren.length > 0 && (
                                             <ChevronDown className='w-4 h-4 group-hover:text-primary -rotate-90 transition-colors' />
                                           )}
-                                        </CustomLink>
+                                        </Typography>
 
                                         {/* Third Level Dropdown */}
                                         {childPublishedChildren.length > 0 &&
@@ -290,19 +269,15 @@ export default function MainHeader({ data }: { data: any }) {
                                               <div className='py-2'>
                                                 {childPublishedChildren.map(
                                                   (grandChild: any, grandChildIndex: number) => (
-                                                    <CustomLink
+                                                    <Typography
+                                                      variant='body2'
+                                                      weight='medium'
                                                       key={grandChild.id ?? grandChildIndex}
                                                       href={getMenuItemUrl(grandChild)}
-                                                      className='group flex items-center hover:bg-linear-to-r hover:from-primary/10 hover:to-primary/5 mx-2 px-4 py-3 rounded-xl text-header-color hover:text-primary transition-all duration-200'
+                                                      className='group flex items-center hover:bg-linear-to-r hover:from-primary/10 hover:to-primary/5 mx-2 px-4 py-3 rounded-xl text-header-color hover:text-primary transition-all group-hover:translate-x-1 duration-200'
                                                     >
-                                                      <Typography
-                                                        variant='body2'
-                                                        weight='medium'
-                                                        className='transition-transform group-hover:translate-x-1 duration-200'
-                                                      >
-                                                        {grandChild.title}
-                                                      </Typography>
-                                                    </CustomLink>
+                                                      {grandChild.title}
+                                                    </Typography>
                                                   )
                                                 )}
                                               </div>
@@ -330,7 +305,7 @@ export default function MainHeader({ data }: { data: any }) {
           <div className='hidden xl:flex items-center gap-4'>
             {/* Phone Number */}
             <div className='flex items-center gap-2 text-header-color/90 hover:text-header-color transition-colors'>
-              <div className='flex justify-center items-center bg-primary/20 rounded-lg w-10 h-10'>
+              <div className='flex justify-center items-center bg-header-color/5 rounded-lg w-10 h-10'>
                 <Phone className='w-5 h-5' />
               </div>
               <div className='text-sm'>

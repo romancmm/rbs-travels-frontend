@@ -125,7 +125,7 @@ const BannerCarousel = ({ data }: BannerCarouselProps) => {
                       duration: 0.6,
                       ease: [0.6, -0.05, 0.01, 0.99]
                     }}
-                    className='z-10 relative lg:px-6 max-w-xl text-white'
+                    className='z-10 relative bg-linear-to-r from-gray-900/30 to-transparent p-4 lg:px-6 rounded-lg max-w-xl text-white __bg-gray-900/50'
                   >
                     {/* Subtitle with enhanced animation */}
                     <motion.div
@@ -134,7 +134,7 @@ const BannerCarousel = ({ data }: BannerCarouselProps) => {
                       transition={{ delay: 0.2, duration: 0.6 }}
                       className='mb-3'
                     >
-                      <span className='inline-flex items-center gap-2 bg-primary/20 backdrop-blur-sm px-4 py-1.5 border border-white/20 rounded-full font-semibold text-xs uppercase tracking-wider'>
+                      <span className='inline-flex items-center gap-2 bg-primary/20 backdrop-blur-sm px-4 py-1.5 border border-white/10 rounded-md font-semibold text-xs uppercase tracking-wider'>
                         {banner.subTitle}
                       </span>
                     </motion.div>
