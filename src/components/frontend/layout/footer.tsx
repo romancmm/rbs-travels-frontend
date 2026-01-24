@@ -104,13 +104,12 @@ export default function Footer({ data }: { data: any }) {
                   })}
                 >
                   {siteConfig?.addresses?.map((office, index) => (
-                    <div key={index} className='flex gap-2'>
+                    <div key={index} className='flex align-start gap-2'>
                       {office.title && (
                         <Typography
                           variant='body1'
                           weight='semibold'
-                          className='font-cursive text-primary uppercase tracking-wide rotate-90__ [writing-mode:vertical-lr]'
-                          // style={{ minWidth: 'max-content' 'writingMode':''}}
+                          className='font-cursive text-primary uppercase tracking-wide rotate-90__ [writing-mode:sideways-lr'
                         >
                           {office.title}
                         </Typography>
