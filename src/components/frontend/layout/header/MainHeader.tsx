@@ -94,7 +94,7 @@ export default function MainHeader({ data }: { data: any }) {
                   {publishedChildren.length > 0 && hoveredItem === index && (
                     <div
                       className={cn(
-                        'top-full z-50 absolute bg-white slide-in-from-top-2 shadow-2xl backdrop-blur-sm border border-gray-200/50 rounded-2xl w-64 animate-in duration-300 fade-in-0',
+                        'top-full z-50 absolute bg-header-color slide-in-from-top-2 shadow-2xl backdrop-blur-sm border border-gray-200/50 rounded-2xl w-64 animate-in duration-300 fade-in-0',
                         getDropdownPosition(`level1-${index}`) === 'right' ? 'right-0' : 'left-0'
                       )}
                     >
@@ -116,7 +116,7 @@ export default function MainHeader({ data }: { data: any }) {
                             >
                               <CustomLink
                                 href={getMenuItemUrl(child)}
-                                className='group flex justify-between items-center hover:bg-linear-to-r hover:from-primary/10 hover:to-primary/5 mx-2 px-4 py-3 rounded-xl text-header-color hover:text-primary transition-all duration-200'
+                                className='group flex justify-between items-center hover:bg-linear-to-r hover:from-primary/10 hover:to-primary/5 mx-2 px-4 py-3 rounded-xl text-header-background hover:text-primary transition-all duration-200'
                               >
                                 <Typography
                                   variant='body2'

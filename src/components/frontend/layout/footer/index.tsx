@@ -5,11 +5,11 @@ import { useSiteConfig } from '@/components/providers/store-provider'
 import { cn } from '@/lib/utils'
 import { SiteSettings } from '@/lib/validations/schemas/siteSettings'
 import { use } from 'react'
-import { FooterBackground } from './footer/footer-background'
-import { FooterBottom } from './footer/footer-bottom'
-import { FooterCompanyInfo } from './footer/footer-company-info'
-import { FooterContactInfo } from './footer/footer-contact-info'
-import { FooterNavSection } from './footer/footer-nav-section'
+import { FooterBackground } from './footer-background'
+import { FooterBottom } from './footer-bottom'
+import { FooterCompanyInfo } from './footer-company-info'
+import { FooterContactInfo } from './footer-contact-info'
+import { FooterNavSection } from './footer-nav-section'
 
 export default function Footer({ data }: { data: any }) {
   const { siteConfig } = useSiteConfig() as { siteConfig?: SiteSettings }
