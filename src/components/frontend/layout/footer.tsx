@@ -109,7 +109,7 @@ export default function Footer({ data }: { data: any }) {
                         <Typography
                           variant='body1'
                           weight='semibold'
-                          className='font-cursive text-primary uppercase tracking-wide rotate-90__ [writing-mode:sideways-lr'
+                          className='font-cursive text-primary uppercase tracking-wide [writing-mode:sideways-lr] py-[9px] text-center bg-gray-900/20'
                         >
                           {office.title}
                         </Typography>
