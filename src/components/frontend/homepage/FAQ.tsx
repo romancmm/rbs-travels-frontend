@@ -69,7 +69,7 @@ const FAQ = ({ className }: FAQProps) => {
                 value={`item-${index}`}
                 className='mb-4 border border-border last:border-b rounded-xl w-full'
               >
-                <AccordionTrigger className='flex justify-between items-center p-2 lg:p-4 rounded-none font-medium lg:text-xl text-left transition-colors cursor-pointer'>
+                <AccordionTrigger className='flex justify-between items-center p-2 lg:p-4 rounded-none font-medium lg:text-xl text-left underline-offset-2 transition-colors cursor-pointer'>
                   {faq?.question}
                 </AccordionTrigger>
                 <AccordionContent className='p-4 lg:p-6 border-t border-t-border text-sm lg:text-lg'>
@@ -98,7 +98,7 @@ const FAQ = ({ className }: FAQProps) => {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 className={cn(
-                  'bg-primary hover:bg-primary/90 px-8 py-3 rounded-full text-white',
+                  'bg-primary hover:bg-primary/90 px-8 py-3 rounded-full text-white cursor-pointer',
                   'font-semibold transition-all duration-300',
                   'shadow-lg hover:shadow-xl hover:shadow-primary/25'
                 )}

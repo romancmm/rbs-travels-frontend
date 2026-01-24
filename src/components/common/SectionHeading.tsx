@@ -112,23 +112,26 @@ const titleUnderlineVariants = cva(
   }
 )
 
-const descriptionVariants = cva('max-w-3xl text-muted-foreground text-lg leading-relaxed', {
-  variants: {
-    alignment: {
-      left: '',
-      center: 'mx-auto',
-      right: ''
+const descriptionVariants = cva(
+  'max-w-3xl text-muted-foreground text-lg leading-relaxed whitespace-pre-wrap',
+  {
+    variants: {
+      alignment: {
+        left: '',
+        center: 'mx-auto',
+        right: ''
+      },
+      animated: {
+        true: 'animate-in fade-in slide-in-from-bottom-2 duration-500',
+        false: ''
+      }
     },
-    animated: {
-      true: 'animate-in fade-in slide-in-from-bottom-2 duration-500',
-      false: ''
+    defaultVariants: {
+      alignment: 'center',
+      animated: true
     }
-  },
-  defaultVariants: {
-    alignment: 'center',
-    animated: true
   }
-})
+)
 
 interface SectionHeadingProps extends VariantProps<typeof sectionHeadingVariants> {
   subtitle?: string

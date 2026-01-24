@@ -103,7 +103,7 @@ const BannerCarousel = ({ data }: BannerCarouselProps) => {
                 </div>
 
                 {/* Content with enhanced animations */}
-                <AnimatePresence mode='wait'>
+                <AnimatePresence mode='popLayout'>
                   {current === index && (
                     <motion.div
                       key={`banner-${index}`}
@@ -114,7 +114,7 @@ const BannerCarousel = ({ data }: BannerCarouselProps) => {
                         duration: 0.8,
                         ease: [0.6, -0.05, 0.01, 0.99]
                       }}
-                      className='z-10 relative mx-auto px-2 lg:px-6 max-w-4xl text-white text-center'
+                      className='z-10 relative mx-auto px-2 lg:px-6 max-w-4xl text-gray-50 text-center'
                     >
                       {/* Subtitle with enhanced animation */}
                       <motion.div
@@ -167,8 +167,8 @@ const BannerCarousel = ({ data }: BannerCarouselProps) => {
                                 'px-8 lg:px-10 py-2.5 lg:py-5 font-medium text-sm lg:text-base',
                                 'hover:scale-105 hover:-translate-y-1 active:scale-95 rounded-full',
                                 btnIndex === 0
-                                  ? 'bg-primary hover:bg-primary/90 text-white border-2 border-primary hover:border-primary/70 shadow-2xl hover:shadow-3xl hover:shadow-primary/30'
-                                  : 'bg-white/10 backdrop-blur-md border border-white/40 text-white hover:bg-white/20 hover:border-white/60 hover:text-white shadow-lg hover:shadow-xl hover:shadow-white/10'
+                                  ? 'bg-primary hover:bg-primary/90 text-gray-50 border-2 border-primary hover:border-primary/70 shadow-2xl hover:shadow-3xl hover:shadow-primary/30'
+                                  : 'bg-white/10 backdrop-blur-md border border-white/40 text-gray-50 hover:bg-white/20 hover:border-white/60 hover:text-gray-50 shadow-lg hover:shadow-xl hover:shadow-white/10'
                               )}
                             >
                               <a href={button.url}>
@@ -197,7 +197,7 @@ const BannerCarousel = ({ data }: BannerCarouselProps) => {
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 1.0, duration: 0.6 }}
-                        className='flex sm:flex-row flex-col justify-center items-center gap-6 mt-8 text-white/80'
+                        className='flex sm:flex-row flex-col justify-center items-center gap-6 mt-8 text-gray-50/80'
                       >
                         <div className='flex items-center gap-2 text-sm'>
                           <motion.div
@@ -236,21 +236,21 @@ const BannerCarousel = ({ data }: BannerCarouselProps) => {
         <CarouselPrevious
           className={cn(
             'max-md:hidden left-0 md:left-10 bg-white/10 backdrop-blur-sm w-12 h-12',
-            'border-white/20 text-white hover:bg-white/20 hover:border-white/40',
+            'border-white/20 text-gray-50 hover:bg-white/20 hover:border-white/40 group',
             'transition-all duration-300 hover:scale-110'
           )}
         >
-          <ChevronLeft className='w-6 h-6' />
+          <ChevronLeft className='w-6 h-6 group-hover:text-white!' />
         </CarouselPrevious>
 
         <CarouselNext
           className={cn(
-            'max-md:hidden right-6 md:right-10 bg-white/10 backdrop-blur-sm w-12 h-12',
-            'border-white/20 text-white hover:bg-white/20 hover:border-white/40',
+            'group max-md:hidden right-6 md:right-10 bg-white/10 backdrop-blur-sm w-12 h-12',
+            'border-white/20 text-gray-50 hover:bg-white/20 hover:border-white/40 ',
             'transition-all duration-300 hover:scale-110'
           )}
         >
-          <ChevronRight className='w-6 h-6' />
+          <ChevronRight className='w-6 h-6 group-hover:text-white!' />
         </CarouselNext>
 
         {/* Enhanced slide indicators */}
