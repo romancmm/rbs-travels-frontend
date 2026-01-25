@@ -177,7 +177,7 @@ export default function ArticleForm({ initialData }: TProps) {
                     options={(data) => {
                       return (
                         data?.data?.items?.map((item: any) => ({
-                          value: item.id,
+                          value: String(item.id),
                           label: item.title || item.name,
                           title: item.title || item.name
                         })) || []

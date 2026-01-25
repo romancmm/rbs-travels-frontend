@@ -14,7 +14,7 @@ import { Skeleton } from '@/components/ui/skeleton'
 import useAsync from '@/hooks/useAsync'
 import { cn } from '@/lib/utils'
 import { ChevronDown, ChevronRight, X } from 'lucide-react'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 
 // Simple debounce utility
 function debounce<T extends (...args: any[]) => any>(func: T, delay: number): T {
@@ -118,19 +118,19 @@ export function CustomSelect({
           ? mapOptions
           : mapOptions(data)
         : data?.data?.map?.((item: any) =>
-          returnFullData
-            ? {
-              ...item,
-              label: item.name,
-              title: item.name,
-              value: item.id
-            }
-            : {
-              label: item.name,
-              title: item.name,
-              value: item.id
-            }
-        )
+            returnFullData
+              ? {
+                  ...item,
+                  label: item.name,
+                  title: item.name,
+                  value: item.id
+                }
+              : {
+                  label: item.name,
+                  title: item.name,
+                  value: item.id
+                }
+          )
       setOptions(rawOptions || [])
       setShouldFetch(false) // Reset fetch trigger after successful data load
     }
@@ -170,10 +170,10 @@ export function CustomSelect({
   const filteredOptions =
     searchMode === 'client' && searchValue
       ? options.filter(
-        (opt) =>
-          opt.title?.toLowerCase().includes(searchValue.toLowerCase()) ||
-          opt.label?.toLowerCase().includes(searchValue.toLowerCase())
-      )
+          (opt) =>
+            opt.title?.toLowerCase().includes(searchValue.toLowerCase()) ||
+            opt.label?.toLowerCase().includes(searchValue.toLowerCase())
+        )
       : options
 
   const handleValueChange = (selectedValue: string) => {
@@ -352,8 +352,28 @@ function MultiSelectComponent({
 }) {
   const [isOpen, setIsOpen] = useState(false)
   const [searchValue, setSearchValue] = useState('')
+  const dropdownRef = useRef<HTMLDivElement>(null)
 
-  const selectedOptions = options.filter((opt) => value.includes(opt.value))
+  // Normalize values to strings for comparison to handle mixed number/string types
+  const normalizedValue = value.map((v) => String(v))
+  const selectedOptions = options.filter((opt) => normalizedValue.includes(String(opt.value)))
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsOpen(false)
+      }
+    }
+
+    if (isOpen) {
+      document.addEventListener('mousedown', handleClickOutside)
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [isOpen])
 
   const handleRemove = (valueToRemove: string, e: React.MouseEvent) => {
     e.stopPropagation()
@@ -375,28 +395,38 @@ function MultiSelectComponent({
   }
 
   return (
-    <div>
+    <div ref={dropdownRef}>
       {label && (
         <label className='block peer-disabled:opacity-70 mb-2 font-medium text-sm leading-none peer-disabled:cursor-not-allowed'>
           {label}
         </label>
       )}
-      <div className={cn('relative', className)}>
-        <Select open={isOpen} onOpenChange={handleOpenChange} disabled={disabled}>
-          <SelectTrigger
-            className='w-full'
-            type='button'
-            onClick={() => !disabled && setIsOpen(true)}
-          >
-            <div className='flex justify-between items-center w-full'>
-              <span className='text-sm'>
-                {selectedOptions.length > 0 ? `${selectedOptions.length} selected` : placeholder}
-              </span>
-            </div>
-          </SelectTrigger>
-          <SelectContent>
+      <div className='relative'>
+        {/* Custom Trigger Button */}
+        <button
+          type='button'
+          className={cn(
+            'flex justify-between items-center bg-background disabled:opacity-50 px-3 py-2 border border-input rounded-md focus:outline-none focus:ring-2 focus:ring-ring ring-offset-background focus:ring-offset-2 w-full h-10 placeholder:text-muted-foreground text-sm disabled:cursor-not-allowed',
+            className
+          )}
+          onClick={() => {
+            if (!disabled) {
+              handleOpenChange(!isOpen)
+            }
+          }}
+          disabled={disabled}
+        >
+          <span className='text-sm'>
+            {selectedOptions.length > 0 ? `${selectedOptions.length} selected` : placeholder}
+          </span>
+          <ChevronDown className='opacity-50 w-4 h-4' />
+        </button>
+
+        {/* Custom Dropdown Content */}
+        {isOpen && (
+          <div className='z-50 absolute bg-popover shadow-md mt-1 border rounded-md outline-none w-full text-popover-foreground animate-in fade-in-80'>
             {onSearch && (
-              <div className='p-2'>
+              <div className='p-2 border-b'>
                 <Input
                   placeholder='Search...'
                   value={searchValue}
@@ -404,7 +434,6 @@ function MultiSelectComponent({
                     setSearchValue(e.target.value)
                     onSearch(e.target.value)
                   }}
-                  // className='h-8'
                   onClick={(e) => e.stopPropagation()}
                 />
               </div>
@@ -433,8 +462,8 @@ function MultiSelectComponent({
                   >
                     <input
                       type='checkbox'
-                      checked={value.includes(option.value)}
-                      onChange={() => { }}
+                      checked={normalizedValue.includes(String(option.value))}
+                      onChange={() => {}}
                       disabled={option.disabled}
                       className='rounded'
                     />
@@ -443,20 +472,20 @@ function MultiSelectComponent({
                 ))}
               </div>
             )}
-          </SelectContent>
-        </Select>
+          </div>
+        )}
       </div>
 
       {/* Selected options badges - displayed outside Select */}
       {selectedOptions.length > 0 && (
         <div className='flex flex-wrap gap-1 mt-2'>
           {selectedOptions.map((option) => (
-            <Badge key={option.value} variant='default' className='text-xs'>
+            <Badge key={option.value} variant='secondary' className='text-xs'>
               {option.label || option.title}
               <button
                 type='button'
                 onClick={(e) => handleRemove(option.value, e)}
-                className='hover:bg-muted ml-0.5 p-0.5 rounded-full'
+                className='ml-0.5 p-0.5 rounded-full cursor-pointer'
                 disabled={disabled}
               >
                 <X className='w-3 h-3' />
@@ -552,7 +581,7 @@ function TreeSelectComponent({
             <input
               type='checkbox'
               checked={isSelected}
-              onChange={() => { }}
+              onChange={() => {}}
               disabled={option.disabled}
               className='rounded'
             />
