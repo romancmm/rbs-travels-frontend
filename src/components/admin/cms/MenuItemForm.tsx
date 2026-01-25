@@ -333,6 +333,7 @@ export default function MenuItemForm({ item, onSave, onCancel }: MenuItemEditorP
                           value={field.value || undefined}
                           url={typeConfig?.adminEndpoint || `/admin/${watchType}s`}
                           options={(data) => {
+                             console.log("[[Entity Data:]] ", typeConfig?.adminEndpoint, data)
                             // Handle gallery folders differently - use folderPath
                             if (watchType === 'gallery') {
                               return (
