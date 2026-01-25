@@ -63,10 +63,10 @@ const Stats = ({ data, isLoading = false, className }: StatsProps) => {
             />
 
             {/* Top border glow */}
-            <div className='top-0 absolute inset-x-0 bg-gradient-to-b from-primary/10 to-transparent h-px' />
+            <div className='top-0 absolute inset-x-0 bg-linear-to-b from-primary/10 to-transparent h-px' />
 
             {/* Stats grid - horizontal bar layout */}
-            <div className='z-10 relative grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 sm:divide-x divide-y sm:divide-y-0 divide-border/50'>
+            <div className='z-10 relative grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 sm:divide-x divide-y sm:divide-y-0 divide-border/50'>
               {data.map((item, index) => (
                 <StatItem
                   key={`stat-${index}-${item.label}`}

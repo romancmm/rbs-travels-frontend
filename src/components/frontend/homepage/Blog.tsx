@@ -22,7 +22,7 @@ const Blogs = ({ className }: ArticleProps) => {
   if (loading) {
     return <ArticleLoadingSkeleton />
   }
-  console.log('data :>> ', data)
+
   if (!data || !data?.data?.items?.length) {
     return (
       <Section variant='xl' className={className}>
