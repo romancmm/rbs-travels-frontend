@@ -296,6 +296,7 @@ export default function MenuItemForm({ item, onSave, onCancel }: MenuItemEditorP
                           value={Array.isArray(field.value) ? field.value : []}
                           url={typeConfig?.adminEndpoint || '/admin/articles/categories'}
                           options={(data) => {
+                            console.log("[[Category Data:]] ", typeConfig?.adminEndpoint, data)
                             return (
                               data?.data?.items?.map((item: any) => ({
                                 value: item.slug,
@@ -332,6 +333,7 @@ export default function MenuItemForm({ item, onSave, onCancel }: MenuItemEditorP
                           value={field.value || undefined}
                           url={typeConfig?.adminEndpoint || `/admin/${watchType}s`}
                           options={(data) => {
+                             console.log("[[Entity Data:]] ", typeConfig?.adminEndpoint, data)
                             // Handle gallery folders differently - use folderPath
                             if (watchType === 'gallery') {
                               return (
