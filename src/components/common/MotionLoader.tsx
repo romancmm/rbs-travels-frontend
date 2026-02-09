@@ -33,13 +33,13 @@ export default function MotionLoader({ size, variant, className }: MotionLoaderP
   if (variant === 'dots') {
     return (
       <div className={cn(loaderVariants({ size, variant }), className)}>
-        {[0, 1, 2, 3, 4].map((i) => (
+        {Array.from({ length: 6 }).map((_, i) => (
           <motion.span
             key={i}
-            className={cn('bg-primary/80 rounded-full', {
-              'h-2 w-2': size === 'sm',
-              'h-3 w-3': size === 'md',
-              'h-4 w-4': size === 'lg'
+            className={cn('bg-primary/80 aspect-square rounded-full', {
+              'size-1': size === 'sm',
+              'size-2': size === 'md',
+              'size-3': size === 'lg'
             })}
             animate={{ y: [0, -10, 0] }}
             transition={{ repeat: Infinity, duration: 0.6, delay: i * 0.2 }}
@@ -55,7 +55,7 @@ export default function MotionLoader({ size, variant, className }: MotionLoaderP
         {[0, 1, 2, 3, 4, 5].map((i) => (
           <motion.span
             key={i}
-            className='bg-primary/80 rounded w-1'
+            className='bg-primary/80 w-1 rounded'
             animate={{ scaleY: [1, 1.8, 1] }}
             transition={{ repeat: Infinity, duration: 0.8, delay: i * 0.2 }}
             style={{
@@ -73,7 +73,7 @@ export default function MotionLoader({ size, variant, className }: MotionLoaderP
       className={cn(
         loaderVariants({ size, variant }),
         className,
-        'rounded-full border-2 border-primary border-t-transparent'
+        'border-primary rounded-full border-2 border-t-transparent'
       )}
       animate={{ rotate: 360 }}
       transition={{ repeat: Infinity, duration: 1, ease: 'easeInOut' }}

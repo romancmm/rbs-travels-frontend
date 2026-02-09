@@ -86,7 +86,7 @@ const FAQ = ({ className }: FAQProps) => {
             transition={{ delay: 0.5, duration: 0.6 }}
             className='mt-12 text-center'
           >
-            <div className='bg-linear-to-r from-primary/10 via-primary/5 to-primary/10 p-8 rounded-2xl'>
+            <div className='bg-linear-to-r from-primary/10 via-primary/5 to-primary/10 p-12 rounded-2xl'>
               <Typography variant='h5' weight='semibold' className='mb-4 text-foreground'>
                 Still have questions?
               </Typography>
@@ -94,17 +94,18 @@ const FAQ = ({ className }: FAQProps) => {
                 Can&apos;t find the answer you&apos;re looking for? Our friendly customer support
                 team is here to help.
               </Typography>
-              <motion.button
+              <motion.a
+                href='/contact'
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 className={cn(
-                  'bg-primary hover:bg-primary/90 px-8 py-3 rounded-full text-white cursor-pointer',
+                  'bg-primary hover:bg-primary/90 px-8 py-3 rounded-full text-white cursor-pointer block mx-auto w-fit',
                   'font-semibold transition-all duration-300',
                   'shadow-lg hover:shadow-xl hover:shadow-primary/25'
                 )}
               >
                 Contact Support
-              </motion.button>
+              </motion.a>
             </div>
           </motion.div>
         </div>
