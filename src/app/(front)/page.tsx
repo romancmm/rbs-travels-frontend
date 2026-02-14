@@ -11,9 +11,6 @@ import WhoWeAre from '@/components/frontend/homepage/WhoWeAre'
 
 export default async function HomePage() {
   const homeData = await getHomepageData()
-  // const homeFaqs = fetchOnServer({ path: '/settings/home_faq_settings', rev: 300 })
-
-  // const featuredArticle = fetchOnServer({ path: '/articles/posts?categorySlugs=blogs', rev: 300 })
 
   return (
     <>

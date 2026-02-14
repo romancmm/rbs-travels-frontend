@@ -59,16 +59,7 @@ const TextEditor = forwardRef<any, TextEditorProps>(
     // Update ref when value changes from outside
     contentRef.current = value
 
-    // Handle content change in real-time
-    const handleChange = useCallback(
-      (newContent: string) => {
-        contentRef.current = newContent
-        onChange(newContent)
-      },
-      [onChange]
-    )
-
-    // Handle blur event (legacy support)
+    // Handle content change without triggering re-render
     const handleBlur = useCallback(
       (newContent: string) => {
         if (newContent !== contentRef.current) {
@@ -88,12 +79,12 @@ const TextEditor = forwardRef<any, TextEditorProps>(
         case 'dark':
           return {
             background: 'hsl(var(--background))',
-            color: 'hsl(var(--foreground))'
+            color: 'hsl(var(--muted))'
           }
         case 'light':
           return {
             background: '#ffffff',
-            color: 'hsl(var(--foreground))'
+            color: 'hsl(var(--muted))'
           }
         case 'auto':
         default:
@@ -152,23 +143,17 @@ const TextEditor = forwardRef<any, TextEditorProps>(
           className={`
             rounded-md border border-input 
             ${theme === 'dark' ? 'bg-background' : 'bg-background'}
-            [&_.jodit-toolbar__box]:bg-foreground!
-            [&_.jodit-container]:bg-transparent!
-            [&_.jodit-workplace]:bg-transparent!  
-            [&_.jodit-wysiwyg]:bg-transparent!
-            [&_.jodit-wysiwyg]:text-gray-900!
-            [&_.jodit-wysiwyg]:${
-              theme === 'dark' ? 'bg-background! text-foreground!' : 'bg-white! text-black!'
-            }
-            [&_.jodit-toolbar]:bg-muted/30!
-            [&_.jodit-toolbar]:text-muted-foreground!
+            [&_.jodit-toolbar__box]:!bg-foreground
+            [&_.jodit-container]:!bg-transparent
+            [&_.jodit-workplace]:!bg-transparent  
+            [&_.jodit-wysiwyg]:!bg-transparent
             [&_.jodit-toolbar]:border-b
             [&_.jodit-toolbar]:border-border
-            [&_.jodit-toolbar-button]:bg-transparent!
-            [&_.jodit-toolbar-button]:hover:bg-muted/80!
-            [&_.jodit-toolbar-button]:border-transparent!
-            [&_.jodit-status-bar]:bg-muted/30!
-            [&_.jodit-status-bar]:text-muted-foreground!
+            [&_.jodit-toolbar-button]:!bg-transparent
+            [&_.jodit-toolbar-button]:hover:!bg-muted/80
+            [&_.jodit-toolbar-button]:!border-transparent
+            [&_.jodit-status-bar]:!bg-muted/30
+            [&_.jodit-status-bar]:!text-muted-foreground
             [&_.jodit-status-bar]:border-t
             [&_.jodit-status-bar]:border-border
           `}
@@ -179,22 +164,21 @@ const TextEditor = forwardRef<any, TextEditorProps>(
             } as React.CSSProperties & { '--toolbar-bg': string }
           }
         >
-          <style jsx>{`
+          {/* <style jsx>{`
             div :global(.jodit-toolbar) {
               background-color: var(--toolbar-bg) !important;
             }
             div :global(.jodit-wysiwyg) {
               color: white !important;
             }
-            // div :global(.jodit-wysiwyg *) {
-            //   color: inherit !important;
-            // }
-          `}</style>
+            div :global(.jodit-wysiwyg *) {
+              color: inherit !important;
+            }
+          `}</style> */}
           <JoditEditor
             ref={ref || editorRef}
             value={value}
             config={getConfig() as any}
-            onChange={handleChange}
             onBlur={handleBlur}
             tabIndex={-1}
             className={`

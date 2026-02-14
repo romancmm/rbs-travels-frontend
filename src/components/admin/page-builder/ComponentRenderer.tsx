@@ -4,7 +4,9 @@ import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import parse from 'html-react-parser'
 import { Copy, GripVertical, Settings, Trash2 } from 'lucide-react'
+import { useState } from 'react'
 
+import TextEditor from '@/components/admin/common/TextEditor'
 import { IconOrImage } from '@/components/common/IconOrImage'
 import { Typography } from '@/components/common/typography'
 import { Button } from '@/components/ui/button'
@@ -167,7 +169,12 @@ export function ComponentRenderer({
         className={cn('bg-white p-4 rounded', component.settings?.className)}
         onClick={(e) => {
           e.stopPropagation()
-          selectElement(component.id, 'component')
+          // Don't open settings drawer for rich text components
+          const isRichTextComponent =
+            component.type === 'text' && (component.props as any)?.isRichText
+          if (!isRichTextComponent) {
+            selectElement(component.id, 'component')
+          }
         }}
       >
         {componentDef ? (
@@ -203,6 +210,9 @@ function ComponentPreview({
   rowId: string
   columnId: string
 }) {
+  const updateComponent = useBuilderStore((state) => state.updateComponent)
+  const [isEditingRichText, setIsEditingRichText] = useState(false)
+
   if (!definition) return null
 
   // Render based on component type
@@ -243,14 +253,50 @@ function ComponentPreview({
         return (
           <div
             className={cn(
-              'max-w-none prose prose-sm',
+              'max-w-none',
               alignment === 'center' && 'text-center',
               alignment === 'right' && 'text-right',
               alignment === 'justify' && 'text-justify',
               componentClassName
             )}
+            onClick={(e) => {
+              e.stopPropagation()
+              setIsEditingRichText(true)
+            }}
           >
-            {parse(text)}
+            {isEditingRichText ? (
+              <div className='border-2 border-blue-500 rounded-lg'>
+                <TextEditor
+                  value={text}
+                  onChange={(newText) => {
+                    updateComponent(component.id, {
+                      props: {
+                        ...component.props,
+                        text: newText
+                      }
+                    })
+                  }}
+                  height={300}
+                  placeholder='Enter your text here...'
+                />
+                <div className='flex justify-end gap-2 bg-gray-50 px-3 py-2 border-t'>
+                  <Button
+                    size='sm'
+                    variant='outline'
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      setIsEditingRichText(false)
+                    }}
+                  >
+                    Done
+                  </Button>
+                </div>
+              </div>
+            ) : (
+              <div className='p-2 rounded hover:ring-2 hover:ring-blue-300 cursor-text prose prose-sm'>
+                {parse(text)}
+              </div>
+            )}
           </div>
         )
       }
@@ -356,10 +402,10 @@ function ComponentPreview({
         aspectRatio === '4/3'
           ? 'aspect-4/3'
           : aspectRatio === '1/1'
-          ? 'aspect-square'
-          : aspectRatio === '21/9'
-          ? 'aspect-21/9'
-          : 'aspect-video' // Default 16/9
+            ? 'aspect-square'
+            : aspectRatio === '21/9'
+              ? 'aspect-21/9'
+              : 'aspect-video' // Default 16/9
 
       return (
         <div className='relative bg-black rounded-lg overflow-hidden'>
