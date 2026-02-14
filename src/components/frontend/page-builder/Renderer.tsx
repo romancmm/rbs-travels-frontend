@@ -111,7 +111,7 @@ function renderComponent(component: BaseComponent) {
           variant={variant as any}
           weight={weight as any}
           align={alignment as any}
-          className={componentClassName}
+          className={cn(componentClassName, 'whitespace-pre-wrap')}
         >
           {text}
         </Typography>
@@ -130,17 +130,17 @@ function renderComponent(component: BaseComponent) {
         variant === 'primary'
           ? 'bg-primary text-white hover:bg-primary/90'
           : variant === 'secondary'
-          ? 'bg-secondary text-white hover:opacity-95'
-          : variant === 'outline'
-          ? 'border border-gray-300 text-gray-700 bg-transparent'
-          : 'bg-gray-100 text-gray-800'
+            ? 'bg-secondary text-white hover:opacity-95'
+            : variant === 'outline'
+              ? 'border border-gray-300 text-gray-700 bg-transparent'
+              : 'bg-gray-100 text-gray-800'
 
       const sizeClass =
         size === 'small'
           ? 'px-3 py-1 text-sm'
           : size === 'large'
-          ? 'px-6 py-3 text-lg'
-          : 'px-4 py-2'
+            ? 'px-6 py-3 text-lg'
+            : 'px-4 py-2'
 
       return (
         <div key={component.id} className={componentClassName}>
@@ -1101,11 +1101,5 @@ function SectionRenderer({ section }: { section: SectionType }) {
 export default function PageBuilderRenderer({ content }: { content: PageContent }) {
   if (!content || !content.sections || content.sections.length === 0) return null
 
-  return (
-    <div>
-      {content.sections.map((section) => (
-        <SectionRenderer key={section.id} section={section} />
-      ))}
-    </div>
-  )
+  return content.sections.map((section) => <SectionRenderer key={section.id} section={section} />)
 }

@@ -22,10 +22,10 @@ export default async function HomePage() {
       <Stats data={homeData?.about?.stats} />
       <WhoWeAre data={homeData?.whoWeAre} />
       <TopDestinations data={homeData?.topCountries} />
-      <SisterConcern />
       <Testimonials />
-      <Blog />
+      <SisterConcern />
       <FAQ />
+      <Blog />
     </>
   )
 }
