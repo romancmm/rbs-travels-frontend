@@ -77,48 +77,46 @@ function MenuSlugContent({ params }: { params: { menuSlug: string[] } }) {
 
   // Page Title/Breadcrumb Section
   const PageHeader = () => (
-    <Section className="bg-linear-to-r from-primary/90 to-primary/70 relative overflow-hidden">
+    <Section className='bg-linear-to-r from-primary/90 to-primary/70 relative overflow-hidden'>
       {/* Optional: Add background pattern/image */}
       <div className="absolute inset-0 bg-[url('/images/bg/breadcrumb.jpg')] bg-cover bg-center opacity-20" />
-      
-      <Container className="relative z-10">
-        <div className="py-8 space-y-4">
+
+      <Container className='relative z-10'>
+        <div className='py-8 space-y-4'>
           {/* Breadcrumb Navigation */}
           <Breadcrumb>
-            <BreadcrumbList className="text-white/90">
+            <BreadcrumbList className='text-white/90'>
               <BreadcrumbItem>
                 <BreadcrumbLink asChild>
-                  <Link href="/" className="flex items-center gap-1 hover:text-white">
-                    <Home className="w-4 h-4" />
+                  <Link href='/' className='flex items-center gap-1 hover:text-white'>
+                    <Home className='w-4 h-4' />
                     <span>Home</span>
                   </Link>
                 </BreadcrumbLink>
               </BreadcrumbItem>
-              
+
               {menuItem.parentId && (
                 <>
-                  <BreadcrumbSeparator className="text-white/60" />
+                  <BreadcrumbSeparator className='text-white/60' />
                   <BreadcrumbItem>
                     <BreadcrumbLink asChild>
-                      <Link href="#" className="hover:text-white">
+                      <Link href='#' className='hover:text-white'>
                         Parent
                       </Link>
                     </BreadcrumbLink>
                   </BreadcrumbItem>
                 </>
               )}
-              
-              <BreadcrumbSeparator className="text-white/60" />
+
+              <BreadcrumbSeparator className='text-white/60' />
               <BreadcrumbItem>
-                <BreadcrumbPage className="text-white font-medium">
-                  {menuItem.title}
-                </BreadcrumbPage>
+                <BreadcrumbPage className='text-white font-medium'>{menuItem.title}</BreadcrumbPage>
               </BreadcrumbItem>
             </BreadcrumbList>
           </Breadcrumb>
 
           {/* Page Title */}
-          <Typography variant="h1" as="h1" weight="bold" className="text-white">
+          <Typography variant='h1' as='h1' weight='bold' className='text-white'>
             {menuItem.title}
           </Typography>
         </div>
