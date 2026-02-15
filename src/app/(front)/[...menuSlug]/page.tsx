@@ -2,9 +2,20 @@
 
 import { Container } from '@/components/common/container'
 import { Section } from '@/components/common/section'
+import { Typography } from '@/components/common/typography'
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator
+} from '@/components/ui/breadcrumb'
 import { Skeleton } from '@/components/ui/skeleton'
 import useAsync from '@/hooks/useAsync'
 import { MenuItem } from '@/types/menu.types'
+import { Home } from 'lucide-react'
+import Link from 'next/link'
 import { notFound, useRouter } from 'next/navigation'
 import { use } from 'react'
 
@@ -64,23 +75,84 @@ function MenuSlugContent({ params }: { params: { menuSlug: string[] } }) {
     notFound()
   }
 
+  // Page Title/Breadcrumb Section
+  const PageHeader = () => (
+    <Section className="bg-linear-to-r from-primary/90 to-primary/70 relative overflow-hidden">
+      {/* Optional: Add background pattern/image */}
+      <div className="absolute inset-0 bg-[url('/images/bg/breadcrumb.jpg')] bg-cover bg-center opacity-20" />
+      
+      <Container className="relative z-10">
+        <div className="py-8 space-y-4">
+          {/* Breadcrumb Navigation */}
+          <Breadcrumb>
+            <BreadcrumbList className="text-white/90">
+              <BreadcrumbItem>
+                <BreadcrumbLink asChild>
+                  <Link href="/" className="flex items-center gap-1 hover:text-white">
+                    <Home className="w-4 h-4" />
+                    <span>Home</span>
+                  </Link>
+                </BreadcrumbLink>
+              </BreadcrumbItem>
+              
+              {menuItem.parentId && (
+                <>
+                  <BreadcrumbSeparator className="text-white/60" />
+                  <BreadcrumbItem>
+                    <BreadcrumbLink asChild>
+                      <Link href="#" className="hover:text-white">
+                        Parent
+                      </Link>
+                    </BreadcrumbLink>
+                  </BreadcrumbItem>
+                </>
+              )}
+              
+              <BreadcrumbSeparator className="text-white/60" />
+              <BreadcrumbItem>
+                <BreadcrumbPage className="text-white font-medium">
+                  {menuItem.title}
+                </BreadcrumbPage>
+              </BreadcrumbItem>
+            </BreadcrumbList>
+          </Breadcrumb>
+
+          {/* Page Title */}
+          <Typography variant="h1" as="h1" weight="bold" className="text-white">
+            {menuItem.title}
+          </Typography>
+        </div>
+      </Container>
+    </Section>
+  )
+
   // Route based on menu item type
   switch (menuItem.type) {
     case 'single-article':
-      return <ArticlePage slug={menuItem.reference as string} />
+      return (
+        <>
+          <PageHeader />
+          <ArticlePage slug={menuItem.reference as string} />
+        </>
+      )
 
     case 'category-articles': {
       const slugs: string[] = Array.isArray(menuItem.reference)
         ? menuItem.reference
         : typeof menuItem.reference === 'string'
-        ? menuItem.reference.split('/').filter(Boolean)
-        : []
+          ? menuItem.reference.split('/').filter(Boolean)
+          : []
 
       if (slugs.length === 0) {
         notFound()
       }
 
-      return <ArticleCategoryPage slugs={slugs} />
+      return (
+        <>
+          <PageHeader />
+          <ArticleCategoryPage slugs={slugs} />
+        </>
+      )
     }
 
     case 'gallery': {
@@ -89,12 +161,22 @@ function MenuSlugContent({ params }: { params: { menuSlug: string[] } }) {
       const fullPath =
         additionalPath.length > 0 ? `${basePath}/${additionalPath.join('/')}` : basePath
 
-      return <GalleryDetails path={fullPath} menuSlug={menuSlug} />
+      return (
+        <>
+          <PageHeader />
+          <GalleryDetails path={fullPath} menuSlug={menuSlug} />
+        </>
+      )
     }
 
     case 'page':
       if (typeof menuItem.reference === 'string') {
-        return <PageDetails pageSlug={menuItem.reference} />
+        return (
+          <>
+            <PageHeader />
+            <PageDetails pageSlug={menuItem.reference} />
+          </>
+        )
       }
       notFound()
 
