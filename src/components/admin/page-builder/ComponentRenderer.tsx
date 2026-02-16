@@ -36,6 +36,7 @@ export function ComponentRenderer({
   const hoverElement = useBuilderStore((state) => state.hoverElement)
   const duplicateComponent = useBuilderStore((state) => state.duplicateComponent)
   const deleteComponent = useBuilderStore((state) => state.deleteComponent)
+  const [isEditingRichText, setIsEditingRichText] = useState(false)
 
   const isSelected = selectedId === component.id
   const isHovered = hoveredId === component.id
@@ -80,11 +81,15 @@ export function ComponentRenderer({
       // }}
       onMouseEnter={(e) => {
         e.stopPropagation()
-        hoverElement(component.id, 'component')
+        if (!isEditingRichText) {
+          hoverElement(component.id, 'component')
+        }
       }}
       onMouseLeave={(e) => {
         e.stopPropagation()
-        hoverElement(null)
+        if (!isEditingRichText) {
+          hoverElement(null)
+        }
       }}
     >
       {/* Drop Indicator - Shows when dragging new component over this component */}
@@ -184,6 +189,8 @@ export function ComponentRenderer({
             sectionId={sectionId}
             rowId={rowId}
             columnId={columnId}
+            isEditingRichText={isEditingRichText}
+            setIsEditingRichText={setIsEditingRichText}
           />
         ) : (
           <div className='text-gray-500 text-sm'>Unknown component: {component.type}</div>
@@ -202,16 +209,19 @@ function ComponentPreview({
   definition,
   sectionId,
   rowId,
-  columnId
+  columnId,
+  isEditingRichText,
+  setIsEditingRichText
 }: {
   component: BaseComponent
   definition: ReturnType<typeof componentRegistry.get>
   sectionId: string
   rowId: string
   columnId: string
+  isEditingRichText: boolean
+  setIsEditingRichText: (value: boolean) => void
 }) {
   const updateComponent = useBuilderStore((state) => state.updateComponent)
-  const [isEditingRichText, setIsEditingRichText] = useState(false)
 
   if (!definition) return null
 
@@ -265,7 +275,25 @@ function ComponentPreview({
             }}
           >
             {isEditingRichText ? (
-              <div className='border-2 border-blue-500 rounded-lg'>
+              <div
+                className='z-50 relative border-2 border-blue-500 rounded-lg'
+                onMouseEnter={(e) => {
+                  e.preventDefault()
+                  e.stopPropagation()
+                }}
+                onMouseLeave={(e) => {
+                  e.preventDefault()
+                  e.stopPropagation()
+                }}
+                onMouseMove={(e) => {
+                  e.preventDefault()
+                  e.stopPropagation()
+                }}
+                onClick={(e) => {
+                  e.preventDefault()
+                  e.stopPropagation()
+                }}
+              >
                 <TextEditor
                   value={text}
                   onChange={(newText) => {

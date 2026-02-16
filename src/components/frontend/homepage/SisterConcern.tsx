@@ -33,14 +33,14 @@ const SisterConcern = ({ className }: SisterConcernProps) => {
   return (
     <Section variant='xl' className={cn('bg-background', className)}>
       <Container>
-        <div className='flex items-center gap-12'>
+        <div className='flex max-md:flex-col items-center md:gap-12'>
           <SectionHeading
             subtitle={sectionData.subtitle ?? ''}
             title={sectionData.title ?? ''}
             description={sectionData.description ?? ''}
             variant='default'
             alignment='left'
-            className='max-w-xl'
+            className='max-md:items-center max-md:mb-6 max-w-xl max-md:text-center'
           />
           <PartnersGrid companies={activeCompanies} />
         </div>
