@@ -45,21 +45,20 @@ function GalleryContent({ pathname, menuSlug }: { pathname: string[]; menuSlug: 
   const router = useRouter()
   const [lightboxOpen, setLightboxOpen] = useState(false)
   const [selectedImageIndex, setSelectedImageIndex] = useState(0)
-
   // Convert pathname array to folder path
   // e.g., ['folder1', 'folder2'] -> '/folder1/folder2'
   const folderPath = !pathname || pathname.length === 0 ? '/' : `/${pathname.join('/')}`
 
-  // Get display name (last segment of path)
-  const displayName = (() => {
-    if (!pathname || pathname.length === 0) {
-      return 'Gallery'
-    }
-    const lastName = pathname[pathname.length - 1]
-    return decodeURIComponent(lastName)
-      .replace(/-/g, ' ')
-      .replace(/\b\w/g, (l) => l.toUpperCase())
-  })()
+  // // Get display name (last segment of path)
+  // const displayName = (() => {
+  //   if (!pathname || pathname.length === 0) {
+  //     return 'Gallery'
+  //   }
+  //   const lastName = pathname[pathname.length - 1]
+  //   return decodeURIComponent(lastName)
+  //     .replace(/-/g, ' ')
+  //     .replace(/\b\w/g, (l) => l.toUpperCase())
+  // })()
 
   // Build API path for the gallery folder
   const encodedPath = encodeURIComponent(folderPath)
@@ -116,66 +115,40 @@ function GalleryContent({ pathname, menuSlug }: { pathname: string[]; menuSlug: 
 
   if (loading) {
     return (
-      <>
-        <Section className='bg-linear-to-r from-primary/90 to-primary/70'>
-          <Container>
-            <div className='py-12 text-center'>
-              <Skeleton className='bg-white/20 mx-auto mb-4 w-3/4 h-12' />
-              <Skeleton className='bg-white/20 mx-auto w-1/2 h-6' />
-            </div>
-          </Container>
-        </Section>
-
-        <Section variant={'xl'}>
-          <Container>
-            <div className='gap-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5'>
-              {Array.from({ length: 10 }).map((_, i) => (
-                <Skeleton key={i} className='rounded-lg w-full h-64' />
-              ))}
-            </div>
-          </Container>
-        </Section>
-      </>
+      <Section variant={'xl'}>
+        <Container>
+          <div className='gap-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5'>
+            {Array.from({ length: 10 }).map((_, i) => (
+              <Skeleton key={i} className='rounded-lg w-full h-64' />
+            ))}
+          </div>
+        </Container>
+      </Section>
     )
   }
 
   if (images.length === 0 && folders.length === 0) {
     return (
-      <>
-        <Section className='bg-linear-to-r from-primary/90 to-primary/70'>
-          <Container>
-            <div className='py-12 text-white text-center'>
-              <Typography variant='h1' weight='bold' className='mb-4'>
-                {displayName}
-              </Typography>
-              <Typography variant='body1' className='opacity-90'>
-                Gallery Collection
-              </Typography>
-            </div>
-          </Container>
-        </Section>
-
-        <Section variant={'xl'}>
-          <Container>
-            <div className='flex flex-col justify-center items-center py-16 text-center'>
-              <ImageIcon className='mb-4 w-16 h-16 text-muted-foreground' />
-              <Typography variant='h4' weight='semibold' className='mb-2 text-gray-800'>
-                No Content Found
-              </Typography>
-              <Typography variant='body1' className='text-gray-600'>
-                This gallery folder doesn&apos;t contain any images or folders yet.
-              </Typography>
-            </div>
-          </Container>
-        </Section>
-      </>
+      <Section variant={'xl'}>
+        <Container>
+          <div className='flex flex-col justify-center items-center py-16 text-center'>
+            <ImageIcon className='mb-4 w-16 h-16 text-muted-foreground' />
+            <Typography variant='h4' weight='semibold' className='mb-2 text-gray-800'>
+              No Content Found
+            </Typography>
+            <Typography variant='body1' className='text-gray-600'>
+              This gallery folder doesn&apos;t contain any images or folders yet.
+            </Typography>
+          </div>
+        </Container>
+      </Section>
     )
   }
 
   return (
     <>
       {/* Header Section */}
-      <Section className='bg-linear-to-r from-primary/90 to-primary/70'>
+      {/* <Section className='bg-linear-to-r from-primary/90 to-primary/70'>
         <Container>
           <motion.div
             className='py-12 text-white text-center'
@@ -192,12 +165,12 @@ function GalleryContent({ pathname, menuSlug }: { pathname: string[]; menuSlug: 
                     images.length
                   } ${images.length === 1 ? 'image' : 'images'}`
                 : folders.length > 0
-                ? `${folders.length} ${folders.length === 1 ? 'folder' : 'folders'}`
-                : `${images.length} ${images.length === 1 ? 'image' : 'images'}`}
+                  ? `${folders.length} ${folders.length === 1 ? 'folder' : 'folders'}`
+                  : `${images.length} ${images.length === 1 ? 'image' : 'images'}`}
             </Typography>
           </motion.div>
         </Container>
-      </Section>
+      </Section> */}
 
       {/* Gallery Grid Section */}
       <Section variant={'xl'}>
@@ -242,7 +215,7 @@ function GalleryContent({ pathname, menuSlug }: { pathname: string[]; menuSlug: 
                           >
                             <div className='relative shadow-lg mx-auto w-[65%] h-[65%]'>
                               <CustomImage
-                                src={img.thumbnail || img.url || ''}
+                                src={img.url || img.thumbnail || ''}
                                 alt={`${folder.name} preview ${idx + 1}`}
                                 fill
                                 className='rounded-sm w-full h-full object-cover'
@@ -306,7 +279,7 @@ function GalleryContent({ pathname, menuSlug }: { pathname: string[]; menuSlug: 
                 {/* Image */}
                 <div className='relative w-full h-full'>
                   <CustomImage
-                    src={image.thumbnail || image.url || ''}
+                    src={image.url || image.thumbnail || ''}
                     alt={image.name}
                     fill
                     className='rounded-lg object-cover group-hover:scale-110 transition-transform duration-300'

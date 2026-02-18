@@ -156,9 +156,7 @@ function MenuSlugContent({ params }: { params: { menuSlug: string[] } }) {
     case 'gallery': {
       // Combine the menu reference path with any additional path segments
       const basePath = menuItem.reference as string
-      const fullPath =
-        additionalPath.length > 0 ? `${basePath}/${additionalPath.join('/')}` : basePath
-
+      const fullPath = additionalPath.length > 0 ? `${additionalPath.join('/')}` : basePath
       return (
         <>
           <PageHeader />
