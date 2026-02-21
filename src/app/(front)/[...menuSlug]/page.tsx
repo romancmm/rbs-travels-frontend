@@ -75,14 +75,23 @@ function MenuSlugContent({ params }: { params: { menuSlug: string[] } }) {
     notFound()
   }
 
+  // Determine if header should be shown (default to true)
+  const shouldShowHeader = menuItem.showTitle !== false
+
+  // Use menuItem.bgImage if available, otherwise use default
+  const headerBgImage = menuItem.bgImage || '/images/bg/breadcrumb.jpg'
+
   // Page Title/Breadcrumb Section
   const PageHeader = () => (
-    <Section className='bg-linear-to-r from-primary/90 to-primary/70 relative overflow-hidden'>
-      {/* Optional: Add background pattern/image */}
-      <div className="absolute inset-0 bg-[url('/images/bg/breadcrumb.jpg')] bg-cover bg-center opacity-20" />
+    <Section className='relative bg-linear-to-r from-primary/90 to-primary/70 overflow-hidden'>
+      {/* Background pattern/image */}
+      <div
+        className='absolute inset-0 bg-cover bg-center opacity-20'
+        style={{ backgroundImage: `url('${headerBgImage}')` }}
+      />
 
-      <Container className='relative z-10'>
-        <div className='py-8 space-y-4'>
+      <Container className='z-10 relative'>
+        <div className='space-y-4 py-8'>
           {/* Breadcrumb Navigation */}
           <Breadcrumb>
             <BreadcrumbList className='text-white/90'>
@@ -110,7 +119,7 @@ function MenuSlugContent({ params }: { params: { menuSlug: string[] } }) {
 
               <BreadcrumbSeparator className='text-white/60' />
               <BreadcrumbItem>
-                <BreadcrumbPage className='text-white font-medium'>{menuItem.title}</BreadcrumbPage>
+                <BreadcrumbPage className='font-medium text-white'>{menuItem.title}</BreadcrumbPage>
               </BreadcrumbItem>
             </BreadcrumbList>
           </Breadcrumb>
@@ -129,7 +138,7 @@ function MenuSlugContent({ params }: { params: { menuSlug: string[] } }) {
     case 'single-article':
       return (
         <>
-          <PageHeader />
+          {shouldShowHeader && <PageHeader />}
           <ArticlePage slug={menuItem.reference as string} />
         </>
       )
@@ -147,7 +156,7 @@ function MenuSlugContent({ params }: { params: { menuSlug: string[] } }) {
 
       return (
         <>
-          <PageHeader />
+          {shouldShowHeader && <PageHeader />}
           <ArticleCategoryPage slugs={slugs} />
         </>
       )
@@ -159,7 +168,7 @@ function MenuSlugContent({ params }: { params: { menuSlug: string[] } }) {
       const fullPath = additionalPath.length > 0 ? `${additionalPath.join('/')}` : basePath
       return (
         <>
-          <PageHeader />
+          {shouldShowHeader && <PageHeader />}
           <GalleryDetails path={fullPath} menuSlug={menuSlug} />
         </>
       )
@@ -169,7 +178,7 @@ function MenuSlugContent({ params }: { params: { menuSlug: string[] } }) {
       if (typeof menuItem.reference === 'string') {
         return (
           <>
-            <PageHeader />
+            {shouldShowHeader && <PageHeader />}
             <PageDetails pageSlug={menuItem.reference} />
           </>
         )

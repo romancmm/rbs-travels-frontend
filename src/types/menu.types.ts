@@ -32,6 +32,8 @@ export interface MenuItem {
   parentId?: string | null
   order: number
   isPublished: boolean
+  bgImage?: string | null // Background image URL for menu item
+  showTitle?: boolean // Whether to show the title (useful for image-only menu items)
   meta?: Record<string, any> | null
   children?: MenuItem[]
   createdAt?: string
@@ -69,6 +71,8 @@ export interface CreateMenuItemInput {
   parentId?: string | null
   order?: number
   isPublished?: boolean
+  bgImage?: string | null
+  showTitle?: boolean
   meta?: Record<string, any> | null
 }
 

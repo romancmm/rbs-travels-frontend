@@ -78,6 +78,8 @@ const MenuItemSchema = z
     cssClass: z.union([z.string(), z.null()]).optional(),
     order: z.number().optional(),
     isPublished: z.boolean().optional(),
+    bgImage: z.union([z.string(), z.null()]).optional(),
+    showTitle: z.boolean().optional(),
     meta: z.record(z.string(), z.any()).optional()
   })
   .superRefine((data, ctx) => {
@@ -97,8 +99,9 @@ const MenuItemSchema = z
       if (!data.reference || typeof data.reference !== 'string') {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
-          message: `Reference (${data.type === 'gallery' ? 'path' : 'slug'}) is required for ${data.type
-            } type`,
+          message: `Reference (${data.type === 'gallery' ? 'path' : 'slug'}) is required for ${
+            data.type
+          } type`,
           path: ['reference']
         })
       }
@@ -167,6 +170,8 @@ export default function MenuItemForm({ item, onSave, onCancel }: MenuItemEditorP
       cssClass: item?.cssClass || '',
       order: item?.order || 0,
       isPublished: item?.isPublished ?? true,
+      bgImage: item?.bgImage || '',
+      showTitle: item?.showTitle ?? true,
       meta: item?.meta || {}
     }
   })
@@ -190,6 +195,8 @@ export default function MenuItemForm({ item, onSave, onCancel }: MenuItemEditorP
       cssClass: data.cssClass || undefined,
       order: data.order ?? 0,
       isPublished: data.isPublished ?? true,
+      bgImage: data.bgImage || undefined,
+      showTitle: data.showTitle ?? true,
       meta: data.meta || {}
     }
 
@@ -296,7 +303,7 @@ export default function MenuItemForm({ item, onSave, onCancel }: MenuItemEditorP
                           value={Array.isArray(field.value) ? field.value : []}
                           url={typeConfig?.adminEndpoint || '/admin/articles/categories'}
                           options={(data) => {
-                            console.log("[[Category Data:]] ", typeConfig?.adminEndpoint, data)
+                            console.log('[[Category Data:]] ', typeConfig?.adminEndpoint, data)
                             return (
                               data?.data?.items?.map((item: any) => ({
                                 value: item.slug,
@@ -333,7 +340,7 @@ export default function MenuItemForm({ item, onSave, onCancel }: MenuItemEditorP
                           value={field.value || undefined}
                           url={typeConfig?.adminEndpoint || `/admin/${watchType}s`}
                           options={(data) => {
-                             console.log("[[Entity Data:]] ", typeConfig?.adminEndpoint, data)
+                            console.log('[[Entity Data:]] ', typeConfig?.adminEndpoint, data)
                             // Handle gallery folders differently - use folderPath
                             if (watchType === 'gallery') {
                               return (
@@ -404,6 +411,46 @@ export default function MenuItemForm({ item, onSave, onCancel }: MenuItemEditorP
               <CardDescription>Optional configuration</CardDescription>
             </CardHeader>
             <CardContent className='space-y-4'>
+              {/* Background Image */}
+              <Controller
+                control={control}
+                name='bgImage'
+                render={({ field }) => (
+                  <div className='space-y-2'>
+                    <Label>Background Image (optional)</Label>
+                    <FilePicker
+                      value={field.value || ''}
+                      onChangeAction={field.onChange}
+                      multiple={false}
+                      maxAllow={1}
+                      size='large'
+                      allowedTypes={['image']}
+                    />
+                  </div>
+                )}
+              />
+
+              {/* Show Title Toggle */}
+              <Controller
+                control={control}
+                name='showTitle'
+                render={({ field }) => (
+                  <div className='space-y-3'>
+                    <CustomInput
+                      type='switch'
+                      label='Show Title'
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                    />
+                    <p className='text-muted-foreground text-xs'>
+                      {field.value
+                        ? 'Title will be visible'
+                        : 'Title will be hidden (useful for icon/image-only menu items)'}
+                    </p>
+                  </div>
+                )}
+              />
+
               <Controller
                 control={control}
                 name='cssClass'

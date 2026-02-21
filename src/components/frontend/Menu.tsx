@@ -95,11 +95,12 @@ function MenuItemLink({
 }: MenuItemLinkProps) {
   const url = item?.url
   const isExternal = item.type === 'external-link'
+  const shouldShowTitle = item.showTitle !== false // Default to true if not specified
 
   const content = (
     <>
       {showIcons && item.icon && <span className='mr-2 menu-icon'>{item.icon}</span>}
-      <span className='menu-title'>{item.title}</span>
+      {shouldShowTitle && <span className='menu-title'>{item.title}</span>}
       {hasChildren && <ChevronDown className='ml-auto w-4 h-4' />}
       {isExternal && <ExternalLinkIcon className='ml-2 w-3 h-3' />}
     </>
@@ -110,6 +111,14 @@ function MenuItemLink({
     isSubmenu && 'px-3 py-2 text-sm'
   )
 
+  const linkStyle = item.bgImage
+    ? {
+        backgroundImage: `url(${item.bgImage})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center'
+      }
+    : undefined
+
   // External links
   if (isExternal && url) {
     return (
@@ -118,6 +127,7 @@ function MenuItemLink({
         target={item.target || '_blank'}
         rel='noopener noreferrer'
         className={linkClassName}
+        style={linkStyle}
       >
         {content}
       </a>
@@ -127,14 +137,18 @@ function MenuItemLink({
   // Internal links (entity types and custom links)
   if (url && url !== '#') {
     return (
-      <CustomLink href={url} className={linkClassName}>
+      <CustomLink href={url} className={linkClassName} style={linkStyle}>
         {content}
       </CustomLink>
     )
   }
 
   // Parent items with no link
-  return <span className={linkClassName}>{content}</span>
+  return (
+    <span className={linkClassName} style={linkStyle}>
+      {content}
+    </span>
+  )
 }
 
 // Mobile Menu Component
@@ -226,11 +240,12 @@ function MobileMenuItem({
   const children = hasChildren(item) ? item.children! : []
   const url = item?.url
   const isExternal = item.type === 'external-link'
+  const shouldShowTitle = item.showTitle !== false // Default to true if not specified
 
   const content = (
     <>
       {showIcons && item.icon && <span className='menu-icon'>{item.icon}</span>}
-      <span className='flex-1'>{item.title}</span>
+      {shouldShowTitle && <span className='flex-1'>{item.title}</span>}
       {children.length > 0 && (
         <button type='button' onClick={onToggle} className='p-1'>
           <ChevronDown className={cn('w-4 h-4 transition-transform', isExpanded && 'rotate-180')} />
@@ -245,6 +260,14 @@ function MobileMenuItem({
     level > 0 && 'ml-4'
   )
 
+  const itemStyle = item.bgImage
+    ? {
+        backgroundImage: `url(${item.bgImage})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center'
+      }
+    : undefined
+
   return (
     <li>
       {isExternal && url ? (
@@ -253,15 +276,18 @@ function MobileMenuItem({
           target={item.target || '_blank'}
           rel='noopener noreferrer'
           className={itemClassName}
+          style={itemStyle}
         >
           {content}
         </a>
       ) : url && url !== '#' ? (
-        <CustomLink href={url} className={itemClassName}>
+        <CustomLink href={url} className={itemClassName} style={itemStyle}>
           {content}
         </CustomLink>
       ) : (
-        <div className={itemClassName}>{content}</div>
+        <div className={itemClassName} style={itemStyle}>
+          {content}
+        </div>
       )}
 
       {/* Children */}
@@ -272,7 +298,7 @@ function MobileMenuItem({
               key={child.id}
               item={child}
               isExpanded={false}
-              onToggle={() => { }}
+              onToggle={() => {}}
               showIcons={showIcons}
               level={level + 1}
             />
