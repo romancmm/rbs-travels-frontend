@@ -83,15 +83,14 @@ function MenuSlugContent({ params }: { params: { menuSlug: string[] } }) {
 
   // Page Title/Breadcrumb Section
   const PageHeader = () => (
-    <Section className='relative bg-linear-to-r from-primary/90 to-primary/70 overflow-hidden'>
-      {/* Background pattern/image */}
-      <div
-        className='absolute inset-0 bg-cover bg-center opacity-20'
-        style={{ backgroundImage: `url('${headerBgImage}')` }}
-      />
-
+    <Section
+      className='relative bg-cover bg-no-repeat bg-center overflow-hidden'
+      style={{
+        backgroundImage: `linear-gradient(to right,  rgba(1, 29, 38, 1),  rgba(1, 29, 38, 0.8),  rgba(1, 29, 38, 0)), url(${headerBgImage})`
+      }}
+    >
       <Container className='z-10 relative'>
-        <div className='space-y-4 py-8'>
+        <div className='space-y-3 py-5'>
           {/* Breadcrumb Navigation */}
           <Breadcrumb>
             <BreadcrumbList className='text-white/90'>
