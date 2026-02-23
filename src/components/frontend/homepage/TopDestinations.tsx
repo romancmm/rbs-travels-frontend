@@ -27,7 +27,7 @@ const DestinationCard = ({
 }) => {
   return (
     <div
-      className='group slide-in-from-bottom-4 relative bg-white shadow-lg hover:shadow-2xl rounded-3xl overflow-hidden transition-all hover:-translate-y-2 animate-in duration-700'
+      className='group relative bg-white shadow-lg hover:shadow-2xl rounded-3xl overflow-hidden transition-all hover:-translate-y-2 duration-700'
       style={{ animationDelay: `${index * 100}ms` }}
     >
       {/* Image Container */}
@@ -138,7 +138,8 @@ export default function TopDestinations({ data }: { data?: TopCountriesType }) {
   if (!data?.destinations?.length) return null
 
   return (
-    <Section variant={'xl'}
+    <Section
+      variant={'xl'}
       className={cn(
         'relative bg-linear-to-br from-blue-50/50 via-white to-purple-50/30 overflow-hidden'
       )}
@@ -226,7 +227,7 @@ export default function TopDestinations({ data }: { data?: TopCountriesType }) {
               containScroll: 'trimSnaps',
               slidesToScroll: 'auto'
             }}
-          // plugins={[autoplayPlugin, classNamesPlugin]}
+            // plugins={[autoplayPlugin, classNamesPlugin]}
           >
             <div className='flex justify-between items-center'>
               <div className='flex items-center gap-4'>

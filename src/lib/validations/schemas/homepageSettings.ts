@@ -38,6 +38,14 @@ const destinationItemSchema = z.object({
   visaType: optionalString
 })
 
+const serviceItemSchema = z.object({
+  id: z.number().optional(),
+  name: optionalString,
+  image: optionalString,
+  description: optionalString,
+  url: optionalString
+})
+
 const testimonialItemSchema = z.object({
   name: optionalString,
   designation: optionalString,
@@ -88,6 +96,12 @@ const topCountriesSectionSchema = z.object({
   subtitle: optionalString,
   destinations: z.array(destinationItemSchema).default([])
 })
+
+const servicesSectionSchema = z.object({
+  title: optionalString,
+  subtitle: optionalString,
+  services: z.array(serviceItemSchema).default([])
+})
 // const offersSectionSchema = titleSubtitleDescSchema
 // const categoriesSectionSchema = titleSubtitleDescSchema
 // const platformSectionSchema = titleSubtitleDescSchema
@@ -103,6 +117,7 @@ export const homepageSettingsSchema = z
     about: aboutSectionSchema.optional(),
     whoWeAre: whoWeAreSectionSchema.optional(),
     topCountries: topCountriesSectionSchema.optional(),
+    services: servicesSectionSchema.optional(),
     testimonial: testimonialsSectionSchema.optional()
     // whyChoose: whyChooseSectionSchema.optional()
     // offers: offersSectionSchema.optional(),
@@ -121,12 +136,14 @@ export type BannerType = z.infer<typeof bannerSectionSchema>
 export type WhoWeAreType = z.infer<typeof whoWeAreSectionSchema>
 export type AboutType = z.infer<typeof aboutSectionSchema>
 export type TopCountriesType = z.infer<typeof topCountriesSectionSchema>
+export type ServicesType = z.infer<typeof servicesSectionSchema>
 export type TestimonialsType = z.infer<typeof testimonialsSectionSchema>
 
 // Utility types for form components
 export type FacilityItem = z.infer<typeof facilityItemSchema>
 export type StatItem = z.infer<typeof statItemSchema>
 export type DestinationItem = z.infer<typeof destinationItemSchema>
+export type ServiceItem = z.infer<typeof serviceItemSchema>
 export type TestimonialItem = z.infer<typeof testimonialItemSchema>
 
 // === Schema Validation Helpers ===

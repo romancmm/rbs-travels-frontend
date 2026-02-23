@@ -21,7 +21,7 @@ function ArticleList() {
       items: Article[]
       pagination: PaginationMeta
     }
-  }>(() => '/admin/articles/posts' + (queryString ? `?${queryString}` : ``))
+  }>(() => '/admin/articles/posts' + (queryString ? `?${queryString}` : `?page=1&perPage=20`))
 
   return (
     <div className='w-full max-w-full overflow-x-hidden'>

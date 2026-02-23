@@ -6,6 +6,7 @@ import {
   LayoutTemplate,
   ListTodo,
   LucideIcon,
+  PocketKnife,
   Settings,
   ShieldAlert
 } from 'lucide-react'
@@ -140,6 +141,10 @@ export const navItems: NavItem[] = [
         href: '/admin/homepage-settings/who-we-are'
       },
       {
+        title: 'Services',
+        href: '/admin/homepage-settings/services'
+      },
+      {
         title: 'Top Countries',
         href: '/admin/homepage-settings/top-countries'
       },
@@ -185,6 +190,14 @@ export const navItems: NavItem[] = [
         permission: { resource: 'permissions', action: 'index' }
       }
     ]
+  },
+
+  // File Manager
+  {
+    title: 'Manage cache',
+    href: '/admin/system-tools',
+    icon: PocketKnife,
+    permission: { resource: 'system_tools', action: 'index' }
   }
 
   // {
