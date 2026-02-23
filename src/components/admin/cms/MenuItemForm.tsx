@@ -177,6 +177,7 @@ export default function MenuItemForm({ item, onSave, onCancel }: MenuItemEditorP
   })
   const watchType = watch('type')
   const watchIconType = watch('iconType')
+  const watchShowTitle = watch('showTitle')
 
   const isCategoryArticles = watchType === 'category-articles'
   const isEntityType = ['single-article', 'page', 'gallery'].includes(watchType)
@@ -411,25 +412,6 @@ export default function MenuItemForm({ item, onSave, onCancel }: MenuItemEditorP
               <CardDescription>Optional configuration</CardDescription>
             </CardHeader>
             <CardContent className='space-y-4'>
-              {/* Background Image */}
-              <Controller
-                control={control}
-                name='bgImage'
-                render={({ field }) => (
-                  <div className='space-y-2'>
-                    <Label>Background Image (optional)</Label>
-                    <FilePicker
-                      value={field.value || ''}
-                      onChangeAction={field.onChange}
-                      multiple={false}
-                      maxAllow={1}
-                      size='large'
-                      allowedTypes={['image']}
-                    />
-                  </div>
-                )}
-              />
-
               {/* Show Title Toggle */}
               <Controller
                 control={control}
@@ -450,6 +432,27 @@ export default function MenuItemForm({ item, onSave, onCancel }: MenuItemEditorP
                   </div>
                 )}
               />
+
+              {/* Background Image */}
+              {watchShowTitle && (
+                <Controller
+                  control={control}
+                  name='bgImage'
+                  render={({ field }) => (
+                    <div className='space-y-2'>
+                      <Label>Background Image (optional)</Label>
+                      <FilePicker
+                        value={field.value || ''}
+                        onChangeAction={field.onChange}
+                        multiple={false}
+                        maxAllow={1}
+                        size='large'
+                        allowedTypes={['image']}
+                      />
+                    </div>
+                  )}
+                />
+              )}
 
               <Controller
                 control={control}
