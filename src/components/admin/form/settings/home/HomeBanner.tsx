@@ -66,7 +66,10 @@ const HomeBanner = ({ settingsKey, initialValues, refetch }: TProps) => {
         `/admin/setting/settings${initialValues ? `/key/${settingsKey}` : ''}`,
         {
           key: settingsKey,
-          value: { banners: data.banners }
+          value: {
+            ...initialValues,
+            banners: data.banners
+          }
         }
       )
       if (res?.success) {
