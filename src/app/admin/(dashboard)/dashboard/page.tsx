@@ -3,9 +3,7 @@
 import { QuickActionCard, WelcomeBanner } from '@/components/admin/dashboard'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
-import {
-  FileText, Image, Settings, TrendingUp
-} from 'lucide-react'
+import { FileText, Image, Settings, TrendingUp } from 'lucide-react'
 
 export default function DashboardPage() {
   // Mock data - replace with real API calls
@@ -59,7 +57,7 @@ export default function DashboardPage() {
       title: 'Upload Media',
       description: 'Add images, videos, and files to your media library',
       icon: Image,
-      href: '/admin/media',
+      href: '/admin/file-manager',
       color: 'success' as const
     },
     {
