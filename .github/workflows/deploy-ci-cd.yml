@@ -61,6 +61,9 @@ jobs:
               exit 1
             fi
 
+            # Clear stale BuildKit cache to avoid corrupted snapshot errors
+            docker builder prune -af || true
+
             # Docker will handle permissions internally
             docker compose up --build -d || exit 1
             rm /tmp/deployment.tar.gz || true
