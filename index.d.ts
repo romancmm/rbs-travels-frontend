@@ -156,10 +156,24 @@ declare global {
 
   type Params<Key extends string> = Promise<{ [K in Key]: string }>
   type SearchParams = Promise<{ [key: string]: string | string[] | undefined }>
-
   type PageProps = {
     params: Params
     searchParams: SearchParams
+  }
+
+  type ApiResponse<T> = {
+    code: string
+    message: string
+    response: T
+    traceId?: string
+  }
+
+  type ApiErrorResponse = {
+    status: number
+    code?: string
+    message?: string
+    errors?: Record<string, string | string[] | object>
+    traceId?: string
   }
 
   // Common props for all filters
@@ -175,6 +189,11 @@ declare global {
     type: 'input'
   }
 
+  // Checkbox field
+  type CheckboxField = BaseField & {
+    type: 'checkbox'
+  }
+
   // Select field with API
   type SelectApiField = BaseField & {
     type: 'select-api'
@@ -188,8 +207,14 @@ declare global {
     type: 'date'
   }
 
+  // Select field with static options (no API call)
+  type SelectField = BaseField & {
+    type: 'select'
+    options: { label: string; value: string }[]
+  }
+
   // Final union type for Filter
-  type FilterField = InputField | SelectApiField | DateField | CheckboxField
+  type FilterField = InputField | SelectApiField | DateField | SelectField | CheckboxField
 
   interface TAdmin {
     id: string
