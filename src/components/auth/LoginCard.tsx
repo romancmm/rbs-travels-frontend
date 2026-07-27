@@ -106,7 +106,6 @@ export default function LoginCard({ className = '', onSuccess, compact = false }
               }}
               error={errors.email?.message}
               required
-              size={compact ? 'middle' : 'large'}
               disabled={isLoading}
             />
           )}
@@ -129,7 +128,6 @@ export default function LoginCard({ className = '', onSuccess, compact = false }
                 }}
                 error={errors.password?.message}
                 required
-                size={compact ? 'middle' : 'large'}
                 disabled={isLoading}
               />
             )}

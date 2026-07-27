@@ -90,7 +90,6 @@ export default function SecurityModal({ isOpen, onClose }: SecurityModalProps) {
                 type='password'
                 placeholder='Enter current password'
                 error={errors.currentPassword?.message}
-                showPasswordToggle
                 required
                 {...field}
               />
@@ -106,7 +105,6 @@ export default function SecurityModal({ isOpen, onClose }: SecurityModalProps) {
                 type='password'
                 placeholder='Enter new password (min 8 characters)'
                 error={errors.newPassword?.message}
-                showPasswordToggle
                 required
                 {...field}
               />
@@ -122,7 +120,6 @@ export default function SecurityModal({ isOpen, onClose }: SecurityModalProps) {
                 type='password'
                 placeholder='Confirm new password'
                 error={errors.confirmPassword?.message}
-                showPasswordToggle
                 required
                 {...field}
               />

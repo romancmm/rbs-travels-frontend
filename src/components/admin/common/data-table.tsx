@@ -70,7 +70,7 @@ export function CustomTable<T>({
         <TableRow key={index} className='hover:bg-transparent'>
           {columns.map((column, colIndex) => (
             <TableCell key={colIndex} className={cn(compact ? 'py-2' : 'py-3')}>
-              <Skeleton className='w-full max-w-[200px] h-4' />
+              <Skeleton className='w-full max-w-50 h-4' />
             </TableCell>
           ))}
         </TableRow>

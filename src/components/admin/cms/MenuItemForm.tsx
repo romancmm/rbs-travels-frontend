@@ -247,14 +247,12 @@ export default function MenuItemForm({ item, onSave, onCancel }: MenuItemEditorP
                 control={control}
                 name='type'
                 render={({ field }) => (
-                  <CustomInput
+                  <CustomSelect
                     label='Menu Type'
                     name='type'
-                    type='select'
                     value={field.value}
-                    onValueChange={field.onChange}
-                    required
-                    options={[
+                    onChange={field.onChange}
+                    staticOptions={[
                       {
                         value: 'category-articles',
                         label: MENU_ITEM_TYPE_LABELS['category-articles']
@@ -473,13 +471,12 @@ export default function MenuItemForm({ item, onSave, onCancel }: MenuItemEditorP
                   control={control}
                   name='target'
                   render={({ field }) => (
-                    <CustomInput
+                    <CustomSelect
                       label='Open In'
                       name='target'
-                      type='select'
                       value={field.value}
-                      onValueChange={field.onChange}
-                      options={[
+                      onChange={field.onChange}
+                      staticOptions={[
                         { value: '_self', label: 'Same Window' },
                         { value: '_blank', label: 'New Tab' }
                       ]}

@@ -3,6 +3,7 @@ import { toast } from 'sonner'
 import { clearSession } from './authUtils'
 
 export const handleApiError = (error: AxiosError) => {
+  console.error('API Error:', error)
   const status = error.response?.status
   const responseData = error.response?.data as { message?: string } | undefined
 

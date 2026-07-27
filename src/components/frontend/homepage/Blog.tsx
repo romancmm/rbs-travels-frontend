@@ -6,6 +6,7 @@ import { Section } from '@/components/common/section'
 import { ArticleLoadingSkeleton } from '@/components/common/Skeleton'
 import { Typography } from '@/components/common/typography'
 import useAsync from '@/hooks/useAsync'
+import { cn } from '@/lib/utils'
 import { TrendingUp } from 'lucide-react'
 import { motion } from 'motion/react'
 import BlogCard from '../../card/BlogCard'
@@ -25,7 +26,7 @@ const Blogs = ({ className }: ArticleProps) => {
 
   if (!data || !data?.data?.items?.length) {
     return (
-      <Section variant='xl' className={className}>
+      <Section variant='md' className={cn(className)}>
         <Container>
           <EmptyState
             title='No Article Posts Available'

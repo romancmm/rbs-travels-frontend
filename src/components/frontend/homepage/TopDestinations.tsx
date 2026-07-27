@@ -4,7 +4,6 @@ import { Container } from '@/components/common/container'
 import CustomImage from '@/components/common/CustomImage'
 import { Section } from '@/components/common/section'
 import { Typography } from '@/components/common/typography'
-import { Button } from '@/components/ui/button'
 import {
   Carousel,
   CarouselContent,
@@ -27,7 +26,7 @@ const DestinationCard = ({
 }) => {
   return (
     <div
-      className='group relative bg-white shadow-lg hover:shadow-2xl rounded-3xl overflow-hidden transition-all hover:-translate-y-2 duration-700'
+      className='group relative bg-card shadow-lg hover:shadow-2xl rounded-3xl overflow-hidden transition-all hover:-translate-y-2 duration-700'
       style={{ animationDelay: `${index * 100}ms` }}
     >
       {/* Image Container */}
@@ -51,31 +50,34 @@ const DestinationCard = ({
           <Typography
             variant='subtitle1'
             weight='semibold'
-            className='text-gray-800 group-hover:text-primary line-clamp-1 transition-colors'
+            className='text-foreground group-hover:text-primary line-clamp-1 transition-colors'
           >
             {destination.name}
           </Typography>
-          <Typography variant='body2' className='text-gray-600 line-clamp-2 leading-relaxed'>
+          <Typography
+            variant='body2'
+            className='text-muted-foreground line-clamp-2 leading-relaxed'
+          >
             {destination.description}
           </Typography>
         </div>
 
         {/* Metadata with enhanced styling */}
-        <div className='space-y-2 pt-2 border-gray-100 border-t'>
+        <div className='space-y-2 pt-2 border-border border-t'>
           {destination.workers && (
-            <div className='flex items-center gap-2 text-gray-600'>
+            <div className='flex items-center gap-2 text-muted-foreground'>
               <Users className='w-4 h-4 text-primary' />
               <span className='font-medium text-sm'>{destination.workers} Workers</span>
             </div>
           )}
           {destination.averageSalary && (
-            <div className='flex items-center gap-2 text-gray-600'>
+            <div className='flex items-center gap-2 text-muted-foreground'>
               <DollarSign className='w-4 h-4 text-primary' />
               <span className='font-medium text-sm'>{destination.averageSalary}</span>
             </div>
           )}
           {destination.visaType && (
-            <div className='flex items-center gap-2 text-gray-600'>
+            <div className='flex items-center gap-2 text-muted-foreground'>
               <Briefcase className='w-4 h-4 text-primary' />
               <span className='font-medium text-sm'>{destination.visaType}</span>
             </div>
@@ -85,7 +87,7 @@ const DestinationCard = ({
         {/* Top Sectors */}
         {destination.topSectors && destination.topSectors.length > 0 && (
           <div className='pt-2'>
-            <Typography variant='body2' weight='medium' className='mb-2 text-gray-700'>
+            <Typography variant='body2' weight='medium' className='mb-2 text-foreground/80'>
               Top Sectors:
             </Typography>
             <div className='flex flex-wrap gap-2'>
@@ -139,9 +141,9 @@ export default function TopDestinations({ data }: { data?: TopCountriesType }) {
 
   return (
     <Section
-      variant={'xl'}
+      variant={'md'}
       className={cn(
-        'relative bg-linear-to-br from-blue-50/50 via-white to-purple-50/30 overflow-hidden'
+        'relative bg-linear-to-br from-primary/5 via-background to-accent/5 overflow-hidden'
       )}
     >
       {/* Enhanced Background Pattern */}
@@ -163,10 +165,13 @@ export default function TopDestinations({ data }: { data?: TopCountriesType }) {
               {data.subtitle || 'Top Destinations'}
             </Typography>
           </div>
-          <Typography variant='h2' weight='bold' className='mx-auto max-w-3xl text-gray-800'>
+          <Typography variant='h2' weight='bold' className='mx-auto max-w-3xl text-foreground'>
             {data.title || 'Explore Top Countries'}
           </Typography>
-          <Typography variant='body1' className='mx-auto max-w-2xl text-gray-600 leading-relaxed'>
+          <Typography
+            variant='body1'
+            className='mx-auto max-w-2xl text-muted-foreground leading-relaxed'
+          >
             Discover the world&apos;s most breathtaking destinations with our curated collection of
             extraordinary travel experiences.
           </Typography>
@@ -231,11 +236,11 @@ export default function TopDestinations({ data }: { data?: TopCountriesType }) {
           >
             <div className='flex justify-between items-center'>
               <div className='flex items-center gap-4'>
-                <div className='hidden md:flex items-center gap-2 text-gray-500 text-sm'>
+                <div className='hidden md:flex items-center gap-2 text-muted-foreground text-sm'>
                   <Filter className='w-4 h-4' />
                   <span>{data?.destinations?.length} destinations</span>
                 </div>
-                <div className='flex items-center gap-2 text-gray-500 text-sm'>
+                <div className='flex items-center gap-2 text-muted-foreground text-sm'>
                   <span>
                     {current} of {count} slides
                   </span>
@@ -246,13 +251,13 @@ export default function TopDestinations({ data }: { data?: TopCountriesType }) {
                 <div className='flex items-center gap-3'>
                   <CarouselPrevious
                     className={cn(
-                      'static hover:bg-primary border-gray-200 hover:border-primary hover:text-white transition-all translate-x-0 translate-y-0 duration-300',
+                      'static hover:bg-primary border-border hover:border-primary hover:text-white transition-all translate-x-0 translate-y-0 duration-300',
                       !canScrollPrev && 'opacity-50 cursor-not-allowed'
                     )}
                   />
                   <CarouselNext
                     className={cn(
-                      'static hover:bg-primary border-gray-200 hover:border-primary hover:text-white transition-all translate-x-0 translate-y-0 duration-300',
+                      'static hover:bg-primary border-border hover:border-primary hover:text-white transition-all translate-x-0 translate-y-0 duration-300',
                       !canScrollNext && 'opacity-50 cursor-not-allowed'
                     )}
                   />
@@ -288,18 +293,20 @@ export default function TopDestinations({ data }: { data?: TopCountriesType }) {
               onClick={() => api?.scrollTo(index)}
               className={cn(
                 'rounded-full h-2 transition-all duration-300',
-                index === current - 1 ? 'bg-primary w-8' : 'bg-gray-300 hover:bg-gray-400 w-2'
+                index === current - 1
+                  ? 'bg-primary w-8'
+                  : 'bg-border hover:bg-muted-foreground/50 w-2'
               )}
             />
           ))}
         </div>
 
         {/* Enhanced Call to Action */}
-        <div className='space-y-4 mt-16 text-center'>
-          <Typography variant='h4' weight='semibold' className='text-gray-800'>
+        {/* <div className='space-y-4 mt-16 text-center'>
+          <Typography variant='h4' weight='semibold' className='text-foreground'>
             Ready to Start Your Adventure?
           </Typography>
-          <Typography variant='body1' className='mx-auto max-w-md text-gray-600'>
+          <Typography variant='body1' className='mx-auto max-w-md text-muted-foreground'>
             Let our travel experts help you plan the perfect getaway to any of these amazing
             destinations.
           </Typography>
@@ -313,12 +320,12 @@ export default function TopDestinations({ data }: { data?: TopCountriesType }) {
             <Button
               variant='outline'
               size='lg'
-              className='px-4 lg:px-8 py-4 border-gray-300 hover:border-primary rounded-xl text-gray-700 hover:text-primary transition-all duration-300'
+              className='px-4 lg:px-8 py-4 border-border hover:border-primary rounded-xl text-foreground hover:text-primary transition-all duration-300'
             >
               Talk to Expert
             </Button>
           </div>
-        </div>
+        </div> */}
       </Container>
     </Section>
   )

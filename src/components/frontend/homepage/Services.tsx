@@ -19,7 +19,7 @@ import { useCallback, useEffect, useState } from 'react'
 const ServiceCard = ({ service, index }: { service: ServiceItem; index: number }) => {
   return (
     <div
-      className='group relative bg-white shadow-md hover:shadow-xl rounded-3xl overflow-hidden transition-all hover:-translate-y-2 duration-700'
+      className='group relative bg-card shadow-md hover:shadow-xl rounded-3xl overflow-hidden transition-all hover:-translate-y-2 duration-700'
       style={{ animationDelay: `${index * 100}ms` }}
     >
       {/* Image Container */}
@@ -37,12 +37,12 @@ const ServiceCard = ({ service, index }: { service: ServiceItem; index: number }
       </div>
 
       {/* Content */}
-      <div className='bottom-0 absolute bg-linear-to-t from-gray-800 to-transparent p-5 w-full'>
+      <div className='bottom-0 absolute bg-linear-to-t from-black/90 to-transparent p-5 w-full'>
         <Typography
           href={service.url ?? '#'}
           variant='subtitle1'
           weight='semibold'
-          className='text-gray-100 line-clamp-1 transition-colors'
+          className='text-gray-100 group-hover:text-white line-clamp-1 transition-colors'
         >
           {service.name}
         </Typography>
@@ -83,12 +83,7 @@ export default function Services({ data }: { data?: ServicesType }) {
   if (!data?.services?.length) return null
 
   return (
-    <Section
-      variant={'xl'}
-      className={cn(
-        'relative bg-linear-to-br from-blue-50/50 via-white to-purple-50/30 overflow-hidden'
-      )}
-    >
+    <Section variant={'md'} className={cn('relative overflow-hidden')}>
       <Container className='relative'>
         <Carousel
           setApi={setApi}
@@ -114,13 +109,13 @@ export default function Services({ data }: { data?: ServicesType }) {
           <div className='right-4 -bottom-2 z-10 absolute flex justify-end items-center gap-4'>
             <CarouselPrevious
               className={cn(
-                'static hover:bg-primary border-gray-200 hover:border-primary hover:text-white transition-all translate-x-0 translate-y-0 duration-300',
+                'static hover:bg-primary border-border hover:border-primary hover:text-white transition-all translate-x-0 translate-y-0 duration-300',
                 !canScrollPrev && 'opacity-50 cursor-not-allowed'
               )}
             />
             <CarouselNext
               className={cn(
-                'static hover:bg-primary border-gray-200 hover:border-primary hover:text-white transition-all translate-x-0 translate-y-0 duration-300',
+                'static hover:bg-primary border-border hover:border-primary hover:text-white transition-all translate-x-0 translate-y-0 duration-300',
                 !canScrollNext && 'opacity-50 cursor-not-allowed'
               )}
             />

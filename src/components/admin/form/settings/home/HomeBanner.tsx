@@ -11,7 +11,7 @@ import {
   bannerSectionSchema
 } from '@/lib/validations/schemas/homepageSettings'
 import requests from '@/services/network/http'
-import { SITE_CONFIG } from '@/types/cache-keys'
+import { HOME_CONFIG } from '@/types/cache-keys'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Plus, Trash2 } from 'lucide-react'
 import { Controller, useFieldArray, useForm } from 'react-hook-form'
@@ -73,7 +73,7 @@ const HomeBanner = ({ settingsKey, initialValues, refetch }: TProps) => {
         }
       )
       if (res?.success) {
-        await revalidateTags(SITE_CONFIG)
+        await revalidateTags(HOME_CONFIG)
         toast.success('Settings updated successfully!')
         refetch?.()
       }
@@ -191,6 +191,30 @@ function BannerCard({
       </CardHeader>
       <CardContent>
         <div className='space-y-4'>
+          {/* Background Image */}
+          <Controller
+            control={control}
+            name={`banners.${bannerIndex}.bgImage`}
+            render={({ field }) => (
+              <div className='space-y-2'>
+                <label className='font-medium text-sm'>Banner Image</label>
+                <FilePicker
+                  value={field.value || ''}
+                  onChangeAction={field.onChange}
+                  multiple={false}
+                  maxAllow={1}
+                  size='large'
+                  allowedTypes={['image']}
+                />
+                {errors?.[bannerIndex]?.bgImage && (
+                  <span className='font-medium text-red-500 text-xs'>
+                    {errors[bannerIndex]?.bgImage?.message}
+                  </span>
+                )}
+              </div>
+            )}
+          />
+
           {/* Title */}
           <Controller
             control={control}
@@ -235,30 +259,6 @@ function BannerCard({
                 {...field}
                 value={field.value ?? ''}
               />
-            )}
-          />
-
-          {/* Background Image */}
-          <Controller
-            control={control}
-            name={`banners.${bannerIndex}.bgImage`}
-            render={({ field }) => (
-              <div className='space-y-2'>
-                <label className='font-medium text-sm'>Banner Image</label>
-                <FilePicker
-                  value={field.value || ''}
-                  onChangeAction={field.onChange}
-                  multiple={false}
-                  maxAllow={1}
-                  size='large'
-                  allowedTypes={['image']}
-                />
-                {errors?.[bannerIndex]?.bgImage && (
-                  <span className='font-medium text-red-500 text-xs'>
-                    {errors[bannerIndex]?.bgImage?.message}
-                  </span>
-                )}
-              </div>
             )}
           />
 

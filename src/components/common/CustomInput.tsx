@@ -1,18 +1,26 @@
-import { Checkbox } from '@/components/ui/checkbox'
+'use client'
 import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue
-} from '@/components/ui/select'
 import { Switch } from '@/components/ui/switch'
 import { Textarea } from '@/components/ui/textarea'
 import { cn } from '@/lib/utils'
 import { Eye, EyeOff } from 'lucide-react'
 import { forwardRef, useState } from 'react'
+export type FieldType =
+  | 'text'
+  | 'select'
+  | 'radio'
+  | 'checkbox'
+  | 'switch'
+  | 'textarea'
+  | 'date'
+  | 'password'
+  | 'email'
+  | 'number'
+  | 'tel'
+  | 'phoneNumber'
+  | 'url'
+  | 'tab'
+  | 'range'
 
 type TProps = {
   label?: string
@@ -21,48 +29,24 @@ type TProps = {
   error?: string
   helperText?: string
   required?: boolean
-  type?:
-  | 'text'
-  | 'email'
-  | 'password'
-  | 'number'
-  | 'tel'
-  | 'url'
-  | 'textarea'
-  | 'checkbox'
-  | 'switch'
-  | 'select'
-  | 'file'
-  size?: 'small' | 'middle' | 'large'
+  type?: Exclude<FieldType, 'select' | 'radio' | 'checkbox'>
   rows?: number
-  compact?: boolean
   maxLength?: number
   showCharCount?: boolean
   disabled?: boolean
   className?: string
   labelClassName?: string
   inputClassName?: string
-  value?: string | number | boolean
-  defaultValue?: any
+  value?: string | number
   checked?: boolean
-  options?: { value: string | number; label: string }[]
   onChange?: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void
-  onValueChange?: (value: string) => void
   onCheckedChange?: (checked: boolean) => void
   onBlur?: (e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => void
   onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>) => void
-  // Number input specific props
-  step?: number | string
-  min?: number | string
-  max?: number | string
-  // Prefix/Suffix props
   prefix?: React.ReactNode
   suffix?: React.ReactNode
-  // File input specific props
-  accept?: string
-  multiple?: boolean
-  // Password visibility toggle
-  showPasswordToggle?: boolean
+  onLeftIconClick?: () => void
+  onRightIconClick?: () => void
 }
 
 const CustomInput = forwardRef<HTMLInputElement | HTMLTextAreaElement, TProps>(
@@ -75,8 +59,7 @@ const CustomInput = forwardRef<HTMLInputElement | HTMLTextAreaElement, TProps>(
       helperText,
       required = false,
       type = 'text',
-      size = 'middle',
-      rows = 4,
+      rows = 5,
       maxLength,
       showCharCount = false,
       disabled = false,
@@ -84,118 +67,80 @@ const CustomInput = forwardRef<HTMLInputElement | HTMLTextAreaElement, TProps>(
       labelClassName,
       inputClassName,
       value,
-      defaultValue,
       checked,
-      options = [],
       onChange,
-      onValueChange,
       onCheckedChange,
       onBlur,
       onKeyDown,
-      step,
-      min,
-      max,
       prefix,
       suffix,
-      accept,
-      multiple,
-      showPasswordToggle = false,
+      onLeftIconClick,
+      onRightIconClick,
       ...props
     },
     ref
   ) => {
-    const [showPassword, setShowPassword] = useState(false)
     const isTextarea = type === 'textarea'
-    const isCheckbox = type === 'checkbox'
     const isSwitch = type === 'switch'
-    const isSelect = type === 'select'
     const currentLength = value?.toString().length || 0
+    const [showPassword, setShowPassword] = useState(false)
 
-    // Size variant classes
-    const sizeClasses = {
-      small: 'h-8 px-2 text-sm',
-      middle: 'h-9 px-3 text-sm',
-      large: 'h-12 px-4 text-base'
-    }
+    const isPasswordField = type === 'password'
+    const effectiveType = isPasswordField && showPassword ? 'text' : type
+    const effectiveSuffix =
+      isPasswordField && !suffix ? showPassword ? <EyeOff /> : <Eye /> : suffix
+    const effectiveOnRightIconClick =
+      isPasswordField && !onRightIconClick ? () => setShowPassword(!showPassword) : onRightIconClick
 
-    const textareaSizeClasses = {
-      small: 'px-2 py-1 text-sm',
-      middle: 'px-3 py-2 text-sm',
-      large: 'px-4 py-3 text-base'
-    }
+    const hasPrefix = !!prefix
+    const hasSuffix = !!effectiveSuffix
 
     return (
-      <div className={cn('flex flex-col', { 'gap-2': label || error || helperText }, className)}>
-        {label && !isCheckbox && !isSwitch && (
-          <Label
+      <div
+        className={cn(
+          'space-y-2 [&_label]:max-sm:font-normal [&_label]:max-sm:text-sm max-sm:text-sm',
+          className
+        )}
+      >
+        {label && !isSwitch && (
+          <label
             htmlFor={name}
             className={cn(
-              required && 'after:content-["*"] after:text-red-500 after:ml-1',
+              'block peer-disabled:opacity-70 font-medium text-sm leading-none peer-disabled:cursor-not-allowed',
+              required && 'after:ml-1 after:text-red-500 after:content-["*"]',
               disabled && 'text-gray-400',
               labelClassName
             )}
           >
             {label}
-          </Label>
+          </label>
         )}
 
-        {isCheckbox ? (
-          <div className='flex items-center space-x-2'>
-            <Checkbox
-              id={name}
-              checked={checked}
-              onCheckedChange={onCheckedChange}
-              disabled={disabled}
-              className={inputClassName}
-              {...(props as any)}
-            />
-            <Label
-              htmlFor={name}
-              className={cn(
-                'font-medium text-sm',
-                required && 'after:content-["*"] after:text-red-500 after:ml-1',
-                disabled && 'text-gray-400',
-                labelClassName
-              )}
-            >
-              {label}
-            </Label>
-          </div>
-        ) : isSwitch ? (
-          <div className='flex items-center space-x-2'>
+        {isSwitch ? (
+          <div className='flex items-center gap-2'>
             <Switch
               id={name}
+              name={name}
               checked={checked}
               onCheckedChange={onCheckedChange}
               disabled={disabled}
               className={inputClassName}
-              {...(props as any)}
+              {...props}
             />
-            <Label
-              htmlFor={name}
-              className={cn(
-                'font-medium text-sm',
-                required && 'after:content-["*"] after:text-red-500 after:ml-1',
-                disabled && 'text-gray-400',
-                labelClassName
-              )}
-            >
-              {label}
-            </Label>
+            {label && (
+              <label
+                htmlFor={name}
+                className={cn(
+                  'font-medium text-sm leading-none peer-disabled:opacity-70 peer-disabled:cursor-not-allowed',
+                  required && 'after:ml-1 after:text-red-500 after:content-["*"]',
+                  disabled && 'text-gray-400',
+                  labelClassName
+                )}
+              >
+                {label}
+              </label>
+            )}
           </div>
-        ) : isSelect ? (
-          <Select onValueChange={onValueChange} value={value as string} disabled={disabled}>
-            <SelectTrigger className={cn('w-full', error && 'border-red-500', inputClassName)}>
-              <SelectValue placeholder={placeholder || 'Select an option'} />
-            </SelectTrigger>
-            <SelectContent>
-              {options.map((option) => (
-                <SelectItem key={option.value} value={option.value.toString()}>
-                  {option.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
         ) : isTextarea ? (
           <Textarea
             ref={ref as React.ForwardedRef<HTMLTextAreaElement>}
@@ -205,123 +150,69 @@ const CustomInput = forwardRef<HTMLInputElement | HTMLTextAreaElement, TProps>(
             rows={rows}
             maxLength={maxLength}
             disabled={disabled}
-            value={value}
-            defaultValue={defaultValue}
+            value={value ?? ''}
             onChange={onChange}
             onBlur={onBlur}
             onKeyDown={onKeyDown}
-            className={cn(
-              textareaSizeClasses[size],
-              error && 'border-red-500 focus-visible:ring-red-500',
-              inputClassName
-            )}
-            {...(props as any)}
+            className={cn(error && 'border-red-500 focus-visible:ring-red-500', inputClassName)}
+            {...props}
           />
-        ) : prefix || suffix || (type === 'password' && showPasswordToggle) ? (
-          // Input with prefix/suffix wrapper
-          <div
-            className={cn(
-              'flex items-center bg-background file:bg-transparent disabled:opacity-50 border border-input file:border-0 focus-within:ring-2 focus-within:ring-ring ring-offset-background focus-within:ring-offset-2 file:font-medium file:text-sm disabled:cursor-not-allowed placeholder:',
-              error && 'border-red-500 focus-within:ring-red-500',
-              sizeClasses[size].includes('h-8') && 'h-8',
-              sizeClasses[size].includes('h-10') && 'h-10',
-              sizeClasses[size].includes('h-12') && 'h-12',
-              'rounded-md px-3',
-              disabled && 'opacity-50 cursor-not-allowed'
-            )}
-          >
-            {prefix && (
-              <div
-                className={cn(
-                  'flex items-center mr-2',
-                  size === 'small' && 'text-sm',
-                  size === 'large' && 'text-base'
-                )}
-              >
-                {prefix}
-              </div>
-            )}
-            <Input
-              ref={ref as React.ForwardedRef<HTMLInputElement>}
-              id={name}
-              name={name}
-              type={type === 'password' && showPasswordToggle ? (showPassword ? 'text' : 'password') : type}
-              placeholder={placeholder}
-              maxLength={maxLength}
-              disabled={disabled}
-              value={value}
-              onChange={onChange}
-              onBlur={onBlur}
-              onKeyDown={onKeyDown}
-              step={step}
-              min={min}
-              max={max}
-              accept={accept}
-              multiple={multiple}
-              className={cn(
-                'flex-1 bg-transparent shadow-none p-0 border-0 focus-visible:ring-0 focus-visible:ring-offset-0',
-                // Hide number input arrows/spinners
-                {
-                  '[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none':
-                    type === 'number'
-                },
-                inputClassName
+        ) : (
+          <div className='relative flex items-center gap-4 w-full'>
+            <div className='relative flex-1'>
+              {hasPrefix && (
+                <button
+                  type='button'
+                  onClick={onLeftIconClick}
+                  disabled={!onLeftIconClick}
+                  className={cn(
+                    'top-1/2 left-3 z-10 absolute [&>svg]:size-5 text-gray-400 -translate-y-1/2'
+                  )}
+                >
+                  {prefix}
+                </button>
               )}
-              {...(props as any)}
-            />
-            {(suffix || (type === 'password' && showPasswordToggle)) && (
-              <div
+
+              <Input
+                ref={ref as React.ForwardedRef<HTMLInputElement>}
+                id={name}
+                name={name}
+                type={effectiveType}
+                placeholder={placeholder}
+                maxLength={maxLength}
+                disabled={disabled}
+                value={value ?? ''}
+                onChange={onChange}
+                onBlur={onBlur}
+                onKeyDown={onKeyDown}
                 className={cn(
-                  'flex items-center ml-2',
-                  size === 'small' && 'text-sm',
-                  size === 'large' && 'text-base'
+                  'flex-1 w-full',
+                  error && 'border-primary focus-visible:ring-primary',
+                  hasPrefix && 'pl-10',
+                  hasSuffix && 'pr-10',
+
+                  inputClassName
+                )}
+                {...props}
+              />
+            </div>
+
+            {hasSuffix && (
+              <button
+                type='button'
+                onClick={effectiveOnRightIconClick}
+                disabled={!effectiveOnRightIconClick}
+                className={cn(
+                  'top-1/2 right-3 z-10 absolute [&>svg]:size-5 text-gray-500 -translate-y-1/2 shrink-0',
+                  effectiveOnRightIconClick
+                    ? 'cursor-pointer hover:opacity-90'
+                    : 'cursor-default opacity-70'
                 )}
               >
-                {suffix}
-                {type === 'password' && showPasswordToggle && (
-                  <button
-                    type='button'
-                    onClick={() => setShowPassword(!showPassword)}
-                    className='text-muted-foreground hover:text-foreground transition-colors'
-                    tabIndex={-1}
-                  >
-                    {showPassword ? <EyeOff className='w-4 h-4' /> : <Eye className='w-4 h-4' />}
-                  </button>
-                )}
-              </div>
+                {effectiveSuffix}
+              </button>
             )}
           </div>
-        ) : (
-          // Regular input without prefix/suffix
-          <Input
-            ref={ref as React.ForwardedRef<HTMLInputElement>}
-            id={name}
-            name={name}
-            type={type}
-            placeholder={placeholder}
-            defaultValue={defaultValue}
-            maxLength={maxLength}
-            disabled={disabled}
-            value={value}
-            onChange={onChange}
-            onBlur={onBlur}
-            onKeyDown={onKeyDown}
-            step={step}
-            min={min}
-            max={max}
-            accept={accept}
-            multiple={multiple}
-            className={cn(
-              error && 'border-red-500 focus-visible:ring-red-500',
-              sizeClasses[size],
-              // Hide number input arrows/spinners
-              type === 'number' &&
-              '[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none',
-              inputClassName
-            )}
-            {...(props as any)}
-            size={{ height: 50 }}
-          />
         )}
 
         <div className='flex justify-between items-start'>

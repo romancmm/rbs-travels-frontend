@@ -3,13 +3,27 @@
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useCallback, useMemo } from 'react'
 
+// Matches the backend's (1-indexed) page metadata, consumed directly by
+// `components/common/Pagination` — never recomputed on the frontend.
 export interface PaginationData {
   page: number
   limit: number
-  total: number
-  pages: number
+  totalItems: number
+  totalPages: number
+  currentItems: number
   hasNext: boolean
   hasPrev: boolean
+  nextPage: number | null
+  prevPage: number | null
+  firstPage: number
+  lastPage: number
+}
+
+export interface PaginatedResponse<T> {
+  success: boolean
+  message: string
+  data: { items: T[] }
+  pagination: PaginationData
 }
 
 export interface FilterOptions {
@@ -202,48 +216,5 @@ export function useFilter(defaultLimit: number = 10): UseFilterReturn {
     // URL helpers
     getQueryString,
     updateURL
-  }
-}
-
-// Hook specifically for pagination with server-side pagination data
-export function usePagination(paginationData?: PaginationData, defaultLimit: number = 10) {
-  const { page, limit, setPage, setLimit, nextPage, prevPage, goToFirstPage, goToLastPage } =
-    useFilter(defaultLimit)
-
-  // Enhanced pagination actions using server data
-  const enhancedNextPage = useCallback(() => {
-    if (paginationData?.hasNext) {
-      nextPage()
-    }
-  }, [paginationData?.hasNext, nextPage])
-
-  const enhancedPrevPage = useCallback(() => {
-    if (paginationData?.hasPrev) {
-      prevPage()
-    }
-  }, [paginationData?.hasPrev, prevPage])
-
-  const enhancedGoToLastPage = useCallback(() => {
-    if (paginationData?.pages) {
-      goToLastPage(paginationData.pages)
-    }
-  }, [paginationData?.pages, goToLastPage])
-
-  return {
-    // Current pagination state
-    page,
-    limit,
-    totalPages: paginationData?.pages || 1,
-    total: paginationData?.total || 0,
-    hasNext: paginationData?.hasNext || false,
-    hasPrev: paginationData?.hasPrev || false,
-
-    // Actions
-    setPage,
-    setLimit,
-    nextPage: enhancedNextPage,
-    prevPage: enhancedPrevPage,
-    goToFirstPage,
-    goToLastPage: enhancedGoToLastPage
   }
 }

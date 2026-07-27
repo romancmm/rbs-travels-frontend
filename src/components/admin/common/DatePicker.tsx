@@ -198,7 +198,7 @@ export const DatePicker = forwardRef<HTMLInputElement, DatePickerProps>(
                   onSelect={handleDateSelect}
                   captionLayout='dropdown'
                   disabled={disabled}
-                  initialFocus
+                  autoFocus
                 />
                 {showTime && selectedDate && (
                   <div className='flex items-center gap-2 mt-3 pt-3 border-t'>

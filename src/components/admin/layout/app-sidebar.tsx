@@ -18,23 +18,48 @@ import { NavMain } from './nav-main'
 import { NavUser } from './nav-user'
 import { SiteSwitcher } from './team-switcher'
 
+// A href "matches" the current path if it's an exact hit or a path segment
+// prefix (so `/admin/blogs` matches `/admin/blogs/1` but not `/admin/blogs-x`).
+const hrefMatches = (href: string, pathname: string) =>
+  !!href && (pathname === href || pathname.startsWith(href.endsWith('/') ? href : `${href}/`))
+
+// Sibling hrefs can overlap (e.g. `/admin/settings` vs
+// `/admin/settings/logo-management`), so among all matches only the longest
+// (most specific) one is considered the active entry.
+const findActiveHref = (items: typeof adminNavItems, pathname: string) => {
+  const candidates: string[] = []
+  items.forEach((it) => {
+    if (it.href) candidates.push(it.href)
+    it.children?.forEach((child) => child.href && candidates.push(child.href))
+  })
+
+  return candidates
+    .filter((href) => hrefMatches(href, pathname))
+    .reduce<string | null>((best, href) => (!best || href.length > best.length ? href : best), null)
+}
+
 // Map admin config to NavMain items
 const mapNavItems = (
   items: typeof adminNavItems,
   pathname: string,
   hasPermission?: (resource: string, action?: string) => boolean
 ) => {
+  const activeHref = findActiveHref(items, pathname)
+
   return items
     .filter((it) => {
       if (!it.permission) return true
       return hasPermission ? hasPermission(it.permission.resource, it.permission.action) : false
     })
     .map((it) => {
-      const children = it?.children?.map((child) => ({ title: child.title, url: child.href })) || []
+      const children =
+        it?.children?.map((child) => ({
+          title: child.title,
+          url: child.href,
+          isActive: !!child.href && child.href === activeHref
+        })) || []
 
-      const isActive =
-        (!!it.href && pathname.startsWith(it.href)) ||
-        children.some((c) => pathname.startsWith(c.url))
+      const isActive = (!!it.href && it.href === activeHref) || children.some((c) => c.isActive)
 
       return {
         title: it.title,

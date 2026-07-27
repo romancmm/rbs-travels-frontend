@@ -2,7 +2,7 @@
 
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useEffect } from 'react'
-import { useForm } from 'react-hook-form'
+import { Controller, useForm } from 'react-hook-form'
 import { z } from 'zod'
 
 import CustomInput from '@/components/common/CustomInput'
@@ -29,7 +29,7 @@ interface ArticleCategoryFormProps {
 
 export function ArticleCategoryForm({ initialData, onSuccess, onCancel }: ArticleCategoryFormProps) {
   const {
-    register,
+    control,
     handleSubmit,
     formState: { errors, isSubmitting },
     reset,
@@ -87,12 +87,18 @@ export function ArticleCategoryForm({ initialData, onSuccess, onCancel }: Articl
   return (
     <form onSubmit={handleSubmit(onSubmit)} className='space-y-6'>
       <div className='space-y-4'>
-        <CustomInput
-          type='text'
-          label='Category Name'
-          placeholder='Enter category name'
-          error={errors.name?.message}
-          {...register('name')}
+        <Controller
+          name='name'
+          control={control}
+          render={({ field }) => (
+            <CustomInput
+              type='text'
+              label='Category Name'
+              placeholder='Enter category name'
+              error={errors.name?.message}
+              {...field}
+            />
+          )}
         />
 
         {/* Show preview of auto-generated slug */}

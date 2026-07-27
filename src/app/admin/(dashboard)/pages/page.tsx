@@ -3,9 +3,11 @@
 import { Copy, ExternalLink, Eye, FileText, MoreVertical, Pencil, Trash2 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { Suspense, useState } from 'react'
+import { toast } from 'sonner'
 
 import { PageFormDialog } from '@/components/admin/cms/PageFormDialog'
 import PageHeader from '@/components/common/PageHeader'
+import Pagination from '@/components/common/Pagination'
 import { AddButton } from '@/components/common/PermissionGate'
 import { CMSEmptyState, CMSListSkeleton, CMSStatusBadge } from '@/components/common/cms'
 import { Button } from '@/components/ui/button'
@@ -17,24 +19,33 @@ import {
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
 import useAsync from '@/hooks/useAsync'
-import { useFilter } from '@/hooks/useFilter'
+import type { PaginatedResponse } from '@/hooks/useFilter'
+import { useConfirmationModal } from '@/hooks/useConfirmationModal'
+import { showError } from '@/lib/errMsg'
+import { useSearchFilters } from '@/plugins/filters/useSearchFilters'
 import { pageBuilderService } from '@/services/api/cms.service'
 import { PageLayout } from '@/types/cms'
+import { defaultFilter } from '@/validations/filter-schemas'
 
 function PageList() {
   const router = useRouter()
-  const { page, limit } = useFilter(10)
+  const { queryString } = useSearchFilters(defaultFilter)
   const [isDialogOpen, setIsDialogOpen] = useState(false)
   const [selectedPage, setSelectedPage] = useState<PageLayout | null>(null)
+  const [pageToDelete, setPageToDelete] = useState<PageLayout | null>(null)
 
-  const { data, loading, mutate } = useAsync<{
-    data: {
-      items: PageLayout[]
-      pagination: any
-    }
-  }>(() => {
-    const url = '/admin/pages' + (page ? `?page=${page}` : '') + (limit ? `&limit=${limit}` : '')
-    return url
+  const { data, loading, mutate } = useAsync<PaginatedResponse<PageLayout>>(
+    () => '/admin/pages' + (queryString ? `?${queryString}` : '')
+  )
+
+  const deleteModal = useConfirmationModal({
+    title: 'Delete Page',
+    description: pageToDelete
+      ? `Are you sure you want to delete "${pageToDelete.title}"? This action cannot be undone.`
+      : 'Are you sure you want to delete this page? This action cannot be undone.',
+    confirmText: 'Delete',
+    variant: 'destructive',
+    icon: Trash2
   })
 
   const handleCreate = () => {
@@ -47,15 +58,19 @@ function PageList() {
     router.push(`/admin/pages/${page.slug}`)
   }
 
-  const handleDelete = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this page? This action cannot be undone.')) return
-
-    try {
-      await pageBuilderService.deletePage(id)
-      mutate()
-    } catch (error) {
-      console.error('Failed to delete page:', error)
-    }
+  const handleDelete = (page: PageLayout) => {
+    setPageToDelete(page)
+    deleteModal.openModal(async () => {
+      try {
+        await pageBuilderService.deletePage(page.id)
+        toast.success('Page deleted successfully')
+        mutate()
+        setPageToDelete(null)
+      } catch (error) {
+        showError(error)
+        throw error
+      }
+    })
   }
 
   const handleStatusToggle = async (page: PageLayout) => {
@@ -203,7 +218,7 @@ function PageList() {
                         <DropdownMenuSeparator />
                         <DropdownMenuItem
                           className='text-destructive'
-                          onClick={() => handleDelete(page.id)}
+                          onClick={() => handleDelete(page)}
                         >
                           <Trash2 className='mr-2 w-4 h-4' />
                           Delete
@@ -218,6 +233,9 @@ function PageList() {
         )}
       </div>
 
+      {/* Pagination */}
+      <Pagination data={data?.pagination} limitOptions={[10, 20, 30, 50]} />
+
       {/* Dialogs */}
       <PageFormDialog
         open={isDialogOpen}
@@ -225,6 +243,7 @@ function PageList() {
         page={selectedPage}
         onSuccess={mutate}
       />
+      <deleteModal.ModalComponent />
     </div>
   )
 }

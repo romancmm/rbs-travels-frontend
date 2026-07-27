@@ -9,6 +9,7 @@ import {
   DialogHeader,
   DialogTitle
 } from '@/components/ui/dialog'
+import { cn } from '@/lib/utils'
 import { AlertTriangle, LucideIcon } from 'lucide-react'
 import { useState } from 'react'
 import CustomInput from './CustomInput'
@@ -62,28 +63,23 @@ export default function ConfirmationModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className='gap-0 p-0 sm:max-w-[440px] overflow-hidden'>
-        {/* Icon Header with Gradient Background */}
-        <div
-          className={`flex flex-col items-center justify-center pt-8 pb-6 px-6 ${
-            variant === 'destructive'
-              ? 'bg-linear-to-br from-red-500/10 via-red-500/5 to-background'
-              : 'bg-linear-to-br from-primary/10 via-primary/5 to-background'
-          }`}
-        >
+      <DialogContent className='gap-0 p-0 sm:max-w-md overflow-hidden'>
+        {/* Header */}
+        <div className='flex items-start gap-3.5 p-6 pb-5'>
           <div
-            className={`rounded-full p-4 mb-4 ring-4 ${
+            className={cn(
+              'flex shrink-0 items-center justify-center rounded-full size-10',
               variant === 'destructive'
-                ? 'bg-red-500/15 text-red-500 ring-red-500/10'
-                : 'bg-primary/15 text-primary ring-primary/10'
-            }`}
+                ? 'bg-red-50 text-red-600 dark:bg-red-500/15 dark:text-red-400'
+                : 'bg-primary/10 text-primary'
+            )}
           >
-            <Icon className='w-8 h-8' strokeWidth={2} />
+            <Icon className='size-5' strokeWidth={2} />
           </div>
 
-          <DialogHeader className='space-y-3 text-center'>
-            <DialogTitle className='font-semibold text-xl tracking-tight'>{title}</DialogTitle>
-            <DialogDescription className='max-w-sm text-muted-foreground text-sm leading-relaxed'>
+          <DialogHeader className='space-y-1 pt-0.5 text-left'>
+            <DialogTitle className='font-semibold text-base leading-tight'>{title}</DialogTitle>
+            <DialogDescription className='text-muted-foreground text-sm leading-relaxed'>
               {description}
             </DialogDescription>
           </DialogHeader>
@@ -91,7 +87,7 @@ export default function ConfirmationModal({
 
         {/* Input Section */}
         {showInput && inputConfig && (
-          <div className='bg-muted/30 px-6 py-4'>
+          <div className='px-6 pb-5 pl-13.5'>
             <CustomInput
               name={inputConfig.name}
               label={inputConfig.label}
@@ -105,25 +101,27 @@ export default function ConfirmationModal({
         )}
 
         {/* Action Buttons */}
-        <DialogFooter className='flex flex-row gap-3 bg-background p-6'>
+        <DialogFooter className='flex-row justify-end gap-2 bg-muted/40 px-6 py-4 border-t'>
           <Button
             variant='outline'
+            size='sm'
             onClick={handleClose}
             disabled={isLoading}
-            className='flex-1 h-10'
+            className='min-w-20'
           >
             {cancelText}
           </Button>
           <Button
             variant={variant}
+            size='sm'
             onClick={handleConfirm}
             disabled={isLoading || (showInput && inputConfig?.required && !inputValue.trim())}
-            className='flex-1 h-10 font-medium'
+            className='min-w-20 font-medium'
           >
             {isLoading ? (
               <span className='flex items-center gap-2'>
-                <span className='border-2 border-current border-t-transparent rounded-full w-4 h-4 animate-spin' />
-                Processing...
+                <span className='border-2 border-current border-t-transparent rounded-full size-3.5 animate-spin' />
+                Processing
               </span>
             ) : (
               confirmText

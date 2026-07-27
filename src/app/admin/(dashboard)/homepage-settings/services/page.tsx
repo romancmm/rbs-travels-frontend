@@ -6,7 +6,6 @@ import HomeServicesSection from '@/components/admin/form/settings/home/HomeServi
 import { EmptyState } from '@/components/common/EmptyState'
 import PageHeader from '@/components/common/PageHeader'
 import RenderData from '@/components/common/RenderData'
-import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import useAsync from '@/hooks/useAsync'
 import type { HomepageSettings } from '@/lib/validations/schemas/homepageSettings'
@@ -19,7 +18,7 @@ type SettingsData<T> = {
 
 // Main component
 export default function ServicesConfigPage() {
-  const [edit, setEdit] = useState(false)
+  const [edit, setEdit] = useState(true)
   const settingsKey = 'homepage_settings'
   const { data, mutate, loading } = useAsync<SettingsData<HomepageSettings>>(
     () => `/admin/setting/settings/key/${settingsKey}`,
@@ -28,7 +27,7 @@ export default function ServicesConfigPage() {
   const homeConfig = data?.data?.value ?? undefined
   const onClose = () => {
     mutate()
-    setEdit(false)
+    // setEdit(false)
   }
 
   return (
@@ -36,11 +35,11 @@ export default function ServicesConfigPage() {
       <PageHeader
         title='Services'
         subTitle='Manage the services section displayed on the homepage'
-        extra={
-          <Button variant={edit ? 'destructive' : 'default'} onClick={() => setEdit(!edit)}>
-            {edit ? 'Cancel' : 'Update'}
-          </Button>
-        }
+        // extra={
+        //   <Button variant={edit ? 'destructive' : 'default'} onClick={() => setEdit(!edit)}>
+        //     {edit ? 'Cancel' : 'Update'}
+        //   </Button>
+        // }
       />
 
       {edit ? (

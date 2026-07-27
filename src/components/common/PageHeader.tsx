@@ -17,21 +17,23 @@ export default function PageHeader({
   className = ''
 }: SectionHeaderProps) {
   return (
-    <div className={`flex flex-col gap-2 ${className} mb-6`}>
-      <div className='flex md:flex-row flex-col md:justify-between md:items-center gap-2'>
-        <div className={cn('flex flex-col', { 'gap-2': !subTitle })}>
+    <div className={`flex flex-col gap-3 ${className} mb-6`}>
+      <div className='flex lg:flex-row flex-col lg:justify-between lg:items-center gap-3'>
+        <div className={cn('flex flex-col shrink-0', { 'gap-1': !subTitle })}>
           {title && (
             <Typography variant='h5' weight='bold'>
               {title}
             </Typography>
           )}
           {subTitle && (
-            <Typography variant={'subtitle2'} weight={'normal'} className={cn(' ')}>
+            <Typography variant={'subtitle2'} weight={'normal'}>
               {subTitle}
             </Typography>
           )}
         </div>
-        <div className='flex flex-wrap items-center gap-4'>{extra}</div>
+        {extra && (
+          <div className='flex flex-wrap items-center gap-3 lg:justify-end'>{extra}</div>
+        )}
       </div>
       {children}
     </div>

@@ -1,6 +1,8 @@
 import { fetchOnServer } from '@/action/data'
+import GoogleTranslate from '@/components/common/GoogleTranslate'
 import Footer from '@/components/frontend/layout/footer'
 import Header from '@/components/frontend/layout/header'
+import { LanguageProvider } from '@/components/providers/language-provider'
 import { SiteThemeProvider } from '@/components/providers/site-theme-provider'
 
 export default async function FrontLayout({
@@ -15,10 +17,13 @@ export default async function FrontLayout({
 
   return (
     <SiteThemeProvider>
-      <Header data={mainMenus} />
-      <main className='min-h-125'>{children}</main>
-      <Footer data={footerMenus} />
-      {modal}
+      <LanguageProvider>
+        <GoogleTranslate />
+        <Header data={mainMenus} />
+        <main className='min-h-125'>{children}</main>
+        <Footer data={footerMenus} />
+        {modal}
+      </LanguageProvider>
     </SiteThemeProvider>
   )
 }

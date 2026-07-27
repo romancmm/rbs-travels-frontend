@@ -32,7 +32,7 @@ const CustomImage: React.FC<CustomImageProps> = ({
   })
   const finalSrc =
     src && typeof src === 'string' && src.startsWith('/files')
-      ? process.env.NEXT_PUBLIC_BASE_API + src
+      ? process.env.NEXT_PUBLIC_BASE_URL + src
       : src || fallbackImg
   const imageProps: any = {
     src: finalSrc,

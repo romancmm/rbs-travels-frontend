@@ -314,3 +314,33 @@
 .animate-shimmer {
   animation: shimmer 2s infinite;
 }
+
+/* Google Translate widget: keep its (hidden) select functional but strip
+   every bit of default chrome - we drive it entirely from LanguageSwitcher. */
+.goog-te-banner-frame,
+.skiptranslate > iframe {
+  display: none !important;
+  visibility: hidden !important;
+}
+
+body {
+  top: 0 !important;
+}
+
+#google_translate_element {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+}
+
+.goog-tooltip,
+.goog-tooltip:hover {
+  display: none !important;
+}
+
+.goog-text-highlight {
+  background: none !important;
+  box-shadow: none !important;
+}

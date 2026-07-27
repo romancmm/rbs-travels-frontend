@@ -3,12 +3,14 @@
 import CustomInput from '@/components/common/CustomInput'
 import { CustomSelect } from '@/components/common/CustomSelect'
 import FilePicker from '@/components/common/FilePicker'
+import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { Label } from '@/components/ui/label'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { showError } from '@/lib/errMsg'
 import { CreateArticleSchema, CreateArticleType } from '@/lib/validations/schemas/article'
 import requests from '@/services/network/http'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { Image as ImageIcon, Search, Tag, Text, X } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useEffect } from 'react'
 import { Controller, SubmitHandler, useForm } from 'react-hook-form'
@@ -27,7 +29,7 @@ export default function ArticleForm({ initialData }: TProps) {
     handleSubmit,
     watch,
     setValue,
-    formState: { errors }
+    formState: { errors, isSubmitting }
   } = useForm<CreateArticleType>({
     resolver: zodResolver(CreateArticleSchema),
     mode: 'onChange',
@@ -55,6 +57,7 @@ export default function ArticleForm({ initialData }: TProps) {
   const watchTitle = watch('title')
   const watchTags = watch('tags')
   const watchSeoKeywords = watch('seo.keywords')
+  const watchIsPublished = watch('isPublished')
 
   // Auto-generate slug from title
   useEffect(() => {
@@ -128,143 +131,205 @@ export default function ArticleForm({ initialData }: TProps) {
   }
 
   return (
-    <div className='bg-white p-5 rounded-xl'>
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <div className='items-start gap-8 lg:gap-6 grid grid-cols-1 lg:grid-cols-2'>
-          <div className='gap-5 grid'>
-            <Controller
-              name='title'
-              control={control}
-              render={({ field }) => (
-                <CustomInput
-                  label='Article Title'
-                  type='text'
-                  placeholder='Enter blog title'
-                  value={field.value}
-                  onChange={field.onChange}
-                  error={errors.title?.message}
-                  required
-                />
-              )}
-            />
-
-            {/* <Controller
-              name='slug'
-              control={control}
-              render={({ field }) => (
-                <CustomInput
-                  label='Article Slug'
-                  type='text'
-                  placeholder='blog-post-slug'
-                  value={field.value}
-                  onChange={field.onChange}
-                  error={errors.slug?.message}
-                  required
-                />
-              )}
-            /> */}
-
-            <Controller
-              name='categoryIds'
-              control={control}
-              render={({ field }) => (
-                <>
-                  <CustomSelect
-                    label='Categories'
-                    placeholder='Select Categories'
-                    value={Array.isArray(field.value) ? field.value : []}
-                    url={'/admin/articles/categories'}
-                    options={(data) => {
-                      return (
-                        data?.data?.items?.map((item: any) => ({
-                          value: String(item.id),
-                          label: item.title || item.name,
-                          title: item.title || item.name
-                        })) || []
-                      )
-                    }}
-                    searchMode='server'
-                    onChange={(value) => {
-                      // CustomSelect already handles toggle logic, just update the field
-                      field.onChange(value)
-                    }}
-                    multiple
+    <form onSubmit={handleSubmit(onSubmit)}>
+      <div className='items-start gap-6 grid grid-cols-1 lg:grid-cols-3'>
+        {/* Main column */}
+        <div className='space-y-6 lg:col-span-2'>
+          <Card>
+            <CardHeader>
+              <CardTitle className='flex items-center gap-2'>
+                <Text className='w-4 h-4 text-muted-foreground' />
+                Post Details
+              </CardTitle>
+              <CardDescription>The title, category and short summary of your post.</CardDescription>
+            </CardHeader>
+            <CardContent className='space-y-5'>
+              <Controller
+                name='title'
+                control={control}
+                render={({ field }) => (
+                  <CustomInput
+                    label='Article Title'
+                    type='text'
+                    placeholder='Enter blog title'
+                    value={field.value}
+                    onChange={field.onChange}
+                    error={errors.title?.message}
+                    required
                   />
-                  {errors.categoryIds && (
-                    <span className='font-medium text-red-500 text-xs'>
-                      {errors.categoryIds.message}
-                    </span>
-                  )}
-                </>
-              )}
-            />
+                )}
+              />
 
-            <Controller
-              name='excerpt'
-              control={control}
-              render={({ field }) => (
-                <CustomInput
-                  label='Excerpt'
-                  type='textarea'
-                  placeholder='Brief description of the content'
-                  value={field.value}
-                  onChange={field.onChange}
-                  error={errors.excerpt?.message}
-                  required
-                />
-              )}
-            />
+              <Controller
+                name='categoryIds'
+                control={control}
+                render={({ field }) => (
+                  <>
+                    <CustomSelect
+                      label='Categories'
+                      placeholder='Select Categories'
+                      value={Array.isArray(field.value) ? field.value : []}
+                      url={'/admin/articles/categories'}
+                      options={(data) => {
+                        return (
+                          data?.data?.items?.map((item: any) => ({
+                            value: String(item.id),
+                            label: item.title || item.name,
+                            title: item.title || item.name
+                          })) || []
+                        )
+                      }}
+                      searchMode='server'
+                      onChange={(value) => {
+                        // CustomSelect already handles toggle logic, just update the field
+                        field.onChange(value)
+                      }}
+                      multiple
+                    />
+                    {errors.categoryIds && (
+                      <span className='font-medium text-red-500 text-xs'>
+                        {errors.categoryIds.message}
+                      </span>
+                    )}
+                  </>
+                )}
+              />
 
-            <Controller
-              name='content'
-              control={control}
-              render={({ field }) => (
-                <TextEditor
-                  label='Content'
-                  value={field.value || ''}
-                  onChange={(newContent) => {
-                    field.onChange(newContent)
-                    // Also manually trigger validation
-                    setValue('content', newContent, { shouldValidate: true })
-                  }}
-                  placeholder='Write your content here'
-                  error={errors.content?.message}
-                  required
-                />
-              )}
-            />
+              <Controller
+                name='excerpt'
+                control={control}
+                render={({ field }) => (
+                  <CustomInput
+                    label='Excerpt'
+                    type='textarea'
+                    rows={3}
+                    placeholder='Brief description of the content'
+                    maxLength={500}
+                    showCharCount
+                    helperText='Shown in post listings and search previews'
+                    value={field.value}
+                    onChange={field.onChange}
+                    error={errors.excerpt?.message}
+                    required
+                  />
+                )}
+              />
+            </CardContent>
+          </Card>
 
-            {/* Tags */}
-            <div className='space-y-2'>
+          <Card>
+            <CardHeader>
+              <CardTitle>Content</CardTitle>
+              <CardDescription>Write the full body of the article.</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Controller
+                name='content'
+                control={control}
+                render={({ field }) => (
+                  <TextEditor
+                    value={field.value || ''}
+                    onChange={(newContent) => {
+                      field.onChange(newContent)
+                      // Also manually trigger validation
+                      setValue('content', newContent, { shouldValidate: true })
+                    }}
+                    placeholder='Write your content here'
+                    error={errors.content?.message}
+                    required
+                  />
+                )}
+              />
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle className='flex items-center gap-2'>
+                <Tag className='w-4 h-4 text-muted-foreground' />
+                Tags
+              </CardTitle>
+              <CardDescription>Help readers discover related posts.</CardDescription>
+            </CardHeader>
+            <CardContent className='space-y-3'>
               <CustomInput
-                label='Tags'
                 type='text'
-                placeholder='Type tag and press Enter'
+                placeholder='Type a tag and press Enter'
                 onKeyDown={handleTagInput}
               />
-              <div className='flex flex-wrap gap-2 mt-2'>
-                {watchTags.map((tag, index) => (
-                  <span
-                    key={index}
-                    className='inline-flex items-center gap-1 bg-blue-100 px-2 py-1 rounded-md text-blue-800 text-sm'
-                  >
-                    {tag}
-                    <button
-                      type='button'
-                      onClick={() => removeTag(index)}
-                      className='ml-1 text-blue-600 hover:text-blue-800'
+              {watchTags.length > 0 && (
+                <div className='flex flex-wrap gap-2 bg-muted/50 p-3 rounded-lg'>
+                  {watchTags.map((tag, index) => (
+                    <div
+                      key={index}
+                      className='group flex items-center gap-1 bg-primary/10 hover:bg-primary/20 px-3 py-1.5 rounded-full text-primary text-sm transition-colors'
                     >
-                      ×
-                    </button>
-                  </span>
-                ))}
-              </div>
-            </div>
-          </div>
+                      <span>{tag}</span>
+                      <button
+                        type='button'
+                        onClick={() => removeTag(index)}
+                        className='opacity-60 hover:opacity-100 transition-opacity'
+                      >
+                        <X className='w-3 h-3' />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </div>
 
-          <div className='gap-5 grid'>
-            <div>
-              <Label className='mb-2'>Thumbnail</Label>
+        {/* Sidebar */}
+        <div className='space-y-6 lg:col-span-1'>
+          <Card>
+            <CardHeader>
+              <div className='flex justify-between items-center'>
+                <CardTitle>Publish</CardTitle>
+                <Badge variant={watchIsPublished ? 'default' : 'secondary'}>
+                  {watchIsPublished ? 'Published' : 'Draft'}
+                </Badge>
+              </div>
+            </CardHeader>
+            <CardContent className='space-y-4'>
+              <Controller
+                name='isPublished'
+                control={control}
+                render={({ field }) => (
+                  <CustomInput
+                    type='switch'
+                    name='isPublished'
+                    label={`Article is ${field.value ? 'Published' : 'Draft'}`}
+                    checked={field.value}
+                    onCheckedChange={(checked) => {
+                      field.onChange(checked)
+                      if (checked && !watch('publishedAt')) {
+                        setValue('publishedAt', new Date().toISOString())
+                      }
+                    }}
+                  />
+                )}
+              />
+
+              <div className='flex flex-col gap-2 pt-2 border-t'>
+                <Button type='submit' disabled={isSubmitting}>
+                  {isSubmitting ? 'Saving...' : initialData ? 'Update Post' : 'Publish Post'}
+                </Button>
+                <Button type='button' variant='outline' onClick={() => router.push('/admin/blogs')}>
+                  Cancel
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle className='flex items-center gap-2'>
+                <ImageIcon className='w-4 h-4 text-muted-foreground' />
+                Featured Image
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
               <Controller
                 control={control}
                 name='thumbnail'
@@ -281,10 +346,15 @@ export default function ArticleForm({ initialData }: TProps) {
               {errors.thumbnail && (
                 <span className='font-medium text-red-500 text-xs'>{errors.thumbnail.message}</span>
               )}
-            </div>
+            </CardContent>
+          </Card>
 
-            <div>
-              <Label className='mb-2'>Gallery Images</Label>
+          <Card>
+            <CardHeader>
+              <CardTitle>Gallery Images</CardTitle>
+              <CardDescription>Add up to 10 supporting images.</CardDescription>
+            </CardHeader>
+            <CardContent>
               <Controller
                 control={control}
                 name='gallery'
@@ -298,9 +368,18 @@ export default function ArticleForm({ initialData }: TProps) {
                   />
                 )}
               />
-            </div>
+            </CardContent>
+          </Card>
 
-            <div className='space-y-6 p-6 border rounded-md'>
+          <Card>
+            <CardHeader>
+              <CardTitle className='flex items-center gap-2'>
+                <Search className='w-4 h-4 text-muted-foreground' />
+                SEO
+              </CardTitle>
+              <CardDescription>Control how this post appears in search engines.</CardDescription>
+            </CardHeader>
+            <CardContent className='space-y-4'>
               <Controller
                 name='seo.title'
                 control={control}
@@ -342,78 +421,30 @@ export default function ArticleForm({ initialData }: TProps) {
                   placeholder='Type keyword and press Enter'
                   onKeyDown={handleSeoKeywordInput}
                 />
-                <div className='flex flex-wrap gap-2'>
-                  {watchSeoKeywords.map((keyword, index) => (
-                    <span
-                      key={index}
-                      className='inline-flex items-center gap-1 bg-green-100 px-2 py-1 rounded-md text-green-800 text-sm'
-                    >
-                      {keyword}
-                      <button
-                        type='button'
-                        onClick={() => removeSeoKeyword(index)}
-                        className='ml-1 text-green-600 hover:text-green-800'
+                {watchSeoKeywords.length > 0 && (
+                  <div className='flex flex-wrap gap-2 bg-muted/50 p-3 rounded-lg'>
+                    {watchSeoKeywords.map((keyword, index) => (
+                      <div
+                        key={index}
+                        className='group flex items-center gap-1 bg-primary/10 hover:bg-primary/20 px-3 py-1.5 rounded-full text-primary text-sm transition-colors'
                       >
-                        ×
-                      </button>
-                    </span>
-                  ))}
-                </div>
+                        <span>{keyword}</span>
+                        <button
+                          type='button'
+                          onClick={() => removeSeoKeyword(index)}
+                          className='opacity-60 hover:opacity-100 transition-opacity'
+                        >
+                          <X className='w-3 h-3' />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
-            </div>
-
-            <Controller
-              name='isPublished'
-              control={control}
-              render={({ field }) => (
-                <CustomInput
-                  type='switch'
-                  name='isPublished'
-                  label={`Article is ${field.value ? 'Published' : 'Draft'}`}
-                  checked={field.value}
-                  onCheckedChange={(checked) => {
-                    field.onChange(checked)
-                    if (checked && !watch('publishedAt')) {
-                      setValue('publishedAt', new Date().toISOString())
-                    }
-                  }}
-                />
-              )}
-            />
-
-            {/* <Controller
-              name='publishedAt'
-              control={control}
-              render={({ field }) => (
-                <CustomInput
-                  label='Published Date'
-                  type='datetime-local'
-                  value={field.value ? new Date(field.value).toISOString().slice(0, 16) : ''}
-                  onChange={(e) => {
-                    const date = e.target.value ? new Date(e.target.value).toISOString() : undefined
-                    field.onChange(date)
-                  }}
-                  error={errors.publishedAt?.message}
-                />
-              )}
-            /> */}
-          </div>
+            </CardContent>
+          </Card>
         </div>
-
-        <div className='flex justify-center lg:justify-end gap-4 mt-5'>
-          <Button
-            type='button'
-            variant='outline'
-            onClick={() => router.push('/admin/blogs')}
-            className='lg:w-full max-w-52'
-          >
-            Cancel
-          </Button>
-          <Button type='submit' className='lg:w-full max-w-52'>
-            {initialData ? 'Update' : 'Create'} Article Post
-          </Button>
-        </div>
-      </form>
-    </div>
+      </div>
+    </form>
   )
 }

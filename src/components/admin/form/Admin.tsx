@@ -166,11 +166,12 @@ const AdminForm = ({ initialData, onClose, onSuccess }: AdminFormProps) => {
             render={({ field }) => (
               <CustomInput
                 type='switch'
+                name={field.name}
                 label={`${field.value ? 'Active' : 'Inactive'}`}
                 checked={field.value}
                 onCheckedChange={field.onChange}
+                onBlur={field.onBlur}
                 error={errors.isActive?.message}
-                {...field}
               />
             )}
           />

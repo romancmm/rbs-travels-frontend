@@ -1,51 +1,51 @@
 'use client'
 
-import CustomInput from '@/components/common/CustomInput'
-import { CustomSelect } from '@/components/common/CustomSelect'
-import { AddButton } from '@/components/common/PermissionGate'
+import CustomSelect from '@/components/common/select'
+import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { Calendar } from '@/components/ui/calendar'
+import { Input } from '@/components/ui/input'
 import {
-  Drawer,
-  DrawerClose,
-  DrawerContent,
-  DrawerDescription,
-  DrawerFooter,
-  DrawerHeader,
-  DrawerTitle,
-  DrawerTrigger
-} from '@/components/ui/drawer'
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from '@/components/ui/select'
+import {
+  Sheet,
+  SheetContent,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger
+} from '@/components/ui/sheet'
 import { useIsMobile } from '@/hooks/use-mobile'
 import { debounce } from '@/lib/debounce'
 import { cn } from '@/lib/utils'
-import { format } from 'date-fns'
-import { CalendarIcon, Filter, RotateCcw, Search } from 'lucide-react'
+import { Filter, Plus, RotateCcw, Search } from 'lucide-react'
 import { motion } from 'motion/react'
-import { Suspense, useCallback, useEffect, useMemo, useState } from 'react'
-import { Controller, useForm } from 'react-hook-form'
+import { Suspense, useCallback, useMemo, useState } from 'react'
 
-interface FilterField {
-  type: 'input' | 'select-api' | 'date'
-  name: string
-  label?: string
-  placeholder?: string
-  url?: string
-  multiple?: boolean
-  isMultiStore?: boolean
-  options?: (data: any) => FilterOption[]
-}
+const NON_FILTER_KEYS = new Set(['page', 'limit', 'sortBy', 'sortOrder'])
 
 type FilterOption = { label: string; value: string }
-
 type FilterFormProps = {
   fields: FilterField[]
-  values: Record<string, any>
-  onChange: (val: Record<string, any>) => void
+  values: Record<string, unknown>
+  onChange: (val: Record<string, unknown>) => void
   onReset?: () => void
   extra?: React.ReactNode
-  addButton?: { title?: string; onClick?: () => void; href?: string; resource: string }
+  addButton?: { title?: string; onClick?: () => void; href?: string }
   defaultValues?: FilterOption[]
+}
+
+function countActiveFilters(values: Record<string, unknown>) {
+  return Object.entries(values).filter(([key, val]) => {
+    if (NON_FILTER_KEYS.has(key)) return false
+    if (val === undefined || val === null || val === '') return false
+    if (Array.isArray(val)) return val.length > 0
+    return true
+  }).length
 }
 
 export function FilterForm({
@@ -57,138 +57,105 @@ export function FilterForm({
   addButton,
   defaultValues
 }: FilterFormProps) {
-  const { control, reset, watch } = useForm({
-    defaultValues: values
-  })
-
   const [openDrawer, setOpenDrawer] = useState(false)
-  const [openDatePopovers, setOpenDatePopovers] = useState<Record<string, boolean>>({})
-  const isMobile = useIsMobile(1080)
-
-  // Watch all form values for changes
-  const watchedValues = watch()
+  const [formValues, setFormValues] = useState<Record<string, unknown>>(values)
+  const isMobile = useIsMobile(1280)
+  const activeFilterCount = countActiveFilters(values)
 
   /** ✅ Handlers */
   const updateValue = useMemo(
     () =>
-      debounce((key: string, val: any) => {
-        onChange({ ...values, [key]: val })
-      }, 300),
-    [values, onChange]
+      debounce((key: string, val: unknown) => {
+        const newValues = { ...formValues, [key]: val }
+        setFormValues(newValues)
+        onChange(newValues)
+      }, 100),
+    [formValues, onChange]
   )
 
   const handleReset = useCallback(() => {
-    reset()
+    setFormValues({})
     onReset?.()
-  }, [reset, onReset])
+  }, [onReset])
 
-  const toggleDatePopover = (fieldName: string, isOpen: boolean) => {
-    setOpenDatePopovers((prev) => ({ ...prev, [fieldName]: isOpen }))
-  }
+  /** ✅ Render single field - `stacked` is used inside the mobile drawer
+   *  (full width, labelled); the default is the compact desktop toolbar. */
+  const renderField = (field: FilterField, stacked = false) => {
+    const wrapperClassName = stacked ? 'w-full' : 'w-44 sm:w-48'
+    const label = stacked && (
+      <label className='block mb-1.5 font-medium text-muted-foreground text-xs'>
+        {field.label}
+      </label>
+    )
 
-  /** ✅ Sync form values with props */
-  useEffect(() => {
-    reset(values)
-  }, [values, reset])
-
-  /** ✅ Sync watched values with parent onChange */
-  useEffect(() => {
-    if (JSON.stringify(watchedValues) !== JSON.stringify(values)) {
-      Object.keys(watchedValues).forEach((key) => {
-        if (watchedValues[key] !== values[key]) {
-          updateValue(key, watchedValues[key])
-        }
-      })
-    }
-  }, [watchedValues, values, updateValue])
-
-  /** ✅ Render single field */
-  const renderField = (field: FilterField) => {
     switch (field.type) {
       case 'input':
         return (
-          <div key={field.name}>
-            <Controller
-              name={field.name}
-              control={control}
-              render={({ field: formField }) => (
-                <div className='relative'>
-                  <CustomInput
-                    type='text'
-                    placeholder={field.placeholder}
-                    value={formField.value || ''}
-                    onChange={(e) => formField.onChange(e.target.value)}
-                    // className='pr-8'
-                    suffix={<Search className='size-4 text-gray-400' />}
-                  />
-                </div>
-              )}
-            />
+          <div key={field.name} className={wrapperClassName}>
+            {label}
+            <div className='relative'>
+              <Input
+                placeholder={field.placeholder}
+                value={(formValues[field.name] as string) || ''}
+                onChange={(e) => updateValue(field.name, e.target.value)}
+                className='pr-8'
+              />
+              <Search className='top-1/2 right-2.5 absolute opacity-40 w-4 h-4 -translate-y-1/2' />
+            </div>
           </div>
         )
 
       case 'select-api':
         return (
-          <div key={field.name}>
-            <Controller
-              name={field.name}
-              control={control}
-              render={({ field: formField }) => (
-                <CustomSelect
-                  placeholder={field.placeholder}
-                  url={field.url}
-                  multiple={field.multiple}
-                  value={formField.value}
-                  onChange={formField.onChange}
-                  options={field.options}
-                  defaultValue={defaultValues}
-                  className='bg-white'
-                />
-              )}
+          <div key={field.name} className={cn(wrapperClassName, !stacked && 'sm:min-w-56')}>
+            {label}
+            <CustomSelect
+              className='w-full'
+              placeholder={field.placeholder}
+              value={formValues[field.name] as string | string[] | undefined}
+              onChange={(val: unknown) => updateValue(field.name, val)}
+              url={field.url}
+              options={field.options}
+              defaultValue={defaultValues}
+              searchMode='server'
+              searchParams='search'
+              multiple={field.multiple}
+              maxTagCount={stacked ? undefined : 1}
             />
+          </div>
+        )
+
+      case 'select':
+        return (
+          <div key={field.name} className={wrapperClassName}>
+            {label}
+            <Select
+              value={(formValues[field.name] as string) || undefined}
+              onValueChange={(val) => updateValue(field.name, val)}
+            >
+              <SelectTrigger className='w-full'>
+                <SelectValue placeholder={field.placeholder} />
+              </SelectTrigger>
+              <SelectContent>
+                {field.options.map((option) => (
+                  <SelectItem key={option.value} value={option.value}>
+                    {option.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
         )
 
       case 'date':
         return (
-          <div key={field.name}>
-            <Controller
-              name={field.name}
-              control={control}
-              render={({ field: formField }) => (
-                <Popover
-                  open={openDatePopovers[field.name]}
-                  onOpenChange={(open) => toggleDatePopover(field.name, open)}
-                >
-                  <PopoverTrigger asChild>
-                    <Button
-                      variant='outline'
-                      className={cn(
-                        'justify-start w-full h-10 font-normal text-left',
-                        !formField.value && 'text-muted-foreground'
-                      )}
-                    >
-                      <CalendarIcon className='mr-2 w-4 h-4' />
-                      {formField.value ? (
-                        format(new Date(formField.value), 'PPP')
-                      ) : (
-                        <span>{field.placeholder}</span>
-                      )}
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className='p-0 w-auto' align='start'>
-                    <Calendar
-                      mode='single'
-                      selected={formField.value ? new Date(formField.value) : undefined}
-                      onSelect={(date) => {
-                        formField.onChange(date ? format(date, 'yyyy-MM-dd') : '')
-                        toggleDatePopover(field.name, false)
-                      }}
-                      initialFocus
-                    />
-                  </PopoverContent>
-                </Popover>
-              )}
+          <div key={field.name} className={wrapperClassName}>
+            {label}
+            <Input
+              type='date'
+              placeholder={field.placeholder}
+              value={(formValues[field.name] as string) || ''}
+              onChange={(e) => updateValue(field.name, e.target.value)}
             />
           </div>
         )
@@ -198,110 +165,104 @@ export function FilterForm({
     }
   }
 
-  const isMultiStore = false
+  const resetButton = onReset && (
+    <motion.div
+      initial={{ opacity: 0, x: 20 }}
+      animate={{ opacity: 1, x: 0 }}
+      exit={{ opacity: 0, x: 20 }}
+      transition={{ type: 'spring', duration: 0.6, ease: 'easeInOut' }}
+    >
+      <Button
+        variant='outline'
+        onClick={handleReset}
+        size='sm'
+        className='text-muted-foreground hover:text-foreground'
+      >
+        <RotateCcw className='w-3.5 h-3.5' />
+        Reset
+      </Button>
+    </motion.div>
+  )
 
-  /** ✅ Render fields */
-  const fieldsUI = (
-    <div className='flex flex-row gap-4 w-full'>
-      <div className='flex flex-wrap flex-1 gap-4 w-full *:w-50'>
-        {fields.filter((field) => isMultiStore !== field.isMultiStore).map(renderField)}
-      </div>
-
-      {onReset && (
-        <motion.div
-          initial={{ opacity: 0, x: 40 }}
-          animate={{ opacity: 1, x: 0 }}
-          exit={{ opacity: 0, x: 40 }}
-          transition={{ type: 'spring', duration: 0.6, ease: 'easeInOut' }}
-        >
-          <Button
-            type='button'
-            variant='outline'
-            size={isMobile ? 'sm' : 'default'}
-            onClick={handleReset}
-            title='Reset filters'
-          >
-            <RotateCcw className='w-4 h-4' />
-            <span className='sr-only lg:not-sr-only'>Reset</span>
-          </Button>
-        </motion.div>
-      )}
+  /** ✅ Compact toolbar (desktop, >=1280px) */
+  const compactFieldsUI = (
+    <div className='flex flex-wrap items-center gap-2.5 bg-muted/40 p-2.5 border rounded-xl'>
+      {fields.map((field) => renderField(field))}
+      {resetButton}
     </div>
   )
 
-  /** ✅ Render Add Button */
+  /** ✅ Stacked fields (mobile drawer) */
+  const stackedFieldsUI = (
+    <div className='flex flex-col gap-4'>{fields.map((field) => renderField(field, true))}</div>
+  )
+
+  /** ✅ Add Button */
   const addButtonUI = addButton && (
-    <AddButton
-      resource={addButton.resource}
-      title={addButton.title}
-      href={addButton.href}
-      onClick={addButton.onClick}
+    <Button
       size={isMobile ? 'default' : 'lg'}
-    />
+      onClick={addButton.onClick}
+      asChild={!!addButton.href}
+    >
+      {addButton.href ? (
+        <a href={addButton.href}>
+          <Plus className='mr-2 w-4 h-4' />
+          <span className='sr-only lg:not-sr-only'>{addButton.title ?? 'Add New'}</span>
+        </a>
+      ) : (
+        <>
+          <Plus className='mr-2 w-4 h-4' />
+          <span className='sr-only lg:not-sr-only'>{addButton.title ?? 'Add New'}</span>
+        </>
+      )}
+    </Button>
   )
 
   /** ✅ Final Render */
   return isMobile ? (
     <Suspense>
-      <div className='flex items-center gap-3 w-full'>
-        <Drawer open={openDrawer} onOpenChange={setOpenDrawer}>
-          <DrawerTrigger asChild>
-            <Button variant='outline' size='lg'>
-              <Filter className='w-4 h-4' />
+      <div className='flex items-center gap-2 w-full'>
+        <Sheet open={openDrawer} onOpenChange={setOpenDrawer}>
+          <SheetTrigger asChild>
+            <Button variant='outline' size='lg' className='relative'>
+              <Filter className='mr-2 w-4 h-4' />
               <span className='sr-only lg:not-sr-only'>Filter</span>
+              {activeFilterCount > 0 && (
+                <Badge className='-top-2 -right-2 absolute flex justify-center items-center p-0 rounded-full size-5'>
+                  {activeFilterCount}
+                </Badge>
+              )}
             </Button>
-          </DrawerTrigger>
-          <DrawerContent>
-            <DrawerHeader>
-              <DrawerTitle>Filters</DrawerTitle>
-              <DrawerDescription>Apply filters to refine your search results.</DrawerDescription>
-            </DrawerHeader>
-            <div className='px-4 pb-10'>
-              <div className='space-y-4'>
-                {fields
-                  .filter((field) => isMultiStore !== field.isMultiStore)
-                  .map((field) => (
-                    <div key={field.name} className='w-full'>
-                      {field.label && (
-                        <label className='block mb-2 font-medium text-foreground text-sm'>
-                          {field.label}
-                        </label>
-                      )}
-                      {renderField(field)}
-                    </div>
-                  ))}
-              </div>
+          </SheetTrigger>
+          <SheetContent side='left' className='flex flex-col w-full sm:max-w-sm'>
+            <SheetHeader className='border-b'>
+              <SheetTitle>Filters</SheetTitle>
+            </SheetHeader>
+            <div className='flex-1 px-4 overflow-y-auto'>
+              {stackedFieldsUI}
               {extra && <div className='mt-4'>{extra}</div>}
             </div>
-            <DrawerFooter>
-              <div className='flex gap-3'>
-                {onReset && (
-                  <Button
-                    type='button'
-                    variant='outline'
-                    onClick={handleReset}
-                    className='flex-1 text-destructive hover:text-destructive'
-                  >
-                    <RotateCcw className='w-4 h-4' />
-                    Reset
-                  </Button>
-                )}
-                <DrawerClose asChild>
-                  <Button className='flex-1'>Done</Button>
-                </DrawerClose>
-              </div>
-            </DrawerFooter>
-          </DrawerContent>
-        </Drawer>
+            <SheetFooter className='flex-row border-t'>
+              {onReset && (
+                <Button variant='outline' className='flex-1' onClick={handleReset}>
+                  <RotateCcw className='w-3.5 h-3.5' />
+                  Reset
+                </Button>
+              )}
+              <Button className='flex-1' onClick={() => setOpenDrawer(false)}>
+                Done
+              </Button>
+            </SheetFooter>
+          </SheetContent>
+        </Sheet>
         {addButtonUI}
       </div>
     </Suspense>
   ) : (
     <Suspense>
-      <div className='flex items-center gap-4'>
-        {fieldsUI}
+      <div className='flex flex-wrap items-center gap-3'>
+        {compactFieldsUI}
         {addButtonUI}
-        {extra && <div>{extra}</div>}
       </div>
     </Suspense>
   )

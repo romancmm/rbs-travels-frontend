@@ -1,154 +1,208 @@
 'use client'
 
-import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from 'lucide-react'
-
-import { Button } from '@/components/ui/button'
-import { Label } from '@/components/ui/label'
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue
-} from '@/components/ui/select'
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+  Pagination as PaginationUI
+} from '@/components/ui/pagination'
 
-import type { PaginationData } from '@/hooks/useFilter'
-import { usePagination } from '@/hooks/useFilter'
+import { PaginationData } from '@/hooks/useFilter'
+import { usePaginationRange } from '@/hooks/usePaginationRange'
+import { cn } from '@/lib/utils'
+import { useSearchFilters } from '@/plugins/filters/useSearchFilters'
+import { defaultFilter } from '@/validations/filter-schemas'
+import { useEffect, useRef } from 'react'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select'
 
 interface PaginationProps {
-  paginationData?: PaginationData
-  pageSizeOptions?: number[]
-  className?: string
-  showRowsPerPage?: boolean
-  showPageInfo?: boolean
-  showFirstLastButtons?: boolean
+  data?: PaginationData
+  enableInfiniteScroll?: boolean
+  defaultLimit?: number
+  limitOptions?: number[]
+  variant?: 'default' | 'extended'
+  scrollToId?: string
 }
 
-export function Pagination({
-  paginationData,
-  pageSizeOptions = [10, 20, 30, 40, 50],
-  className = '',
-  showRowsPerPage = true,
-  showPageInfo = true,
-  showFirstLastButtons = true
+export default function Pagination({
+  data,
+  enableInfiniteScroll = false,
+  limitOptions = [10, 20, 50, 100],
+  defaultLimit,
+  variant = 'default',
+  scrollToId
 }: PaginationProps) {
-  const {
-    page,
-    limit,
-    totalPages,
-    total,
-    hasNext,
-    hasPrev,
-    setLimit,
-    nextPage,
-    prevPage,
-    goToFirstPage,
-    goToLastPage
-  } = usePagination(paginationData)
+  const { filters, setFilters } = useSearchFilters(defaultFilter)
 
-  // Don't render if there's no pagination data
-  if (!paginationData) {
-    return null
+  const {
+    page: backendPage = 0,
+    totalPages = 1,
+    totalItems = 0,
+    hasNext = false,
+    hasPrev = false,
+    nextPage: backendNextPage = null,
+    prevPage: backendPrevPage = null,
+    firstPage: backendFirstPage = 0,
+    lastPage: backendLastPage = 0
+  } = data ?? {}
+
+  // Backend pagination is 0-indexed (matches the 0-indexed `page` the API
+  // expects - see useSearchFilters.queryString). The UI stays 1-indexed
+  // (page buttons, "Page X of Y", and the `page` URL param), so convert here.
+  const page = backendPage + 1
+  const firstPage = backendFirstPage + 1
+  const lastPage = backendLastPage + 1
+  const nextPage = backendNextPage != null ? backendNextPage + 1 : null
+  const prevPage = backendPrevPage != null ? backendPrevPage + 1 : null
+
+  // Computed values
+  const pageSize = filters.limit ? Number(filters.limit) : defaultLimit || limitOptions[0]
+
+  const pageRange = usePaginationRange({
+    currentPage: page,
+    totalPages
+  })
+
+  // Validate and compute select value
+  const pageSizeStr = String(pageSize)
+  const validOptions = limitOptions.map(String)
+  const selectValue = validOptions.includes(pageSizeStr) ? pageSizeStr : String(limitOptions[0])
+
+  const observerRef = useRef<HTMLDivElement | null>(null)
+
+  const scrollToTarget = () => {
+    if (scrollToId) {
+      const el = document.getElementById(scrollToId)
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    }
   }
 
+  const handlePageChange = (newPage: number) => {
+    if (newPage < 1 || newPage > totalPages) return
+
+    setFilters({ page: String(newPage), limit: String(pageSize) })
+    scrollToTarget()
+  }
+
+  const handlePageSizeChange = (value: string) => {
+    setFilters({ limit: value, page: '1' })
+    scrollToTarget()
+  }
+
+  // Infinite scroll observer
+  useEffect(() => {
+    if (!enableInfiniteScroll || !hasNext) return
+
+    const ref = observerRef.current
+    if (!ref) return
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry?.isIntersecting && hasNext && nextPage != null) {
+          setFilters({ page: String(nextPage), limit: String(pageSize) })
+          scrollToTarget()
+        }
+      },
+      { threshold: 1 }
+    )
+
+    observer.observe(ref)
+
+    return () => {
+      observer.unobserve(ref)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [hasNext, nextPage, enableInfiniteScroll])
+
+  const startItem = totalItems > 0 ? (page - 1) * pageSize + 1 : 0
+  const endItem = Math.min(page * pageSize, totalItems)
+
+  // Never render pagination controls when there's no data to paginate.
+  if (!data || totalItems === 0) return null
+
   return (
-    <div
-      className={`flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mt-8 ${className}`}
-    >
-      {/* Rows per page */}
-      {showRowsPerPage && (
-        <div className='flex items-center gap-2 order-2 sm:order-1'>
-          <Label
-            htmlFor='pagination-rows-per-page'
-            className='font-medium text-white text-xs sm:text-sm whitespace-nowrap'
-            style={{ fontFamily: 'Manrope' }}
-          >
-            Rows per page
-          </Label>
-          <Select value={`${limit}`} onValueChange={(value) => setLimit(Number(value))}>
-            <SelectTrigger
-              size='sm'
-              className='bg-background border-white/20 w-16 sm:w-20 text-white'
-              id='pagination-rows-per-page'
-            >
-              <SelectValue placeholder={limit} />
-            </SelectTrigger>
-            <SelectContent side='top' className='bg-background border-white/20'>
-              {pageSizeOptions.map((size) => (
-                <SelectItem
-                  key={size}
-                  value={`${size}`}
-                  className='hover:bg-white/10 focus:bg-white/10 text-white'
-                >
-                  {size}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+    <div className='flex flex-wrap justify-between items-center gap-4 py-2 max-w-full'>
+      {variant === 'extended' && (
+        <div className='text-xs md:text-sm whitespace-nowrap'>
+          Showing {startItem}–{endItem} of {totalItems}
         </div>
       )}
-      {/* Page info */}
-      {showPageInfo && (
-        <div className='flex justify-center items-center order-1 sm:order-2 font-medium text-white text-xs sm:text-sm'>
-          <span style={{ fontFamily: 'Manrope' }}>
-            Page {page} of {totalPages}
-          </span>
-          {total > 0 && (
-            <span className='ml-2 text-white/60' style={{ fontFamily: 'Manrope' }}>
-              ({total} total)
-            </span>
-          )}
-        </div>
-      )}
-      {/* Navigation buttons */}
-      <div className='flex justify-center items-center gap-1 sm:gap-2 order-3'>
-        {showFirstLastButtons && (
-          <Button
-            variant='outline'
-            className='sm:flex bg-background hover:bg-white/10 disabled:opacity-50 p-0 border-white/20 w-7 sm:w-8 h-7 sm:h-8 text-white'
-            onClick={goToFirstPage}
-            disabled={!hasPrev}
-          >
-            <span className='sr-only'>Go to first page</span>
-            <ChevronsLeft className='w-3 sm:w-4 h-3 sm:h-4' />
-          </Button>
-        )}
 
-        <Button
-          variant='outline'
-          className='bg-background hover:bg-white/10 disabled:opacity-50 border-white/20 w-7 sm:w-8 h-7 sm:h-8 text-white'
-          size='icon'
-          onClick={prevPage}
-          disabled={!hasPrev}
+      {/* Page Size Selector */}
+      <div className='xl:order-last'>
+        <Select
+          value={selectValue}
+          defaultValue={String(limitOptions[0])}
+          onValueChange={handlePageSizeChange}
         >
-          <span className='sr-only'>Go to previous page</span>
-          <ChevronLeft className='w-3 sm:w-4 h-3 sm:h-4' />
-        </Button>
+          <SelectTrigger className='gap-1 bg-white shadow-gray-200/40 shadow-sm px-3 border focus-visible:border-gray-200 rounded-lg focus-visible:ring-0 w-fit h-9 font-medium text-sm cursor-pointer'>
+            <SelectValue />
+          </SelectTrigger>
 
-        <Button
-          variant='outline'
-          className='bg-background hover:bg-white/10 disabled:opacity-50 border-white/20 w-7 sm:w-8 h-7 sm:h-8 text-white'
-          size='icon'
-          onClick={nextPage}
-          disabled={!hasNext}
-        >
-          <span className='sr-only'>Go to next page</span>
-          <ChevronRight className='w-3 sm:w-4 h-3 sm:h-4' />
-        </Button>
-
-        {showFirstLastButtons && (
-          <Button
-            variant='outline'
-            className='sm:flex bg-background hover:bg-white/10 disabled:opacity-50 border-white/20 w-7 sm:w-8 h-7 sm:h-8 text-white'
-            size='icon'
-            onClick={goToLastPage}
-            disabled={!hasNext}
-          >
-            <span className='sr-only'>Go to last page</span>
-            <ChevronsRight className='w-3 sm:w-4 h-3 sm:h-4' />
-          </Button>
-        )}
+          <SelectContent align='end'>
+            {limitOptions.map((option) => (
+              <SelectItem value={String(option)} key={option}>
+                {option} / page
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
+
+      {totalPages > 1 && (
+        <PaginationUI className='flex flex-1 justify-start sm:justify-center w-full overflow-x-auto'>
+          <PaginationContent className='flex-nowrap gap-1 sm:gap-2'>
+            <PaginationItem>
+              <PaginationPrevious
+                onClick={() => hasPrev && handlePageChange(prevPage ?? firstPage)}
+                className={cn('hover:bg-gray-100 text-sm cursor-pointer', {
+                  'pointer-events-none opacity-50': !hasPrev
+                })}
+                aria-label='Previous Page'
+              />
+            </PaginationItem>
+
+            {pageRange.map((pageNumber, i) => {
+              // Only keep the page right next to the current one visible on small
+              // screens; the rest (first/last/ellipsis) only show from `sm` up.
+              const isNearCurrent = pageNumber !== '...' && Math.abs(Number(pageNumber) - page) <= 1
+
+              return (
+                <PaginationItem key={i} className={cn({ 'hidden md:block': !isNearCurrent })}>
+                  {pageNumber === '...' ? (
+                    <PaginationEllipsis className='border rounded-md text-gray-500' />
+                  ) : (
+                    <PaginationLink
+                      onClick={() => handlePageChange(Number(pageNumber))}
+                      isActive={Number(pageNumber) === page}
+                      className={cn('border border-gray-100 text-sm cursor-pointer', {
+                        'border-gray-200 bg-gray-100': Number(pageNumber) === page
+                      })}
+                    >
+                      {pageNumber}
+                    </PaginationLink>
+                  )}
+                </PaginationItem>
+              )
+            })}
+
+            <PaginationItem>
+              <PaginationNext
+                onClick={() => hasNext && handlePageChange(nextPage ?? lastPage)}
+                className={cn('hover:bg-gray-100 text-sm cursor-pointer', {
+                  'pointer-events-none opacity-50': !hasNext
+                })}
+                aria-label='Next Page'
+              />
+            </PaginationItem>
+          </PaginationContent>
+        </PaginationUI>
+      )}
+
+      {enableInfiniteScroll && <div ref={observerRef} className='h-1' />}
     </div>
   )
 }

@@ -6,27 +6,22 @@ import { CustomTable } from '@/components/admin/common/data-table'
 import AdminForm from '@/components/admin/form/Admin'
 import { adminColumns } from '@/components/admin/table/admins/admin-columns'
 import PageHeader from '@/components/common/PageHeader'
-import { Pagination } from '@/components/common/Pagination'
+import Pagination from '@/components/common/Pagination'
 import { AddButton } from '@/components/common/PermissionGate'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import useAsync from '@/hooks/useAsync'
-import { useFilter } from '@/hooks/useFilter'
+import type { PaginatedResponse } from '@/hooks/useFilter'
 import { AdminUser } from '@/lib/validations/schemas/admin'
+import { useSearchFilters } from '@/plugins/filters/useSearchFilters'
+import { defaultFilter } from '@/validations/filter-schemas'
 
 function AdminList() {
-  const { page, limit } = useFilter(10)
+  const { queryString } = useSearchFilters(defaultFilter)
   const [isDialogOpen, setIsDialogOpen] = useState(false)
 
-  const { data, loading, mutate } = useAsync<{
-    data: {
-      items: AdminUser[]
-      pagination: any
-    }
-  }>(() => {
-    const url =
-      '/admin/user/admins' + (page ? `?page=${page}` : '') + (limit ? `&limit=${limit}` : '')
-    return url
-  })
+  const { data, loading, mutate } = useAsync<PaginatedResponse<AdminUser>>(
+    () => '/admin/user/admins' + (queryString ? `?${queryString}` : '')
+  )
 
   const handleDialogClose = () => {
     setIsDialogOpen(false)
@@ -67,7 +62,7 @@ function AdminList() {
       />
 
       {/* Pagination */}
-      <Pagination paginationData={data?.data?.pagination} pageSizeOptions={[5, 10, 20, 50]} />
+      <Pagination data={data?.pagination} limitOptions={[5, 10, 20, 50]} />
 
       {/* Add New User Dialog */}
       <Dialog open={isDialogOpen} onOpenChange={handleDialogClose}>

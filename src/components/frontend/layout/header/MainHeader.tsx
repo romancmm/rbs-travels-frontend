@@ -9,6 +9,7 @@ import { cn } from '@/lib/utils'
 import { getMenuItemUrl } from '@/types/menu.types'
 import { ChevronDown, Phone } from 'lucide-react'
 import { useRef, useState } from 'react'
+import LanguageSwitcher from './LanguageSwitcher'
 import MobileNav from './MobileNav'
 
 export default function MainHeader({ data }: { data: any }) {
@@ -325,8 +326,16 @@ export default function MainHeader({ data }: { data: any }) {
           </div>
         )}
 
+        {/* Language Switcher (desktop) */}
+        <div className='hidden xl:flex items-center'>
+          <LanguageSwitcher />
+        </div>
+
         {/* Mobile Navigation */}
-        <MobileNav items={data} />
+        <div className='flex xl:hidden items-center gap-2'>
+          <LanguageSwitcher compact />
+          <MobileNav items={data} />
+        </div>
       </div>
     </div>
   )

@@ -5,6 +5,7 @@ import { Suspense, useState } from 'react'
 
 import { MenuFormDialog } from '@/components/admin/cms/MenuFormDialog'
 import PageHeader from '@/components/common/PageHeader'
+import Pagination from '@/components/common/Pagination'
 import { AddButton } from '@/components/common/PermissionGate'
 import { CMSEmptyState, CMSListSkeleton, CMSStatusBadge } from '@/components/common/cms'
 import { Badge } from '@/components/ui/badge'
@@ -17,26 +18,22 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import useAsync from '@/hooks/useAsync'
-import { useFilter } from '@/hooks/useFilter'
+import type { PaginatedResponse } from '@/hooks/useFilter'
+import { useSearchFilters } from '@/plugins/filters/useSearchFilters'
 import { menuService } from '@/services/api/cms.service'
 import { Menu } from '@/types/cms'
+import { defaultFilter } from '@/validations/filter-schemas'
 import { useRouter } from 'next/navigation'
 
 function MenuList() {
-  const { page, limit } = useFilter(10)
+  const { queryString } = useSearchFilters(defaultFilter)
   const [isDialogOpen, setIsDialogOpen] = useState(false)
   const [selectedMenu, setSelectedMenu] = useState<Menu | null>(null)
   const router = useRouter()
 
-  const { data, loading, mutate } = useAsync<{
-    data: {
-      items: Menu[]
-      pagination: any
-    }
-  }>(() => {
-    const url = '/admin/menu' + (page ? `?page=${page}` : '') + (limit ? `&limit=${limit}` : '')
-    return url
-  })
+  const { data, loading, mutate } = useAsync<PaginatedResponse<Menu>>(
+    () => '/admin/menu' + (queryString ? `?${queryString}` : '')
+  )
 
   const handleCreate = () => {
     setSelectedMenu(null)
@@ -190,6 +187,9 @@ function MenuList() {
           </div>
         )}
       </div>
+
+      {/* Pagination */}
+      <Pagination data={data?.pagination} limitOptions={[10, 20, 30, 50]} />
 
       {/* Dialogs */}
       <MenuFormDialog

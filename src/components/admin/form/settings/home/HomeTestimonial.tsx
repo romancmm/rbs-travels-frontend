@@ -255,9 +255,9 @@ const HomeTestimonial = ({ settingsKey, initialValues, refetch }: TProps) => {
                               label='Rating'
                               type='number'
                               placeholder='5'
-                              min={1}
-                              max={5}
-                              step={0.5}
+                              // min={1}
+                              // max={5}
+                              // step={0.5}
                               error={errors.testimonials?.[index]?.rating?.message}
                               {...field}
                               value={field.value ?? 5}
@@ -272,10 +272,11 @@ const HomeTestimonial = ({ settingsKey, initialValues, refetch }: TProps) => {
                               {Array.from({ length: 5 }).map((_, i) => (
                                 <Star
                                   key={i}
-                                  className={`w-4 h-4 ${i < (field.value || 0)
+                                  className={`w-4 h-4 ${
+                                    i < (field.value || 0)
                                       ? 'text-yellow-400 fill-yellow-400'
                                       : 'text-gray-300'
-                                    }`}
+                                  }`}
                                 />
                               ))}
                               <span className='ml-2 text-muted-foreground text-sm'>

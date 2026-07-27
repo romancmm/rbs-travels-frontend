@@ -32,7 +32,7 @@ const Testimonials = ({ className }: TestimonialsProps) => {
 
   if (!testimonialData?.testimonials?.length) {
     return (
-      <Section variant='xl' className={className}>
+      <Section variant='md' className={className}>
         <Container>
           <EmptyState
             title='No Testimonials Available'

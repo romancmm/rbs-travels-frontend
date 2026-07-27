@@ -7,7 +7,6 @@ import { EmptyState } from '@/components/common/EmptyState'
 import PageHeader from '@/components/common/PageHeader'
 import RenderData from '@/components/common/RenderData'
 import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import useAsync from '@/hooks/useAsync'
@@ -58,7 +57,7 @@ const KeyValueList = ({ data }: KeyValueListProps) => {
 
 // Main component
 export default function SiteConfigPage() {
-  const [edit, setEdit] = useState(false)
+  const [edit, setEdit] = useState(true)
   const settingsKey = 'system_site_settings'
   const { data, mutate, loading } = useAsync<SettingsData<SiteSettings>>(
     () => `/admin/setting/settings/key/${settingsKey}`,
@@ -75,13 +74,13 @@ export default function SiteConfigPage() {
       <PageHeader
         title='Site Configuration'
         subTitle='Manage your site settings'
-        extra={
-          siteConfig && (
-            <Button variant={edit ? 'destructive' : 'default'} onClick={() => setEdit(!edit)}>
-              {edit ? 'Cancel' : 'Edit'}
-            </Button>
-          )
-        }
+        // extra={
+        //   siteConfig && (
+        //     <Button variant={edit ? 'destructive' : 'default'} onClick={() => setEdit(!edit)}>
+        //       {edit ? 'Cancel' : 'Edit'}
+        //     </Button>
+        //   )
+        // }
       />
 
       {!siteConfig || edit ? (

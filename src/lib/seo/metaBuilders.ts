@@ -6,14 +6,14 @@ export const buildSiteMetadata = (data: SiteSettings | null): Metadata => {
   const siteTitle = data?.seo?.metaTitle || data?.name || '~ NODE CMS'
   const siteDescription = data?.seo?.metaDescription || data?.shortDescription || ''
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://rbstravelsbd.com'
-  const baseApiUrl = process.env.NEXT_PUBLIC_BASE_API || ''
+  const baseApiUrl = process.env.NEXT_PUBLIC_BASE_URL || ''
 
   // Construct full URLs for images
   const ogImageUrl = data?.seo?.ogImage
     ? `${baseApiUrl}${data.seo.ogImage}`
     : data?.logo?.default
-    ? `${baseApiUrl}${data.logo.default}`
-    : `${baseUrl}/default-og-image.jpg`
+      ? `${baseApiUrl}${data.logo.default}`
+      : `${baseUrl}/default-og-image.jpg`
 
   const faviconUrl = data?.favicon ? data.favicon : `${baseUrl}/favicon.ico`
 
@@ -126,7 +126,7 @@ export const buildPageMetadata = (
 ): Metadata => {
   const baseMetadata = buildSiteMetadata(siteData)
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://example.com'
-  const baseApiUrl = process.env.NEXT_PUBLIC_BASE_API || ''
+  const baseApiUrl = process.env.NEXT_PUBLIC_BASE_URL || ''
 
   const pageTitle = pageData.title
     ? `${pageData.title} | ${siteData?.seo?.metaName || siteData?.name || '~ NODE CMS'}`
@@ -215,7 +215,7 @@ export const buildStructuredData = (data: SiteSettings | null) => {
     description: data.shortDescription,
     url: baseUrl,
     logo: data.logo?.default
-      ? `${process.env.NEXT_PUBLIC_BASE_API || ''}${data.logo.default}`
+      ? `${process.env.NEXT_PUBLIC_BASE_URL || ''}${data.logo.default}`
       : undefined,
     email: data.email,
     telephone: data.phone,

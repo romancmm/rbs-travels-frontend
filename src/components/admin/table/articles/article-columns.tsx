@@ -36,7 +36,7 @@ const ActionsCell = ({ data, mutate }: { data: any; mutate?: () => void }) => {
       inputConfig: undefined,
       onClick: async (data: any) => {
         try {
-          await requests.delete(`/admin/articles/${data?.id}`)
+          await requests.delete(`/admin/articles/posts/${data?.id}`)
           toast.success('Article post deleted successfully')
           mutate?.()
         } catch (error) {

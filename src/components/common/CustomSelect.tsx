@@ -1,7 +1,14 @@
 'use client'
 
 import { Badge } from '@/components/ui/badge'
-import { Combobox, type ComboboxOption } from '@/components/ui/combobox'
+import {
+  Combobox,
+  ComboboxContent,
+  ComboboxEmpty,
+  ComboboxInput,
+  ComboboxItem,
+  ComboboxList
+} from '@/components/ui/combobox'
 import { Input } from '@/components/ui/input'
 import {
   Select,
@@ -15,6 +22,7 @@ import useAsync from '@/hooks/useAsync'
 import { cn } from '@/lib/utils'
 import { ChevronDown, ChevronRight, X } from 'lucide-react'
 import { useCallback, useEffect, useRef, useState } from 'react'
+import { ComboboxOption } from './select'
 
 // Simple debounce utility
 function debounce<T extends (...args: any[]) => any>(func: T, delay: number): T {
@@ -245,6 +253,7 @@ export function CustomSelect({
       label: option.label ?? option.title ?? '',
       disabled: option.disabled || false
     }))
+    const singleValue = Array.isArray(value) ? (value[0] ?? null) : (value ?? null)
 
     return (
       <div className={cn('space-y-2', label && 'space-y-2')}>
@@ -254,16 +263,12 @@ export function CustomSelect({
           </label>
         )}
         <Combobox
-          options={comboboxOptions}
-          value={Array.isArray(value) ? value[0] : value}
-          placeholder={placeholder}
-          onSelect={handleValueChange}
-          onSearch={searchMode === 'server' ? debouncedSearch : setSearchValue}
+          items={comboboxOptions}
+          value={singleValue}
+          onValueChange={(val) => {
+            if (val != null) handleValueChange(val)
+          }}
           disabled={disabled}
-          className={className}
-          loading={loading}
-          emptyText='No options found'
-          searchPlaceholder='Search...'
           open={isOpen}
           onOpenChange={(open: boolean) => {
             setIsOpen(open)
@@ -272,7 +277,38 @@ export function CustomSelect({
               triggerInitialFetch()
             }
           }}
-        />
+        >
+          <ComboboxInput
+            className={className}
+            placeholder={placeholder}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+              const query = e.target.value
+              if (searchMode === 'server') {
+                debouncedSearch(query)
+              } else {
+                setSearchValue(query)
+              }
+            }}
+          />
+          <ComboboxContent>
+            {loading ? (
+              <div className='p-4'>
+                <Skeleton className='w-full h-4' />
+              </div>
+            ) : (
+              <>
+                <ComboboxEmpty className='p-4 text-sm text-center'>No options found</ComboboxEmpty>
+                <ComboboxList>
+                  {(item: ComboboxOption) => (
+                    <ComboboxItem key={item.value} value={item.value} disabled={item.disabled}>
+                      {item.label}
+                    </ComboboxItem>
+                  )}
+                </ComboboxList>
+              </>
+            )}
+          </ComboboxContent>
+        </Combobox>
       </div>
     )
   }

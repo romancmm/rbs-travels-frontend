@@ -36,28 +36,36 @@ const ImageCard = ({ value, name }: { value: string; name: string }) => {
             )}
             {name}
           </span>
-          <span className={cn(
-            'px-2 py-0.5 rounded-full font-medium text-xs',
-            isDark ? 'bg-gray-800 text-white' : isFavicon ? 'bg-amber-100 text-amber-700' : 'bg-blue-100 text-blue-700'
-          )}>
+          <span
+            className={cn(
+              'px-2 py-0.5 rounded-full font-medium text-xs',
+              isDark
+                ? 'bg-gray-800 text-white'
+                : isFavicon
+                  ? 'bg-amber-100 text-amber-700'
+                  : 'bg-blue-100 text-blue-700'
+            )}
+          >
             {isDark ? 'Dark' : isFavicon ? 'Icon' : 'Light'}
           </span>
         </CardTitle>
       </CardHeader>
 
       <CardContent className='relative'>
-        <div className={cn(
-          'relative flex justify-center items-center p-8 rounded-xl transition-all duration-500',
-          'bg-linear-to-br from-muted/50 via-muted/30 to-background',
-          'border-2 border-dashed border-muted-foreground/20',
-          'group-hover:border-primary/40 group-hover:from-primary/5 group-hover:via-primary/10 group-hover:to-primary/5',
-          'shadow-inner group-hover:shadow-primary/10'
-        )}>
+        <div
+          className={cn(
+            'relative flex justify-center items-center p-8 rounded-xl transition-all duration-500',
+            'bg-linear-to-br from-muted/50 via-muted/30 to-background',
+            'border-2 border-dashed border-muted-foreground/20',
+            'group-hover:border-primary/40 group-hover:from-primary/5 group-hover:via-primary/10 group-hover:to-primary/5',
+            'shadow-inner group-hover:shadow-primary/10'
+          )}
+        >
           {/* Floating decorative dots */}
           <div className='top-2 left-2 absolute bg-primary/20 group-hover:bg-primary/40 rounded-full w-2 h-2 transition-colors' />
           <div className='right-2 bottom-2 absolute bg-primary/20 group-hover:bg-primary/40 rounded-full w-2 h-2 transition-colors' />
 
-          <div className='relative w-full max-w-[200px] h-24 group-hover:scale-105 transition-transform duration-500'>
+          <div className='relative w-full max-w-50 h-24 group-hover:scale-105 transition-transform duration-500'>
             <CustomImage src={value} alt={name} fill className='drop-shadow-lg object-contain' />
           </div>
         </div>
@@ -158,38 +166,52 @@ export default function SiteConfigPage() {
               {
                 color: 'bg-blue-500',
                 title: 'Logo variants:',
-                description: 'Upload different logo versions (light, dark, etc.) for optimal display across various themes and backgrounds.'
+                description:
+                  'Upload different logo versions (light, dark, etc.) for optimal display across various themes and backgrounds.'
               },
               {
                 color: 'bg-purple-500',
                 title: 'Favicon:',
-                description: 'Recommended size is 32x32 or 16x16 pixels. Use PNG, ICO, or SVG format for best browser compatibility.'
+                description:
+                  'Recommended size is 32x32 or 16x16 pixels. Use PNG, ICO, or SVG format for best browser compatibility.'
               },
               {
                 color: 'bg-emerald-500',
                 title: 'File formats:',
-                description: 'PNG with transparent background is recommended for logos. JPG, SVG, and WebP are also supported.'
+                description:
+                  'PNG with transparent background is recommended for logos. JPG, SVG, and WebP are also supported.'
               },
               {
                 color: 'bg-amber-500',
                 title: 'Image quality:',
-                description: 'Use high-resolution images to ensure crisp display on retina and high-DPI screens.'
+                description:
+                  'Use high-resolution images to ensure crisp display on retina and high-DPI screens.'
               },
               {
                 color: 'bg-rose-500',
                 title: 'Cache clearing:',
-                description: 'After updating logos, you may need to clear your browser cache or perform a hard refresh (Ctrl+F5) to see changes.'
+                description:
+                  'After updating logos, you may need to clear your browser cache or perform a hard refresh (Ctrl+F5) to see changes.'
               }
             ].map((note, index) => (
-              <li key={index} className='flex items-center gap-3 bg-white/50 hover:bg-white/80 p-3 rounded-lg transition-colors duration-300'>
-                <span className={cn('flex justify-center items-center', note.color, 'mt-0.5 rounded-full w-6 h-6 font-bold text-white text-xs shrink-0')}>{index + 1}</span>
+              <li
+                key={index}
+                className='flex items-center gap-3 bg-white/50 hover:bg-white/80 p-3 rounded-lg transition-colors duration-300'
+              >
+                <span
+                  className={cn(
+                    'flex justify-center items-center',
+                    note.color,
+                    'mt-0.5 rounded-full w-6 h-6 font-bold text-white text-xs shrink-0'
+                  )}
+                >
+                  {index + 1}
+                </span>
                 <span>
                   <strong className='text-foreground'>{note.title}</strong> {note.description}
                 </span>
               </li>
-            )
-            )}
-
+            ))}
           </ul>
         </CardContent>
       </Card>

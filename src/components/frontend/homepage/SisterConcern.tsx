@@ -31,7 +31,7 @@ const SisterConcern = ({ className }: SisterConcernProps) => {
   }
 
   return (
-    <Section variant='xl' className={cn('bg-background', className)}>
+    <Section variant='md' className={cn('bg-muted/30', className)}>
       <Container>
         <div className='flex max-md:flex-col items-center md:gap-12'>
           <SectionHeading

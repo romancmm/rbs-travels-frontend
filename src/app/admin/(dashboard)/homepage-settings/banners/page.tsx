@@ -7,7 +7,6 @@ import CustomImage from '@/components/common/CustomImage'
 import { EmptyState } from '@/components/common/EmptyState'
 import PageHeader from '@/components/common/PageHeader'
 import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import useAsync from '@/hooks/useAsync'
@@ -22,7 +21,7 @@ type SettingsData<T> = {
 
 // Main component
 export default function HomeBannerConfigPage() {
-  const [edit, setEdit] = useState(false)
+  const [edit, setEdit] = useState(true)
   const settingsKey = 'homepage_settings'
   const { data, mutate, loading } = useAsync<SettingsData<HomepageSettings>>(
     () => `/admin/setting/settings/key/${settingsKey}`,
@@ -32,7 +31,7 @@ export default function HomeBannerConfigPage() {
 
   const onClose = () => {
     mutate()
-    setEdit(false)
+    // setEdit(false)
   }
 
   return (
@@ -40,11 +39,11 @@ export default function HomeBannerConfigPage() {
       <PageHeader
         title='Hero Banners / Carousel'
         subTitle='Manage the hero banners displayed on the homepage'
-        extra={
-          <Button variant={edit ? 'destructive' : 'default'} onClick={() => setEdit(!edit)}>
-            {edit ? 'Cancel' : 'Update'}
-          </Button>
-        }
+        // extra={
+        //   <Button variant={edit ? 'destructive' : 'default'} onClick={() => setEdit(!edit)}>
+        //     {edit ? 'Cancel' : 'Update'}
+        //   </Button>
+        // }
       />
 
       {edit ? (

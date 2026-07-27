@@ -34,7 +34,7 @@ const FAQ = ({ className }: FAQProps) => {
   const faqData = data?.data?.value
 
   return (
-    <Section variant='xl' className={className}>
+    <Section variant='md' className={className}>
       <Container>
         {/* Header Section */}
         <div className='mb-12 text-center'>
@@ -99,7 +99,7 @@ const FAQ = ({ className }: FAQProps) => {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 className={cn(
-                  'bg-primary hover:bg-primary/90 px-8 py-3 rounded-full text-white cursor-pointer block mx-auto w-fit',
+                  'block bg-primary hover:bg-primary/90 mx-auto px-8 py-3 rounded-full w-fit text-white cursor-pointer',
                   'font-semibold transition-all duration-300',
                   'shadow-lg hover:shadow-xl hover:shadow-primary/25'
                 )}

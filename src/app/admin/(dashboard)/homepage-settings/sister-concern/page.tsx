@@ -6,7 +6,6 @@ import SisterConcern from '@/components/admin/form/settings/home/SisterConcern'
 import { EmptyState } from '@/components/common/EmptyState'
 import PageHeader from '@/components/common/PageHeader'
 import RenderData from '@/components/common/RenderData'
-import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import useAsync from '@/hooks/useAsync'
 import type { SisterConcernSettings } from '@/lib/validations/schemas/sisterConcernSettings'
@@ -19,7 +18,7 @@ type SettingsData<T> = {
 
 // Main component
 export default function SisterConcernConfigPage() {
-  const [edit, setEdit] = useState(false)
+  const [edit, setEdit] = useState(true)
   const settingsKey = 'home_sister_concern_settings'
   const { data, mutate, loading } = useAsync<SettingsData<SisterConcernSettings>>(
     () => `/admin/setting/settings/key/${settingsKey}`,
@@ -28,7 +27,7 @@ export default function SisterConcernConfigPage() {
   const sisterConcernConfig = data?.data?.value ?? undefined
   const onClose = () => {
     mutate()
-    setEdit(false)
+    // setEdit(false)
   }
 
   return (
@@ -36,11 +35,11 @@ export default function SisterConcernConfigPage() {
       <PageHeader
         title='Sister Concern Companies'
         subTitle='Manage sister concern companies displayed on the homepage'
-        extra={
-          <Button variant={edit ? 'destructive' : 'default'} onClick={() => setEdit(!edit)}>
-            {edit ? 'Cancel' : 'Update'}
-          </Button>
-        }
+        // extra={
+        //   <Button variant={edit ? 'destructive' : 'default'} onClick={() => setEdit(!edit)}>
+        //     {edit ? 'Cancel' : 'Update'}
+        //   </Button>
+        // }
       />
 
       {edit ? (

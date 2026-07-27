@@ -11,7 +11,7 @@ type TProps = {
 
 export default async function DashboardLayout({ children }: TProps) {
   const cookieStore = await cookies()
-  const defaultOpen = cookieStore.get('sidebar_state')?.value === 'true'
+  const defaultOpen = cookieStore.get('sidebar_state')?.value !== 'false'
 
   return (
     <PermissionProvider>

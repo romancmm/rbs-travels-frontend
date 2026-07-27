@@ -207,7 +207,7 @@ transition={{
 
 - Verify API endpoint returns correct image URLs
 - Check if images are accessible via direct URL
-- Ensure `NEXT_PUBLIC_BASE_API` is configured correctly
+- Ensure `NEXT_PUBLIC_BASE_URL` is configured correctly
 
 ### Lightbox not working
 

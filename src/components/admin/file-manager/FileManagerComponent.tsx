@@ -1,11 +1,12 @@
 'use client'
 
-import { Pagination } from '@/components/common/Pagination'
+import Pagination from '@/components/common/Pagination'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { useIsMobile } from '@/hooks/use-mobile'
-import useAsync from '@/hooks/useAsync'
+import useAsync from '@/hooks/useAsync.hook'
 import { useConfirmationModal } from '@/hooks/useConfirmationModal'
+import type { PaginatedResponse } from '@/hooks/useFilter'
 import { useFilter } from '@/hooks/useFilter'
 import { cn } from '@/lib/utils'
 import requests from '@/services/network/http'
@@ -175,14 +176,21 @@ export function FileManagerComponent({
     fileType: 'all',
     path: currentPath,
     page: page.toString(),
-    perPage: limit.toString(),
+    limit: limit.toString(),
     ...(searchQuery && { search: searchQuery })
   }).toString()}`
 
-  const { data, loading, mutate } = useAsync<{
-    items: FileItem[]
-    pagination: any
-  }>(apiPath)
+  const {
+    data,
+    error,
+    loading,
+    execute: mutate
+  } = useAsync<PaginatedResponse<FileItem>>({
+    path: apiPath,
+    token: 'adminToken',
+    immediate: true
+  })
+  console.log('FileManagerComponent data:', apiPath, data, error)
   // Path breadcrumbs
   const pathSegments = (() => {
     if (currentPath === '/') return [{ name: 'Root', path: '/' }]
@@ -203,9 +211,9 @@ export function FileManagerComponent({
 
   // Filtered files based on allowed types
   const filteredFiles = (() => {
-    if (!data?.items) return []
+    if (!data?.data?.items) return []
 
-    return data.items.filter((item) => {
+    return data.data.items.filter((item) => {
       if (item.type === 'folder') return true
       if (allowedTypes.length === 0) return true
 
@@ -497,7 +505,7 @@ export function FileManagerComponent({
       {/* Content Area */}
       <div className='flex flex-1 overflow-y-auto'>
         {/* File Browser */}
-        <div className='flex-1 h-full overflow-y-hidden h-full  overflow-y-scroll'>
+        <div className='flex-1 h-full h-full overflow-y-hidden overflow-y-scroll'>
           {loading ? (
             <div className='flex justify-center items-center h-64'>
               <div className='text-center'>
@@ -540,15 +548,7 @@ export function FileManagerComponent({
           )}
 
           {/* Pagination */}
-          {data && (
-            <Pagination
-              paginationData={data?.pagination}
-              pageSizeOptions={[10, 20, 30, 50]}
-              showRowsPerPage={true}
-              showPageInfo={true}
-              showFirstLastButtons={true}
-            />
-          )}
+          {data && <Pagination data={data.pagination} limitOptions={[10, 20, 30, 50]} />}
         </div>
 
         {/* Details Panel (only in standalone mode) */}

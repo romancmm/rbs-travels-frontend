@@ -6,39 +6,28 @@ import { CustomTable } from '@/components/admin/common/data-table'
 import { ArticleCategoryForm } from '@/components/admin/form/ArticleCategory'
 import { blogCategoryColumns } from '@/components/admin/table/articles/article-categories-columns'
 import PageHeader from '@/components/common/PageHeader'
-import { Pagination } from '@/components/common/Pagination'
-import { AddButton } from '@/components/common/PermissionGate'
+import Pagination from '@/components/common/Pagination'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import useAsync from '@/hooks/useAsync'
-import { useFilter } from '@/hooks/useFilter'
+import type { PaginatedResponse } from '@/hooks/useFilter'
 import { ArticleCategoryType } from '@/lib/validations/schemas/article'
+import { filterConfigs } from '@/plugins/filters/filterConfig'
+import { FilterForm } from '@/plugins/filters/FilterForm'
+import { useSearchFilters } from '@/plugins/filters/useSearchFilters'
+import { defaultFilter } from '@/validations/filter-schemas'
 
 interface ArticleCategory extends ArticleCategoryType {
   id: number
   createdAt: string
 }
 
-interface PaginationMeta {
-  page: number
-  limit: number
-  total: number
-  pages: number
-  hasNext: boolean
-  hasPrev: boolean
-}
-
 function ArticleCategoryList() {
-  const { page, limit } = useFilter(10)
+  const { filters, setFilters, resetFilters, queryString } = useSearchFilters(defaultFilter)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [editingCategory, setEditingCategory] = useState<ArticleCategory | null>(null)
 
-  const { data, loading, mutate } = useAsync<{
-    data: {
-      items: ArticleCategory[]
-      pagination: PaginationMeta
-    }
-  }>(
-    () => 'admin/articles/categories' + (page ? `?page=${page}` : '') + (limit ? `&limit=${limit}` : '')
+  const { data, loading, mutate } = useAsync<PaginatedResponse<ArticleCategory>>(
+    () => 'admin/articles/categories' + (queryString ? `?${queryString}` : '')
   )
 
   // Enhanced mutate function that includes edit functionality
@@ -71,11 +60,13 @@ function ArticleCategoryList() {
         title='Article Categories'
         subTitle='Manage blog categories'
         extra={
-          <div className='flex sm:flex-row flex-col sm:justify-between sm:items-end gap-4 mb-6'>
-            <div className='flex sm:flex-row flex-col sm:items-end gap-4'>
-              <AddButton resource='category' onClick={handleAddNew} />
-            </div>
-          </div>
+          <FilterForm
+            fields={filterConfigs.articleCategories as FilterField[]}
+            values={filters}
+            onChange={setFilters}
+            onReset={queryString ? resetFilters : undefined}
+            addButton={{ title: 'Add Category', onClick: handleAddNew }}
+          />
         }
       />
 
@@ -89,7 +80,7 @@ function ArticleCategoryList() {
       />
 
       {/* Pagination */}
-      <Pagination paginationData={data?.data?.pagination} pageSizeOptions={[5, 10, 20, 50]} />
+      <Pagination data={data?.pagination} limitOptions={[5, 10, 20, 50]} />
 
       {/* Add/Edit Modal */}
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>

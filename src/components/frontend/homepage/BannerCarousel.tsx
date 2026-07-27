@@ -106,7 +106,7 @@ const BannerCarousel = ({ data }: BannerCarouselProps) => {
                   src={banner.bgImage}
                   alt={banner.title || 'Banner image'}
                   fill
-                  priority={index === 0}
+                  preload={index === 0}
                   quality={90}
                   className='object-cover object-center transition-transform duration-1000 ease-out'
                 />
@@ -235,7 +235,7 @@ const BannerCarousel = ({ data }: BannerCarouselProps) => {
         </CarouselNext>
 
         {/* Enhanced slide indicators */}
-        <div className='bottom-8 left-1/2 absolute flex gap-3 -translate-x-1/2'>
+        <div className='bottom-8 lg:bottom-28 left-1/2 absolute flex gap-3 -translate-x-1/2 transition-all duration-500'>
           {data?.map((_, index) => (
             <button
               key={index}
