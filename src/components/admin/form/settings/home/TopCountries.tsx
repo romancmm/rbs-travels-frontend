@@ -12,7 +12,7 @@ import {
   homepageSettingsSchema
 } from '@/lib/validations/schemas/homepageSettings'
 import requests from '@/services/network/http'
-import { SITE_CONFIG } from '@/types/cache-keys'
+import { HOME_CONFIG } from '@/types/cache-keys'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Trash2 } from 'lucide-react'
 import { Controller, useFieldArray, useForm } from 'react-hook-form'
@@ -60,7 +60,7 @@ const TopCountriesSection = ({ settingsKey, initialValues, refetch }: TProps) =>
         }
       )
       if (res?.success) {
-        await revalidateTags(SITE_CONFIG)
+        await revalidateTags(HOME_CONFIG)
         toast.success('Settings updated successfully!')
         refetch?.()
       }

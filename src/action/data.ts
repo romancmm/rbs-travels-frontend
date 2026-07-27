@@ -1,9 +1,11 @@
 'use server'
 import { HomepageSettings } from '@/lib/validations/schemas/homepageSettings'
-import { revalidateTag } from 'next/cache'
+import { HOME_CONFIG, SITE_CONFIG } from '@/types/cache-keys'
+import { updateTag } from 'next/cache'
 import { cookies } from 'next/headers'
 
 const baseURL = process.env.NEXT_PUBLIC_APP_ROOT_API
+const DEFAULT_FETCH_TIMEOUT_MS = 15000
 
 type FetchOnServerParams<T = any> = {
   path: string
@@ -28,10 +30,18 @@ export const fetchOnServer = async <T = any>({
     }
   }
 
+  // Without a timeout, a slow/unreachable backend hangs this fetch
+  // indefinitely - during `next build` that blows past the per-page static
+  // generation watchdog and takes every route down with it, since almost
+  // every page depends on this (via getSiteConfig/getMainNav/getFooterNav).
+  const controller = new AbortController()
+  const timeoutId = setTimeout(() => controller.abort(), DEFAULT_FETCH_TIMEOUT_MS)
+
   try {
     const response = await fetch(baseURL + path, {
       headers: options.headers,
       method: 'GET',
+      signal: controller.signal,
       ...(rev
         ? { cache: 'force-cache', next: { revalidate: rev, ...(tag ? { tags: [tag] } : {}) } }
         : { cache: 'no-store' })
@@ -43,19 +53,33 @@ export const fetchOnServer = async <T = any>({
     } else {
       return { data: null, error: `HTTP ${response.status}` }
     }
-  } catch {
+  } catch (error) {
+    if (controller.signal.aborted) {
+      return {
+        data: null,
+        error: `Request timed out after ${DEFAULT_FETCH_TIMEOUT_MS / 1000} seconds for GET ${path}`
+      }
+    }
     return { data: null, error: 'Network error' }
+  } finally {
+    clearTimeout(timeoutId)
   }
 }
 
 export const revalidateTags = async (tags: string) => {
-  revalidateTag(tags, { expire: 300 })
-  // revalidatePath('/')
-  console.log('tags', tags)
+  // Called from settings forms right after a save - the admin expects to see
+  // their own change immediately, so this needs updateTag's "expire now,
+  // next request blocks for fresh data" semantics, not revalidateTag's
+  // stale-while-revalidate (which would keep serving the old cached value).
+  updateTag(tags)
 }
 
 export const getSiteConfig = async (): Promise<any | null> => {
-  const data = await fetchOnServer({ path: '/settings/system_site_settings', rev: 3600 }) // 1 hour revalidation
+  const data = await fetchOnServer({
+    path: '/settings/system_site_settings',
+    rev: 3600, // 1 hour revalidation
+    tag: SITE_CONFIG
+  })
   if (data.error) {
     return null
   }
@@ -64,7 +88,11 @@ export const getSiteConfig = async (): Promise<any | null> => {
 }
 
 export const getHomepageData = async (): Promise<HomepageSettings | null> => {
-  const data = await fetchOnServer({ path: '/settings/homepage_settings', rev: 3600 }) // 1 hour revalidation
+  const data = await fetchOnServer({
+    path: '/settings/homepage_settings',
+    rev: 3600, // 1 hour revalidation
+    tag: HOME_CONFIG
+  })
   if (data.error) {
     return null
   }

@@ -1,11 +1,6 @@
 'use client'
 
-import {
-  DEFAULT_LANGUAGE,
-  LANGUAGE_COOKIE,
-  getLanguage,
-  isSupportedLanguage
-} from '@/config/languages'
+import { DEFAULT_LANGUAGE, LANGUAGE_COOKIE, getLanguage, isSupportedLanguage } from '@/config/languages'
 import Cookies from 'js-cookie'
 import { useRouter } from 'next/navigation'
 import { ReactNode, createContext, useContext, useEffect, useState } from 'react'
@@ -86,9 +81,5 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
     }
   }
 
-  return (
-    <LanguageContext.Provider value={{ language, setLanguage }}>
-      {children}
-    </LanguageContext.Provider>
-  )
+  return <LanguageContext.Provider value={{ language, setLanguage }}>{children}</LanguageContext.Provider>
 }
