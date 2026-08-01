@@ -1,8 +1,9 @@
 'use client'
 
-import { revalidateTags } from '@/action/data'
 import { AddItemButton } from '@/components/admin/common/AddItemButton'
+import { FormSubmitButton } from '@/components/admin/common/FormSubmitButton'
 import IconPickerModal from '@/components/admin/common/IconPickerModal'
+import { DynamicForm } from '@/components/admin/common/dynamic-form'
 import CustomInput from '@/components/common/CustomInput'
 import FilePicker from '@/components/common/FilePicker'
 import {
@@ -17,17 +18,16 @@ import {
 } from '@/components/ui/alert-dialog'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
-import { showError } from '@/lib/errMsg'
+import { whoWeAreFields } from '@/config/forms/whoWeAre'
+import { useSettingsForm } from '@/hooks/useSettingsForm'
 import {
   type HomepageSettings,
   homepageSettingsSchema
 } from '@/lib/validations/schemas/homepageSettings'
-import requests from '@/services/network/http'
 import { HOME_CONFIG } from '@/types/cache-keys'
-import { zodResolver } from '@hookform/resolvers/zod'
 import { Image as ImageIcon, Sparkles, Trash2 } from 'lucide-react'
-import { useEffect, useRef, useState } from 'react'
-import { Controller, useFieldArray, useForm, useWatch } from 'react-hook-form'
+import { useEffect, useMemo, useRef, useState } from 'react'
+import { Controller, useFieldArray, useWatch } from 'react-hook-form'
 import { toast } from 'sonner'
 
 type TProps = {
@@ -37,14 +37,8 @@ type TProps = {
 }
 
 const WhoWeAreSection = ({ settingsKey, initialValues, refetch }: TProps) => {
-  const {
-    handleSubmit,
-    control,
-    setValue,
-    formState: { errors, isSubmitting }
-  } = useForm({
-    resolver: zodResolver(homepageSettingsSchema),
-    defaultValues: {
+  const values = useMemo(
+    () => ({
       ...initialValues,
       whoWeAre: {
         title: initialValues?.whoWeAre?.title || '',
@@ -53,8 +47,25 @@ const WhoWeAreSection = ({ settingsKey, initialValues, refetch }: TProps) => {
         iconType: initialValues?.whoWeAre?.iconType || 'icon',
         features: initialValues?.whoWeAre?.features || []
       }
-    }
+    }),
+    [initialValues]
+  )
+
+  const form = useSettingsForm<HomepageSettings>({
+    schema: homepageSettingsSchema,
+    settingsKey,
+    values,
+    isEditing: !!initialValues,
+    cacheTag: HOME_CONFIG,
+    refetch
   })
+  const {
+    control,
+    setValue,
+    onSubmit,
+    isEditing,
+    formState: { errors, isSubmitting }
+  } = form
 
   const {
     fields: featuresFields,
@@ -106,73 +117,13 @@ const WhoWeAreSection = ({ settingsKey, initialValues, refetch }: TProps) => {
     prevIconTypeRef.current = iconType
   }, [iconType, featuresFields, setValue])
 
-  const onSubmit = handleSubmit(async (data) => {
-    try {
-      const res = await requests[initialValues ? 'put' : 'post'](
-        `/admin/setting/settings${initialValues ? `/key/${settingsKey}` : ''}`,
-        {
-          key: settingsKey,
-          value: data
-        }
-      )
-      if (res?.success) {
-        await revalidateTags(HOME_CONFIG)
-        toast.success('Settings updated successfully!')
-        refetch?.()
-      }
-    } catch (error) {
-      showError(error)
-    }
-  })
 
   return (
     <form onSubmit={onSubmit} className='space-y-6'>
       <Card>
         <CardContent>
           <div className='space-y-4'>
-            <Controller
-              control={control}
-              name='whoWeAre.title'
-              render={({ field }) => (
-                <CustomInput
-                  label='Title'
-                  placeholder='Enter who we are title'
-                  error={errors.whoWeAre?.title?.message}
-                  {...field}
-                  value={field.value ?? ''}
-                />
-              )}
-            />
-
-            <Controller
-              control={control}
-              name='whoWeAre.subTitle'
-              render={({ field }) => (
-                <CustomInput
-                  label='Sub Title'
-                  placeholder='Enter who we are subtitle'
-                  error={errors.whoWeAre?.subTitle?.message}
-                  {...field}
-                  value={field.value ?? ''}
-                />
-              )}
-            />
-
-            <Controller
-              control={control}
-              name='whoWeAre.desc'
-              render={({ field }) => (
-                <CustomInput
-                  label='Description'
-                  type='textarea'
-                  rows={3}
-                  placeholder='Enter who we are description'
-                  error={errors.whoWeAre?.desc?.message}
-                  {...field}
-                  value={field.value ?? ''}
-                />
-              )}
-            />
+            <DynamicForm form={form} fields={whoWeAreFields} />
 
             {/* Features Section */}
             <div className='space-y-2 lg:col-span-2'>
@@ -300,9 +251,12 @@ const WhoWeAreSection = ({ settingsKey, initialValues, refetch }: TProps) => {
         </CardContent>
       </Card>
 
-      <Button type='submit' size={'lg'}>
-        {isSubmitting ? 'Submitting...' : initialValues ? 'Update Settings' : 'Save Settings'}
-      </Button>
+      <FormSubmitButton
+        size='lg'
+        isSubmitting={isSubmitting}
+        isEditing={isEditing}
+        savingLabel='Submitting...'
+      />
 
       {/* Icon Type Change Alert Dialog */}
       <AlertDialog open={showAlert} onOpenChange={setShowAlert}>

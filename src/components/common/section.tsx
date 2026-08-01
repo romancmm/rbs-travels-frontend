@@ -9,7 +9,7 @@ const sectionVariants = cva('block w-full', {
       xs: 'py-2',
       sm: 'py-4',
       md: 'py-6 md:py-8 lg:py-10',
-      lg: 'py-12 lg:py-14',
+      lg: 'py-6 lg:py-14',
       xl: 'py-14 xl:py-20',
       xxl: 'py-20 xl:py-32'
     },
@@ -35,8 +35,7 @@ const sectionVariants = cva('block w-full', {
 })
 
 export interface SectionProps
-  extends React.HTMLAttributes<HTMLElement>,
-    VariantProps<typeof sectionVariants> {
+  extends React.HTMLAttributes<HTMLElement>, VariantProps<typeof sectionVariants> {
   as?: React.ElementType
 }
 

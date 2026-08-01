@@ -238,7 +238,7 @@ export const buildArticleMetadata = (data: Article): Metadata => ({
     title: data?.title,
     description: data?.excerpt ?? '',
     type: 'article',
-    url: `${process.env.NEXT_PUBLIC_APP_URL}/blogs?slug=${data?.slug}`,
+    url: `${process.env.NEXT_PUBLIC_APP_URL}/articles?slug=${data?.slug}`,
     images: data?.thumbnail ? [{ url: data?.thumbnail }] : []
   }
 })

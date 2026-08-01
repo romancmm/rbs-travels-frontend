@@ -25,14 +25,14 @@ function ArticleList() {
       {/* Header */}
       <PageHeader
         title='Article Posts'
-        subTitle='Manage blog posts and articles'
+        subTitle='Manage articles and blog posts'
         extra={
           <FilterForm
-            fields={filterConfigs.blogs as FilterField[]}
+            fields={filterConfigs.articles as FilterField[]}
             values={filters}
             onChange={setFilters}
             onReset={queryString ? resetFilters : undefined}
-            addButton={{ href: '/admin/blogs/add' }}
+            addButton={{ href: '/admin/articles/add' }}
           />
         }
       />

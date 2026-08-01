@@ -78,7 +78,7 @@ export function SectionCards() {
           </div>
 
           {/* Count */}
-          <div className='w-full h-[26.39px] font-rajdhani font-semibold text-[30px] text-center leading-[39px] tracking-[-1%]'>
+          <div className='w-full h-[26.39px] font-rajdhani font-semibold text-[30px] text-center leading-10 tracking-[-1%]'>
             {card.count}
           </div>
 

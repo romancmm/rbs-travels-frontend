@@ -129,7 +129,7 @@ export const CONTENT_TYPE_CONFIG: Record<ContentType, ContentTypeConfig> = {
  * Get content type from route path
  */
 export function getContentTypeFromPath(path: string): ContentType | null {
-  if (path.startsWith('/page/blogs') || path.startsWith('/article/posts')) return 'post'
+  if (path.startsWith('/page/articles') || path.startsWith('/articles/posts')) return 'post'
   if (path.startsWith('/services')) return 'service'
   if (path.startsWith('/products')) return 'product'
   if (path.startsWith('/packages')) return 'package'

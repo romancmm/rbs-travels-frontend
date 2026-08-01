@@ -6,12 +6,7 @@ type CustomLinkProps = LinkProps & Omit<AnchorHTMLAttributes<HTMLAnchorElement>,
 
 export default function CustomLink({ href, children, className, ...props }: CustomLinkProps) {
   return (
-    <Link
-      href={href}
-      prefetch={false}
-      className={cn(className)}
-      {...props}
-    >
+    <Link href={href} prefetch={false} className={cn(className)} {...props}>
       {children}
     </Link>
   )

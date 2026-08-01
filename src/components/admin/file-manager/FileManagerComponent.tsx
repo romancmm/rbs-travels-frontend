@@ -1,12 +1,10 @@
 'use client'
 
-import Pagination from '@/components/common/Pagination'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { useIsMobile } from '@/hooks/use-mobile'
 import useAsync from '@/hooks/useAsync.hook'
 import { useConfirmationModal } from '@/hooks/useConfirmationModal'
-import type { PaginatedResponse } from '@/hooks/useFilter'
 import { useFilter } from '@/hooks/useFilter'
 import { cn } from '@/lib/utils'
 import requests from '@/services/network/http'
@@ -57,6 +55,41 @@ export interface FileItem {
   children?: FileItem[] // For folders
 }
 
+// Both GET /admin/media and GET /admin/media/search return their body
+// directly (no {success, data, pagination} envelope like the rest of the
+// admin API) - ImageKit gives no real total, so pagination is `hasMore`-driven
+// rather than page-count-driven. The two endpoints' shapes differ slightly
+// (search has no `folders`/`files`/`currentPath`), so only the fields both
+// share (`items`, `hasMore`) are relied on below.
+interface MediaListResponse {
+  items: FileItem[]
+  folders: FileItem[]
+  files: FileItem[]
+  page: number
+  limit: number
+  hasMore: boolean
+  totalEstimate: number
+  currentPath: string
+}
+
+interface MediaSearchResponse {
+  items: FileItem[]
+  page: number
+  limit: number
+  hasMore: boolean
+  totalEstimate: number
+  searchQuery?: string
+  filters: {
+    tags?: string[]
+    fileType?: string
+    path?: string
+    dateFrom?: string
+    dateTo?: string
+  }
+}
+
+type MediaResponse = MediaListResponse | MediaSearchResponse
+
 interface FileManagerComponentProps {
   mode?: 'standalone' | 'modal'
   onFileSelect?: (file: FileItem) => void
@@ -77,7 +110,7 @@ export function FileManagerComponent({
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
-  const { page, limit } = useFilter(50)
+  const { page, limit, nextPage, prevPage } = useFilter(50)
 
   // Base route for route-driven browsing
   const basePath = '/admin/file-manager'
@@ -119,9 +152,16 @@ export function FileManagerComponent({
   })
 
   // Confirmation modal for bulk deletion
+  const selectedFileCount = selectedFiles.filter((file) => file.type === 'file').length
+  const selectedFolderCount = selectedFiles.length - selectedFileCount
+
   const bulkDeleteConfirmModal = useConfirmationModal({
     title: 'Confirm Bulk Deletion',
-    description: `Are you sure you want to delete ${selectedFiles.length} item(s)? This action cannot be undone.`,
+    description:
+      `Are you sure you want to delete ${selectedFileCount} file(s)? This action cannot be undone.` +
+      (selectedFolderCount > 0
+        ? ` (${selectedFolderCount} selected folder(s) will be skipped - bulk delete only supports files; delete folders individually.)`
+        : ''),
     confirmText: 'Delete All',
     cancelText: 'Cancel',
     variant: 'destructive',
@@ -171,26 +211,36 @@ export function FileManagerComponent({
     router.push(fullPath, { scroll: false })
   }
 
-  // Build API path based on current folder
-  const apiPath = `/admin/media?${new URLSearchParams({
-    fileType: 'all',
-    path: currentPath,
-    page: page.toString(),
-    limit: limit.toString(),
-    ...(searchQuery && { search: searchQuery })
-  }).toString()}`
+  // Build API path based on current folder. The media API's `page` is
+  // 0-indexed, while `useFilter`'s `page` is the 1-indexed value shown in the
+  // URL/UI - convert here rather than leaking the 0-index convention upward.
+  const apiPage = Math.max(0, page - 1)
+  const apiPath = searchQuery
+    ? `/admin/media/search?${new URLSearchParams({
+        searchQuery,
+        fileType: 'all',
+        path: currentPath,
+        page: apiPage.toString(),
+        limit: limit.toString()
+      }).toString()}`
+    : `/admin/media?${new URLSearchParams({
+        fileType: 'all',
+        path: currentPath,
+        page: apiPage.toString(),
+        limit: limit.toString()
+      }).toString()}`
 
   const {
     data,
     error,
     loading,
     execute: mutate
-  } = useAsync<PaginatedResponse<FileItem>>({
+  } = useAsync<MediaResponse>({
     path: apiPath,
     token: 'adminToken',
     immediate: true
   })
-  console.log('FileManagerComponent data:', apiPath, data, error)
+
   // Path breadcrumbs
   const pathSegments = (() => {
     if (currentPath === '/') return [{ name: 'Root', path: '/' }]
@@ -211,9 +261,9 @@ export function FileManagerComponent({
 
   // Filtered files based on allowed types
   const filteredFiles = (() => {
-    if (!data?.data?.items) return []
+    if (!data?.items) return []
 
-    return data.data.items.filter((item) => {
+    return data.items.filter((item) => {
       if (item.type === 'folder') return true
       if (allowedTypes.length === 0) return true
 
@@ -243,7 +293,6 @@ export function FileManagerComponent({
 
   // Handle folder navigation
   const handleFolderClick = (folder: FileItem) => {
-    console.log('folder', folder)
     navigateToPath(folder.folderPath)
     setSelectedFile(null)
   }
@@ -276,10 +325,12 @@ export function FileManagerComponent({
   // Handle file/folder delete
   const handleDelete = (file: FileItem) => {
     deleteConfirmModal.openModal(async () => {
-      const id = file.type === 'file' ? file.fileId : file.folderId
+      const id = getItemId(file)
 
       try {
-        await requests.delete(`/admin/media/${id}`)
+        // force=true: our confirmation modal already asked the user, so a
+        // non-empty folder shouldn't get a second "folder has contents" error
+        await requests.delete(`/admin/media/${id}?force=true`)
 
         // Clear selection if deleted file was selected
         if (selectedFile && getItemId(selectedFile) === getItemId(file)) {
@@ -295,11 +346,11 @@ export function FileManagerComponent({
     })
   }
 
-  // Handle bulk delete
+  // Handle bulk delete - the bulk endpoints only operate on files, not folders
   const handleBulkDelete = () => {
     bulkDeleteConfirmModal.openModal(async () => {
       try {
-        const fileIds = selectedFiles.map((file) => getItemId(file))
+        const fileIds = selectedFiles.filter((file) => file.type === 'file').map(getItemId)
 
         await requests.post('/admin/media/bulk/delete', { fileIds })
 
@@ -346,14 +397,15 @@ export function FileManagerComponent({
     setSelectedFiles([])
   }
 
-  // Handle file/folder rename
+  // Handle file/folder rename - the unified /rename endpoint takes `id` as
+  // fileId for files, but a folder *path* (not folderId) for folders
   const handleRename = async (file: FileItem, newName: string) => {
     try {
-      await requests.patch('/api/admin/media/rename', {
-        fileId: file.fileId,
-        currentName: file.name,
-        newName: newName,
-        path: file.filePath,
+      const id = file.type === 'folder' ? file.folderPath : file.fileId
+
+      await requests.put('/admin/media/rename', {
+        id,
+        newName,
         type: file.type
       })
 
@@ -407,7 +459,7 @@ export function FileManagerComponent({
             variant='destructive'
             size='sm'
             onClick={handleBulkDelete}
-            disabled={selectedFiles.length === 0}
+            disabled={selectedFileCount === 0}
             className='h-8'
           >
             <Trash2 className='mr-1 w-4 h-4' />
@@ -547,8 +599,19 @@ export function FileManagerComponent({
             />
           )}
 
-          {/* Pagination */}
-          {data && <Pagination data={data.pagination} limitOptions={[10, 20, 30, 50]} />}
+          {/* Pagination - ImageKit gives no real total, so this is hasMore-driven
+              rather than the numbered page-count control used elsewhere */}
+          {data && (data.hasMore || page > 1) && (
+            <div className='flex justify-center items-center gap-3 py-3'>
+              <Button variant='outline' size='sm' onClick={prevPage} disabled={page <= 1 || loading}>
+                Previous
+              </Button>
+              <span className='text-muted-foreground text-sm'>Page {page}</span>
+              <Button variant='outline' size='sm' onClick={nextPage} disabled={!data.hasMore || loading}>
+                Next
+              </Button>
+            </div>
+          )}
         </div>
 
         {/* Details Panel (only in standalone mode) */}

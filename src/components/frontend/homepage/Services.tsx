@@ -1,25 +1,21 @@
 'use client'
 
+import CarouselWrapper from '@/components/common/carousel-wrapper'
 import { Container } from '@/components/common/container'
 import CustomImage from '@/components/common/CustomImage'
 import { Section } from '@/components/common/section'
 import { Typography } from '@/components/common/typography'
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-  type CarouselApi
-} from '@/components/ui/carousel'
+import { Button } from '@/components/ui/button'
+import type { CarouselApi } from '@/components/ui/carousel'
 import { cn } from '@/lib/utils'
 import { ServicesType, type ServiceItem } from '@/lib/validations/schemas/homepageSettings'
-import { useCallback, useEffect, useState } from 'react'
+import { ArrowLeft, ArrowRight } from 'lucide-react'
+import { useState } from 'react'
 
 const ServiceCard = ({ service, index }: { service: ServiceItem; index: number }) => {
   return (
     <div
-      className='group relative bg-card shadow-md hover:shadow-xl rounded-3xl overflow-hidden transition-all hover:-translate-y-2 duration-700'
+      className='group relative bg-card shadow-md hover:shadow-xl rounded-lg overflow-hidden transition-all hover:-translate-y-2 duration-700'
       style={{ animationDelay: `${index * 100}ms` }}
     >
       {/* Image Container */}
@@ -27,8 +23,8 @@ const ServiceCard = ({ service, index }: { service: ServiceItem; index: number }
         <CustomImage
           src={service.image || ''}
           alt={service.name || 'Service'}
-          width={400}
-          height={300}
+          fill
+          sizes='(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw'
           className='w-full h-full object-cover group-hover:scale-105 transition-transform duration-700'
         />
 
@@ -37,16 +33,20 @@ const ServiceCard = ({ service, index }: { service: ServiceItem; index: number }
       </div>
 
       {/* Content */}
-      <div className='bottom-0 absolute bg-linear-to-t from-black/90 to-transparent p-5 w-full'>
+      <div className='bottom-0 absolute space-y-2 bg-linear-to-t from-black/90 to-transparent p-5 w-full'>
         <Typography
           href={service.url ?? '#'}
-          variant='subtitle1'
-          weight='semibold'
+          variant='h4'
+          weight='bold'
           className='text-gray-100 group-hover:text-white line-clamp-1 transition-colors'
         >
           {service.name}
         </Typography>
-        <Typography variant='body2' className='text-gray-300 line-clamp-2 leading-relaxed'>
+        <Typography
+          variant='body1'
+          weight='medium'
+          className='text-gray-300 line-clamp-2 leading-relaxed'
+        >
           {service.description}
         </Typography>
       </div>
@@ -55,72 +55,65 @@ const ServiceCard = ({ service, index }: { service: ServiceItem; index: number }
 }
 
 export default function Services({ data }: { data?: ServicesType }) {
-  const [api, setApi] = useState<CarouselApi>()
-  const [canScrollPrev, setCanScrollPrev] = useState(false)
-  const [canScrollNext, setCanScrollNext] = useState(false)
+  // CarouselWrapper owns the embla instance internally - this mirrors it back
+  // up so the prev/next buttons anchored bottom-right can drive the same
+  // carousel instead of duplicating carousel plumbing.
+  const [carouselState, setCarouselState] = useState<{
+    api: CarouselApi
+    current: number
+    count: number
+  }>()
 
-  const onSelect = useCallback((emblaApi: CarouselApi) => {
-    if (!emblaApi) return
-
-    setCanScrollPrev(emblaApi.canScrollPrev())
-    setCanScrollNext(emblaApi.canScrollNext())
-  }, [])
-
-  useEffect(() => {
-    if (!api) return
-
-    onSelect(api)
-
-    api.on('reInit', onSelect)
-    api.on('select', onSelect)
-
-    return () => {
-      api?.off('select', onSelect)
-      api?.off('reInit', onSelect)
-    }
-  }, [api, onSelect])
+  const api = carouselState?.api
+  const canScrollPrev = !!api?.canScrollPrev()
+  const canScrollNext = !!api?.canScrollNext()
 
   if (!data?.services?.length) return null
 
   return (
     <Section variant={'md'} className={cn('relative overflow-hidden')}>
       <Container className='relative'>
-        <Carousel
-          setApi={setApi}
-          className='w-full'
-          opts={{
-            align: 'start',
-            loop: true,
-            // skipSnaps: false,
-            // dragFree: true,
-            // containScroll: 'trimSnaps',
-            slidesToScroll: 'auto'
-          }}
-          // plugins={[autoplayPlugin, classNamesPlugin]}
+        <CarouselWrapper
+          loop
+          showArrows={false}
+          showDots={false}
+          itemsPerView={{ default: 1, sm: 1.75 }}
+          contentClassName='pt-6 pb-10'
+          onApiChange={setCarouselState}
         >
-          <CarouselContent className='-ml-6 pt-6 pb-10'>
-            {data?.services.map((service, index) => (
-              <CarouselItem key={index} className='pl-6 basis-1/1 sm:basis-1/2'>
-                <ServiceCard service={service} index={index} />
-              </CarouselItem>
-            ))}
-          </CarouselContent>
+          {data.services.map((service, index) => (
+            <ServiceCard key={index} service={service} index={index} />
+          ))}
+        </CarouselWrapper>
 
-          <div className='right-4 -bottom-2 z-10 absolute flex justify-end items-center gap-4'>
-            <CarouselPrevious
-              className={cn(
-                'static hover:bg-primary border-border hover:border-primary hover:text-white transition-all translate-x-0 translate-y-0 duration-300',
-                !canScrollPrev && 'opacity-50 cursor-not-allowed'
-              )}
-            />
-            <CarouselNext
-              className={cn(
-                'static hover:bg-primary border-border hover:border-primary hover:text-white transition-all translate-x-0 translate-y-0 duration-300',
-                !canScrollNext && 'opacity-50 cursor-not-allowed'
-              )}
-            />
-          </div>
-        </Carousel>
+        <div className='-bottom-2 z-10 absolute inset-e-4 flex justify-end items-center gap-4'>
+          <Button
+            type='button'
+            variant='outline'
+            size='icon'
+            onClick={() => api?.scrollPrev()}
+            disabled={!canScrollPrev}
+            className={cn(
+              'hover:bg-primary border-border hover:border-primary hover:text-white transition-all duration-300',
+              !canScrollPrev && 'opacity-50 cursor-not-allowed'
+            )}
+          >
+            <ArrowLeft className='rtl:rotate-180' />
+          </Button>
+          <Button
+            type='button'
+            variant='outline'
+            size='icon'
+            onClick={() => api?.scrollNext()}
+            disabled={!canScrollNext}
+            className={cn(
+              'hover:bg-primary border-border hover:border-primary hover:text-white transition-all duration-300',
+              !canScrollNext && 'opacity-50 cursor-not-allowed'
+            )}
+          >
+            <ArrowRight className='rtl:rotate-180' />
+          </Button>
+        </div>
       </Container>
     </Section>
   )

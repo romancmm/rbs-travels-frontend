@@ -16,7 +16,7 @@ const customerFilter = [
 export const filterConfigs = {
   default: [...defaultFilter],
   customer: customerFilter,
-  blogs: [
+  articles: [
     ...defaultFilter,
     {
       type: 'select-api',

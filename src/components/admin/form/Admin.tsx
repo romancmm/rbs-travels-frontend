@@ -5,11 +5,12 @@ import { CustomSelect } from '@/components/common/CustomSelect'
 import FilePicker from '@/components/common/FilePicker'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
+import { useEntityForm } from '@/hooks/useEntityForm'
 import { showError } from '@/lib/errMsg'
-import { AdminUser, CreateAdminType } from '@/lib/validations/schemas/admin'
+import { AdminUser, CreateAdminSchema, CreateAdminType } from '@/lib/validations/schemas/admin'
 import requests from '@/services/network/http'
-import { useState } from 'react'
-import { Controller, SubmitHandler, useForm } from 'react-hook-form'
+import { useMemo, useState } from 'react'
+import { Controller, SubmitHandler } from 'react-hook-form'
 import { toast } from 'sonner'
 
 interface AdminFormProps {
@@ -21,13 +22,8 @@ interface AdminFormProps {
 const AdminForm = ({ initialData, onClose, onSuccess }: AdminFormProps) => {
   const [loading, setLoading] = useState(false)
 
-  const {
-    control,
-    handleSubmit,
-    formState: { errors }
-  } = useForm<CreateAdminType>({
-    mode: 'onSubmit',
-    defaultValues: {
+  const values = useMemo(
+    () => ({
       avatar: initialData?.avatar || '',
       name: initialData?.name || '',
       email: initialData?.email || '',
@@ -35,7 +31,18 @@ const AdminForm = ({ initialData, onClose, onSuccess }: AdminFormProps) => {
       isActive: initialData?.isActive ?? true,
       isAdmin: initialData?.isAdmin ?? true,
       roleIds: initialData?.roles?.map((role) => role.id) || [] // Map roles to roleIds array
-    }
+    }),
+    [initialData]
+  )
+
+  const {
+    control,
+    handleSubmit,
+    formState: { errors }
+  } = useEntityForm<CreateAdminType>({
+    schema: CreateAdminSchema,
+    mode: 'onSubmit',
+    values
   })
 
   const onSubmit: SubmitHandler<CreateAdminType> = async (data: CreateAdminType) => {

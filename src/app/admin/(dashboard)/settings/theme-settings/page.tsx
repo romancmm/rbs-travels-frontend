@@ -2,10 +2,8 @@
 
 import { useMemo, useState } from 'react'
 
-import ThemeSettings, {
-  DEFAULT_THEME_COLOR_MAP,
-  THEME_COLOR_SECTIONS
-} from '@/components/admin/form/settings/ThemeSettings'
+import ThemeSettings from '@/components/admin/form/settings/ThemeSettings'
+import { DEFAULT_THEME_COLOR_MAP, THEME_COLOR_SECTIONS } from '@/config/forms/themeSettings'
 import { EmptyState } from '@/components/common/EmptyState'
 import PageHeader from '@/components/common/PageHeader'
 import { Badge } from '@/components/ui/badge'

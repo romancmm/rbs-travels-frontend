@@ -34,14 +34,14 @@ export const navItems: NavItem[] = [
     permission: { resource: 'post', action: 'index' },
     children: [
       {
-        title: 'Categories',
-        href: '/admin/blogs/categories',
-        permission: { resource: 'post', action: 'index' }
+        title: 'Manage Articles',
+        href: '/admin/articles',
+        permission: { resource: 'category', action: 'index' }
       },
       {
-        title: 'Posts',
-        href: '/admin/blogs',
-        permission: { resource: 'category', action: 'index' }
+        title: 'All Categories',
+        href: '/admin/articles/categories',
+        permission: { resource: 'post', action: 'index' }
       }
     ]
   },

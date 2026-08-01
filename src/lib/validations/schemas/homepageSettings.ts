@@ -16,6 +16,12 @@ const facilityItemSchema = z.object({
   icon: optionalString
 })
 
+// About's facilities carry a color code the icon renders in; WhoWeAre's features
+// (which otherwise share the same shape) don't expose this, so it's a separate schema.
+const aboutFacilityItemSchema = facilityItemSchema.extend({
+  color: optionalString
+})
+
 const statItemSchema = z.object({
   value: optionalString,
   label: optionalString,
@@ -81,7 +87,7 @@ const aboutSectionSchema = titleSubtitleDescSchema.extend({
   image: optionalString,
   experience: experienceSchema.optional(),
   facilitiesIconType: z.enum(['icon', 'image']).default('icon'),
-  facilities: z.array(facilityItemSchema).default([]),
+  facilities: z.array(aboutFacilityItemSchema).default([]),
   statsIconType: z.enum(['icon', 'image']).default('icon'),
   stats: z.array(statItemSchema).default([])
 })
@@ -141,6 +147,7 @@ export type TestimonialsType = z.infer<typeof testimonialsSectionSchema>
 
 // Utility types for form components
 export type FacilityItem = z.infer<typeof facilityItemSchema>
+export type AboutFacilityItem = z.infer<typeof aboutFacilityItemSchema>
 export type StatItem = z.infer<typeof statItemSchema>
 export type DestinationItem = z.infer<typeof destinationItemSchema>
 export type ServiceItem = z.infer<typeof serviceItemSchema>

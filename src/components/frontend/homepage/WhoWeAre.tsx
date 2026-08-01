@@ -1,8 +1,8 @@
 import { Container } from '@/components/common/container'
 import { EmptyState } from '@/components/common/EmptyState'
 import { Section } from '@/components/common/section'
+import { SectionHeading } from '@/components/common/SectionHeading'
 import { WhoWeAreLoadingSkeleton } from '@/components/common/Skeleton'
-import { Typography } from '@/components/common/typography'
 import { cn } from '@/lib/utils'
 import { WhoWeAreType } from '@/lib/validations/schemas/homepageSettings'
 import FeatureCard from './FeatureCard'
@@ -31,43 +31,13 @@ const WhoWeAre = ({ data, isLoading = false, className }: WhoWeAreProps) => {
           />
         ) : (
           <>
-            {/* Enhanced Header Section */}
-            <div
-              className='slide-in-from-top-4 mx-auto mb-12 max-w-2xl text-center animate-in duration-700 fade-in'
-              role='banner'
-              aria-labelledby='whoweare-title'
-            >
-              {data.subTitle && (
-                <Typography
-                  variant='subtitle1'
-                  className='font-semibold text-primary uppercase tracking-wide animate-in duration-500 fade-in'
-                  style={{ animationDelay: '100ms', animationFillMode: 'both' }}
-                >
-                  {data.subTitle}
-                </Typography>
-              )}
-              {data.title && (
-                <Typography
-                  id='whoweare-title'
-                  variant='h2'
-                  as='h2'
-                  weight='bold'
-                  className='slide-in-from-top-6 text-foreground animate-in duration-600 fade-in'
-                  style={{ animationDelay: '200ms', animationFillMode: 'both' }}
-                >
-                  {data.title}
-                </Typography>
-              )}
-              {data.desc && (
-                <Typography
-                  variant='body1'
-                  className='mx-auto mt-4 max-w-3xl text-muted-foreground animate-in duration-700 fade-in'
-                  style={{ animationDelay: '300ms', animationFillMode: 'both' }}
-                >
-                  {data.desc}
-                </Typography>
-              )}
-            </div>
+            <SectionHeading
+              subtitle={data.subTitle}
+              title={data.title ?? ''}
+              description={data.desc}
+              alignment='center'
+              className='mx-auto max-w-2xl'
+            />
 
             {/* Enhanced Features Grid */}
             <div

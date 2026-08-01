@@ -21,13 +21,13 @@ export default function ArticleDetailsPage() {
     <div className='space-y-6'>
       <PageHeader
         title='Post Details'
-        subTitle='View and manage blog post details'
+        subTitle='View and manage article details'
         extra={
           <CustomLink
-            href={`/admin/blogs/${data.data.id}/edit`}
+            href={`/admin/articles/${data.data.id}/edit`}
             className={cn('hover:text-background', buttonVariants())}
           >
-            <Pencil /> Edit Post
+            <Pencil /> Edit Article
           </CustomLink>
         }
       />

@@ -2,6 +2,7 @@
 
 import { Container } from '@/components/common/container'
 import { Section } from '@/components/common/section'
+import { SectionHeading } from '@/components/common/SectionHeading'
 import { Typography } from '@/components/common/typography'
 import {
   Accordion,
@@ -36,29 +37,11 @@ const FAQ = ({ className }: FAQProps) => {
   return (
     <Section variant='md' className={className}>
       <Container>
-        {/* Header Section */}
-        <div className='mb-12 text-center'>
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-          >
-            <Typography
-              variant='subtitle1'
-              className='mb-3 font-semibold text-primary uppercase tracking-wide'
-            >
-              {faqData?.subtitle}
-            </Typography>
-            <Typography
-              variant='h2'
-              as='h2'
-              weight='bold'
-              className='text-foreground leading-tight'
-            >
-              {faqData?.title}
-            </Typography>
-          </motion.div>
-        </div>
+        <SectionHeading
+          subtitle={faqData?.subtitle}
+          title={faqData?.title ?? ''}
+          alignment='center'
+        />
 
         {/* FAQ Grid */}
         <div className='mx-auto pb-10 max-w-4xl'>

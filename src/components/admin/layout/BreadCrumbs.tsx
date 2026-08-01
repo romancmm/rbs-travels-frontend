@@ -1,9 +1,26 @@
 'use client'
 
-import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbSeparator } from '@/components/ui/breadcrumb'
+import CustomLink from '@/components/common/CustomLink'
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator
+} from '@/components/ui/breadcrumb'
 import { useSidebar } from '@/components/ui/sidebar'
+import { Home, type LucideIcon } from 'lucide-react'
 import { usePathname } from 'next/navigation'
 import React from 'react'
+
+const DASHBOARD_HREF = '/admin/dashboard'
+
+interface CrumbData {
+  href: string
+  label: string
+  icon?: LucideIcon
+}
 
 export default function BreadCrumbs() {
   const pathname = usePathname()
@@ -12,42 +29,60 @@ export default function BreadCrumbs() {
   // Split pathname and filter out empty strings
   const pathSegments = pathname.split('/').filter(Boolean)
 
-  // Create breadcrumb items with proper titles and hrefs
-  const breadcrumbItems = pathSegments.map((segment, index) => {
-    // Build href from segments up to current index
-    const href = '/' + pathSegments.slice(0, index + 1).join('/')
+  // Drop the leading "admin" segment — the Dashboard crumb below stands in for it
+  const restSegments = pathSegments.slice(1)
+  const isDashboardRoot =
+    restSegments.length === 0 ||
+    (restSegments.length === 1 && restSegments[0].toLowerCase() === 'dashboard')
 
-    // Remove dashes and convert to title case
-    const label = segment
-      .replace(/-/g, ' ')
-      .split(' ')
-      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-      .join(' ')
+  const restItems: CrumbData[] = isDashboardRoot
+    ? []
+    : restSegments.map((segment, index) => {
+        const href = '/admin/' + restSegments.slice(0, index + 1).join('/')
 
-    return { href, label }
-  })
+        // Remove dashes and convert to title case
+        const label = segment
+          .replace(/-/g, ' ')
+          .split(' ')
+          .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+          .join(' ')
+
+        return { href, label }
+      })
+
+  const breadcrumbItems: CrumbData[] = [
+    { href: DASHBOARD_HREF, label: 'Dashboard', icon: Home },
+    ...restItems
+  ]
 
   return (
     <div className='flex flex-col items-start gap-0'>
-      {/* <Typography variant={'body2'} weight={'medium'}>
-        {breadcrumbItems[breadcrumbItems.length - 1]?.label || 'Dashboard'}
-      </Typography> */}
       <Breadcrumb>
         <BreadcrumbList>
-          {breadcrumbItems.map((item, index) => (
-            <React.Fragment key={index}>
-              <BreadcrumbItem className="hidden md:block">
-                <BreadcrumbLink href={item.href}>
-                  {item.label}
-                </BreadcrumbLink>
-              </BreadcrumbItem>
-              {breadcrumbItems?.length - 1 !== index && <BreadcrumbSeparator className="hidden md:block" />}
-            </React.Fragment>
-          ))}
+          {breadcrumbItems.map((item, index) => {
+            const isLast = index === breadcrumbItems.length - 1
 
-          {/* <BreadcrumbItem>
-            <BreadcrumbPage>Data Fetching</BreadcrumbPage>
-          </BreadcrumbItem> */}
+            return (
+              <React.Fragment key={item.href}>
+                <BreadcrumbItem className='hidden md:block'>
+                  {isLast ? (
+                    <BreadcrumbPage className='flex items-center gap-1.5'>
+                      {item.icon && <item.icon className='size-3.5' />}
+                      {item.label}
+                    </BreadcrumbPage>
+                  ) : (
+                    <BreadcrumbLink asChild className='flex items-center gap-1.5'>
+                      <CustomLink href={item.href}>
+                        {item.icon && <item.icon className='size-3.5' />}
+                        {item.label}
+                      </CustomLink>
+                    </BreadcrumbLink>
+                  )}
+                </BreadcrumbItem>
+                {!isLast && <BreadcrumbSeparator className='hidden md:block' />}
+              </React.Fragment>
+            )
+          })}
         </BreadcrumbList>
       </Breadcrumb>
     </div>

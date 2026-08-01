@@ -1,9 +1,8 @@
 'use client'
 
-import { zodResolver } from '@hookform/resolvers/zod'
 import { CheckCircle2, Circle } from 'lucide-react'
-import { useState } from 'react'
-import { Controller, useForm } from 'react-hook-form'
+import { useEffect, useMemo, useState } from 'react'
+import { Controller } from 'react-hook-form'
 import { toast } from 'sonner'
 
 import { revalidateTags } from '@/action/data'
@@ -14,6 +13,7 @@ import { Checkbox } from '@/components/ui/checkbox'
 import { Label } from '@/components/ui/label'
 import { Separator } from '@/components/ui/separator'
 import useAsync from '@/hooks/useAsync'
+import { useEntityForm } from '@/hooks/useEntityForm'
 import { showError } from '@/lib/errMsg'
 import { Permission, Role, roleSchema } from '@/lib/validations/schemas/role'
 import requests from '@/services/network/http'
@@ -50,18 +50,29 @@ export default function RoleForm({ initialData, onClose, onSuccess }: RoleFormPr
     data: { items: Permission[] }
   }>(() => '/admin/permission')
 
+  const values = useMemo(
+    () => ({
+      name: initialData?.name || '',
+      description: initialData?.description || '',
+      permissions: initialData?.permissions || []
+    }),
+    [initialData]
+  )
+
   const {
     control,
     handleSubmit,
     formState: { errors, isSubmitting }
-  } = useForm<RoleFormData>({
-    resolver: zodResolver(roleSchema) as any,
-    defaultValues: {
-      name: initialData?.name || '',
-      description: initialData?.description || '',
-      permissions: initialData?.permissions || []
-    }
+  } = useEntityForm<RoleFormData>({
+    schema: roleSchema as any,
+    values
   })
+
+  // selectedPermissions is plain component state (not react-hook-form-controlled),
+  // so it needs its own sync whenever initialData arrives/changes.
+  useEffect(() => {
+    setSelectedPermissions(initialData?.permissions?.map((p) => p.id) || [])
+  }, [initialData])
 
   const availablePermissions = permissionsData?.data?.items || []
 

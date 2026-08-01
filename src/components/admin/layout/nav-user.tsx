@@ -123,7 +123,7 @@ export function NavUser({
                 <span className='font-medium truncate'>{user.name}</span>
                 <span className='text-xs truncate'>{user.email}</span>
               </div>
-              <ChevronsUpDown className='ml-auto size-4' />
+              <ChevronsUpDown className='ml-auto size-4 text-sidebar-foreground/50' />
             </SidebarMenuButton>
           </DropdownMenuTrigger>
           <DropdownMenuContent

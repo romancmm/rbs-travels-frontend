@@ -11,7 +11,7 @@ interface FooterBottomProps {
 
 export function FooterBottom({ siteConfig }: FooterBottomProps) {
   return (
-    <div className='bg-slate-900/50 backdrop-blur-sm py-6 border-slate-700 border-t'>
+    <div className='bg-secondary backdrop-blur-sm py-6 border-slate-700 border-t'>
       <Container>
         <div className='flex md:flex-row flex-col justify-between items-center gap-4 text-slate-400 text-sm'>
           <Typography variant='body2' className='md:text-left text-center'>

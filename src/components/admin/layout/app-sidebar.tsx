@@ -7,7 +7,8 @@ import {
   SidebarContent,
   SidebarFooter,
   SidebarHeader,
-  SidebarRail
+  SidebarRail,
+  SidebarSeparator
 } from '@/components/ui/sidebar'
 import { navItems as adminNavItems } from '@/config/adminNavItems'
 import Cookies from 'js-cookie'
@@ -19,7 +20,7 @@ import { NavUser } from './nav-user'
 import { SiteSwitcher } from './team-switcher'
 
 // A href "matches" the current path if it's an exact hit or a path segment
-// prefix (so `/admin/blogs` matches `/admin/blogs/1` but not `/admin/blogs-x`).
+// prefix (so `/admin/articles` matches `/admin/articles/1` but not `/admin/articles-x`).
 const hrefMatches = (href: string, pathname: string) =>
   !!href && (pathname === href || pathname.startsWith(href.endsWith('/') ? href : `${href}/`))
 
@@ -118,6 +119,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           fallbackIcon={GalleryVerticalEnd}
         />
       </SidebarHeader>
+      <SidebarSeparator />
       <SidebarContent>
         {loading ? (
           <div className='flex justify-center items-center p-4'>
@@ -128,6 +130,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         )}
         {/* <NavProjects projects={data.projects} /> */}
       </SidebarContent>
+      <SidebarSeparator />
       <SidebarFooter>
         <NavUser user={data.user} />
       </SidebarFooter>

@@ -6,6 +6,7 @@ import useEmblaCarousel, {
 } from "embla-carousel-react"
 import { ArrowLeft, ArrowRight } from "lucide-react"
 
+import { useIsRtl } from "@/hooks/useIsRtl"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 
@@ -51,10 +52,16 @@ function Carousel({
   children,
   ...props
 }: React.ComponentProps<"div"> & CarouselProps) {
+  // Embla doesn't read the page's `dir` attribute itself - without an explicit
+  // `direction`, it keeps computing drag/scroll/index math as if the track
+  // were LTR even though the surrounding flex layout has visually mirrored,
+  // which is what makes arrows/drag/autoplay feel backwards under RTL.
+  const isRtl = useIsRtl()
   const [carouselRef, api] = useEmblaCarousel(
     {
       ...opts,
       axis: orientation === "horizontal" ? "x" : "y",
+      direction: opts?.direction ?? (isRtl ? "rtl" : "ltr"),
     },
     plugins
   )
@@ -187,7 +194,7 @@ function CarouselPrevious({
       className={cn(
         "absolute size-8 rounded-full",
         orientation === "horizontal"
-          ? "top-1/2 -left-12 -translate-y-1/2"
+          ? "top-1/2 -inset-s-12 -translate-y-1/2"
           : "-top-12 left-1/2 -translate-x-1/2 rotate-90",
         className
       )}
@@ -195,7 +202,7 @@ function CarouselPrevious({
       onClick={scrollPrev}
       {...props}
     >
-      <ArrowLeft />
+      <ArrowLeft className="rtl:rotate-180" />
       <span className="sr-only">Previous slide</span>
     </Button>
   )
@@ -217,7 +224,7 @@ function CarouselNext({
       className={cn(
         "absolute size-8 rounded-full",
         orientation === "horizontal"
-          ? "top-1/2 -right-12 -translate-y-1/2"
+          ? "top-1/2 -inset-e-12 -translate-y-1/2"
           : "-bottom-12 left-1/2 -translate-x-1/2 rotate-90",
         className
       )}
@@ -225,7 +232,7 @@ function CarouselNext({
       onClick={scrollNext}
       {...props}
     >
-      <ArrowRight />
+      <ArrowRight className="rtl:rotate-180" />
       <span className="sr-only">Next slide</span>
     </Button>
   )

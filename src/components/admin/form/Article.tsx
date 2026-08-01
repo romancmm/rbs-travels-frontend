@@ -6,14 +6,14 @@ import FilePicker from '@/components/common/FilePicker'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { useEntityForm } from '@/hooks/useEntityForm'
 import { showError } from '@/lib/errMsg'
 import { CreateArticleSchema, CreateArticleType } from '@/lib/validations/schemas/article'
 import requests from '@/services/network/http'
-import { zodResolver } from '@hookform/resolvers/zod'
 import { Image as ImageIcon, Search, Tag, Text, X } from 'lucide-react'
 import { useRouter } from 'next/navigation'
-import { useEffect } from 'react'
-import { Controller, SubmitHandler, useForm } from 'react-hook-form'
+import { useEffect, useMemo } from 'react'
+import { Controller, SubmitHandler } from 'react-hook-form'
 import { toast } from 'sonner'
 import TextEditor from '../common/TextEditor'
 
@@ -24,16 +24,8 @@ type TProps = {
 export default function ArticleForm({ initialData }: TProps) {
   const router = useRouter()
 
-  const {
-    control,
-    handleSubmit,
-    watch,
-    setValue,
-    formState: { errors, isSubmitting }
-  } = useForm<CreateArticleType>({
-    resolver: zodResolver(CreateArticleSchema),
-    mode: 'onChange',
-    defaultValues: {
+  const values = useMemo(
+    () => ({
       title: initialData?.title || '',
       slug: initialData?.slug || '',
       excerpt: initialData?.excerpt || '',
@@ -51,7 +43,20 @@ export default function ArticleForm({ initialData }: TProps) {
       tags: initialData?.tags || [],
       isPublished: initialData?.isPublished || true,
       publishedAt: initialData?.publishedAt || undefined
-    }
+    }),
+    [initialData]
+  )
+
+  const {
+    control,
+    handleSubmit,
+    watch,
+    setValue,
+    formState: { errors, isSubmitting }
+  } = useEntityForm<CreateArticleType>({
+    schema: CreateArticleSchema,
+    mode: 'onChange',
+    values
   })
 
   const watchTitle = watch('title')
@@ -123,8 +128,8 @@ export default function ArticleForm({ initialData }: TProps) {
           ...(initialData?.id ? { id: initialData.id } : {})
         }
       )
-      toast.success('Article post created successfully')
-      router.push('/admin/blogs')
+      toast.success('Article created successfully')
+      router.push('/admin/articles')
     } catch (error) {
       showError(error)
     }
@@ -315,7 +320,11 @@ export default function ArticleForm({ initialData }: TProps) {
                 <Button type='submit' disabled={isSubmitting}>
                   {isSubmitting ? 'Saving...' : initialData ? 'Update Post' : 'Publish Post'}
                 </Button>
-                <Button type='button' variant='outline' onClick={() => router.push('/admin/blogs')}>
+                <Button
+                  type='button'
+                  variant='outline'
+                  onClick={() => router.push('/admin/articles')}
+                >
                   Cancel
                 </Button>
               </div>

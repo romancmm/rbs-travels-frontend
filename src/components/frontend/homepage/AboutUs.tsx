@@ -11,11 +11,7 @@ const AboutUs = ({ data }: { data?: AboutType }) => {
   if (!data) return null
 
   return (
-    <Section variant='xl' className='relative overflow-hidden'>
-      {/* Ambient background accents for depth */}
-      <div className='-top-24 -left-24 absolute bg-primary/5 blur-3xl rounded-full w-72 h-72 pointer-events-none' />
-      <div className='-right-24 -bottom-24 absolute bg-accent/5 blur-3xl rounded-full w-80 h-80 pointer-events-none' />
-
+    <Section variant='lg' className='relative overflow-hidden'>
       <Container className='relative'>
         <div className='flex sm:flex-row flex-col items-center gap-8 lg:gap-12'>
           {/* Content Section */}
@@ -29,53 +25,76 @@ const AboutUs = ({ data }: { data?: AboutType }) => {
               alignment='left'
             />
 
-            {/* Facilities Grid — unified brand palette for a cohesive, professional look */}
+            {/* Facilities Grid — each card can opt into its own accent color
+                (facility.color, a CMS-picked hex), falling back to the brand
+                primary gradient when unset. The color is only known at
+                runtime, so it's exposed as a CSS custom property rather than
+                a Tailwind class - arbitrary-value utilities below reference
+                `var(--facility-color)` directly, which keeps hover states and
+                color-mix() opacity tinting working through plain Tailwind
+                classes instead of inline styles. */}
             <div className='gap-4 lg:gap-5 grid grid-cols-2 pt-2'>
-              {data.facilities?.map((facility, index) => (
-                <div
-                  key={`facility-${index}-${facility.title}`}
-                  className={cn(
-                    'group relative bg-card p-5 border border-border/70 rounded-2xl overflow-hidden transition-all duration-500 ease-out',
-                    'hover:border-primary/30 hover:shadow-xl hover:shadow-primary/10 hover:-translate-y-1.5',
-                    'animate-in fade-in slide-in-from-bottom-4'
-                  )}
-                  style={{
-                    animationDelay: `${400 + index * 100}ms`,
-                    animationFillMode: 'both'
-                  }}
-                >
-                  {/* Hover gradient overlay */}
-                  <div className='absolute inset-0 bg-linear-to-br from-primary/0 via-primary/0 to-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500' />
+              {data.facilities?.map((facility, index) => {
+                const accentColor = facility.color
 
-                  <div className='relative flex md:flex-row flex-col items-center gap-4'>
-                    {/* Icon container in consistent brand tone */}
-                    <div
-                      className={cn(
-                        'flex justify-center items-center bg-linear-to-br from-primary to-primary/80 shadow-primary/25 shadow-xl rounded-2xl w-16 lg:w-14 h-16 lg:h-14 transition-all duration-500',
-                        'group-hover:scale-110 group-hover:rotate-6'
-                      )}
-                    >
-                      <IconOrImage
-                        icon={facility.icon}
-                        alt={facility.title}
-                        size='sm'
-                        color='white'
-                        iconClassName='group-hover:scale-110 transition-transform duration-500'
-                        strokeWidth={1.2}
-                      />
+                return (
+                  <div
+                    key={`facility-${index}-${facility.title}`}
+                    className={cn(
+                      'group relative p-5 border rounded-2xl overflow-hidden transition-all duration-500 ease-out',
+                      'hover:shadow-xl hover:-translate-y-1.5',
+                      'animate-in fade-in slide-in-from-bottom-4',
+                      accentColor
+                        ? [
+                            'bg-[color-mix(in_srgb,var(--facility-color)_8%,var(--card))]',
+                            'border-[color-mix(in_srgb,var(--facility-color)_30%,transparent)]',
+                            'hover:border-[color-mix(in_srgb,var(--facility-color)_55%,transparent)]'
+                          ]
+                        : 'bg-card border-border/70 hover:border-primary/30 hover:shadow-primary/10'
+                    )}
+                    style={{
+                      ...(accentColor &&
+                        ({ '--facility-color': accentColor } as React.CSSProperties)),
+                      animationDelay: `${400 + index * 100}ms`,
+                      animationFillMode: 'both'
+                    }}
+                  >
+                    {/* Hover gradient overlay */}
+                    <div className='absolute inset-0 bg-linear-to-br from-primary/0 via-primary/0 to-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500' />
+
+                    <div className='relative flex md:flex-row flex-col items-center gap-4'>
+                      {/* Icon container - accent color when set, brand tone otherwise */}
+                      <div
+                        className={cn(
+                          'flex justify-center items-center shadow-xl rounded-2xl w-16 lg:w-14 h-16 lg:h-14 transition-all duration-500',
+                          'group-hover:scale-110 group-hover:rotate-6',
+                          accentColor
+                            ? 'bg-(--facility-color)'
+                            : 'bg-linear-to-br from-primary to-primary/80 shadow-primary/25'
+                        )}
+                      >
+                        <IconOrImage
+                          icon={facility.icon}
+                          alt={facility.title}
+                          size='sm'
+                          color='white'
+                          iconClassName='group-hover:scale-110 transition-transform duration-500'
+                          strokeWidth={1.2}
+                        />
+                      </div>
+
+                      {/* Typography */}
+                      <Typography
+                        variant='body1'
+                        weight='semibold'
+                        className='flex-1 max-w-[90%] lg:max-w-[65%] text-foreground/90 group-hover:text-foreground max-md:text-center leading-snug transition-colors duration-300'
+                      >
+                        {facility.title}
+                      </Typography>
                     </div>
-
-                    {/* Typography */}
-                    <Typography
-                      variant='body1'
-                      weight='semibold'
-                      className='flex-1 max-w-[90%] lg:max-w-[65%] text-foreground/90 group-hover:text-foreground max-md:text-center leading-snug transition-colors duration-300'
-                    >
-                      {facility.title}
-                    </Typography>
                   </div>
-                </div>
-              ))}
+                )
+              })}
             </div>
           </div>
 
@@ -106,11 +125,11 @@ const AboutUs = ({ data }: { data?: AboutType }) => {
             {data?.experience && (
               <div
                 className={cn(
-                  'md:-right-6 md:-bottom-6 md:absolute flex items-center gap-5 bg-linear-to-br from-primary via-primary to-primary/90 mx-auto md:mx-0 -mt-8 md:mt-0',
-                  'shadow-2xl shadow-primary/30 p-3.5 rounded-2xl',
+                  'md:-right-8 md:-bottom-5 md:absolute flex items-center gap-5 bg-linear-to-br from-secondary via-secondary to-secondary/90 mx-auto md:mx-0 -mt-8 md:mt-0',
+                  'shadow-xl shadow-primary/30 p-3.5 rounded-2xl',
                   'text-white transform transition-all duration-500 hover:scale-110 hover:shadow-3xl hover:shadow-primary/40',
                   'animate-in fade-in slide-in-from-bottom-4 duration-600',
-                  'max-w-72 w-fit backdrop-blur-md border-[6px] border-transparent ring-2 ring-primary/50 ring-offset-2 ring-offset-white/10'
+                  'max-w-72 w-fit backdrop-blur-md border-2 border-gray-100'
                 )}
                 style={{ animationDelay: '800ms', animationFillMode: 'both' }}
               >

@@ -1,8 +1,10 @@
 'use client'
 
-import { revalidateTags } from '@/action/data'
 import { AddItemButton } from '@/components/admin/common/AddItemButton'
+import { FormSubmitButton } from '@/components/admin/common/FormSubmitButton'
 import IconPickerModal from '@/components/admin/common/IconPickerModal'
+import { DynamicForm } from '@/components/admin/common/dynamic-form'
+import { ColorPickerField } from '@/components/common/ColorPickerField'
 import CustomInput from '@/components/common/CustomInput'
 import FilePicker from '@/components/common/FilePicker'
 import {
@@ -17,17 +19,16 @@ import {
 } from '@/components/ui/alert-dialog'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
-import { showError } from '@/lib/errMsg'
+import { aboutSectionFields } from '@/config/forms/aboutSection'
+import { useSettingsForm } from '@/hooks/useSettingsForm'
 import {
   type HomepageSettings,
   homepageSettingsSchema
 } from '@/lib/validations/schemas/homepageSettings'
-import requests from '@/services/network/http'
 import { HOME_CONFIG } from '@/types/cache-keys'
-import { zodResolver } from '@hookform/resolvers/zod'
 import { Image as ImageIcon, Sparkles, Trash2 } from 'lucide-react'
-import { useEffect, useRef, useState } from 'react'
-import { Controller, useFieldArray, useForm, useWatch } from 'react-hook-form'
+import { useEffect, useMemo, useRef, useState } from 'react'
+import { Controller, useFieldArray, useWatch } from 'react-hook-form'
 import { toast } from 'sonner'
 
 type TProps = {
@@ -37,14 +38,8 @@ type TProps = {
 }
 
 const AboutSection = ({ settingsKey, initialValues, refetch }: TProps) => {
-  const {
-    handleSubmit,
-    control,
-    setValue,
-    formState: { errors, isSubmitting }
-  } = useForm({
-    resolver: zodResolver(homepageSettingsSchema),
-    defaultValues: {
+  const values = useMemo(
+    () => ({
       ...initialValues,
       about: {
         title: initialValues?.about?.title || '',
@@ -60,8 +55,25 @@ const AboutSection = ({ settingsKey, initialValues, refetch }: TProps) => {
         statsIconType: initialValues?.about?.statsIconType || 'icon',
         stats: initialValues?.about?.stats || []
       }
-    }
+    }),
+    [initialValues]
+  )
+
+  const form = useSettingsForm<HomepageSettings>({
+    schema: homepageSettingsSchema,
+    settingsKey,
+    values,
+    isEditing: !!initialValues,
+    cacheTag: HOME_CONFIG,
+    refetch
   })
+  const {
+    control,
+    setValue,
+    onSubmit,
+    isEditing,
+    formState: { errors, isSubmitting }
+  } = form
 
   const {
     fields: facilitiesFields,
@@ -169,121 +181,12 @@ const AboutSection = ({ settingsKey, initialValues, refetch }: TProps) => {
     prevStatsIconTypeRef.current = statsIconType
   }, [statsIconType, statisticsFields, setValue])
 
-  const onSubmit = handleSubmit(async (data) => {
-    try {
-      const res = await requests[initialValues ? 'put' : 'post'](
-        `/admin/setting/settings${initialValues ? `/key/${settingsKey}` : ''}`,
-        {
-          key: settingsKey,
-          value: data
-        }
-      )
-      if (res?.success) {
-        await revalidateTags(HOME_CONFIG)
-        toast.success('Settings updated successfully!')
-        refetch?.()
-      }
-    } catch (error) {
-      showError(error)
-    }
-  })
-
   return (
     <form onSubmit={onSubmit} className='space-y-6'>
       <Card>
         <CardContent>
           <div className='space-y-4'>
-            <Controller
-              control={control}
-              name='about.title'
-              render={({ field }) => (
-                <CustomInput
-                  label='Title'
-                  placeholder='Enter about title'
-                  error={errors.about?.title?.message}
-                  {...field}
-                  value={field.value ?? ''}
-                />
-              )}
-            />
-
-            <Controller
-              control={control}
-              name='about.subTitle'
-              render={({ field }) => (
-                <CustomInput
-                  label='Sub Title'
-                  placeholder='Enter about subtitle'
-                  error={errors.about?.subTitle?.message}
-                  {...field}
-                  value={field.value ?? ''}
-                />
-              )}
-            />
-
-            <Controller
-              control={control}
-              name='about.desc'
-              render={({ field }) => (
-                <CustomInput
-                  label='Description'
-                  type='textarea'
-                  rows={3}
-                  placeholder='Enter about description'
-                  error={errors.about?.desc?.message}
-                  {...field}
-                  value={field.value ?? ''}
-                />
-              )}
-            />
-
-            {/* Experience Section */}
-            <div className='gap-4 grid grid-cols-1 lg:grid-cols-2'>
-              <Controller
-                control={control}
-                name='about.experience.years'
-                render={({ field }) => (
-                  <CustomInput
-                    label='Experience Years'
-                    placeholder='e.g., 25+'
-                    error={errors.about?.experience?.years?.message}
-                    {...field}
-                    value={field.value ?? ''}
-                  />
-                )}
-              />
-
-              <Controller
-                control={control}
-                name='about.experience.text'
-                render={({ field }) => (
-                  <CustomInput
-                    label='Experience Text'
-                    placeholder='e.g., Years of Excellence'
-                    error={errors.about?.experience?.text?.message}
-                    {...field}
-                    value={field.value ?? ''}
-                  />
-                )}
-              />
-            </div>
-
-            <div className=''>
-              <label className='font-medium text-sm'>Image</label>
-              <Controller
-                control={control}
-                name='about.image'
-                render={({ field }) => (
-                  <FilePicker
-                    value={field.value || ''}
-                    onChangeAction={field.onChange}
-                  />
-                )}
-              />
-              {errors.about?.image && (
-                <span className='text-red-500 text-xs'>{errors.about.image.message}</span>
-              )}
-            </div>
+            <DynamicForm form={form} fields={aboutSectionFields} />
 
             {/* Facilities Section */}
             <div className='space-y-2 lg:col-span-2'>
@@ -393,6 +296,20 @@ const AboutSection = ({ settingsKey, initialValues, refetch }: TProps) => {
                             </div>
                           )}
                         />
+
+                        <Controller
+                          control={control}
+                          name={`about.facilities.${index}.color`}
+                          render={({ field }) => (
+                            <ColorPickerField
+                              label='Color (optional)'
+                              value={field.value}
+                              fallbackValue='#000000'
+                              onChange={field.onChange}
+                              onBlur={field.onBlur}
+                            />
+                          )}
+                        />
                       </div>
                     </div>
                   ))}
@@ -402,128 +319,12 @@ const AboutSection = ({ settingsKey, initialValues, refetch }: TProps) => {
               {facilitiesFields.length < 4 && (
                 <AddItemButton
                   label='Add Facility'
-                  onClick={() => appendFacility({ title: '', desc: '', icon: '' })}
+                  onClick={() => appendFacility({ title: '', desc: '', icon: '', color: '' })}
                 />
               )}
             </div>
 
-            {/* <div className='space-y-2 lg:col-span-2'>
-              <div className='flex justify-between items-center gap-4 w-full'>
-                <label className='font-semibold text-lg'>Statistics</label>
-                {/* Stats Icon Type Selector 
-                <Controller
-                  control={control}
-                  name='about.statsIconType'
-                  render={({ field }) => (
-                    <div className='inline-flex items-center gap-1.5 bg-muted/40 p-1.5 rounded-lg'>
-                      <Button
-                        type='button'
-                        variant={field.value === 'icon' ? 'default' : 'ghost'}
-                        size='icon'
-                        onClick={() => handleStatsIconTypeChange('icon')}
-                        className='size-8!'
-                      >
-                        <Sparkles className='w-4 h-4' />
-                      </Button>
-                      <Button
-                        type='button'
-                        variant={field.value === 'image' ? 'default' : 'ghost'}
-                        size='icon'
-                        onClick={() => handleStatsIconTypeChange('image')}
-                        className='size-8!'
-                      >
-                        <ImageIcon className='w-4 h-4' />
-                      </Button>
-                    </div>
-                  )}
-                />
-              </div>
-
-              {statisticsFields.length === 0 ? (
-                <div className='p-4 border-2 border-dashed rounded-lg text-center'>
-                  No statistics added yet. Click &quot;Add Statistic&quot; to get started.
-                </div>
-              ) : (
-                <div className='flex flex-wrap *:flex-[1_1_calc(50%-16px)] gap-4'>
-                  {statisticsFields.map((field, index) => (
-                    <div
-                      key={field.id}
-                      className='flex-1 space-y-3 hover:shadow-lg p-4 border rounded-lg'
-                    >
-                      <div className='flex justify-between items-center'>
-                        <h4 className='font-medium text-sm'>Statistic {index + 1}</h4>
-                        <Button
-                          type='button'
-                          variant='outline'
-                          size='sm'
-                          onClick={() => removeStatistic(index)}
-                          className='hover:bg-red-50 hover:text-red-700'
-                        >
-                          <Trash2 className='w-4 h-4' />
-                        </Button>
-                      </div>
-
-                      <div className='space-y-3'>
-                        <Controller
-                          control={control}
-                          name={`about.stats.${index}.value`}
-                          render={({ field }) => (
-                            <CustomInput
-                              label='Value'
-                              placeholder='e.g., 1.6k+, 50+'
-                              error={errors.about?.stats?.[index]?.value?.message}
-                              {...field}
-                              value={field.value ?? ''}
-                            />
-                          )}
-                        />
-
-                        <Controller
-                          control={control}
-                          name={`about.stats.${index}.label`}
-                          render={({ field }) => (
-                            <CustomInput
-                              label='Label'
-                              placeholder='e.g., Happy Travelers'
-                              error={errors.about?.stats?.[index]?.label?.message}
-                              {...field}
-                              value={field.value ?? ''}
-                            />
-                          )}
-                        />
-
-                        <Controller
-                          control={control}
-                          name={`about.stats.${index}.icon`}
-                          render={({ field }) => (
-                            <div className='space-y-1.5'>
-                              <label className='block font-medium text-sm'>
-                                {statsIconType === 'image' ? 'Image' : 'Icon'} (optional)
-                              </label>
-                              {statsIconType === 'image' ? (
-                                <FilePicker
-                                  value={field.value as string}
-                                  onChangeAction={(val: string | string[]) => field.onChange(val)}
-                                  size='small'
-                                />
-                              ) : (
-                                <IconPickerModal
-                                  value={field.value as string}
-                                  onChange={(val) => field.onChange(val)}
-                                />
-                              )}
-                            </div>
-                          )}
-                        />
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-
-              {facilitiesFields.length < 4 && <AddItemButton label="Add Facility" onClick={() => appendFacility({ title: '', desc: '', icon: '' })} />}
-            </div> */}
-
+            {/* Statistics Section */}
             <div className='space-y-2 lg:col-span-2'>
               <div className='flex justify-between items-center gap-4 w-full'>
                 <label className='font-semibold text-lg'>Statistics</label>
@@ -649,9 +450,12 @@ const AboutSection = ({ settingsKey, initialValues, refetch }: TProps) => {
         </CardContent>
       </Card>
 
-      <Button type='submit' size={'lg'}>
-        {isSubmitting ? 'Submitting...' : initialValues ? 'Update Settings' : 'Save Settings'}
-      </Button>
+      <FormSubmitButton
+        size='lg'
+        isSubmitting={isSubmitting}
+        isEditing={isEditing}
+        savingLabel='Submitting...'
+      />
 
       {/* Facilities Icon Type Change Alert Dialog */}
       <AlertDialog open={showFacilitiesAlert} onOpenChange={setShowFacilitiesAlert}>

@@ -62,7 +62,7 @@ export function SiteSwitcher({
                 <span className='font-medium truncate'>{siteName}</span>
                 <span className='text-xs truncate'>Admin Panel</span>
               </div>
-              <ChevronsUpDown className='ml-auto' />
+              <ChevronsUpDown className='ml-auto size-4 text-sidebar-foreground/50' />
             </SidebarMenuButton>
           </DropdownMenuTrigger>
           <DropdownMenuContent

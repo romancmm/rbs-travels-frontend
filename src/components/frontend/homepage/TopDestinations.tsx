@@ -1,21 +1,17 @@
 'use client'
 
+import CarouselWrapper from '@/components/common/carousel-wrapper'
 import { Container } from '@/components/common/container'
 import CustomImage from '@/components/common/CustomImage'
 import { Section } from '@/components/common/section'
+import { SectionHeading } from '@/components/common/SectionHeading'
 import { Typography } from '@/components/common/typography'
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-  type CarouselApi
-} from '@/components/ui/carousel'
+import { Button } from '@/components/ui/button'
+import type { CarouselApi } from '@/components/ui/carousel'
 import { cn } from '@/lib/utils'
 import { TopCountriesType, type DestinationItem } from '@/lib/validations/schemas/homepageSettings'
-import { Briefcase, DollarSign, Filter, MapPin, Users } from 'lucide-react'
-import { useCallback, useEffect, useState } from 'react'
+import { ArrowLeft, ArrowRight, Briefcase, DollarSign, Users } from 'lucide-react'
+import { useState } from 'react'
 
 const DestinationCard = ({
   destination,
@@ -108,34 +104,20 @@ const DestinationCard = ({
 }
 
 export default function TopDestinations({ data }: { data?: TopCountriesType }) {
-  const [api, setApi] = useState<CarouselApi>()
-  const [current, setCurrent] = useState(0)
-  const [count, setCount] = useState(0)
-  const [canScrollPrev, setCanScrollPrev] = useState(false)
-  const [canScrollNext, setCanScrollNext] = useState(false)
+  // CarouselWrapper owns the embla instance internally - this mirrors it back
+  // up so the header row above the rail (slide counter + prev/next buttons)
+  // can drive the same carousel instead of duplicating carousel plumbing.
+  const [carouselState, setCarouselState] = useState<{
+    api: CarouselApi
+    current: number
+    count: number
+  }>()
 
-  const onSelect = useCallback((emblaApi: CarouselApi) => {
-    if (!emblaApi) return
-
-    setCurrent(emblaApi.selectedScrollSnap() + 1)
-    setCanScrollPrev(emblaApi.canScrollPrev())
-    setCanScrollNext(emblaApi.canScrollNext())
-  }, [])
-
-  useEffect(() => {
-    if (!api) return
-
-    setCount(api.scrollSnapList().length)
-    onSelect(api)
-
-    api.on('reInit', onSelect)
-    api.on('select', onSelect)
-
-    return () => {
-      api?.off('select', onSelect)
-      api?.off('reInit', onSelect)
-    }
-  }, [api, onSelect])
+  const api = carouselState?.api
+  const current = carouselState?.current ?? 0
+  const count = carouselState?.count ?? 0
+  const canScrollPrev = !!api?.canScrollPrev()
+  const canScrollNext = !!api?.canScrollNext()
 
   if (!data?.destinations?.length) return null
 
@@ -157,132 +139,71 @@ export default function TopDestinations({ data }: { data?: TopCountriesType }) {
       </div>
 
       <Container className='relative'>
-        {/* Enhanced Header */}
-        <div className='space-y-6 mb-12 text-center'>
-          <div className='inline-flex justify-center items-center gap-2 bg-primary/10 px-4 py-2 rounded-full text-primary'>
-            <MapPin className='w-4 h-4' />
-            <Typography variant='body2' weight='medium' className='uppercase tracking-wider'>
-              {data.subtitle || 'Top Destinations'}
-            </Typography>
-          </div>
-          <Typography variant='h2' weight='bold' className='mx-auto max-w-3xl text-foreground'>
-            {data.title || 'Explore Top Countries'}
-          </Typography>
-          <Typography
-            variant='body1'
-            className='mx-auto max-w-2xl text-muted-foreground leading-relaxed'
-          >
-            Discover the world&apos;s most breathtaking destinations with our curated collection of
-            extraordinary travel experiences.
-          </Typography>
-        </div>
+        <SectionHeading
+          subtitle={data.subtitle || 'Top Destinations'}
+          title={data.title || 'Explore Top Countries'}
+          description="Discover the world's most breathtaking destinations with our curated collection of extraordinary travel experiences."
+          variant='badge'
+          alignment='center'
+        />
 
-        {/* Enhanced Filter Tabs */}
-        {/* <div className='flex flex-wrap justify-center items-center gap-3 mb-10'>
-          {filters.map((filter) => {
-            const IconComponent = filter.icon
-            const isActive = activeFilter === filter.id
-            const count =
-              filter.id === 'all'
-                ? data.destinations.length
-                : data.destinations.filter((d) => d.type === filter.id).length
-
-            return (
-              <button
-                key={filter.id}
-                onClick={() => {
-                  setActiveFilter(filter.id)
-                  // Reset carousel when filter changes
-                  if (api) {
-                    api.scrollTo(0)
-                  }
-                }}
-                className={cn(
-                  'flex items-center gap-2 shadow-sm px-4 py-2.5 rounded-xl transition-all duration-300',
-                  isActive
-                    ? 'bg-primary text-white shadow-lg scale-105'
-                    : 'bg-white text-gray-600 hover:bg-gray-50 hover:text-primary border border-gray-200'
-                )}
-              >
-                <IconComponent className='w-4 h-4' />
-                <span className='font-medium'>{filter.label}</span>
-                <span
-                  className={cn(
-                    'px-2 py-0.5 rounded-full text-xs',
-                    isActive ? 'bg-white/20' : 'bg-gray-100'
-                  )}
-                >
-                  {count}
-                </span>
-              </button>
-            )
-          })}
-        </div> */}
-
-        {/* Enhanced Carousel Implementation */}
+        {/* Rail header row: slide counter + prev/next, driven by the carousel below via onApiChange */}
         <div className='relative mb-8'>
-          <Carousel
-            setApi={setApi}
-            className='w-full'
-            opts={{
-              align: 'start',
-              loop: true,
-              skipSnaps: false,
-              dragFree: true,
-              containScroll: 'trimSnaps',
-              slidesToScroll: 'auto'
-            }}
-            // plugins={[autoplayPlugin, classNamesPlugin]}
+          <CarouselWrapper
+            loop
+            showArrows={false}
+            showDots={false}
+            itemsPerView={{ default: 1, sm: 2, lg: 3, xl: 4 }}
+            contentClassName='pt-6 pb-10'
+            onApiChange={setCarouselState}
           >
-            <div className='flex justify-between items-center'>
-              <div className='flex items-center gap-4'>
-                <div className='hidden md:flex items-center gap-2 text-muted-foreground text-sm'>
-                  <Filter className='w-4 h-4' />
-                  <span>{data?.destinations?.length} destinations</span>
-                </div>
-                <div className='flex items-center gap-2 text-muted-foreground text-sm'>
-                  <span>
-                    {current} of {count} slides
-                  </span>
-                </div>
-              </div>
+            {data.destinations.map((destination, index) => (
+              <DestinationCard key={index} destination={destination} index={index} />
+            ))}
+          </CarouselWrapper>
 
-              <div className='flex items-center gap-4'>
-                <div className='flex items-center gap-3'>
-                  <CarouselPrevious
-                    className={cn(
-                      'static hover:bg-primary border-border hover:border-primary hover:text-white transition-all translate-x-0 translate-y-0 duration-300',
-                      !canScrollPrev && 'opacity-50 cursor-not-allowed'
-                    )}
-                  />
-                  <CarouselNext
-                    className={cn(
-                      'static hover:bg-primary border-border hover:border-primary hover:text-white transition-all translate-x-0 translate-y-0 duration-300',
-                      !canScrollNext && 'opacity-50 cursor-not-allowed'
-                    )}
-                  />
-                </div>
-                {/* <CustomLink
-                  href='/destinations'
-                  className='group flex items-center gap-2 bg-primary/5 hover:bg-primary/10 px-4 py-2 rounded-lg font-semibold text-primary hover:text-primary/80 transition-colors'
-                >
-                  <span>View All</span>
-                  <ArrowRight className='w-4 h-4 transition-transform group-hover:translate-x-1' />
-                </CustomLink> */}
+          <div className='flex justify-between items-center mb-4'>
+            <div className='flex items-center gap-4'>
+              {/* <div className='hidden md:flex items-center gap-2 text-muted-foreground text-sm'>
+                <Filter className='w-4 h-4' />
+                <span>{data.destinations.length} destinations</span>
               </div>
+              <div className='flex items-center gap-2 text-muted-foreground text-sm'>
+                <span>
+                  {count > 0 ? current + 1 : 0} of {count} slides
+                </span>
+              </div> */}
             </div>
 
-            <CarouselContent className='-ml-6 pt-6 pb-10'>
-              {data?.destinations.map((destination, index) => (
-                <CarouselItem
-                  key={index}
-                  className='pl-6 transition-all duration-500 basis-1/1 sm:basis-1/2 lg:basis-1/3 xl:basis-1/4'
-                >
-                  <DestinationCard destination={destination} index={index} />
-                </CarouselItem>
-              ))}
-            </CarouselContent>
-          </Carousel>
+            <div className='flex items-center gap-3'>
+              <Button
+                type='button'
+                variant='outline'
+                size='icon'
+                onClick={() => api?.scrollPrev()}
+                disabled={!canScrollPrev}
+                className={cn(
+                  'hover:bg-primary border-border hover:border-primary hover:text-white transition-all duration-300',
+                  !canScrollPrev && 'opacity-50 cursor-not-allowed'
+                )}
+              >
+                <ArrowLeft />
+              </Button>
+              <Button
+                type='button'
+                variant='outline'
+                size='icon'
+                onClick={() => api?.scrollNext()}
+                disabled={!canScrollNext}
+                className={cn(
+                  'hover:bg-primary border-border hover:border-primary hover:text-white transition-all duration-300',
+                  !canScrollNext && 'opacity-50 cursor-not-allowed'
+                )}
+              >
+                <ArrowRight />
+              </Button>
+            </div>
+          </div>
         </div>
 
         {/* Progress Indicators */}
@@ -293,39 +214,11 @@ export default function TopDestinations({ data }: { data?: TopCountriesType }) {
               onClick={() => api?.scrollTo(index)}
               className={cn(
                 'rounded-full h-2 transition-all duration-300',
-                index === current - 1
-                  ? 'bg-primary w-8'
-                  : 'bg-border hover:bg-muted-foreground/50 w-2'
+                index === current ? 'bg-primary w-8' : 'bg-border hover:bg-muted-foreground/50 w-2'
               )}
             />
           ))}
         </div>
-
-        {/* Enhanced Call to Action */}
-        {/* <div className='space-y-4 mt-16 text-center'>
-          <Typography variant='h4' weight='semibold' className='text-foreground'>
-            Ready to Start Your Adventure?
-          </Typography>
-          <Typography variant='body1' className='mx-auto max-w-md text-muted-foreground'>
-            Let our travel experts help you plan the perfect getaway to any of these amazing
-            destinations.
-          </Typography>
-          <div className='flex justify-center items-center gap-4 pt-4'>
-            <Button
-              size='lg'
-              className='bg-linear-to-r from-primary hover:from-primary/90 to-primary/90 hover:to-primary shadow-xl hover:shadow-2xl px-4 lg:px-8 py-4 rounded-xl font-semibold text-white hover:scale-105 transition-all duration-300'
-            >
-              Plan My Journey
-            </Button>
-            <Button
-              variant='outline'
-              size='lg'
-              className='px-4 lg:px-8 py-4 border-border hover:border-primary rounded-xl text-foreground hover:text-primary transition-all duration-300'
-            >
-              Talk to Expert
-            </Button>
-          </div>
-        </div> */}
       </Container>
     </Section>
   )

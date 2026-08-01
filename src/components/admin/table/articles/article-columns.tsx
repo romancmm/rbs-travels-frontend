@@ -68,13 +68,13 @@ const ActionsCell = ({ data, mutate }: { data: any; mutate?: () => void }) => {
       type: 'action' as const,
       label: 'View',
       icon: Eye,
-      href: `/admin/blogs/${data.id}`
+      href: `/admin/articles/${data.id}`
     },
     {
       type: 'action' as const,
       label: 'Edit',
       icon: Pencil,
-      href: `/admin/blogs/${data.id}/edit/`
+      href: `/admin/articles/${data.id}/edit/`
     },
     {
       type: 'action' as const,

@@ -1,12 +1,13 @@
 'use client'
 
-import { zodResolver } from '@hookform/resolvers/zod'
-import { Controller, useForm } from 'react-hook-form'
+import { useMemo } from 'react'
+import { Controller } from 'react-hook-form'
 import { toast } from 'sonner'
 
 import { revalidateTags } from '@/action/data'
 import CustomInput from '@/components/common/CustomInput'
 import { Button } from '@/components/ui/button'
+import { useEntityForm } from '@/hooks/useEntityForm'
 import { showError } from '@/lib/errMsg'
 import { Permission, permissionSchema } from '@/lib/validations/schemas/permission'
 import requests from '@/services/network/http'
@@ -18,15 +19,15 @@ type PermissionFormProps = {
 }
 
 export default function PermissionForm({ initialData, onClose, onSuccess }: PermissionFormProps) {
+  const values = useMemo(() => ({ name: initialData?.name || '' }), [initialData])
+
   const {
     control,
     handleSubmit,
     formState: { errors, isSubmitting }
-  } = useForm<Permission>({
-    resolver: zodResolver(permissionSchema),
-    defaultValues: {
-      name: initialData?.name || ''
-    }
+  } = useEntityForm<Permission>({
+    schema: permissionSchema,
+    values
   })
 
   const onSubmit = handleSubmit(async (data) => {

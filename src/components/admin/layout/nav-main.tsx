@@ -37,7 +37,9 @@ export function NavMain({ items }: { items: NavItem[] }) {
 
   return (
     <SidebarGroup>
-      <SidebarGroupLabel>Main Navigation</SidebarGroupLabel>
+      <SidebarGroupLabel className='font-semibold uppercase tracking-wider'>
+        Main Navigation
+      </SidebarGroupLabel>
       <SidebarMenu>
         {items.map((item, index) => {
           const hasChildren = !!item.items && item.items.length > 0
@@ -50,7 +52,7 @@ export function NavMain({ items }: { items: NavItem[] }) {
                 <Collapsible defaultOpen={item.isActive} className='group/collapsible'>
                   <CollapsibleTrigger asChild>
                     <SidebarMenuButton tooltip={item.title} isActive={item.isActive}>
-                      {item.icon && <item.icon className='w-4 lg:w-6 h-4 lg:h-6' />}
+                      {item.icon && <item.icon />}
                       <span>{item.title}</span>
                       <ChevronRight className='ml-auto group-data-[state=open]/collapsible:rotate-90 transition-transform duration-200' />
                     </SidebarMenuButton>
@@ -70,7 +72,7 @@ export function NavMain({ items }: { items: NavItem[] }) {
               ) : (
                 <SidebarMenuButton tooltip={item.title} isActive={item.isActive} asChild>
                   <CustomLink href={item.url}>
-                    {item.icon && <item.icon className='w-4 lg:w-5 h-4 lg:h-5' />}
+                    {item.icon && <item.icon />}
                     <span>{item.title}</span>
                   </CustomLink>
                 </SidebarMenuButton>
@@ -112,7 +114,7 @@ function NavMainHoverItem({ item }: { item: NavItem }) {
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <SidebarMenuButton onMouseEnter={handleOpen} onMouseLeave={handleClose} isActive={item.isActive}>
-          {item.icon && <item.icon className='w-4 lg:w-6 h-4 lg:h-6' />}
+          {item.icon && <item.icon />}
           <span>{item.title}</span>
         </SidebarMenuButton>
       </PopoverTrigger>
@@ -131,7 +133,7 @@ function NavMainHoverItem({ item }: { item: NavItem }) {
               key={idx}
               href={subItem.url}
               className={cn(
-                'rounded-md px-2 py-1.5 text-sm hover:bg-sidebar-accent hover:text-sidebar-accent-foreground',
+                'rounded-md px-2 py-1.5 text-sm transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground',
                 subItem.isActive && 'bg-sidebar-accent text-sidebar-accent-foreground font-medium'
               )}
             >

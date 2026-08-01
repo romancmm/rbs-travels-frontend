@@ -66,22 +66,10 @@ const BlogCard = ({ post, index, className }: BlogCardProps) => {
 
         {/* Content Section */}
         <div className='space-y-4 p-6'>
-          {/* Meta Information */}
-          <div className='flex items-center gap-4 text-sm'>
-            <div className='flex items-center gap-1.5'>
-              <Calendar className='w-4 h-4' />
-              <span>{format(new Date(post.createdAt), 'MMM dd, yyyy')}</span>
-            </div>
-            <div className='flex items-center gap-1.5'>
-              <span>•</span>
-              <span>{post.readTime}</span>
-            </div>
-          </div>
-
           {/* Title */}
           <Typography
             variant='h6'
-            weight='semibold'
+            weight='bold'
             className={cn(
               'line-clamp-2 transition-colors duration-300',
               'group-hover:text-primary'
@@ -94,6 +82,18 @@ const BlogCard = ({ post, index, className }: BlogCardProps) => {
           <Typography variant='body2' className='line-clamp-3 leading-relaxed'>
             {post.excerpt}
           </Typography>
+
+          {/* Meta Information */}
+          <div className='flex items-center gap-4 text-sm'>
+            <div className='flex items-center gap-1.5'>
+              <Calendar className='w-4 h-4' />
+              <span>{format(new Date(post.createdAt), 'MMM dd, yyyy')}</span>
+            </div>
+            <div className='flex items-center gap-1.5'>
+              <span>•</span>
+              <span>{post.readTime}</span>
+            </div>
+          </div>
         </div>
 
         {/* Decorative Elements */}

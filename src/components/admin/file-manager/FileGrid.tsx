@@ -51,7 +51,7 @@ export function FileGrid({
   }
 
   return (
-    <div className='bg-gray-50/30 py-4 gap-3 flex flex-wrap *:flex-[1_1_calc(150px)] *:max-w-[200px]'>
+    <div className='flex flex-wrap *:flex-[1_1_calc(150px)] gap-3 bg-gray-50/30 py-4 *:max-w-50'>
       {files.map((file, index) => {
         const Icon = getFileIcon(file)
         const selected = isSelected(file)
@@ -60,7 +60,7 @@ export function FileGrid({
           <div
             key={index}
             className={cn(
-              'group relative hover:shadow-xl border relative transition-all duration-300 cursor-pointer',
+              'group relative hover:shadow-xl border transition-all duration-300 cursor-pointer',
               'flex flex-col overflow-hidden! rounded-xl bg-white',
               selected
                 ? 'ring-2 ring-primary ring-offset-2 border-primary bg-primary/5 shadow-xl'
@@ -101,7 +101,7 @@ export function FileGrid({
                     alt={file.name}
                     fill
                     className='h-full object-cover group-hover:scale-110 transition-transform duration-500'
-                  // sizes='(max-width: 768px) 50vw, (max-width: 1200px) 25vw, 12.5vw'
+                    // sizes='(max-width: 768px) 50vw, (max-width: 1200px) 25vw, 12.5vw'
                   />
                   <div className='absolute inset-0 bg-linear-to-t from-black/30 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300' />
                 </div>
@@ -114,7 +114,7 @@ export function FileGrid({
               )}
             </div>
             {/* File Info */}
-            <div className='bg-white/95 backdrop-blur-sm px-2.5 py-2 rounded-b-xl border-gray-100 border-t'>
+            <div className='bg-white/95 backdrop-blur-sm px-2.5 py-2 border-gray-100 border-t rounded-b-xl'>
               <div
                 className='font-semibold text-gray-800 group-hover:text-primary text-xs truncate transition-colors duration-200'
                 title={file.name}

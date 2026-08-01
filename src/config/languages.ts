@@ -10,7 +10,8 @@ export const SUPPORTED_LANGUAGES: SupportedLanguage[] = [
   { code: 'bn', name: 'Bangla', nativeName: 'বাংলা' },
   { code: 'ar', name: 'Arabic', nativeName: 'العربية', dir: 'rtl' },
   { code: 'ru', name: 'Russian', nativeName: 'Русский' },
-  { code: 'hi', name: 'Hindi', nativeName: 'हिन्दी' }
+  { code: 'hi', name: 'Hindi', nativeName: 'हिन्दी' },
+  { code: 'ms', name: 'Malay', nativeName: 'Bahasa Melayu' }
 ]
 
 export const DEFAULT_LANGUAGE = 'en'

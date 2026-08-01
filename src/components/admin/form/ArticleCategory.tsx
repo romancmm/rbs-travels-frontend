@@ -1,12 +1,12 @@
 'use client'
 
-import { zodResolver } from '@hookform/resolvers/zod'
-import { useEffect } from 'react'
-import { Controller, useForm } from 'react-hook-form'
+import { useMemo } from 'react'
+import { Controller } from 'react-hook-form'
 import { z } from 'zod'
 
 import CustomInput from '@/components/common/CustomInput'
 import { Button } from '@/components/ui/button'
+import { useEntityForm } from '@/hooks/useEntityForm'
 import { showError } from '@/lib/errMsg'
 import requests from '@/services/network/http'
 import { toast } from 'sonner'
@@ -28,18 +28,17 @@ interface ArticleCategoryFormProps {
 }
 
 export function ArticleCategoryForm({ initialData, onSuccess, onCancel }: ArticleCategoryFormProps) {
+  const values = useMemo(() => ({ name: initialData?.name || '' }), [initialData])
+
   const {
     control,
     handleSubmit,
     formState: { errors, isSubmitting },
     reset,
-    setValue,
     watch
-  } = useForm<ArticleCategoryFormType>({
-    resolver: zodResolver(ArticleCategoryFormSchema),
-    defaultValues: {
-      name: initialData?.name || ''
-    }
+  } = useEntityForm<ArticleCategoryFormType>({
+    schema: ArticleCategoryFormSchema,
+    values
   })
 
   // Auto-generate slug from name
@@ -52,13 +51,6 @@ export function ArticleCategoryForm({ initialData, onSuccess, onCancel }: Articl
       .replace(/-+/g, '-')
       .trim()
   }
-
-  // Set initial data if editing
-  useEffect(() => {
-    if (initialData) {
-      setValue('name', initialData.name)
-    }
-  }, [initialData, setValue])
 
   const onSubmit = async (data: ArticleCategoryFormType) => {
     try {

@@ -10,42 +10,41 @@ const containerVariants = cva('mx-auto w-full container', {
   variants: {
     variant: {
       full: 'max-w-full',
-      wide: 'max-w-(--breakpoint-xl)',
-      boxed: 'max-w-7xl',
+      wide: 'max-w-(--breakpoint-xl) 2xl:max-w-[1360px]', // (--breakpoint-2xl)
+      default: 'lg:max-w-none xl:max-w-(--breakpoint-xl)',
+      boxed: 'max-w-6xl',
       narrow: 'max-w-(--breakpoint-md)',
-      none: 'max-w-none',
+      none: 'max-w-none'
     },
     padding: {
       none: 'px-0',
       compact: 'px-4 sm:px-5',
-      base: 'px-4 sm:px-6 lg:px-20 2xl:px-6',
-      spacious: 'px-6 sm:px-10 lg:px-24',
-      wide: 'px-4 lg:px-20',
+      base: 'px-4 xl:px-3 2xl:px-4',
+      spacious: 'px-6 sm:px-10 lg:px-16',
+      wide: 'px-4 lg:px-8'
     },
     bg: {
       none: 'bg-transparent',
       surface: 'bg-lightGray rounded-none xl:rounded-xl 2xl:rounded-3xl',
       muted: 'bg-slate-50',
       dark: 'bg-black',
-      primary: 'bg-primary text-white',
-    },
+      primary: 'bg-primary text-white'
+    }
   },
   defaultVariants: {
-    variant: 'wide',
+    variant: 'default',
     padding: 'base',
-    bg: 'none',
-  },
+    bg: 'none'
+  }
 })
 
 /**
  * Container Props
  */
 export interface ContainerProps
-  extends Omit<
-    React.ComponentPropsWithoutRef<'div'>,
-    keyof VariantProps<typeof containerVariants>
-  >,
-  VariantProps<typeof containerVariants> {
+  extends
+    Omit<React.ComponentPropsWithoutRef<'div'>, keyof VariantProps<typeof containerVariants>>,
+    VariantProps<typeof containerVariants> {
   as?: React.ElementType
 }
 
@@ -56,7 +55,7 @@ const Container = React.forwardRef<HTMLDivElement, ContainerProps>(
       className={cn(containerVariants({ variant, padding, bg }), className)}
       {...props}
     />
-  ),
+  )
 )
 
 Container.displayName = 'Container'
