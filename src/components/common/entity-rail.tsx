@@ -132,7 +132,7 @@ export default function EntityRail<T>({
           {viewAllHref && (
             <CustomLink
               href={viewAllHref}
-              className='shrink-0 font-semibold text-primary text-sm hover:underline'
+              className='font-semibold text-primary text-sm hover:underline shrink-0'
             >
               See More
             </CustomLink>

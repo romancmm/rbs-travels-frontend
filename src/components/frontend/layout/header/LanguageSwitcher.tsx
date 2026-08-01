@@ -21,8 +21,9 @@ export default function LanguageSwitcher({ compact = false }: { compact?: boolea
         <button
           type='button'
           aria-label='Change language'
+          translate='no'
           className={cn(
-            'flex items-center gap-1.5 rounded-lg text-header-color/90 hover:text-header-color transition-colors cursor-pointer',
+            'notranslate flex items-center gap-1.5 rounded-lg text-header-color/90 hover:text-header-color transition-colors cursor-pointer',
             compact
               ? 'justify-center bg-white/10 hover:bg-white/20 w-10 h-10'
               : 'hover:bg-white/10 px-3 py-2 text-sm'
@@ -32,7 +33,7 @@ export default function LanguageSwitcher({ compact = false }: { compact?: boolea
           {!compact && <span className='font-medium uppercase'>{current.code}</span>}
         </button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align='end' className='w-48'>
+      <DropdownMenuContent align='end' className='notranslate w-48' translate='no'>
         {SUPPORTED_LANGUAGES.map((lang) => (
           <DropdownMenuItem
             key={lang.code}

@@ -398,8 +398,8 @@ export default function CarouselWrapper({
                 type='button'
                 onClick={() => api?.scrollTo(index)}
                 className={cn(
-                  'rounded-full w-2.5 h-2.5 transition-all duration-300 cursor-pointer',
-                  current === index ? 'bg-primary ring-primary/30 ring-2' : 'bg-white/70'
+                  'bg-white/70 border rounded-full w-2.5 h-2.5 transition-all duration-300 cursor-pointer',
+                  { 'bg-primary ring-primary/30 ring-2': current === index }
                 )}
               />
             ))}
