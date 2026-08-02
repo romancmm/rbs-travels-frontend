@@ -1,27 +1,16 @@
 'use client'
 
-import { Container } from '@/components/common/container'
-import { Section } from '@/components/common/section'
-import { Typography } from '@/components/common/typography'
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator
-} from '@/components/ui/breadcrumb'
-import { Skeleton } from '@/components/ui/skeleton'
-import useAsync from '@/hooks/useAsync'
+import { LinkRedirect } from '@/components/frontend/menu/LinkRedirect'
+import { MenuPageHeader } from '@/components/frontend/menu/MenuPageHeader'
+import { MenuSlugSkeleton } from '@/components/frontend/menu/MenuSlugSkeleton'
+import { useMenuItem } from '@/hooks/useMenuItem'
 import { MenuItem } from '@/types/menu.types'
-import { Home } from 'lucide-react'
-import Link from 'next/link'
-import { notFound, useRouter } from 'next/navigation'
-import { use } from 'react'
+import { notFound } from 'next/navigation'
+import { use, type ReactNode } from 'react'
 
-// Import page components
+// Content views, one per `MenuItem['type']`
 import ArticlePage from '@/components/frontend/details/ArticleDetails'
-import ArticleCategoryPage from '@/components/frontend/details/articles/category/[...slugs]/page'
+import CategoryArticlesPage from '@/components/frontend/details/articles/category/[...slugs]/page'
 import GalleryDetails from '@/components/frontend/details/GalleryDetails'
 import PageDetails from '@/components/frontend/details/PageDetails'
 
@@ -32,171 +21,111 @@ interface MenuSlugPageProps {
 }
 
 export default function MenuSlugPage({ params }: MenuSlugPageProps) {
-  const resolvedParams = use(params)
-
-  return <MenuSlugContent params={resolvedParams} />
+  const { menuSlug: segments } = use(params)
+  return <MenuSlugContent segments={segments} />
 }
 
-function MenuSlugContent({ params }: { params: { menuSlug: string[] } }) {
-  const router = useRouter()
-  const menuSlug = params.menuSlug[0] // First segment is the menu slug
-  const additionalPath = params.menuSlug.slice(1) // Remaining segments for gallery/article subpaths
-
-  // Fetch menu item by slug
-  const { data: response, loading } = useAsync<{ data: MenuItem }>(`/menus/item/${menuSlug}`, true)
-  const menuItem = response?.data
+function MenuSlugContent({ segments }: { segments: string[] }) {
+  // First segment identifies the menu item; the rest are subpaths (e.g. gallery folders)
+  const [menuSlug, ...additionalPath] = segments
+  const { menuItem, loading } = useMenuItem(menuSlug)
 
   if (loading) {
-    return (
-      <>
-        <Section className='bg-linear-to-r from-primary/90 to-primary/70'>
-          <Container>
-            <div className='py-12 text-center'>
-              <Skeleton className='bg-white/20 mx-auto mb-4 w-3/4 h-12' />
-              <Skeleton className='bg-white/20 mx-auto w-1/2 h-6' />
-            </div>
-          </Container>
-        </Section>
-
-        <Section variant={'xl'}>
-          <Container>
-            <div className='space-y-4'>
-              <Skeleton className='w-full h-64' />
-              <Skeleton className='w-full h-64' />
-              <Skeleton className='w-full h-64' />
-            </div>
-          </Container>
-        </Section>
-      </>
-    )
+    return <MenuSlugSkeleton />
   }
 
   if (!menuItem) {
     notFound()
   }
 
-  // Determine if header should be shown (default to true)
-  const shouldShowHeader = menuItem.showTitle !== false
+  const header =
+    menuItem.showTitle !== false ? (
+      <MenuPageHeader
+        title={menuItem.title}
+        bgImage={menuItem.bgImage}
+        hasParent={!!menuItem.parentId}
+      />
+    ) : null
 
-  // Use menuItem.bgImage if available, otherwise use default
-  const headerBgImage = menuItem.bgImage || '/images/bg/breadcrumb.jpg'
+  return renderMenuItemContent(menuItem, menuSlug, additionalPath, header)
+}
 
-  // Page Title/Breadcrumb Section
-  const PageHeader = () => (
-    <Section
-      className='relative bg-cover bg-no-repeat bg-center overflow-hidden'
-      style={{
-        backgroundImage: `linear-gradient(to right,  rgba(1, 29, 38, 1),  rgba(1, 29, 38, 0.8),  rgba(1, 29, 38, 0)), url(${headerBgImage})`
-      }}
-    >
-      <Container className='z-10 relative'>
-        <div className='space-y-3 py-5'>
-          {/* Breadcrumb Navigation */}
-          <Breadcrumb>
-            <BreadcrumbList className='text-white/90'>
-              <BreadcrumbItem>
-                <BreadcrumbLink asChild>
-                  <Link href='/' className='flex items-center gap-1 hover:text-white'>
-                    <Home className='w-4 h-4' />
-                    <span>Home</span>
-                  </Link>
-                </BreadcrumbLink>
-              </BreadcrumbItem>
-
-              {menuItem.parentId && (
-                <>
-                  <BreadcrumbSeparator className='text-white/60' />
-                  <BreadcrumbItem>
-                    <BreadcrumbLink asChild>
-                      <Link href='#' className='hover:text-white'>
-                        Parent
-                      </Link>
-                    </BreadcrumbLink>
-                  </BreadcrumbItem>
-                </>
-              )}
-
-              <BreadcrumbSeparator className='text-white/60' />
-              <BreadcrumbItem>
-                <BreadcrumbPage className='font-medium text-white'>{menuItem.title}</BreadcrumbPage>
-              </BreadcrumbItem>
-            </BreadcrumbList>
-          </Breadcrumb>
-
-          {/* Page Title */}
-          <Typography variant='h1' as='h1' weight='bold' className='text-white'>
-            {menuItem.title}
-          </Typography>
-        </div>
-      </Container>
-    </Section>
-  )
-
-  // Route based on menu item type
+function renderMenuItemContent(
+  menuItem: MenuItem,
+  menuSlug: string,
+  additionalPath: string[],
+  header: ReactNode
+) {
   switch (menuItem.type) {
     case 'single-article':
       return (
         <>
-          {shouldShowHeader && <PageHeader />}
+          {header}
           <ArticlePage slug={menuItem.reference as string} />
         </>
       )
 
-    case 'category-articles': {
-      const slugs: string[] = Array.isArray(menuItem.reference)
-        ? menuItem.reference
-        : typeof menuItem.reference === 'string'
-          ? menuItem.reference.split('/').filter(Boolean)
-          : []
-
+    case 'category-blog': {
+      const slugs = getCategorySlugs(menuItem.reference)
       if (slugs.length === 0) {
         notFound()
       }
 
       return (
         <>
-          {shouldShowHeader && <PageHeader />}
-          <ArticleCategoryPage slugs={slugs} />
+          {header}
+          <CategoryArticlesPage slugs={slugs} />
         </>
       )
     }
 
     case 'gallery': {
-      // Combine the menu reference path with any additional path segments
+      // Deeper folder navigation replaces the base reference with an absolute
+      // folder path (see GalleryDetails' folder-click handler), so only fall
+      // back to the menu item's reference at the gallery's root.
       const basePath = menuItem.reference as string
-      const fullPath = additionalPath.length > 0 ? `${additionalPath.join('/')}` : basePath
+      const fullPath = additionalPath.length > 0 ? additionalPath.join('/') : basePath
+
       return (
         <>
-          {shouldShowHeader && <PageHeader />}
+          {header}
           <GalleryDetails path={fullPath} menuSlug={menuSlug} />
         </>
       )
     }
 
     case 'page':
-      if (typeof menuItem.reference === 'string') {
-        return (
-          <>
-            {shouldShowHeader && <PageHeader />}
-            <PageDetails pageSlug={menuItem.reference} />
-          </>
-        )
+      if (typeof menuItem.reference !== 'string') {
+        notFound()
       }
-      notFound()
+
+      return (
+        <>
+          {header}
+          <PageDetails pageSlug={menuItem.reference} />
+        </>
+      )
 
     case 'custom-link':
     case 'external-link':
-      if (menuItem.url) {
-        if (menuItem.target === '_blank') {
-          window.open(menuItem.url, '_blank')
-          router.back()
-        } else {
-          router.push(menuItem.url)
-        }
+      if (!menuItem.url) {
+        notFound()
       }
-      return null
+
+      return <LinkRedirect url={menuItem.url} target={menuItem.target} />
 
     default:
       notFound()
   }
+}
+
+/** Normalizes a category-articles reference (string path or slug array) into slugs. */
+function getCategorySlugs(reference: MenuItem['reference']): string[] {
+  if (Array.isArray(reference)) {
+    return reference
+  }
+  if (typeof reference === 'string') {
+    return reference.split('/').filter(Boolean)
+  }
+  return []
 }

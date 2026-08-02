@@ -35,22 +35,27 @@ export default function MenuGroupPage() {
   }
 
   return (
-    <div className="">
+    <div className=''>
       <PageHeader
         title='Menu Items'
         subTitle='Add and organize menu items. You can nest items by adding child items.'
         extra={<AddButton resource='menu' onClick={() => setIsDialogOpen(true)} />}
       />
 
-
       <div className='flex lg:flex-row flex-col gap-5 overflow-y-auto'>
         {/* Menu Items Builder */}
         <div className='flex-1 lg:col-span-3'>
-          <MenuItemsBuilder items={items} groupId={menu.id} refetch={mutate} isSheetOpen={isDialogOpen} setIsSheetOpen={setIsDialogOpen} />
+          <MenuItemsBuilder
+            items={items}
+            groupId={menu.id}
+            refetch={mutate}
+            isSheetOpen={isDialogOpen}
+            setIsSheetOpen={setIsDialogOpen}
+          />
         </div>
 
         {/* Sidebar: Menu Info */}
-        <div className='space-y-4 w-full lg:w-80 min-w-72'>
+        <div className='top-10 sticky space-y-4 pb-8 w-full lg:w-80 min-w-72'>
           {/* Main Info Card */}
           <div className='bg-white shadow-lg border rounded-2xl overflow-hidden'>
             <div className='bg-slate-50 px-6 py-5 border-b'>
@@ -64,14 +69,16 @@ export default function MenuGroupPage() {
                   </Typography>
                 </div>
                 <span
-                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold ${menu.isPublished
-                    ? 'bg-emerald-100 text-emerald-700'
-                    : 'bg-orange-100 text-orange-700'
-                    }`}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold ${
+                    menu.isPublished
+                      ? 'bg-emerald-100 text-emerald-700'
+                      : 'bg-orange-100 text-orange-700'
+                  }`}
                 >
                   <span
-                    className={`w-1.5 h-1.5 rounded-full ${menu.isPublished ? 'bg-emerald-500' : 'bg-orange-500'
-                      }`}
+                    className={`w-1.5 h-1.5 rounded-full ${
+                      menu.isPublished ? 'bg-emerald-500' : 'bg-orange-500'
+                    }`}
                   />
                   {menu.isPublished ? 'Live' : 'Draft'}
                 </span>
@@ -169,7 +176,7 @@ export default function MenuGroupPage() {
           </div>
 
           {/* Quick Actions Card */}
-          <div className='bg-slate-50 p-5 border border-slate-200 rounded-2xl'>
+          {/* <div className='bg-slate-50 p-5 border border-slate-200 rounded-2xl'>
             <h4 className='mb-3 font-semibold text-slate-600 text-xs uppercase tracking-wide'>
               Quick Actions
             </h4>
@@ -207,9 +214,8 @@ export default function MenuGroupPage() {
                 <span className='font-medium text-slate-700 text-sm'>Bulk Edit</span>
               </button>
             </div>
-          </div>
+          </div> */}
         </div>
-
       </div>
     </div>
   )

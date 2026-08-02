@@ -1,14 +1,6 @@
 'use client'
 
 import { Badge } from '@/components/ui/badge'
-import {
-  Combobox,
-  ComboboxContent,
-  ComboboxEmpty,
-  ComboboxInput,
-  ComboboxItem,
-  ComboboxList
-} from '@/components/ui/combobox'
 import { Input } from '@/components/ui/input'
 import {
   Select,
@@ -22,7 +14,6 @@ import useAsync from '@/hooks/useAsync'
 import { cn } from '@/lib/utils'
 import { ChevronDown, ChevronRight, X } from 'lucide-react'
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { ComboboxOption } from './select'
 
 // Simple debounce utility
 function debounce<T extends (...args: any[]) => any>(func: T, delay: number): T {
@@ -33,7 +24,7 @@ function debounce<T extends (...args: any[]) => any>(func: T, delay: number): T 
   }) as T
 }
 
-type Option = {
+export type Option = {
   title?: string
   value: string
   label?: string
@@ -50,7 +41,7 @@ type CustomSelectProps = {
   tree?: boolean
   value?: string | string[]
   onChange?: (val: any) => void
-  options?: (data: any) => Option[] | Option[] // Optional data mapping function or static options
+  options?: ((data: any) => Option[]) | Option[] // Optional data mapping function or static options
   defaultLabel?: string
   defaultValue?: Option[]
   returnFullData?: boolean
@@ -246,70 +237,21 @@ export function CustomSelect({
     )
   }
 
-  // Single select with conditional rendering based on showSearch
+  // Single select with a search box (searchable dropdown)
   if (showSearch) {
-    const comboboxOptions: ComboboxOption[] = filteredOptions.map((option) => ({
-      value: option.value,
-      label: option.label ?? option.title ?? '',
-      disabled: option.disabled || false
-    }))
-    const singleValue = Array.isArray(value) ? (value[0] ?? null) : (value ?? null)
-
     return (
-      <div className={cn('space-y-2', label && 'space-y-2')}>
-        {label && (
-          <label className='block peer-disabled:opacity-70 font-medium text-sm leading-none peer-disabled:cursor-not-allowed'>
-            {label}
-          </label>
-        )}
-        <Combobox
-          items={comboboxOptions}
-          value={singleValue}
-          onValueChange={(val) => {
-            if (val != null) handleValueChange(val)
-          }}
-          disabled={disabled}
-          open={isOpen}
-          onOpenChange={(open: boolean) => {
-            setIsOpen(open)
-            // Trigger initial fetch when opening if no options and using server mode with URL
-            if (open) {
-              triggerInitialFetch()
-            }
-          }}
-        >
-          <ComboboxInput
-            className={className}
-            placeholder={placeholder}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-              const query = e.target.value
-              if (searchMode === 'server') {
-                debouncedSearch(query)
-              } else {
-                setSearchValue(query)
-              }
-            }}
-          />
-          <ComboboxContent>
-            {loading ? (
-              <div className='p-4'>
-                <Skeleton className='w-full h-4' />
-              </div>
-            ) : (
-              <>
-                <ComboboxEmpty className='p-4 text-sm text-center'>No options found</ComboboxEmpty>
-                <ComboboxList>
-                  {(item: ComboboxOption) => (
-                    <ComboboxItem key={item.value} value={item.value} disabled={item.disabled}>
-                      {item.label}
-                    </ComboboxItem>
-                  )}
-                </ComboboxList>
-              </>
-            )}
-          </ComboboxContent>
-        </Combobox>
-      </div>
+      <SingleSelectComponent
+        options={filteredOptions}
+        value={Array.isArray(value) ? value[0] : value}
+        onChange={handleValueChange}
+        placeholder={placeholder}
+        loading={loading}
+        onSearch={searchMode === 'server' ? debouncedSearch : setSearchValue}
+        disabled={disabled}
+        className={className}
+        label={label}
+        triggerInitialFetch={triggerInitialFetch}
+      />
     )
   }
 
@@ -464,6 +406,7 @@ function MultiSelectComponent({
             {onSearch && (
               <div className='p-2 border-b'>
                 <Input
+                  autoFocus
                   placeholder='Search...'
                   value={searchValue}
                   onChange={(e) => {
@@ -530,6 +473,144 @@ function MultiSelectComponent({
           ))}
         </div>
       )}
+    </div>
+  )
+}
+
+// Single select with a search box, mirroring MultiSelectComponent's dropdown
+function SingleSelectComponent({
+  options,
+  value,
+  onChange,
+  placeholder,
+  loading,
+  onSearch,
+  disabled,
+  className,
+  label,
+  triggerInitialFetch
+}: {
+  options: Option[]
+  value?: string
+  onChange: (val: string) => void
+  placeholder?: string
+  loading: boolean
+  onSearch?: (search: string) => void
+  disabled?: boolean
+  className?: string
+  label?: string
+  triggerInitialFetch?: () => void
+}) {
+  const [isOpen, setIsOpen] = useState(false)
+  const [searchValue, setSearchValue] = useState('')
+  const dropdownRef = useRef<HTMLDivElement>(null)
+
+  const selectedOption = options.find((opt) => opt.value === value)
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsOpen(false)
+      }
+    }
+
+    if (isOpen) {
+      document.addEventListener('mousedown', handleClickOutside)
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [isOpen])
+
+  const handleSelect = (optionValue: string) => {
+    onChange(optionValue)
+    setIsOpen(false)
+  }
+
+  const handleOpenChange = (open: boolean) => {
+    setIsOpen(open)
+    // Trigger initial fetch when opening if no options and using server mode with URL
+    if (open && triggerInitialFetch) {
+      triggerInitialFetch()
+    }
+  }
+
+  return (
+    <div ref={dropdownRef}>
+      {label && (
+        <label className='block peer-disabled:opacity-70 mb-2 font-medium text-sm leading-none peer-disabled:cursor-not-allowed'>
+          {label}
+        </label>
+      )}
+      <div className='relative'>
+        <button
+          type='button'
+          className={cn(
+            'flex justify-between items-center bg-background disabled:opacity-50 px-3 py-2 border border-input rounded-md focus:outline-none focus:ring-2 focus:ring-ring ring-offset-background focus:ring-offset-2 w-full h-10 placeholder:text-muted-foreground text-sm disabled:cursor-not-allowed',
+            className
+          )}
+          onClick={() => {
+            if (!disabled) {
+              handleOpenChange(!isOpen)
+            }
+          }}
+          disabled={disabled}
+        >
+          <span className='text-sm truncate'>
+            {selectedOption ? selectedOption.label || selectedOption.title : placeholder}
+          </span>
+          <ChevronDown className='opacity-50 w-4 h-4' />
+        </button>
+
+        {isOpen && (
+          <div className='z-50 absolute bg-popover shadow-md mt-1 border rounded-md outline-none w-full text-popover-foreground animate-in fade-in-80'>
+            {onSearch && (
+              <div className='p-2 border-b'>
+                <Input
+                  autoFocus
+                  placeholder='Search...'
+                  value={searchValue}
+                  onChange={(e) => {
+                    setSearchValue(e.target.value)
+                    onSearch(e.target.value)
+                  }}
+                  onClick={(e) => e.stopPropagation()}
+                />
+              </div>
+            )}
+            {loading ? (
+              <div className='p-4'>
+                <Skeleton className='w-full h-4' />
+              </div>
+            ) : options.length === 0 ? (
+              <div className='p-4 text-sm text-center'>No options found</div>
+            ) : (
+              <div className='max-h-48 overflow-auto'>
+                {options.map((option) => (
+                  <div
+                    key={option.value}
+                    className={cn(
+                      'hover:bg-accent px-2 py-2 text-sm cursor-pointer',
+                      option.value === value && 'bg-accent',
+                      option.disabled && 'opacity-50 cursor-not-allowed hover:bg-transparent'
+                    )}
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      if (!option.disabled) {
+                        handleSelect(option.value)
+                      }
+                    }}
+                  >
+                    <span>{option.label || option.title}</span>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+      </div>
     </div>
   )
 }

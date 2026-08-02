@@ -6,8 +6,8 @@
  */
 
 import {
-  ChevronDown,
   ChevronRight,
+  Edit,
   ExternalLink,
   FileText,
   FolderOpen,
@@ -15,7 +15,8 @@ import {
   Plus,
   Trash2
 } from 'lucide-react'
-import { useEffect, useState } from 'react'
+import { AnimatePresence, motion } from 'motion/react'
+import { useState } from 'react'
 import { toast } from 'sonner'
 
 import { revalidateTags } from '@/action/data'
@@ -26,9 +27,220 @@ import { Switch } from '@/components/ui/switch'
 import { useConfirmationModal } from '@/hooks/useConfirmationModal'
 import { cn } from '@/lib/utils'
 import { menuService } from '@/services/api/cms.service'
+import type { CreateMenuItemPayload, UpdateMenuItemPayload } from '@/types/cms'
 import type { MenuItem, MenuItemType } from '@/types/menu.types'
 import { MENU_ITEM_TYPE_LABELS } from '@/types/menu.types'
 import MenuItemForm from './MenuItemForm'
+
+// A menu item can only be nested two levels deep below the root (root ->
+// child -> grandchild) - the "Add child" action stops appearing past that.
+const MAX_NESTING_LEVEL = 2
+
+const MENU_ITEM_ICONS: Record<MenuItemType, typeof FileText> = {
+  page: FileText,
+  'single-article': FileText,
+  'category-blog': FolderOpen,
+  gallery: FolderOpen,
+  'custom-link': LinkIcon,
+  'external-link': ExternalLink
+}
+
+function getMenuItemSubtext(item: MenuItem): string {
+  if (item.url) return item.url
+  if (item.type === 'category-blog' && Array.isArray(item.reference)) {
+    return `${item.reference.length} ${item.reference.length === 1 ? 'category' : 'categories'}`
+  }
+  if (item.reference && typeof item.reference === 'string') {
+    return `Slug: ${item.reference.slice(0, 20)}${item.reference.length > 20 ? '...' : ''}`
+  }
+  return 'No link'
+}
+
+// ─── Presentational row ──────────────────────────────────────────────────────
+
+interface MenuItemRowProps {
+  item: MenuItem
+  level: number
+  hasChildren: boolean
+  isExpanded: boolean
+  onToggleExpand: () => void
+  onAddChild: () => void
+  onEdit: () => void
+  onDelete: () => void
+  onTogglePublished: () => void
+}
+
+function MenuItemRow({
+  item,
+  level,
+  hasChildren,
+  isExpanded,
+  onToggleExpand,
+  onAddChild,
+  onEdit,
+  onDelete,
+  onTogglePublished
+}: MenuItemRowProps) {
+  const Icon = MENU_ITEM_ICONS[item.type] ?? LinkIcon
+
+  return (
+    <div className='group flex items-center gap-4 bg-background p-3 border rounded-lg transition-colors'>
+      {/* Expand/Collapse */}
+      {hasChildren ? (
+        <button
+          type='button'
+          onClick={onToggleExpand}
+          className='text-muted-foreground hover:text-foreground'
+        >
+          <ChevronRight
+            className={cn('w-4 h-4 transition-transform duration-200', isExpanded && 'rotate-90')}
+          />
+        </button>
+      ) : (
+        <span className='w-4' />
+      )}
+
+      {/* Icon */}
+      <Icon className='w-4 h-4 text-muted-foreground shrink-0' />
+
+      {/* Content */}
+      <div className='flex-1 space-y-1'>
+        <div className='flex items-center gap-2'>
+          <span className='font-medium'>{item.title}</span>
+          <Badge variant='secondary' className='text-xs'>
+            {MENU_ITEM_TYPE_LABELS[item.type]}
+          </Badge>
+          {/* <Badge variant='outline' className='text-xs' title='Display order'>
+            {item.order}
+          </Badge> */}
+          {item.target === '_blank' && <ExternalLink className='w-3 h-3' />}
+        </div>
+        <p className='text-muted-foreground text-xs'>{getMenuItemSubtext(item)}</p>
+      </div>
+
+      {/* Actions */}
+      <div className='flex items-center gap-3 opacity-0 group-hover:opacity-100 transition-opacity'>
+        <Switch
+          checked={item.isPublished ?? false}
+          onCheckedChange={onTogglePublished}
+          onClick={(e) => e.stopPropagation()}
+        />
+
+        <div className='bg-border w-px h-4' />
+
+        {level < MAX_NESTING_LEVEL && (
+          <Button
+            type='button'
+            variant='ghost'
+            size='icon'
+            onClick={onAddChild}
+            title='Add child item'
+          >
+            <Plus className='w-4 h-4' />
+          </Button>
+        )}
+        <Button type='button' variant='ghost' size='icon' onClick={onEdit} title='Edit'>
+          <Edit className='w-4 h-4' />
+        </Button>
+        <Button
+          type='button'
+          variant='ghost'
+          size='icon'
+          onClick={(e) => {
+            e.stopPropagation()
+            onDelete()
+          }}
+          title='Delete'
+          className='text-destructive hover:text-destructive'
+        >
+          <Trash2 className='w-4 h-4' />
+        </Button>
+      </div>
+    </div>
+  )
+}
+
+// ─── Recursive tree, with a connector spine down each sibling group ─────────
+
+interface MenuItemTreeProps {
+  items: MenuItem[]
+  level: number
+  expandedItems: Set<string>
+  onToggleExpand: (id: string) => void
+  onAddChild: (parentId: string) => void
+  onEdit: (item: MenuItem) => void
+  onDelete: (id: string) => void
+  onTogglePublished: (item: MenuItem) => void
+}
+
+function MenuItemTree({
+  items,
+  level,
+  expandedItems,
+  onToggleExpand,
+  onAddChild,
+  onEdit,
+  onDelete,
+  onTogglePublished
+}: MenuItemTreeProps) {
+  if (items.length === 0) return null
+
+  return (
+    <ul className='relative space-y-1 pl-6 border-border border-l-2'>
+      {items.map((item) => {
+        const hasChildren = (item.children?.length ?? 0) > 0
+        const isExpanded = expandedItems.has(item.id)
+
+        return (
+          <li key={item.id}>
+            <div className='relative'>
+              {/* Elbow connecting this row to the sibling-group's spine */}
+              <span className='top-1/2 -left-6 absolute border-border border-t-2 w-6 h-px -translate-y-1/2' />
+              <MenuItemRow
+                item={item}
+                level={level}
+                hasChildren={hasChildren}
+                isExpanded={isExpanded}
+                onToggleExpand={() => onToggleExpand(item.id)}
+                onAddChild={() => onAddChild(item.id)}
+                onEdit={() => onEdit(item)}
+                onDelete={() => onDelete(item.id)}
+                onTogglePublished={() => onTogglePublished(item)}
+              />
+            </div>
+
+            <AnimatePresence initial={false}>
+              {hasChildren && isExpanded && (
+                <motion.div
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: 'auto', opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  transition={{ duration: 0.2, ease: 'easeInOut' }}
+                  className='overflow-hidden'
+                >
+                  <div className='mt-1'>
+                    <MenuItemTree
+                      items={item.children!}
+                      level={level + 1}
+                      expandedItems={expandedItems}
+                      onToggleExpand={onToggleExpand}
+                      onAddChild={onAddChild}
+                      onEdit={onEdit}
+                      onDelete={onDelete}
+                      onTogglePublished={onTogglePublished}
+                    />
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </li>
+        )
+      })}
+    </ul>
+  )
+}
+
+// ─── Main component ──────────────────────────────────────────────────────────
 
 interface MenuItemsBuilderProps {
   groupId: string
@@ -53,11 +265,8 @@ export function MenuItemsBuilder({
   const [parentItemId, setParentItemId] = useState<string | undefined>(undefined)
 
   // Use external state if provided, otherwise use internal
-  const isSheetOpen = externalIsSheetOpen !== undefined ? externalIsSheetOpen : internalIsSheetOpen
-  const setIsSheetOpen = externalSetIsSheetOpen || setInternalIsSheetOpen
-
-  // maintain a local copy of items so we can optimistically update UI
-  const [localItems, setLocalItems] = useState<MenuItem[]>(items)
+  const isSheetOpen = externalIsSheetOpen ?? internalIsSheetOpen
+  const setIsSheetOpen = externalSetIsSheetOpen ?? setInternalIsSheetOpen
 
   // Confirmation modal for delete action
   const deleteModal = useConfirmationModal({
@@ -70,10 +279,6 @@ export function MenuItemsBuilder({
     icon: Trash2
   })
 
-  useEffect(() => {
-    setLocalItems(items)
-  }, [items])
-
   const toggleExpand = (id: string) => {
     setExpandedItems((prev) => {
       const next = new Set(prev)
@@ -81,6 +286,12 @@ export function MenuItemsBuilder({
       else next.add(id)
       return next
     })
+  }
+
+  const closeEditor = () => {
+    setIsSheetOpen(false)
+    setEditingItem(null)
+    setParentItemId(undefined)
   }
 
   const openEditor = (item: MenuItem) => {
@@ -96,20 +307,19 @@ export function MenuItemsBuilder({
   }
 
   const addItem = async (parentId: string | undefined, itemData: Partial<MenuItem>) => {
+    if (!groupId) {
+      toast.error('Menu group not found')
+      return
+    }
+
     try {
-      if (!groupId) {
-        toast.error('Menu group not found')
-        return
-      }
-
-      const payload = { ...itemData, parentId: parentId || null }
-      await menuService.addMenuItem(groupId, payload as any)
-
+      await menuService.addMenuItem(groupId, {
+        ...itemData,
+        parentId: parentId || null
+      } as CreateMenuItemPayload)
       toast.success('Menu item added')
       await refetch?.()
-      setIsSheetOpen(false)
-      setEditingItem(null)
-      setParentItemId(undefined)
+      closeEditor()
     } catch (err) {
       console.error('Failed to add menu item', err)
       toast.error('Failed to add menu item')
@@ -119,13 +329,11 @@ export function MenuItemsBuilder({
   const updateItem = async (id: string, updates: Partial<MenuItem>) => {
     try {
       if (groupId) {
-        await menuService.updateMenuItem(groupId, id, updates as any)
+        await menuService.updateMenuItem(groupId, id, updates as UpdateMenuItemPayload)
       }
       await refetch?.()
       toast.success('Menu item updated')
-      setIsSheetOpen(false)
-      setEditingItem(null)
-      setParentItemId(undefined)
+      closeEditor()
     } catch (err) {
       console.error('Failed to update menu item', err)
       toast.error('Failed to update menu item')
@@ -134,22 +342,19 @@ export function MenuItemsBuilder({
 
   const handleFormSave = async (updates: Partial<MenuItem>) => {
     if (editingItem) {
-      // Edit existing item
       await updateItem(editingItem.id, updates)
       await revalidateTags('main_menus')
     } else {
-      // Add new item
       await addItem(parentItemId, updates)
     }
   }
 
-  const deleteItem = async (id: string) => {
+  const deleteItem = (id: string) => {
     deleteModal.openModal(async () => {
       try {
         if (groupId) {
           await menuService.deleteMenuItem(groupId, id)
         }
-
         toast.success('Menu item deleted')
       } catch (err) {
         console.error('Failed to delete menu item', err)
@@ -161,147 +366,19 @@ export function MenuItemsBuilder({
     })
   }
 
-  const togglePublished = async (item: MenuItem, currentStatus: boolean) => {
+  const togglePublished = async (item: MenuItem) => {
     try {
-      const newStatus = !currentStatus
       if (groupId) {
-        await menuService.updateMenuItem(groupId, item.id, { isPublished: newStatus } as any)
+        await menuService.updateMenuItem(groupId, item.id, {
+          isPublished: !item.isPublished
+        } as UpdateMenuItemPayload)
       }
-
-      refetch?.()
-      toast.success(`Menu item ${newStatus ? 'published' : 'unpublished'}`)
+      await refetch?.()
+      toast.success(`Menu item ${item.isPublished ? 'unpublished' : 'published'}`)
     } catch (err) {
       console.error('Failed to update menu item status', err)
       toast.error('Failed to update menu item status')
     }
-  }
-
-  const getMenuItemIcon = (type: MenuItemType) => {
-    switch (type) {
-      case 'page':
-        return <FileText className='w-4 h-4' />
-      case 'single-article':
-        return <FileText className='w-4 h-4' />
-      case 'category-articles':
-        return <FolderOpen className='w-4 h-4' />
-      case 'custom-link':
-        return <LinkIcon className='w-4 h-4' />
-      case 'external-link':
-        return <ExternalLink className='w-4 h-4' />
-      default:
-        return <LinkIcon className='w-4 h-4' />
-    }
-  }
-
-  const getMenuItemSubtext = (item: MenuItem) => {
-    if (item.url) return item.url
-    if (item.type === 'category-articles' && Array.isArray(item.reference)) {
-      return `${item.reference.length} ${item.reference.length === 1 ? 'category' : 'categories'}`
-    }
-    if (item.reference && typeof item.reference === 'string') {
-      return `Slug: ${item.reference.substring(0, 20)}${item.reference.length > 20 ? '...' : ''}`
-    }
-    return 'No link'
-  }
-
-  const renderMenuItem = (item: MenuItem, level: number = 0) => {
-    const isExpanded = expandedItems.has(item.id)
-    const hasChildren = (item.children?.length ?? 0) > 0
-
-    return (
-      <div key={item.id} className='space-y-1'>
-        {/* Menu Item Row */}
-        <div
-          className={cn(
-            'group flex items-center gap-4 bg-background p-3 border rounded-lg transition-colors',
-            level > 0 && 'ml-8'
-          )}
-        >
-          {/* Expand/Collapse */}
-          {hasChildren && (
-            <button
-              type='button'
-              onClick={() => toggleExpand(item.id)}
-              className='text-muted-foreground hover:text-foreground'
-            >
-              {isExpanded ? (
-                <ChevronDown className='w-4 h-4' />
-              ) : (
-                <ChevronRight className='w-4 h-4' />
-              )}
-            </button>
-          )}
-
-          {/* Icon */}
-          <div className='text-muted-foreground'>{getMenuItemIcon(item.type)}</div>
-
-          {/* Content */}
-          <div className='flex-1'>
-            <div className='space-y-1'>
-              <div className='flex items-center gap-2'>
-                <span className='font-medium'>{item.title}</span>
-                <Badge variant='secondary' className='text-xs'>
-                  {MENU_ITEM_TYPE_LABELS[item.type]}
-                </Badge>
-                {item.target === '_blank' && <ExternalLink className='w-3 h-3' />}
-              </div>
-              <p className='text-muted-foreground text-xs'>{getMenuItemSubtext(item)}</p>
-            </div>
-          </div>
-
-          {/* Actions */}
-          <div className='flex items-center gap-3 opacity-0 group-hover:opacity-100 transition-opacity'>
-            {/* Published Toggle */}
-            <Switch
-              checked={(item as any).isPublished || false}
-              onCheckedChange={() => togglePublished(item, (item as any).isPublished || false)}
-              onClick={(e) => e.stopPropagation()}
-            />
-
-            <div className='bg-border w-px h-4' />
-
-            <Button
-              type='button'
-              variant='ghost'
-              size='icon'
-              onClick={() => openAddItemForm(item.id)}
-              title='Add child item'
-            >
-              <Plus className='w-4 h-4' />
-            </Button>
-            <Button
-              type='button'
-              variant='ghost'
-              size='icon'
-              onClick={() => openEditor(item)}
-              title='Edit'
-            >
-              <FileText className='w-4 h-4' />
-            </Button>
-            <Button
-              type='button'
-              variant='ghost'
-              size='icon'
-              onClick={(e) => {
-                e.stopPropagation()
-                deleteItem(item.id)
-              }}
-              title='Delete'
-              className='text-destructive hover:text-destructive'
-            >
-              <Trash2 className='w-4 h-4' />
-            </Button>
-          </div>
-        </div>
-
-        {/* Children */}
-        {hasChildren && isExpanded && (
-          <div className='space-y-1'>
-            {item.children?.map((child) => renderMenuItem(child, level + 1))}
-          </div>
-        )}
-      </div>
-    )
   }
 
   return (
@@ -317,20 +394,12 @@ export function MenuItemsBuilder({
             <SheetClose />
           </SheetHeader>
           <div className='px-4 pb-8 overflow-y-auto'>
-            <MenuItemForm
-              item={editingItem}
-              onSave={handleFormSave}
-              onCancel={() => {
-                setEditingItem(null)
-                setParentItemId(undefined)
-                setIsSheetOpen(false)
-              }}
-            />
+            <MenuItemForm item={editingItem} onSave={handleFormSave} onCancel={closeEditor} />
           </div>
         </SheetContent>
       </Sheet>
 
-      {localItems?.length === 0 ? (
+      {items.length === 0 ? (
         <div className='flex flex-col justify-center items-center p-12 border border-dashed rounded-lg text-center'>
           <LinkIcon className='mb-4 w-12 h-12 text-muted-foreground' />
           <h3 className='mb-2 font-semibold text-lg'>No menu items yet</h3>
@@ -343,7 +412,16 @@ export function MenuItemsBuilder({
           </Button>
         </div>
       ) : (
-        <div className='space-y-2'>{localItems.map((item) => renderMenuItem(item))}</div>
+        <MenuItemTree
+          items={items}
+          level={0}
+          expandedItems={expandedItems}
+          onToggleExpand={toggleExpand}
+          onAddChild={openAddItemForm}
+          onEdit={openEditor}
+          onDelete={deleteItem}
+          onTogglePublished={togglePublished}
+        />
       )}
     </div>
   )

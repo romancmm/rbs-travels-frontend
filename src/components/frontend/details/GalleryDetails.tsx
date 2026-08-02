@@ -6,7 +6,7 @@ import { Section } from '@/components/common/section'
 import { Typography } from '@/components/common/typography'
 import { ImageLightbox } from '@/components/frontend/ImageLightbox'
 import { Skeleton } from '@/components/ui/skeleton'
-import useAsync from '@/hooks/useAsync'
+import useAsync from '@/hooks/useAsync.hook'
 import { cn } from '@/lib/utils'
 import { Eye, Folder, Image as ImageIcon } from 'lucide-react'
 import { motion } from 'motion/react'
@@ -62,7 +62,7 @@ function GalleryContent({ pathname, menuSlug }: { pathname: string[]; menuSlug: 
 
   // Build API path for the gallery folder
   const encodedPath = encodeURIComponent(folderPath)
-  const apiPath = `/media?path=${encodedPath}&page=1&perPage=100&withItems=true`
+  const apiPath = `/media?path=${encodedPath}&page=0&limit=50&fileType=all&withItems=true`
 
   const { data, loading } = useAsync<{
     items?: FileItem[]
@@ -78,8 +78,7 @@ function GalleryContent({ pathname, menuSlug }: { pathname: string[]; menuSlug: 
     folderPath?: string
     folderId?: string
     createdAt?: string
-  }>(apiPath, true)
-
+  }>({ path: apiPath, immediate: true })
   // Filter folders and images from items
   const folders = (() => {
     // Handle both array response and single folder response
@@ -147,31 +146,6 @@ function GalleryContent({ pathname, menuSlug }: { pathname: string[]; menuSlug: 
 
   return (
     <>
-      {/* Header Section */}
-      {/* <Section className='bg-linear-to-r from-primary/90 to-primary/70'>
-        <Container>
-          <motion.div
-            className='py-12 text-white text-center'
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-          >
-            <Typography variant='h1' weight='bold' className='mb-4'>
-              {displayName}
-            </Typography>
-            <Typography variant='body1' className='opacity-90 mx-auto max-w-2xl'>
-              {folders.length > 0 && images.length > 0
-                ? `${folders.length} ${folders.length === 1 ? 'folder' : 'folders'} • ${
-                    images.length
-                  } ${images.length === 1 ? 'image' : 'images'}`
-                : folders.length > 0
-                  ? `${folders.length} ${folders.length === 1 ? 'folder' : 'folders'}`
-                  : `${images.length} ${images.length === 1 ? 'image' : 'images'}`}
-            </Typography>
-          </motion.div>
-        </Container>
-      </Section> */}
-
       {/* Gallery Grid Section */}
       <Section variant={'xl'}>
         <Container>

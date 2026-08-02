@@ -6,11 +6,10 @@ import CustomImage from '@/components/common/CustomImage'
 import { Section } from '@/components/common/section'
 import { SectionHeading } from '@/components/common/SectionHeading'
 import { Typography } from '@/components/common/typography'
-import { Button } from '@/components/ui/button'
 import type { CarouselApi } from '@/components/ui/carousel'
 import { cn } from '@/lib/utils'
 import { TopCountriesType, type DestinationItem } from '@/lib/validations/schemas/homepageSettings'
-import { ArrowLeft, ArrowRight, Briefcase, DollarSign, Users } from 'lucide-react'
+import { Briefcase, DollarSign, Users } from 'lucide-react'
 import { useState } from 'react'
 
 const DestinationCard = ({
@@ -122,28 +121,13 @@ export default function TopDestinations({ data }: { data?: TopCountriesType }) {
   if (!data?.destinations?.length) return null
 
   return (
-    <Section
-      variant={'md'}
-      className={cn(
-        'relative bg-linear-to-br from-primary/5 via-background to-accent/5 overflow-hidden'
-      )}
-    >
-      {/* Enhanced Background Pattern */}
-      <div className='absolute inset-0 opacity-5'>
-        <div
-          className='absolute inset-0'
-          style={{
-            backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23000000' fill-opacity='0.1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`
-          }}
-        />
-      </div>
-
+    <Section variant={'md'} className={cn('relative overflow-hidden')}>
       <Container className='relative'>
         <SectionHeading
           subtitle={data.subtitle || 'Top Destinations'}
           title={data.title || 'Explore Top Countries'}
           description="Discover the world's most breathtaking destinations with our curated collection of extraordinary travel experiences."
-          variant='badge'
+          variant='gradient'
           alignment='center'
         />
 
@@ -151,73 +135,18 @@ export default function TopDestinations({ data }: { data?: TopCountriesType }) {
         <div className='relative mb-8'>
           <CarouselWrapper
             loop
-            showArrows={false}
-            showDots={false}
+            showArrows={true}
+            showDots
+            dotsPosition='below'
             itemsPerView={{ default: 1, sm: 2, lg: 3, xl: 4 }}
-            contentClassName='pt-6 pb-10'
+            // contentClassName='pt-6 pb-10'
+            itemClassName='pb-12!'
             onApiChange={setCarouselState}
           >
             {data.destinations.map((destination, index) => (
               <DestinationCard key={index} destination={destination} index={index} />
             ))}
           </CarouselWrapper>
-
-          <div className='flex justify-between items-center mb-4'>
-            <div className='flex items-center gap-4'>
-              {/* <div className='hidden md:flex items-center gap-2 text-muted-foreground text-sm'>
-                <Filter className='w-4 h-4' />
-                <span>{data.destinations.length} destinations</span>
-              </div>
-              <div className='flex items-center gap-2 text-muted-foreground text-sm'>
-                <span>
-                  {count > 0 ? current + 1 : 0} of {count} slides
-                </span>
-              </div> */}
-            </div>
-
-            <div className='flex items-center gap-3'>
-              <Button
-                type='button'
-                variant='outline'
-                size='icon'
-                onClick={() => api?.scrollPrev()}
-                disabled={!canScrollPrev}
-                className={cn(
-                  'hover:bg-primary border-border hover:border-primary hover:text-white transition-all duration-300',
-                  !canScrollPrev && 'opacity-50 cursor-not-allowed'
-                )}
-              >
-                <ArrowLeft />
-              </Button>
-              <Button
-                type='button'
-                variant='outline'
-                size='icon'
-                onClick={() => api?.scrollNext()}
-                disabled={!canScrollNext}
-                className={cn(
-                  'hover:bg-primary border-border hover:border-primary hover:text-white transition-all duration-300',
-                  !canScrollNext && 'opacity-50 cursor-not-allowed'
-                )}
-              >
-                <ArrowRight />
-              </Button>
-            </div>
-          </div>
-        </div>
-
-        {/* Progress Indicators */}
-        <div className='flex justify-center items-center gap-2 -mt-6 mb-8'>
-          {Array.from({ length: count }).map((_, index) => (
-            <button
-              key={index}
-              onClick={() => api?.scrollTo(index)}
-              className={cn(
-                'rounded-full h-2 transition-all duration-300',
-                index === current ? 'bg-primary w-8' : 'bg-border hover:bg-muted-foreground/50 w-2'
-              )}
-            />
-          ))}
         </div>
       </Container>
     </Section>

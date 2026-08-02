@@ -83,6 +83,16 @@ interface CarouselWrapperProps {
   showDots?: boolean
 
   /**
+   * Dots placement relative to the carousel content:
+   * - `over`  — absolute overlay near the bottom of the content, for
+   *             full-bleed banners/images where dots sit on top of the slide.
+   * - `below` — normal document flow, right after the content, for card
+   *             rails where dots should sit in the space beneath the cards
+   *             instead of overlapping them.
+   */
+  dotsPosition?: 'over' | 'below'
+
+  /**
    * Arrow visibility behavior
    */
   arrowVisibility?: 'always' | 'hover' | 'hidden'
@@ -116,6 +126,14 @@ interface CarouselWrapperProps {
   align?: 'start' | 'center' | 'end'
 
   /**
+   * Lifts whichever slide currently sits in the middle of the visible set
+   * (only when an odd number ≥3 are in view) slightly above its neighbors,
+   * e.g. a 3-up testimonial rail where the center card should stand out.
+   * Default false.
+   */
+  centerEmphasis?: boolean
+
+  /**
    * Escape hatch for callers that need their own controls (e.g. a custom
    * counter or arrow buttons placed outside the carousel) instead of - or in
    * addition to - the built-in arrows/dots. Fires whenever the embla API,
@@ -138,12 +156,15 @@ export default function CarouselWrapper({
 
   showArrows = true,
   showDots = true,
+  dotsPosition = 'over',
 
   arrowVisibility = 'hover',
 
   arrow = {},
 
   align = 'start',
+
+  centerEmphasis = false,
 
   itemsPerView = {
     default: 1,
@@ -158,6 +179,7 @@ export default function CarouselWrapper({
   const [api, setApi] = React.useState<CarouselApi>()
   const [current, setCurrent] = React.useState(0)
   const [count, setCount] = React.useState(0)
+  const [centerIndex, setCenterIndex] = React.useState<number | null>(null)
 
   React.useEffect(() => {
     onApiChange?.({ api, current, count })
@@ -196,6 +218,54 @@ export default function CarouselWrapper({
       api.off('reInit', onInit)
     }
   }, [api])
+
+  // Track whichever slide is visually centered so it can be raised above its
+  // neighbors - only meaningful with ≥3 substantially-visible slides, else
+  // there's no true middle to lift. Uses real slide geometry rather than
+  // `slidesInView()`, whose default zero-threshold intersection counts a
+  // slide that's only sub-pixel-clipped at the viewport edge as "in view",
+  // which threw off a parity-based (odd/even count) center calculation.
+  React.useEffect(() => {
+    if (!api || !centerEmphasis) {
+      setCenterIndex(null)
+      return
+    }
+
+    const updateCenter = () => {
+      const rootRect = api.rootNode().getBoundingClientRect()
+      const viewportCenter = rootRect.left + rootRect.width / 2
+
+      let visibleCount = 0
+      let closestIndex: number | null = null
+      let closestDistance = Infinity
+
+      api.slideNodes().forEach((slide, i) => {
+        const rect = slide.getBoundingClientRect()
+        const visibleWidth =
+          Math.min(rect.right, rootRect.right) - Math.max(rect.left, rootRect.left)
+        // Ignore slides that are only barely clipped in at the edge
+        if (visibleWidth < rect.width * 0.6) return
+
+        visibleCount++
+        const distance = Math.abs(rect.left + rect.width / 2 - viewportCenter)
+        if (distance < closestDistance) {
+          closestDistance = distance
+          closestIndex = i
+        }
+      })
+
+      setCenterIndex(visibleCount >= 3 ? closestIndex : null)
+    }
+
+    updateCenter()
+    api.on('scroll', updateCenter)
+    api.on('reInit', updateCenter)
+
+    return () => {
+      api.off('scroll', updateCenter)
+      api.off('reInit', updateCenter)
+    }
+  }, [api, centerEmphasis])
 
   React.useEffect(() => {
     const handleResize = () => {
@@ -325,7 +395,7 @@ export default function CarouselWrapper({
             <CarouselItem
               key={index}
               className={cn(
-                'pb-2 pl-2.5_sm:pl-3 min-w-0 shrink-0 grow-0',
+                'pb-2 pl-2.5_sm:pl-3 min-w-0 shrink-0 grow-0 transition-transform duration-500',
                 // Static Tailwind classes with CSS variables (JIT will successfully pick these up!)
                 'basis-[calc(100%/var(--default-items))]',
                 'sm:basis-[calc(100%/var(--sm-items))]',
@@ -333,6 +403,7 @@ export default function CarouselWrapper({
                 'lg:basis-[calc(100%/var(--lg-items))]',
                 'xl:basis-[calc(100%/var(--xl-items))]',
                 '2xl:basis-[calc(100%/var(--2xl-items))]',
+                centerEmphasis && index === centerIndex && 'z-10 -translate-y-4',
                 itemClassName
               )}
             >
@@ -391,15 +462,21 @@ export default function CarouselWrapper({
 
         {/* Dots */}
         {showDots && count > 1 && (
-          <div className='bottom-3 left-1/2 z-20 absolute flex gap-2 -translate-x-1/2'>
+          <div
+            className={cn(
+              'flex flex-auto justify-center gap-2',
+              dotsPosition === 'over'
+                ? 'bottom-3 left-1/2 absolute -translate-x-1/2'
+                : 'relative mt-4'
+            )}
+          >
             {Array.from({ length: count }).map((_, index) => (
               <button
                 key={index}
-                type='button'
                 onClick={() => api?.scrollTo(index)}
                 className={cn(
-                  'bg-white/70 border rounded-full w-2.5 h-2.5 transition-all duration-300 cursor-pointer',
-                  { 'bg-primary ring-primary/30 ring-2': current === index }
+                  'hover:bg-muted-foreground/50 bg-border rounded-full w-2.5 h-2.5 transition-all duration-300',
+                  { 'bg-primary w-8': index === current }
                 )}
               />
             ))}

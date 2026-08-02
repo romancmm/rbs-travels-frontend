@@ -51,7 +51,7 @@ export function FileGrid({
   }
 
   return (
-    <div className='flex flex-wrap *:flex-[1_1_calc(150px)] gap-3 bg-gray-50/30 py-4 *:max-w-50'>
+    <div className='flex flex-wrap *:flex-[1_1_calc(150px)] gap-3 bg-gray-50/30 p-4 *:max-w-50'>
       {files.map((file, index) => {
         const Icon = getFileIcon(file)
         const selected = isSelected(file)

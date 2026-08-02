@@ -1,28 +1,47 @@
 'use client'
 
+import CustomImage from '@/components/common/CustomImage'
 import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Sheet, SheetContent } from '@/components/ui/sheet'
-import {
-  Calendar,
-  Copy,
-  Download,
-  Edit3,
-  ExternalLink,
-  FileType,
-  HardDrive,
-  Image as ImageIcon,
-  Trash2,
-  X
-} from 'lucide-react'
-import Image from 'next/image'
+import { Calendar, Copy, ExternalLink, FileType, HardDrive, Image as ImageIcon } from 'lucide-react'
 import { useState } from 'react'
 import { FileItem } from './FileManagerComponent'
 
 interface FileDetailsPanelProps {
   file: FileItem
   onClose: () => void
+}
+
+/**
+ * Renders the thumbnail at its real aspect ratio instead of trusting
+ * `file.width`/`file.height` — those describe the original upload and can
+ * disagree with `thumbnail`'s actual crop, which showed up as letterboxed
+ * whitespace above/below the image.
+ */
+function ImagePreview({ src, alt }: { src: string; alt: string }) {
+  const [aspectRatio, setAspectRatio] = useState<number | null>(null)
+
+  return (
+    <div
+      className='relative flex justify-center items-center bg-muted mb-3 rounded-lg w-full overflow-hidden'
+      style={aspectRatio ? { aspectRatio } : { minHeight: 160 }}
+    >
+      <CustomImage
+        src={src}
+        alt={alt}
+        fill
+        sizes='100vw'
+        className='object-contain'
+        onLoad={(e) => {
+          const img = e.currentTarget
+          if (img.naturalWidth && img.naturalHeight) {
+            setAspectRatio(img.naturalWidth / img.naturalHeight)
+          }
+        }}
+      />
+    </div>
+  )
 }
 
 export function FileDetailsPanel({ file, onClose }: FileDetailsPanelProps) {
@@ -80,15 +99,17 @@ export function FileDetailsPanel({ file, onClose }: FileDetailsPanelProps) {
 
   // Sheet/modal logic
   return (
-    <Sheet open={!!file} onOpenChange={open => { if (!open) onClose() }}>
-      <SheetContent side="right" className="max-w-md w-full p-0">
+    <Sheet
+      open={!!file}
+      onOpenChange={(open) => {
+        if (!open) onClose()
+      }}
+    >
+      <SheetContent side='right' className='p-0 w-full max-w-md'>
         <div className='flex flex-col bg-muted/30 h-full'>
           {/* Header */}
           <div className='flex justify-between items-center p-4 border-b'>
             <h3 className='font-medium'>File Details</h3>
-            <Button variant='ghost' size='sm' onClick={onClose}>
-              <X className='w-4 h-4' />
-            </Button>
           </div>
 
           {/* Content */}
@@ -96,17 +117,11 @@ export function FileDetailsPanel({ file, onClose }: FileDetailsPanelProps) {
             {/* Preview */}
             <Card>
               <CardContent className='p-4'>
-                <div className='flex justify-center items-center bg-muted mb-3 rounded-lg aspect-video'>
-                  {file.fileType === 'image' && file.thumbnail ? (
-                    <Image
-                      src={file.thumbnail}
-                      alt={file.name}
-                      width={200}
-                      height={150}
-                      className='rounded-lg max-w-full max-h-full object-cover'
-                    />
-                  ) : (
-                    <div className='text-center'>
+                {file.fileType === 'image' && file.thumbnail ? (
+                  <ImagePreview key={file.thumbnail} src={file.thumbnail} alt={file.name} />
+                ) : (
+                  <div className='flex justify-center items-center bg-muted mb-3 py-8 rounded-lg w-full text-center'>
+                    <div>
                       {file.fileType === 'image' ? (
                         <ImageIcon className='mx-auto mb-2 w-12 h-12 text-muted-foreground' />
                       ) : (
@@ -114,8 +129,8 @@ export function FileDetailsPanel({ file, onClose }: FileDetailsPanelProps) {
                       )}
                       <p className='text-muted-foreground text-sm'>No preview available</p>
                     </div>
-                  )}
-                </div>
+                  </div>
+                )}
 
                 <h4 className='font-medium truncate' title={file.name}>
                   {file.name}
@@ -198,7 +213,7 @@ export function FileDetailsPanel({ file, onClose }: FileDetailsPanelProps) {
           </div>
 
           {/* Actions */}
-          <div className='space-y-2 p-4 border-t'>
+          {/* <div className='space-y-2 p-4 border-t'>
             <Button
               variant='outline'
               size='sm'
@@ -236,7 +251,7 @@ export function FileDetailsPanel({ file, onClose }: FileDetailsPanelProps) {
               <Trash2 className='mr-2 w-4 h-4' />
               {isDeleting ? 'Deleting...' : 'Delete'}
             </Button>
-          </div>
+          </div> */}
         </div>
       </SheetContent>
     </Sheet>

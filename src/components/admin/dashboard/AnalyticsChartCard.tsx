@@ -10,6 +10,7 @@ import { motion } from 'motion/react'
 type ChartDataPoint = {
     label: string
     value: number
+    color?: string
 }
 
 type AnalyticsChartCardProps = {
@@ -30,7 +31,7 @@ export default function AnalyticsChartCard({
     trend,
     totalValue
 }: AnalyticsChartCardProps) {
-    const maxValue = Math.max(...data.map((d) => d.value))
+    const maxValue = Math.max(...data.map((d) => d.value)) || 1
 
     return (
         <motion.div
@@ -91,7 +92,16 @@ export default function AnalyticsChartCard({
                                     className='space-y-2'
                                 >
                                     <div className='flex justify-between items-center'>
-                                        <span className='font-medium text-sm'>{item.label}</span>
+                                        <span className='flex items-center gap-2 font-medium text-sm'>
+                                            {item.color && (
+                                                <span
+                                                    className='rounded-full w-2.5 h-2.5 shrink-0'
+                                                    style={{ backgroundColor: item.color }}
+                                                    aria-hidden
+                                                />
+                                            )}
+                                            {item.label}
+                                        </span>
                                         <span className='font-semibold text-sm'>{item.value.toLocaleString()}</span>
                                     </div>
                                     <div className='relative bg-muted rounded-full w-full h-3 overflow-hidden'>
@@ -99,7 +109,11 @@ export default function AnalyticsChartCard({
                                             initial={{ width: 0 }}
                                             animate={{ width: `${percentage}%` }}
                                             transition={{ duration: 1, delay: index * 0.1, ease: 'easeOut' }}
-                                            className='top-0 left-0 absolute bg-linear-to-r from-primary to-accent rounded-full h-full'
+                                            className={cn(
+                                                'top-0 left-0 absolute rounded-full h-full',
+                                                !item.color && 'bg-linear-to-r from-primary to-accent'
+                                            )}
+                                            style={item.color ? { backgroundColor: item.color } : undefined}
                                         />
                                     </div>
                                 </motion.div>

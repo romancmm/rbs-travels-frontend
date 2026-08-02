@@ -7,7 +7,7 @@ import { cva } from 'class-variance-authority'
 import { Eye, FileText, Loader2, Plus, Trash2, X } from 'lucide-react'
 import { AnimatePresence, motion } from 'motion/react'
 import { toast } from 'sonner'
-import CustomImage from '../common/CustomImage'
+import CustomImage from './CustomImage'
 
 // CVA variants
 const containerVariants = cva('', {

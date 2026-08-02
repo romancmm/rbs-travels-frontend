@@ -31,13 +31,13 @@ const SisterConcern = ({ className }: SisterConcernProps) => {
   }
 
   return (
-    <Section variant='md' className={cn('bg-muted/30', className)}>
+    <Section variant='md' bg='mid' className={cn(className)}>
       <Container>
         <div className='flex max-md:flex-col items-center md:gap-12'>
           <SectionHeading
             subtitle={sectionData.subtitle ?? ''}
             title={sectionData.title ?? ''}
-            description={sectionData.description ?? ''}
+            description={sectionData.description}
             variant='default'
             alignment='left'
             className='max-md:items-center max-md:mb-6 max-w-xl max-md:text-center'

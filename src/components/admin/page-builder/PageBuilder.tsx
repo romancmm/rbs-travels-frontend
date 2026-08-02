@@ -1,12 +1,11 @@
 'use client'
 
-import { Eye, Monitor, Redo2, Save, Smartphone, Tablet, Undo2 } from 'lucide-react'
+import { Monitor, Redo2, Save, Smartphone, Tablet, Undo2 } from 'lucide-react'
 import { useCallback, useEffect } from 'react'
 
 import { Button } from '@/components/ui/button'
 import { useBuilderStore } from '@/lib/page-builder/builder-store'
 import { BuilderDndProvider } from '@/lib/page-builder/dnd-context'
-import { cn } from '@/lib/utils'
 import type { PageContent } from '@/types/page-builder'
 import { Canvas } from './Canvas'
 import { ComponentsSidebar } from './ComponentsSidebar'
@@ -130,7 +129,7 @@ export function PageBuilder({ pageId, initialContent, pageMetadata }: PageBuilde
           </div>
 
           {/* Center: Preview mode switcher */}
-          <div className='flex items-center gap-1 bg-gray-50 p-1 border rounded-lg'>
+          {/* <div className='flex items-center gap-1 bg-gray-50 p-1 border rounded-lg'>
             {previewModes.map(({ mode, icon: Icon, label }) => (
               <Button
                 key={mode}
@@ -143,7 +142,7 @@ export function PageBuilder({ pageId, initialContent, pageMetadata }: PageBuilde
                 <span className='hidden sm:inline'>{label}</span>
               </Button>
             ))}
-          </div>
+          </div> */}
 
           {/* Right: Actions */}
           <div className='flex items-center gap-2'>
@@ -172,10 +171,10 @@ export function PageBuilder({ pageId, initialContent, pageMetadata }: PageBuilde
             </div>
 
             {/* Preview */}
-            <Button variant='outline' size='sm' className='gap-2'>
+            {/* <Button variant='outline' size='sm' className='gap-2'>
               <Eye className='w-4 h-4' />
               Preview
-            </Button>
+            </Button> */}
 
             {/* Save */}
             <Button

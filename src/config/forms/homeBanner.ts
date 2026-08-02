@@ -43,8 +43,18 @@ export const homeBannerFields: FieldConfig<HomepageSettings>[] = [
         itemLabel: (index) => `Button ${index + 1}`,
         emptyLabel: 'No buttons added yet. Click "Add Button" to create a call-to-action.',
         itemFields: [
-          { type: 'text', name: 'title', label: 'Button Text', placeholder: 'e.g., Get Started, Learn More' },
-          { type: 'text', name: 'url', label: 'Button URL', placeholder: '/contact or https://example.com' }
+          {
+            type: 'text',
+            name: 'title',
+            label: 'Button Text',
+            placeholder: 'e.g., Get Started, Learn More'
+          },
+          {
+            type: 'text',
+            name: 'url',
+            label: 'Button URL',
+            placeholder: '/contact or https://example.com'
+          }
         ]
       }
     ]

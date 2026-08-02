@@ -29,13 +29,15 @@ export const UpdateArticleCategorySchema = CreateArticleCategorySchema.partial()
 export const ArticleSeoSchema = z.object({
   title: z
     .string()
-    .min(1, 'SEO title is required')
-    .max(60, 'SEO title must be less than 60 characters'),
+    .max(60, 'SEO title must be less than 60 characters')
+    .optional()
+    .or(z.literal('')),
   description: z
     .string()
-    .min(1, 'SEO description is required')
-    .max(160, 'SEO description must be less than 160 characters'),
-  keywords: z.array(z.string())
+    .max(160, 'SEO description must be less than 160 characters')
+    .optional()
+    .or(z.literal('')),
+  keywords: z.array(z.string()).optional()
 })
 
 // Create blog schema
@@ -49,7 +51,7 @@ export const CreateArticleSchema = z.object({
   content: z.string().min(1, 'Content is required'),
   thumbnail: z.string().url('Thumbnail must be a valid URL').optional(),
   gallery: z.array(z.string().url('Gallery images must be valid URLs')),
-  seo: ArticleSeoSchema,
+  seo: ArticleSeoSchema.optional().nullable(),
   categoryIds: z.array(z.string()),
   tags: z.array(z.string()),
   isPublished: z.boolean(),

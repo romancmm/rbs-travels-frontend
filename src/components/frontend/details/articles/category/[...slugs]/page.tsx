@@ -3,13 +3,13 @@ import BlogCard from '@/components/card/BlogCard'
 import { Container } from '@/components/common/container'
 import { Typography } from '@/components/common/typography'
 import { Skeleton } from '@/components/ui/skeleton'
-import useAsync from '@/hooks/useAsync'
+import useAsync from '@/hooks/useAsync.hook'
 
 export default function CategoryArticlesPage({ slugs }: { slugs: string[] }) {
-  const { data, loading } = useAsync(
-    () => (slugs ? `/articles/posts?categorySlugs=${slugs?.join(',')}` : null),
-    true
-  )
+  const { data, loading } = useAsync({
+    path: `/articles/posts?categorySlugs=${slugs.join(',')}`,
+    immediate: true
+  })
   const articlesData = data?.data?.items
 
   if (loading) {

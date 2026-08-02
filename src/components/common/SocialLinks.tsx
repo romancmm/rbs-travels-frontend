@@ -1,6 +1,7 @@
 'use client'
 import { Skeleton } from '@/components/ui/skeleton'
 import useAsync from '@/hooks/useAsync'
+import { cn } from '@/lib/utils'
 import { SocialLinkType } from '@/lib/validations/schemas/socialLinks'
 import CustomImage from './CustomImage'
 import CustomLink from './CustomLink'
@@ -29,7 +30,13 @@ const socialPlatformLabels: Record<string, string> = {
     snapchat: 'Snapchat'
 }
 
-export default function SocialLinks() {
+interface SocialLinksProps {
+    /** `dark` (default) is for dark backgrounds - icons are light at rest, invert on hover.
+     * `light` is for light backgrounds (e.g. white cards) - icons are dark at rest, invert to white on hover. */
+    variant?: 'dark' | 'light'
+}
+
+export default function SocialLinks({ variant = 'dark' }: SocialLinksProps) {
     const { data, loading } = useAsync(() => '/settings/system_social_links')
     const socialLinks = data?.data?.value
 
@@ -84,7 +91,12 @@ export default function SocialLinks() {
                             alt={`${platformLabel} icon`}
                             width={20}
                             height={20}
-                            className='group-hover:brightness-0 group-hover:invert lg:w-5 lg:h-5 object-contain transition-all duration-300'
+                            className={cn(
+                                'lg:w-5 lg:h-5 object-contain transition-all duration-300',
+                                variant === 'light'
+                                    ? 'opacity-70 brightness-0 group-hover:opacity-100 group-hover:invert'
+                                    : 'group-hover:brightness-0 group-hover:invert'
+                            )}
                         />
                     </CustomLink>
                 )

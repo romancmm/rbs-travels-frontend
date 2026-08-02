@@ -12,7 +12,7 @@ import { CreateArticleSchema, CreateArticleType } from '@/lib/validations/schema
 import requests from '@/services/network/http'
 import { Image as ImageIcon, Search, Tag, Text, X } from 'lucide-react'
 import { useRouter } from 'next/navigation'
-import { useEffect, useMemo } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Controller, SubmitHandler } from 'react-hook-form'
 import { toast } from 'sonner'
 import TextEditor from '../common/TextEditor'
@@ -61,8 +61,14 @@ export default function ArticleForm({ initialData }: TProps) {
 
   const watchTitle = watch('title')
   const watchTags = watch('tags')
-  const watchSeoKeywords = watch('seo.keywords')
+  const watchSeoKeywords = watch('seo.keywords') ?? []
   const watchIsPublished = watch('isPublished')
+
+  // CustomInput always renders a controlled <Input value={value ?? ''}>, so
+  // leaving these fields without value/onChange locks them to a permanent
+  // empty string - every keystroke got reverted and nothing could be typed.
+  const [tagInput, setTagInput] = useState('')
+  const [seoKeywordInput, setSeoKeywordInput] = useState('')
 
   // Auto-generate slug from title
   useEffect(() => {
@@ -81,11 +87,10 @@ export default function ArticleForm({ initialData }: TProps) {
   const handleTagInput = (e: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     if (e.key === 'Enter' || e.key === ',') {
       e.preventDefault()
-      const input = e.target as HTMLInputElement
-      const newTag = input.value.trim()
+      const newTag = tagInput.trim()
       if (newTag && !watchTags.includes(newTag)) {
-        setValue('tags', [...watchTags, newTag])
-        input.value = ''
+        setValue('tags', [...watchTags, newTag], { shouldValidate: true, shouldDirty: true })
+        setTagInput('')
       }
     }
   }
@@ -93,7 +98,8 @@ export default function ArticleForm({ initialData }: TProps) {
   const removeTag = (indexToRemove: number) => {
     setValue(
       'tags',
-      watchTags.filter((_, index) => index !== indexToRemove)
+      watchTags.filter((_, index) => index !== indexToRemove),
+      { shouldValidate: true, shouldDirty: true }
     )
   }
 
@@ -103,11 +109,10 @@ export default function ArticleForm({ initialData }: TProps) {
   ) => {
     if (e.key === 'Enter' || e.key === ',') {
       e.preventDefault()
-      const input = e.target as HTMLInputElement
-      const newKeyword = input.value.trim()
+      const newKeyword = seoKeywordInput.trim()
       if (newKeyword && !watchSeoKeywords.includes(newKeyword)) {
-        setValue('seo.keywords', [...watchSeoKeywords, newKeyword])
-        input.value = ''
+        setValue('seo.keywords', [...watchSeoKeywords, newKeyword], { shouldDirty: true })
+        setSeoKeywordInput('')
       }
     }
   }
@@ -115,7 +120,8 @@ export default function ArticleForm({ initialData }: TProps) {
   const removeSeoKeyword = (indexToRemove: number) => {
     setValue(
       'seo.keywords',
-      watchSeoKeywords.filter((_, index) => index !== indexToRemove)
+      watchSeoKeywords.filter((_, index) => index !== indexToRemove),
+      { shouldDirty: true }
     )
   }
 
@@ -260,6 +266,8 @@ export default function ArticleForm({ initialData }: TProps) {
               <CustomInput
                 type='text'
                 placeholder='Type a tag and press Enter'
+                value={tagInput}
+                onChange={(e) => setTagInput(e.target.value)}
                 onKeyDown={handleTagInput}
               />
               {watchTags.length > 0 && (
@@ -428,6 +436,8 @@ export default function ArticleForm({ initialData }: TProps) {
                   label='SEO Keywords'
                   type='text'
                   placeholder='Type keyword and press Enter'
+                  value={seoKeywordInput}
+                  onChange={(e) => setSeoKeywordInput(e.target.value)}
                   onKeyDown={handleSeoKeywordInput}
                 />
                 {watchSeoKeywords.length > 0 && (

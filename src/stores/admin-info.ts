@@ -38,7 +38,8 @@ export const useAdminStore = create<AdminStoreState>()(
     }),
     {
       name: 'adminInfo',
-      storage: createJSONStorage(() => storage)
+      storage: createJSONStorage(() => storage),
+      skipHydration: true
     }
   )
 )

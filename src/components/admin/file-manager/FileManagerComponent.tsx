@@ -22,6 +22,7 @@ import {
   Home,
   List,
   Plus,
+  RefreshCcw,
   Search,
   Trash2,
   Upload,
@@ -138,7 +139,7 @@ export function FileManagerComponent({
 
   // Helper function to get unique ID for files and folders
   const getItemId = (item: FileItem) => {
-    return item.type === 'file' ? item.fileId : item.folderId
+    return item.type?.toLocaleLowerCase() === 'file' ? item.fileId : item.folderId
   }
 
   // Confirmation modal for deletion
@@ -330,7 +331,7 @@ export function FileManagerComponent({
       try {
         // force=true: our confirmation modal already asked the user, so a
         // non-empty folder shouldn't get a second "folder has contents" error
-        await requests.delete(`/admin/media/${id}?force=true`)
+        await requests.delete(`/admin/media/${id}?force=false`)
 
         // Clear selection if deleted file was selected
         if (selectedFile && getItemId(selectedFile) === getItemId(file)) {
@@ -509,6 +510,11 @@ export function FileManagerComponent({
             {/* Action Buttons */}
             {!selectionMode && (
               <>
+                <Button variant='outline' size='sm' onClick={() => mutate()}>
+                  <RefreshCcw className='w-4 h-4' />
+                  {!isMobile && 'Refresh'}
+                </Button>
+
                 <Button
                   variant='outline'
                   size='sm'
@@ -603,11 +609,21 @@ export function FileManagerComponent({
               rather than the numbered page-count control used elsewhere */}
           {data && (data.hasMore || page > 1) && (
             <div className='flex justify-center items-center gap-3 py-3'>
-              <Button variant='outline' size='sm' onClick={prevPage} disabled={page <= 1 || loading}>
+              <Button
+                variant='outline'
+                size='sm'
+                onClick={prevPage}
+                disabled={page <= 1 || loading}
+              >
                 Previous
               </Button>
               <span className='text-muted-foreground text-sm'>Page {page}</span>
-              <Button variant='outline' size='sm' onClick={nextPage} disabled={!data.hasMore || loading}>
+              <Button
+                variant='outline'
+                size='sm'
+                onClick={nextPage}
+                disabled={!data.hasMore || loading}
+              >
                 Next
               </Button>
             </div>

@@ -33,8 +33,8 @@ export default function SisterConcernConfigPage() {
   return (
     <>
       <PageHeader
-        title='Sister Concern Companies'
-        subTitle='Manage sister concern companies displayed on the homepage'
+        title='Sister Concerns'
+        subTitle='Manage companies displayed on the homepage'
         // extra={
         //   <Button variant={edit ? 'destructive' : 'default'} onClick={() => setEdit(!edit)}>
         //     {edit ? 'Cancel' : 'Update'}

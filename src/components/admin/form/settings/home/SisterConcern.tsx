@@ -36,7 +36,7 @@ const SisterConcern = ({ settingsKey, initialValues, refetch }: TProps) => {
     isEditing: !!initialValues,
     cacheTag: `/settings/${settingsKey}`,
     refetch,
-    successMessage: 'Sister concern companies updated successfully!'
+    successMessage: 'Sister concern updated successfully!'
   })
 
   return (
@@ -57,7 +57,11 @@ const SisterConcern = ({ settingsKey, initialValues, refetch }: TProps) => {
       </Card>
 
       <div className='flex justify-end gap-3'>
-        <FormSubmitButton isSubmitting={form.formState.isSubmitting} isEditing={form.isEditing} size='lg'>
+        <FormSubmitButton
+          isSubmitting={form.formState.isSubmitting}
+          isEditing={form.isEditing}
+          size='lg'
+        >
           Save Changes
         </FormSubmitButton>
       </div>

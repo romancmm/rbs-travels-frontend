@@ -2,12 +2,10 @@
 
 import CarouselWrapper from '@/components/common/carousel-wrapper'
 import { Container } from '@/components/common/container'
-import { EmptyState } from '@/components/common/EmptyState'
 import { Section } from '@/components/common/section'
 import { SectionHeading } from '@/components/common/SectionHeading'
 import { ArticleLoadingSkeleton } from '@/components/common/Skeleton'
 import useAsync from '@/hooks/useAsync'
-import { cn } from '@/lib/utils'
 import BlogCard from '../../card/BlogCard'
 
 interface ArticleProps {
@@ -21,19 +19,7 @@ const Blogs = ({ className }: ArticleProps) => {
     return <ArticleLoadingSkeleton />
   }
 
-  if (!data || !data?.data?.items?.length) {
-    return (
-      <Section variant='md' className={cn(className)}>
-        <Container>
-          <EmptyState
-            title='No Article Posts Available'
-            description='Stay tuned for exciting travel stories and tips coming soon!'
-            imageSrc='/no-data.png'
-          />
-        </Container>
-      </Section>
-    )
-  }
+  if (!data || !data?.data?.items?.length) return
 
   return (
     <Section variant='xl' className={className}>
@@ -41,17 +27,13 @@ const Blogs = ({ className }: ArticleProps) => {
         <SectionHeading
           subtitle='Articles'
           title='Latest Travel Stories & Tips'
-          variant='underline'
+          variant='gradient'
           alignment='center'
         />
 
         {/* Article Carousel */}
-        <CarouselWrapper
-          loop
-          itemsPerView={{ default: 1, md: 2, lg: 3 }}
-          contentClassName='pb-14'
-        >
-          {data.data.items.slice(0, 8).map((post: any, index: number) => (
+        <CarouselWrapper loop itemsPerView={{ default: 1, md: 2, lg: 3 }} dotsPosition='below'>
+          {data.data.items?.map((post: any, index: number) => (
             <BlogCard key={post.id} post={post} index={index} />
           ))}
         </CarouselWrapper>

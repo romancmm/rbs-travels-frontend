@@ -10,15 +10,16 @@ export const sisterConcernFields: FieldConfig<SisterConcernSettings>[] = [
     placeholder: 'e.g., Companies Under Our Group'
   },
   {
-    type: 'text',
+    type: 'textarea',
     name: 'description',
     label: 'Description',
-    placeholder: 'e.g., Companies Under Our Group'
+    placeholder: 'e.g., Companies Under Our Group',
+    colSpan: 2
   },
   {
     type: 'array',
     name: 'companies',
-    label: 'Sister Concern Companies',
+    label: 'Sister Concern',
     emptyLabel:
       'No sister concern companies added yet. Click the button below to add your first company.',
     addLabel: 'Add Company',

@@ -27,8 +27,8 @@ export function FileUploadModal({
   const [uploadedFiles, setUploadedFiles] = useState<string | string[]>([])
 
   const handleUploadComplete = (urls: string | string[]) => {
-    setUploadedFiles(urls)
     onUploadComplete()
+    setUploadedFiles([])
     onClose()
   }
 

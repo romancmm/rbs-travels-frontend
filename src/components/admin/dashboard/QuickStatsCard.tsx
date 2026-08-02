@@ -13,7 +13,7 @@ type QuickStatsCardProps = {
         value: number
         isPositive: boolean
     }
-    color: 'primary' | 'accent' | 'success' | 'warning' | 'danger'
+    color: 'primary' | 'accent' | 'success' | 'warning' | 'danger' | 'blue'
     delay?: number
 }
 
@@ -42,6 +42,11 @@ const colorClasses = {
         bg: 'bg-red-500/10',
         text: 'text-red-600',
         border: 'border-red-500/20'
+    },
+    blue: {
+        bg: 'bg-blue-500/10',
+        text: 'text-blue-600',
+        border: 'border-blue-500/20'
     }
 }
 

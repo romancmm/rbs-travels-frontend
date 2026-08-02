@@ -1,5 +1,7 @@
 'use server'
+import { DEFAULT_SITE_CONFIG } from '@/data/siteConfig'
 import { HomepageSettings } from '@/lib/validations/schemas/homepageSettings'
+import { SiteSettings } from '@/lib/validations/schemas/siteSettings'
 import { HOME_CONFIG, SITE_CONFIG } from '@/types/cache-keys'
 import { updateTag } from 'next/cache'
 import { cookies } from 'next/headers'
@@ -74,17 +76,19 @@ export const revalidateTags = async (tags: string) => {
   updateTag(tags)
 }
 
-export const getSiteConfig = async (): Promise<any | null> => {
+export const getSiteConfig = async (): Promise<SiteSettings> => {
   const data = await fetchOnServer({
     path: '/settings/system_site_settings',
     rev: 3600, // 1 hour revalidation
     tag: SITE_CONFIG
   })
-  if (data.error) {
-    return null
+  if (data.error || !data?.data?.value) {
+    return DEFAULT_SITE_CONFIG
   }
 
-  return data?.data?.value
+  // Shallow-merge over the defaults so a key the backend hasn't saved yet
+  // (e.g. theme untouched since install) still renders instead of blank.
+  return { ...DEFAULT_SITE_CONFIG, ...data.data.value }
 }
 
 export const getHomepageData = async (): Promise<HomepageSettings | null> => {

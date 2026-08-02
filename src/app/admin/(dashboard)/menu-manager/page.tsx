@@ -1,6 +1,6 @@
 'use client'
 
-import { Copy, Edit, Eye, Menu as MenuIcon, MoreVertical, Pencil, Trash2 } from 'lucide-react'
+import { Edit, Menu as MenuIcon, MoreVertical, Pencil, Trash2 } from 'lucide-react'
 import { Suspense, useState } from 'react'
 
 import { MenuFormDialog } from '@/components/admin/cms/MenuFormDialog'
@@ -15,7 +15,7 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
-  DropdownMenuTrigger,
+  DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
 import useAsync from '@/hooks/useAsync'
 import type { PaginatedResponse } from '@/hooks/useFilter'
@@ -136,13 +136,9 @@ function MenuList() {
 
                   {/* Actions */}
                   <div className='flex items-center gap-2'>
-                    <Button
-                      variant='outline'
-                      size='sm'
-                      onClick={() => handleEditItems(menu)}
-                    >
+                    {/* <Button variant='outline' size='sm' onClick={() => handleEditItems(menu)}>
                       <Pencil className='w-4 h-4' />
-                    </Button>
+                    </Button> */}
 
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
@@ -150,16 +146,16 @@ function MenuList() {
                           <MoreVertical className='w-4 h-4' />
                         </Button>
                       </DropdownMenuTrigger>
-                      <DropdownMenuContent align='end'>
-                        <DropdownMenuItem onClick={() => handleEditBasic(menu)}>
-                          <Edit className='mr-2 w-4 h-4' />
-                          Edit Menu Info
-                        </DropdownMenuItem>
+                      <DropdownMenuContent align='end' className='min-w-42'>
                         <DropdownMenuItem onClick={() => handleEditItems(menu)}>
                           <Pencil className='mr-2 w-4 h-4' />
                           Manage Items
                         </DropdownMenuItem>
-                        <DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => handleEditBasic(menu)}>
+                          <Edit className='mr-2 w-4 h-4' />
+                          Edit Menu Info
+                        </DropdownMenuItem>
+                        {/* <DropdownMenuItem>
                           <Eye className='mr-2 w-4 h-4' />
                           Preview
                         </DropdownMenuItem>
@@ -168,8 +164,13 @@ function MenuList() {
                           Duplicate
                         </DropdownMenuItem>
                         <DropdownMenuItem onClick={() => handleStatusToggle(menu)}>
+                          {menu.isPublished ? (
+                            <EyeOff className='mr-2 w-4 h-4' />
+                          ) : (
+                            <Globe className='mr-2 w-4 h-4' />
+                          )}
                           {menu.isPublished ? 'Unpublish' : 'Publish'}
-                        </DropdownMenuItem>
+                        </DropdownMenuItem> */}
                         <DropdownMenuSeparator />
                         <DropdownMenuItem
                           className='text-destructive'
@@ -198,7 +199,6 @@ function MenuList() {
         menu={selectedMenu}
         onSuccess={mutate}
       />
-
     </div>
   )
 }

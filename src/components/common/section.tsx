@@ -16,7 +16,7 @@ const sectionVariants = cva('block w-full', {
     bg: {
       none: '',
       light: 'bg-white dark:bg-black',
-      mid: 'bg-slate-100',
+      mid: 'bg-slate-50',
       dark: 'bg-gray-900',
       secondary: 'bg-secondary',
       primary: 'bg-primary text-muted',

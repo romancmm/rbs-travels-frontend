@@ -1,7 +1,6 @@
 'use client'
 
 import { Container } from '@/components/common/container'
-import { EmptyState } from '@/components/common/EmptyState'
 import EntityRail from '@/components/common/entity-rail'
 import { Section } from '@/components/common/section'
 import { SectionHeading } from '@/components/common/SectionHeading'
@@ -21,19 +20,7 @@ const Testimonials = ({ className }: TestimonialsProps) => {
 
   if (loading) return <TestimonialsLoadingSkeleton />
 
-  if (!testimonialData?.testimonials?.length) {
-    return (
-      <Section variant='md' className={className}>
-        <Container>
-          <EmptyState
-            title='No Testimonials Available'
-            description='Customer reviews will appear here once available.'
-            imageSrc='/no-data.png'
-          />
-        </Container>
-      </Section>
-    )
-  }
+  if (!testimonialData?.testimonials?.length) return
 
   return (
     <Section variant='xl' className={cn('bg-linear-to-b from-accent/5 to-background', className)}>
@@ -42,6 +29,7 @@ const Testimonials = ({ className }: TestimonialsProps) => {
           subtitle={testimonialData.subtitle}
           title={testimonialData.title || 'Testimonials'}
           alignment='center'
+          variant='gradient'
           className='mb-10'
         />
 
@@ -56,6 +44,8 @@ const Testimonials = ({ className }: TestimonialsProps) => {
           arrow={{ variant: 'round', size: 'md' }}
           loop
           showDots
+          dotsPosition='below'
+          centerEmphasis
           renderItem={(testimonial, index) => (
             <TestimonialCard key={index} testimonial={testimonial} index={index} />
           )}

@@ -218,7 +218,7 @@ Data-driven content displays.
 
 **Use Cases:**
 
-- Travel agency websites
+- CMS websites
 - Tour operator platforms
 - Destination guides
 

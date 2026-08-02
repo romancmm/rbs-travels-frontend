@@ -2,17 +2,19 @@
 
 import { Container } from '@/components/common/container'
 import CustomInput from '@/components/common/CustomInput'
+import CustomLink from '@/components/common/CustomLink'
 import { Section } from '@/components/common/section'
+import { SectionHeading } from '@/components/common/SectionHeading'
 import { Typography } from '@/components/common/typography'
 import { useSiteConfig } from '@/components/providers/store-provider'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
-import { Textarea } from '@/components/ui/textarea'
 import { showError } from '@/lib/errMsg'
+import { cn } from '@/lib/utils'
 import { SiteSettings } from '@/lib/validations/schemas/siteSettings'
 import requests from '@/services/network/http'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Clock, Mail, MapPin, Phone, Send } from 'lucide-react'
+import { ArrowUpRight, Clock, Mail, MapPin, Phone, Send } from 'lucide-react'
 import { useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { toast } from 'sonner'
@@ -65,30 +67,39 @@ export default function ContactPage() {
     }
   }
 
+  const mapQuery = siteConfig?.address || siteConfig?.name || 'our office'
+  const mapSrc = `https://www.google.com/maps?q=${encodeURIComponent(mapQuery)}&output=embed`
+
   const contactInfo = [
     {
       icon: MapPin,
       title: 'Visit Us',
       content: siteConfig?.address,
-      details: 'Visit us at our office'
+      details: '',
+      href: siteConfig?.address
+        ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(siteConfig.address)}`
+        : undefined,
+      external: true
     },
     {
       icon: Phone,
       title: 'Call Us',
       content: siteConfig?.phone,
-      details: siteConfig?.hotline ? `Hotline: ${siteConfig.hotline}` : 'Mon-Fri: 9AM - 6PM'
+      details: siteConfig?.hotline ? `Hotline: ${siteConfig.hotline}` : 'Mon-Fri: 9AM - 6PM',
+      href: siteConfig?.phone ? `tel:${siteConfig.phone.replace(/\s+/g, '')}` : undefined
     },
     {
       icon: Mail,
       title: 'Email Us',
       content: siteConfig?.email,
-      details: 'We reply within 24 hours'
+      details: 'We reply within 24 hours',
+      href: siteConfig?.email ? `mailto:${siteConfig.email}` : undefined
     },
     {
       icon: Clock,
       title: 'Working Hours',
       content: siteConfig?.workingHours,
-      details: '9:00 AM - 6:00 PM'
+      details: siteConfig?.workingHours ? undefined : '9:00 AM - 6:00 PM'
     }
   ]
 
@@ -97,14 +108,15 @@ export default function ContactPage() {
       {/* Hero Section */}
       <Section className='bg-linear-to-r from-primary/10 via-primary/5 to-background'>
         <Container>
-          <div className='py-16 text-center'>
-            <Typography variant='h1' as='h1' weight='bold' className='mb-4'>
-              Get In Touch
-            </Typography>
-            <Typography variant='body1' className='mx-auto max-w-2xl text-muted-foreground'>
-              Have questions about our services? We&apos;d love to hear from you. Send us a message
-              and we&apos;ll respond as soon as possible.
-            </Typography>
+          <div className='py-16'>
+            <SectionHeading
+              subtitle='Contact Us'
+              title='Get In Touch'
+              description="Have questions about our services? We'd love to hear from you. Send us a message and we'll respond as soon as possible."
+              variant='gradient'
+              alignment='center'
+              className='mb-0'
+            />
           </div>
         </Container>
       </Section>
@@ -112,30 +124,56 @@ export default function ContactPage() {
       {/* Contact Info Cards */}
       <Section variant='lg'>
         <Container>
-          <div className='gap-4 md:gap-6 grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 -mt-8'>
-            {contactInfo.map((info, index) => (
-              <Card
-                key={index}
-                className='hover:shadow-lg border-border/50 transition-shadow duration-300'
-              >
-                <CardContent className='pt-6'>
-                  <div className='flex flex-col items-center text-center'>
-                    <div className='flex justify-center items-center bg-primary/10 mb-4 rounded-full w-16 h-16'>
-                      <info.icon className='w-8 h-8 text-primary' />
-                    </div>
-                    <Typography variant='h6' weight='semibold' className='mb-2'>
-                      {info.title}
-                    </Typography>
-                    <Typography variant='body2' weight='medium' className='mb-1'>
+          <div className='gap-4 md:gap-6 grid grid-cols-2 lg:grid-cols-4 -mt-8'>
+            {contactInfo.map((info, index) => {
+              const isInteractive = !!info.href
+
+              const cardBody = (
+                <CardContent className='flex flex-col justify-center items-center h-full text-center'>
+                  <div className='flex justify-center items-center bg-primary/10 group-hover:bg-primary/15 mb-4 rounded-full w-16 h-16 transition-colors duration-300'>
+                    <info.icon className='w-8 h-8 text-primary group-hover:scale-110 transition-transform duration-300' />
+                  </div>
+                  <Typography variant='h6' weight='semibold' className='mb-2'>
+                    {info.title}
+                  </Typography>
+                  {info.content && (
+                    <Typography variant='body2' weight='medium' className='mb-1 wrap-break-word'>
                       {info.content}
                     </Typography>
+                  )}
+                  {info.details && info.details !== info.content && (
                     <Typography variant='caption' className='text-muted-foreground'>
                       {info.details}
                     </Typography>
-                  </div>
+                  )}
                 </CardContent>
-              </Card>
-            ))}
+              )
+
+              return (
+                <Card
+                  key={index}
+                  className={cn(
+                    'group relative border-border/50 transition-all duration-300',
+                    isInteractive && 'hover:shadow-lg hover:-translate-y-1 hover:border-primary/30'
+                  )}
+                >
+                  {isInteractive && (
+                    <ArrowUpRight className='top-4 right-4 absolute opacity-0 group-hover:opacity-100 w-4 h-4 text-primary transition-opacity duration-300' />
+                  )}
+                  {info.href ? (
+                    <CustomLink
+                      href={info.href}
+                      {...(info.external && { target: '_blank', rel: 'noopener noreferrer' })}
+                      className='block rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2 h-full'
+                    >
+                      {cardBody}
+                    </CustomLink>
+                  ) : (
+                    cardBody
+                  )}
+                </Card>
+              )
+            })}
           </div>
         </Container>
       </Section>
@@ -146,14 +184,13 @@ export default function ContactPage() {
           <div className='gap-12 grid grid-cols-1 lg:grid-cols-2'>
             {/* Contact Form */}
             <div>
-              <div className='mb-8'>
-                <Typography variant='h2' as='h2' weight='bold' className='mb-4'>
-                  Send Us a Message
-                </Typography>
-                <Typography variant='body1' className='text-muted-foreground'>
-                  Fill out the form below and our team will get back to you within 24 hours.
-                </Typography>
-              </div>
+              <SectionHeading
+                title='Send Us a Message'
+                description='Fill out the form below and our team will get back to you within 24 hours.'
+                // variant=''
+                alignment='left'
+                className='mb-8'
+              />
 
               <form onSubmit={handleSubmit(onSubmit)} className='space-y-6'>
                 <div className='gap-6 grid grid-cols-1 sm:grid-cols-2'>
@@ -223,20 +260,15 @@ export default function ContactPage() {
                   name='message'
                   control={control}
                   render={({ field }) => (
-                    <div className='space-y-2'>
-                      <label className='font-medium text-sm'>
-                        Message <span className='text-destructive'>*</span>
-                      </label>
-                      <Textarea
-                        placeholder='Tell us more about your inquiry...'
-                        rows={6}
-                        className={errors.message ? 'border-destructive' : ''}
-                        {...field}
-                      />
-                      {errors.message && (
-                        <p className='text-destructive text-sm'>{errors.message.message}</p>
-                      )}
-                    </div>
+                    <CustomInput
+                      label='Message'
+                      type='textarea'
+                      placeholder='Tell us more about your inquiry...'
+                      rows={6}
+                      error={errors.message?.message}
+                      required
+                      {...field}
+                    />
                   )}
                 />
 
@@ -259,9 +291,9 @@ export default function ContactPage() {
             {/* Map & Additional Info */}
             <div className='space-y-6'>
               {/* Map */}
-              <Card className='p-0! h-full overflow-hidden'>
+              <Card className='p-0! overflow-hidden'>
                 <iframe
-                  src='https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3022.2412648718453!2d-73.98784492346618!3d40.74844097138558!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89c259a9b3117469%3A0xd134e199a405a163!2sEmpire%20State%20Building!5e0!3m2!1sen!2sus!4v1701234567890!5m2!1sen!2sus'
+                  src={mapSrc}
                   width='100%'
                   height='100%'
                   style={{ border: 0 }}
@@ -269,9 +301,51 @@ export default function ContactPage() {
                   loading='lazy'
                   referrerPolicy='no-referrer-when-downgrade'
                   title='Office Location'
-                  className='inset-0 h-full min-h-100'
+                  className='inset-0 min-h-100'
                 />
               </Card>
+
+              {/* Additional Info: quick contact + social */}
+              {/* <Card className='border-border/50'>
+                <CardContent className='space-y-5 pt-6'>
+                  <Typography variant='h6' weight='semibold'>
+                    Prefer to reach us directly?
+                  </Typography>
+
+                  <div className='space-y-3'>
+                    {siteConfig?.phone && (
+                      <CustomLink
+                        href={`tel:${siteConfig.phone.replace(/\s+/g, '')}`}
+                        className='flex items-center gap-3 text-muted-foreground hover:text-primary transition-colors'
+                      >
+                        <div className='flex justify-center items-center bg-primary/10 rounded-lg w-9 h-9 shrink-0'>
+                          <Phone className='w-4 h-4 text-primary' />
+                        </div>
+                        <Typography variant='body2'>{siteConfig.phone}</Typography>
+                      </CustomLink>
+                    )}
+
+                    {siteConfig?.email && (
+                      <CustomLink
+                        href={`mailto:${siteConfig.email}`}
+                        className='flex items-center gap-3 text-muted-foreground hover:text-primary transition-colors'
+                      >
+                        <div className='flex justify-center items-center bg-primary/10 rounded-lg w-9 h-9 shrink-0'>
+                          <Mail className='w-4 h-4 text-primary' />
+                        </div>
+                        <Typography variant='body2'>{siteConfig.email}</Typography>
+                      </CustomLink>
+                    )}
+                  </div>
+
+                  <div className='pt-1 border-border/50 border-t'>
+                    <Typography variant='caption' className='block mb-3 text-muted-foreground'>
+                      Follow us
+                    </Typography>
+                    <SocialLinks variant='light' />
+                  </div>
+                </CardContent>
+              </Card> */}
             </div>
           </div>
         </Container>

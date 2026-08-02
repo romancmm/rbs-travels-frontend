@@ -1,255 +1,180 @@
 'use client'
 
-import { QuickActionCard, WelcomeBanner } from '@/components/admin/dashboard'
+import type { Feature } from '@/components/admin/dashboard'
+import {
+  AnalyticsChartCard,
+  FeatureGrid,
+  QuickStatsCard,
+  RecentActivityCard,
+  WelcomeBanner
+} from '@/components/admin/dashboard'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
-import { FileText, Image, Settings, TrendingUp } from 'lucide-react'
+import useAsync from '@/hooks/useAsync'
+import type { PaginatedResponse } from '@/hooks/useFilter'
+import { formatDistanceToNow } from 'date-fns'
+import {
+  FileText,
+  FolderTree,
+  Image,
+  Layers,
+  Menu,
+  Settings,
+  Shield,
+  Users,
+  Wrench
+} from 'lucide-react'
 
 export default function DashboardPage() {
-  // Mock data - replace with real API calls
-  // const stats = [
-  //   {
-  //     title: 'Total Users',
-  //     value: '1,234',
-  //     icon: Users,
-  //     trend: { value: 12.5, isPositive: true },
-  //     color: 'primary' as const
-  //   },
-  //   {
-  //     title: 'Total Pages',
-  //     value: '89',
-  //     icon: FileText,
-  //     trend: { value: 8.2, isPositive: true },
-  //     color: 'accent' as const
-  //   },
-  //   {
-  //     title: 'Comments',
-  //     value: '567',
-  //     icon: MessageSquare,
-  //     trend: { value: 3.1, isPositive: false },
-  //     color: 'success' as const
-  //   },
-  //   {
-  //     title: 'Conversion Rate',
-  //     value: '3.2%',
-  //     icon: TrendingUp,
-  //     trend: { value: 15.8, isPositive: true },
-  //     color: 'warning' as const
-  //   }
-  // ]
+  const { data: articlesData, loading: articlesLoading } = useAsync<PaginatedResponse<Article>>(
+    '/admin/articles/posts?limit=1'
+  )
+  const { data: pagesData, loading: pagesLoading } =
+    useAsync<PaginatedResponse<unknown>>('/admin/pages?limit=1')
+  const { data: categoriesData, loading: categoriesLoading } = useAsync<PaginatedResponse<unknown>>(
+    '/admin/articles/categories?limit=1'
+  )
+  const { data: adminsData, loading: adminsLoading } = useAsync<PaginatedResponse<unknown>>(
+    '/admin/user/admins?limit=1'
+  )
+  const { data: recentArticlesData, loading: recentLoading } = useAsync<PaginatedResponse<Article>>(
+    '/admin/articles/posts?limit=5&sortBy=createdAt&sortOrder=desc'
+  )
 
-  const quickActions = [
+  const articlesCount = articlesData?.pagination?.totalItems
+  const pagesCount = pagesData?.pagination?.totalItems
+  const categoriesCount = categoriesData?.pagination?.totalItems
+  const adminsCount = adminsData?.pagination?.totalItems
+
+  const stats = [
     {
-      title: 'Create New Page',
-      description: 'Add a new page to your website with the page builder',
+      title: 'Total Articles',
+      value: articlesLoading ? '—' : (articlesCount ?? 0),
       icon: FileText,
-      href: '/admin/pages/create',
       color: 'primary' as const
     },
     {
-      title: 'Manage Settings',
-      description: 'Configure site settings, appearance, and preferences',
-      icon: Settings,
-      href: '/admin/settings',
-      color: 'accent' as const
+      title: 'Total Pages',
+      value: pagesLoading ? '—' : (pagesCount ?? 0),
+      icon: Layers,
+      color: 'blue' as const
     },
     {
-      title: 'Upload Media',
-      description: 'Add images, videos, and files to your media library',
-      icon: Image,
-      href: '/admin/file-manager',
+      title: 'Categories',
+      value: categoriesLoading ? '—' : (categoriesCount ?? 0),
+      icon: FolderTree,
       color: 'success' as const
     },
     {
-      title: 'View Analytics',
-      description: 'Check website performance and visitor statistics',
-      icon: TrendingUp,
-      href: '/admin/dashboard',
+      title: 'Admin Users',
+      value: adminsLoading ? '—' : (adminsCount ?? 0),
+      icon: Users,
       color: 'warning' as const
     }
   ]
 
-  // const cmsFeatures = [
-  //   {
-  //     id: 'pages',
-  //     title: 'Pages',
-  //     description: 'Manage all your website pages and content',
-  //     icon: FileText,
-  //     href: '/admin/pages',
-  //     badge: '89',
-  //     color: 'primary' as const
-  //   },
-  //   {
-  //     id: 'homepage',
-  //     title: 'Homepage Settings',
-  //     description: 'Customize your homepage sections and layout',
-  //     icon: Layout,
-  //     href: '/admin/homepage-settings',
-  //     color: 'accent' as const
-  //   },
-  //   {
-  //     id: 'menu',
-  //     title: 'Menu Builder',
-  //     description: 'Create and manage navigation menus',
-  //     icon: Menu,
-  //     href: '/admin/menus',
-  //     color: 'success' as const
-  //   },
-  //   {
-  //     id: 'media',
-  //     title: 'Media Library',
-  //     description: 'Browse and manage uploaded files',
-  //     icon: Image,
-  //     href: '/admin/media',
-  //     badge: '453',
-  //     color: 'warning' as const
-  //   },
-  //   {
-  //     id: 'users',
-  //     title: 'Users',
-  //     description: 'Manage user accounts and permissions',
-  //     icon: Users,
-  //     href: '/admin/users',
-  //     badge: '1,234',
-  //     color: 'purple' as const
-  //   },
-  //   {
-  //     id: 'appearance',
-  //     title: 'Appearance',
-  //     description: 'Customize theme colors and styles',
-  //     icon: Palette,
-  //     href: '/admin/appearance',
-  //     color: 'pink' as const
-  //   },
-  //   {
-  //     id: 'categories',
-  //     title: 'Categories',
-  //     description: 'Organize content with categories',
-  //     icon: FolderTree,
-  //     href: '/admin/categories',
-  //     badge: '24',
-  //     color: 'primary' as const
-  //   },
-  //   {
-  //     id: 'seo',
-  //     title: 'SEO Settings',
-  //     description: 'Optimize your site for search engines',
-  //     icon: Globe,
-  //     href: '/admin/seo',
-  //     color: 'accent' as const
-  //   },
-  //   {
-  //     id: 'database',
-  //     title: 'Database',
-  //     description: 'Backup and manage database',
-  //     icon: Database,
-  //     href: '/admin/database',
-  //     color: 'success' as const
-  //   },
-  //   {
-  //     id: 'email',
-  //     title: 'Email Templates',
-  //     description: 'Configure email notifications',
-  //     icon: Mail,
-  //     href: '/admin/emails',
-  //     color: 'warning' as const
-  //   },
-  //   {
-  //     id: 'security',
-  //     title: 'Security',
-  //     description: 'Manage security and access control',
-  //     icon: Shield,
-  //     href: '/admin/security',
-  //     color: 'purple' as const
-  //   },
-  //   {
-  //     id: 'notifications',
-  //     title: 'Notifications',
-  //     description: 'View and manage system notifications',
-  //     icon: Bell,
-  //     href: '/admin/notifications',
-  //     badge: '12',
-  //     color: 'pink' as const
-  //   }
-  // ]
+  const cmsFeatures: Feature[] = [
+    {
+      id: 'articles',
+      title: 'Articles',
+      description: 'Write, edit, and publish blog articles',
+      icon: FileText,
+      href: '/admin/articles',
+      badge: articlesLoading ? undefined : articlesCount?.toString(),
+      color: 'primary'
+    },
+    {
+      id: 'pages',
+      title: 'Pages',
+      description: 'Manage all your website pages and content',
+      icon: Layers,
+      href: '/admin/pages',
+      badge: pagesLoading ? undefined : pagesCount?.toString(),
+      color: 'blue'
+    },
+    {
+      id: 'categories',
+      title: 'Categories',
+      description: 'Organize articles with categories',
+      icon: FolderTree,
+      href: '/admin/articles/categories',
+      badge: categoriesLoading ? undefined : categoriesCount?.toString(),
+      color: 'success'
+    },
+    {
+      id: 'menu',
+      title: 'Menu Manager',
+      description: 'Create and manage header and footer navigation',
+      icon: Menu,
+      href: '/admin/menu-manager',
+      color: 'warning'
+    },
+    {
+      id: 'media',
+      title: 'File Manager',
+      description: 'Browse and manage uploaded media files',
+      icon: Image,
+      href: '/admin/file-manager',
+      color: 'sky'
+    },
+    {
+      id: 'admins',
+      title: 'Admin Users',
+      description: 'Manage admin accounts and access',
+      icon: Users,
+      href: '/admin/administration/admins',
+      badge: adminsLoading ? undefined : adminsCount?.toString(),
+      color: 'purple'
+    },
+    {
+      id: 'roles',
+      title: 'Roles & Permissions',
+      description: 'Control what each admin role can access',
+      icon: Shield,
+      href: '/admin/administration/roles',
+      color: 'pink'
+    },
+    {
+      id: 'settings',
+      title: 'Site Settings',
+      description: 'Configure branding, contact info, and SEO',
+      icon: Settings,
+      href: '/admin/settings',
+      color: 'primary'
+    },
+    {
+      id: 'system-tools',
+      title: 'System Tools',
+      description: 'Maintenance utilities and system diagnostics',
+      icon: Wrench,
+      href: '/admin/system-tools',
+      color: 'warning'
+    }
+  ]
 
-  // const recentActivities = [
-  //   {
-  //     id: '1',
-  //     user: 'John Doe',
-  //     action: 'Created new page',
-  //     target: 'About Us',
-  //     timestamp: '2 minutes ago',
-  //     type: 'create' as const
-  //   },
-  //   {
-  //     id: '2',
-  //     user: 'Jane Smith',
-  //     action: 'Updated content',
-  //     target: 'Homepage Banner',
-  //     timestamp: '15 minutes ago',
-  //     type: 'update' as const
-  //   },
-  //   {
-  //     id: '3',
-  //     user: 'Admin',
-  //     action: 'Deleted post',
-  //     target: 'Old Announcement',
-  //     timestamp: '1 hour ago',
-  //     type: 'delete' as const
-  //   },
-  //   {
-  //     id: '4',
-  //     user: 'Sarah Johnson',
-  //     action: 'Uploaded image',
-  //     target: 'hero-banner.jpg',
-  //     timestamp: '2 hours ago',
-  //     type: 'create' as const
-  //   },
-  //   {
-  //     id: '5',
-  //     user: 'Mike Wilson',
-  //     action: 'Updated settings',
-  //     target: 'Site Configuration',
-  //     timestamp: '3 hours ago',
-  //     type: 'update' as const
-  //   }
-  // ]
+  const recentActivities =
+    recentArticlesData?.data?.items?.map((article) => ({
+      id: String(article.id),
+      user: article.author
+        ? [article.author.firstName, article.author.lastName].filter(Boolean).join(' ') ||
+          article.author.username ||
+          article.author.email
+        : 'Unknown',
+      action: article.isPublished ? 'Published article' : 'Drafted article',
+      target: article.title,
+      timestamp: article.createdAt
+        ? formatDistanceToNow(new Date(article.createdAt), { addSuffix: true })
+        : '',
+      type: 'create' as const
+    })) ?? []
 
-  // const systemMetrics = [
-  //   {
-  //     label: 'CPU Usage',
-  //     value: 45,
-  //     status: 'healthy' as const,
-  //     unit: '%'
-  //   },
-  //   {
-  //     label: 'Memory Usage',
-  //     value: 68,
-  //     status: 'warning' as const,
-  //     unit: '%'
-  //   },
-  //   {
-  //     label: 'Storage',
-  //     value: 32,
-  //     status: 'healthy' as const,
-  //     unit: '%'
-  //   },
-  //   {
-  //     label: 'Database Size',
-  //     value: 78,
-  //     status: 'warning' as const,
-  //     unit: '%'
-  //   }
-  // ]
-
-  // const analyticsData = [
-  //   { label: 'Homepage', value: 15420 },
-  //   { label: 'About Us', value: 8350 },
-  //   { label: 'Services', value: 6240 },
-  //   { label: 'Contact', value: 4180 },
-  //   { label: 'Article', value: 3920 }
-  // ]
+  const contentOverview = [
+    { label: 'Articles', value: articlesCount ?? 0, color: '#2a78d6' },
+    { label: 'Pages', value: pagesCount ?? 0, color: '#eb6834' },
+    { label: 'Categories', value: categoriesCount ?? 0, color: '#1baf7a' },
+    { label: 'Admin Users', value: adminsCount ?? 0, color: '#eda100' }
+  ]
+  const contentTotal = contentOverview.reduce((sum, item) => sum + item.value, 0)
 
   return (
     <div className='flex flex-col flex-1 gap-6 p-4 pt-0'>
@@ -257,62 +182,37 @@ export default function DashboardPage() {
       <WelcomeBanner userName='Admin' />
 
       {/* Quick Stats */}
-      {/* <div className='gap-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4'>
+      <div className='gap-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4'>
         {stats.map((stat, index) => (
           <QuickStatsCard key={stat.title} {...stat} delay={index * 0.1} />
         ))}
-      </div> */}
+      </div>
 
-      {/* Quick Actions */}
-      <Card>
-        <CardHeader>
+      {/* CMS Features Grid */}
+      <Card className='shadow-sm border-2'>
+        <CardHeader className='bg-linear-to-r from-primary/5 to-transparent'>
           <CardTitle className='flex items-center gap-2'>
-            <TrendingUp className='w-5 h-5 text-primary' />
-            Quick Actions
+            <Layers className='w-5 h-5 text-primary' />
+            CMS Features
           </CardTitle>
-          <CardDescription>Common tasks and shortcuts for quick access</CardDescription>
+          <CardDescription>Access all content management features and tools</CardDescription>
         </CardHeader>
         <Separator />
         <CardContent>
-          <div className='gap-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4'>
-            {quickActions.map((action, index) => (
-              <QuickActionCard key={action.title} {...action} delay={index * 0.1} />
-            ))}
-          </div>
+          <FeatureGrid features={cmsFeatures} columns={3} />
         </CardContent>
       </Card>
 
-      {/* CMS Features Grid */}
-      {/* <Card className='shadow-sm border-2'>
-        <CardHeader className='bg-linear-to-r from-accent/5 to-transparent'>
-          <CardTitle className='flex items-center gap-2'>
-            <Layout className='w-5 h-5 text-accent' />
-            CMS Features
-          </CardTitle>
-          <CardDescription>
-            Access all content management features and tools
-          </CardDescription>
-        </CardHeader>
-        <Separator />
-        <CardContent>
-          <FeatureGrid features={cmsFeatures} columns={4} />
-        </CardContent>
-      </Card> */}
-
-      {/* Activity & Health */}
-      {/* <div className='gap-4 grid grid-cols-1 lg:grid-cols-2'>
-        <RecentActivityCard activities={recentActivities} />
-        <SystemHealthCard metrics={systemMetrics} />
-      </div> */}
-
-      {/* Analytics Chart */}
-      {/* <AnalyticsChartCard
-        title='Page Views This Week'
-        description='Most visited pages on your website'
-        data={analyticsData}
-        trend={{ value: 12.5, isPositive: true }}
-        totalValue='38.1K'
-      /> */}
+      {/* Recent Activity & Content Overview */}
+      <div className='gap-4 grid grid-cols-1 lg:grid-cols-2'>
+        <RecentActivityCard activities={recentLoading ? [] : recentActivities} />
+        <AnalyticsChartCard
+          title='Content Overview'
+          description='Total items by content type'
+          data={contentOverview}
+          totalValue={contentTotal.toLocaleString()}
+        />
+      </div>
     </div>
   )
 }

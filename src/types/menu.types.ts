@@ -6,7 +6,7 @@
 // ==================== MENU ITEM TYPES ====================
 
 export type MenuItemType =
-  | 'category-articles'
+  | 'category-blog'
   | 'single-article'
   | 'gallery'
   | 'page'
@@ -99,10 +99,10 @@ export function isEntityMenuItem(item: MenuItem): boolean {
 }
 
 /**
- * Check if menu item is category-articles type (array reference)
+ * Check if menu item is category-blog type (array reference)
  */
 export function isCategoryArticlesMenuItem(item: MenuItem): boolean {
-  return item.type === 'category-articles' && Array.isArray(item.reference)
+  return item.type === 'category-blog' && Array.isArray(item.reference)
 }
 
 /**
@@ -125,10 +125,10 @@ export function hasChildren(item: MenuItem): boolean {
  * Validate menu item based on type
  */
 export function validateMenuItem(item: CreateMenuItemInput | UpdateMenuItemInput): string | null {
-  // Category-articles requires reference as array
-  if (item.type === 'category-articles') {
+  // category-blog requires reference as array
+  if (item.type === 'category-blog') {
     if (!Array.isArray(item.reference) || item.reference.length === 0) {
-      return 'At least one category reference is required for category-articles type'
+      return 'At least one category reference is required for category-blog type'
     }
   }
 
@@ -210,7 +210,7 @@ export function getMenuItemUrl(item: MenuItem): string {
   }
 
   // Priority 2: All other types use slug
-  // This includes: category-articles, single-article, page, gallery
+  // This includes: category-blog, single-article, page, gallery
   if (item.slug) {
     return `/${item.slug}`
   }
@@ -248,7 +248,7 @@ export function createBreadcrumb(items: MenuItem[], targetId: string): MenuItem[
 // ==================== CONSTANTS ====================
 
 export const MENU_ITEM_TYPE_LABELS: Record<MenuItemType, string> = {
-  'category-articles': 'Category Articles',
+  'category-blog': 'Category Articles',
   'single-article': 'Single Article',
   gallery: 'Gallery',
   page: 'Page',
@@ -257,7 +257,7 @@ export const MENU_ITEM_TYPE_LABELS: Record<MenuItemType, string> = {
 }
 
 export const MENU_ITEM_TYPE_DESCRIPTIONS: Record<MenuItemType, string> = {
-  'category-articles': 'Article listing from selected categories',
+  'category-blog': 'Article listing from selected categories',
   'single-article': 'Link to a specific article',
   gallery: 'Link to a gallery folder',
   page: 'Link to a CMS page',

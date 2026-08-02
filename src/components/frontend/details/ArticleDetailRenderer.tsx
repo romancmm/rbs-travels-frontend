@@ -62,7 +62,7 @@ export default function ArticleDetailRenderer({ data, relatedPosts = [] }: Artic
           <article className='lg:col-span-8'>
             {/* Featured Image */}
             {data.thumbnail && (
-              <div className='relative mb-8 rounded-xl w-full h-[400px] overflow-hidden'>
+              <div className='relative mb-8 rounded-xl w-full h-100 overflow-hidden'>
                 <CustomImage src={data.thumbnail} alt={data.title} fill className='object-cover' />
               </div>
             )}

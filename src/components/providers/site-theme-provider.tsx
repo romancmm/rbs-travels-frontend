@@ -1,15 +1,5 @@
 import { getSiteConfig } from '@/action/data'
-
-const FALLBACK_THEME_COLORS: Record<string, string> = {
-  primary: '#1677FF',
-  secondary: '#13C2C2',
-  accent: '#FAAD14',
-  text: '#1F1F1F',
-  'header-background': '#F5F5F5',
-  'header-color': '#1F1F1F',
-  'footer-background': '#001529',
-  'footer-color': '#FFFFFF'
-}
+import { DEFAULT_THEME_COLORS as FALLBACK_THEME_COLORS } from '@/data/siteConfig'
 
 const HEX_COLOR_REGEX = /^#([0-9A-F]{6})$/i
 const ALLOWED_THEME_KEYS = new Set(Object.keys(FALLBACK_THEME_COLORS))

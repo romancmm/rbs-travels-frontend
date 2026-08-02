@@ -69,9 +69,6 @@ const ImageCard = ({ value, name }: { value: string; name: string }) => {
             <CustomImage src={value} alt={name} fill className='drop-shadow-lg object-contain' />
           </div>
         </div>
-
-        {/* Hover effect bar */}
-        <div className='right-0 bottom-0 left-0 absolute bg-linear-to-r from-primary/0 via-primary to-primary/0 h-1 scale-x-0 group-hover:scale-x-100 transition-transform duration-500' />
       </CardContent>
     </Card>
   )

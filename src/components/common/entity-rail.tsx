@@ -35,6 +35,9 @@ type TProps<T> = {
   loop?: boolean
   /** Dot indicators below the rail, in addition to the arrows. Default false. */
   showDots?: boolean
+  dotsPosition?: 'over' | 'below'
+  /** Lifts the visually-centered card above its neighbors (odd counts ≥3 in view only). Default false. */
+  centerEmphasis?: boolean
   /** Skip the built-in title/"See More" heading - for callers with their own
    * bespoke section header who still want the fetch/loading/empty/carousel
    * plumbing this component owns. Default false. */
@@ -75,6 +78,8 @@ export default function EntityRail<T>({
   arrowVisibility = 'hover',
   loop = false,
   showDots = false,
+  dotsPosition = 'below',
+  centerEmphasis = false,
   hideHeading = false,
   className,
   wrapInCard = true,
@@ -143,6 +148,8 @@ export default function EntityRail<T>({
         loop={loop}
         showArrows
         showDots={showDots}
+        dotsPosition={dotsPosition}
+        centerEmphasis={centerEmphasis}
         arrowVisibility={arrowVisibility}
         arrow={arrow}
         itemsPerView={itemsPerView}

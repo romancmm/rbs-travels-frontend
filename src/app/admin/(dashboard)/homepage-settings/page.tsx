@@ -58,7 +58,7 @@ const homepageSections: Feature[] = [
   {
     id: 'sister-concern',
     title: 'Sister Concern',
-    description: 'Manage the sister concern companies listed on the homepage',
+    description: 'Manage the sister concern listed on the homepage',
     icon: Building2,
     href: '/admin/homepage-settings/sister-concern',
     color: 'pink'

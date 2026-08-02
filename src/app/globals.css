@@ -10,6 +10,17 @@
 @import 'lightgallery/css/lg-autoplay.css';
 @import 'lightgallery/css/lg-rotate.css';
 
+/* Bengali font — LanguageProvider sets <html lang="bn"> as soon as Bangla is
+   picked from the language switcher (independent of whether Google Translate
+   has finished translating), so that attribute is a reliable hook for
+   swapping in a Bangla-native typeface (Manrope has no Bengali glyphs).
+   !important is required here: Google Translate injects its own
+   `body { font-family: ... !important }` once it finishes translating,
+   which otherwise wins regardless of our selector's specificity. */
+html[lang='bn'] body {
+  font-family: var(--font-anek-bangla), var(--font-manrope), sans-serif !important;
+}
+
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {

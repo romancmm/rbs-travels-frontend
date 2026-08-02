@@ -1,6 +1,6 @@
 'use client'
 
-import { Copy, ExternalLink, Eye, FileText, MoreVertical, Pencil, Trash2 } from 'lucide-react'
+import { Eye, FileText, MoreVertical, Pencil, Trash2 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { Suspense, useState } from 'react'
 import { toast } from 'sonner'
@@ -15,12 +15,11 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuSeparator,
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
 import useAsync from '@/hooks/useAsync'
-import type { PaginatedResponse } from '@/hooks/useFilter'
 import { useConfirmationModal } from '@/hooks/useConfirmationModal'
+import type { PaginatedResponse } from '@/hooks/useFilter'
 import { showError } from '@/lib/errMsg'
 import { useSearchFilters } from '@/plugins/filters/useSearchFilters'
 import { pageBuilderService } from '@/services/api/cms.service'
@@ -196,7 +195,7 @@ function PageList() {
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align='end'>
-                        <DropdownMenuItem onClick={() => handleEdit(page)}>
+                        {/* <DropdownMenuItem onClick={() => handleEdit(page)}>
                           <Pencil className='mr-2 w-4 h-4' />
                           Edit Page
                         </DropdownMenuItem>
@@ -215,7 +214,7 @@ function PageList() {
                         <DropdownMenuItem onClick={() => handleStatusToggle(page)}>
                           {page.isPublished ? 'Unpublish' : 'Publish'}
                         </DropdownMenuItem>
-                        <DropdownMenuSeparator />
+                        <DropdownMenuSeparator /> */}
                         <DropdownMenuItem
                           className='text-destructive'
                           onClick={() => handleDelete(page)}

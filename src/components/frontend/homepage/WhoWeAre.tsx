@@ -15,11 +15,7 @@ interface WhoWeAreProps {
 
 const WhoWeAre = ({ data, isLoading = false, className }: WhoWeAreProps) => {
   return (
-    <Section variant='lg' className={cn('relative overflow-hidden', className)}>
-      {/* Ambient background accents for visual rhythm with neighboring sections */}
-      <div className='top-0 right-0 absolute bg-primary/5 blur-3xl rounded-full w-96 h-96 -translate-y-1/2 translate-x-1/3 pointer-events-none' />
-      <div className='bottom-0 left-0 absolute bg-accent/5 blur-3xl rounded-full w-80 h-80 -translate-x-1/3 translate-y-1/2 pointer-events-none' />
-
+    <Section variant='lg' bg='mid' className={cn('relative overflow-hidden', className)}>
       <Container className='relative'>
         {isLoading ? (
           <WhoWeAreLoadingSkeleton count={data?.features?.length || 6} />
@@ -36,6 +32,7 @@ const WhoWeAre = ({ data, isLoading = false, className }: WhoWeAreProps) => {
               title={data.title ?? ''}
               description={data.desc}
               alignment='center'
+              variant='gradient'
               className='mx-auto max-w-2xl'
             />
 

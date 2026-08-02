@@ -40,9 +40,8 @@ const BannerCarousel = ({ data }: BannerCarouselProps) => {
             key={index}
             className={cn(
               'relative flex justify-start items-center w-screen',
-              'h-[calc(100vh-8rem)] lg:h-[calc(80vh)]',
-              'transition-all duration-1000 ease-out',
-              'overflow-hidden'
+              'h-[calc(100vh-8rem)] lg:h-[calc(80vh)] overflow-hidden'
+              // 'transition-all duration-1000 ease-out'
             )}
           >
             {/* Background Image */}

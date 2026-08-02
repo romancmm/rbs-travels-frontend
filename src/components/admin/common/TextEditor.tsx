@@ -1,6 +1,7 @@
 'use client'
 
 import { Label } from '@/components/ui/label'
+import { uploadImages, validateFile, type RcFile } from '@/lib/uploader'
 import dynamic from 'next/dynamic'
 import { forwardRef, useCallback, useRef } from 'react'
 
@@ -22,6 +23,18 @@ interface TextEditorProps {
   backgroundColor?: string
   toolbarBackgroundColor?: string
 }
+// Matches Jodit's IUploaderAnswer - what customUploadFunction must resolve to.
+interface JoditUploaderAnswer {
+  success: boolean
+  time: string
+  data: {
+    messages?: string[]
+    files: string[]
+    isImages?: boolean[]
+    baseurl: string
+  }
+}
+
 interface JoditConfig {
   height: number | string
   processPasteHTML: boolean
@@ -36,6 +49,9 @@ interface JoditConfig {
   uploader: {
     insertImageAsBase64URI: boolean
     imagesExtensions: string[]
+    filesVariableName: (i: number) => string
+    beforeUpload: (files: File[]) => boolean
+    customUploadFunction: (requestData: FormData) => Promise<JoditUploaderAnswer>
   }
 }
 const TextEditor = forwardRef<any, TextEditorProps>(
@@ -125,8 +141,37 @@ const TextEditor = forwardRef<any, TextEditorProps>(
         theme: theme === 'dark' ? 'dark' : 'default',
         style: themeColors,
         uploader: {
-          insertImageAsBase64URI: true,
-          imagesExtensions: ['jpg', 'png', 'jpeg', 'gif']
+          // Files are uploaded to the media API and inserted by URL - embedding
+          // them as base64 blew up the request body past the backend's size
+          // limit (413 Payload Too Large) as soon as an image was inserted.
+          insertImageAsBase64URI: false,
+          imagesExtensions: ['jpg', 'png', 'jpeg', 'gif', 'webp'],
+          filesVariableName: () => 'files[]',
+          beforeUpload: (files) => files.every((file) => validateFile(file as RcFile)),
+          customUploadFunction: async (requestData) => {
+            try {
+              const urls = await uploadImages(requestData, {})
+              return {
+                success: true,
+                time: '',
+                data: {
+                  files: urls,
+                  baseurl: '',
+                  isImages: urls.map(() => true)
+                }
+              }
+            } catch (err) {
+              return {
+                success: false,
+                time: '',
+                data: {
+                  messages: [err instanceof Error ? err.message : 'Upload failed'],
+                  files: [],
+                  baseurl: ''
+                }
+              }
+            }
+          }
         }
       }
     }
@@ -143,17 +188,17 @@ const TextEditor = forwardRef<any, TextEditorProps>(
           className={`
             rounded-md border border-input 
             ${theme === 'dark' ? 'bg-background' : 'bg-background'}
-            [&_.jodit-toolbar__box]:!bg-foreground
-            [&_.jodit-container]:!bg-transparent
-            [&_.jodit-workplace]:!bg-transparent  
-            [&_.jodit-wysiwyg]:!bg-transparent
+            [&_.jodit-toolbar__box]:bg-foreground!
+            [&_.jodit-container]:bg-transparent!
+            [&_.jodit-workplace]:bg-transparent!  
+            [&_.jodit-wysiwyg]:bg-transparent!
             [&_.jodit-toolbar]:border-b
             [&_.jodit-toolbar]:border-border
-            [&_.jodit-toolbar-button]:!bg-transparent
-            [&_.jodit-toolbar-button]:hover:!bg-muted/80
-            [&_.jodit-toolbar-button]:!border-transparent
-            [&_.jodit-status-bar]:!bg-muted/30
-            [&_.jodit-status-bar]:!text-muted-foreground
+            [&_.jodit-toolbar-button]:bg-transparent!
+            [&_.jodit-toolbar-button]:hover:bg-muted/80!
+            [&_.jodit-toolbar-button]:border-transparent!
+            [&_.jodit-status-bar]:bg-muted/30!
+            [&_.jodit-status-bar]:text-muted-foreground!
             [&_.jodit-status-bar]:border-t
             [&_.jodit-status-bar]:border-border
           `}

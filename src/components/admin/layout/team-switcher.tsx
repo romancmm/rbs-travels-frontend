@@ -60,7 +60,7 @@ export function SiteSwitcher({
               </div>
               <div className='flex-1 grid text-sm text-left leading-tight'>
                 <span className='font-medium truncate'>{siteName}</span>
-                <span className='text-xs truncate'>Admin Panel</span>
+                <span className='text-xs truncate'>Admin Dashboard</span>
               </div>
               <ChevronsUpDown className='ml-auto size-4 text-sidebar-foreground/50' />
             </SidebarMenuButton>
