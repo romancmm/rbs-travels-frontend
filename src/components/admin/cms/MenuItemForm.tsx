@@ -167,29 +167,6 @@ function FieldError({ message }: { message?: string }) {
   return <p className='text-red-600 text-sm'>{message}</p>
 }
 
-function CategoryReferenceField({ control, errors, typeConfig }: ReferenceFieldProps) {
-  return (
-    <Controller
-      control={control}
-      name='reference'
-      render={({ field }) => (
-        <div className='space-y-2'>
-          <CustomSelect
-            label='Select Categories'
-            placeholder='Choose categories...'
-            value={Array.isArray(field.value) ? field.value : []}
-            url={typeConfig?.adminEndpoint || '/admin/articles/categories'}
-            options={mapSlugOptions}
-            onChange={field.onChange}
-            multiple
-          />
-          <FieldError message={errors.reference?.message as string} />
-        </div>
-      )}
-    />
-  )
-}
-
 function EntityReferenceField({ control, errors, watchType, typeConfig }: ReferenceFieldProps) {
   const isGallery = watchType === 'gallery'
 
@@ -197,35 +174,22 @@ function EntityReferenceField({ control, errors, watchType, typeConfig }: Refere
     <Controller
       control={control}
       name='reference'
-      render={({ field }) =>
-        isGallery ? (
-          <div className='space-y-2'>
-            <CustomSelect
-              label='Select Gallery Folder'
-              placeholder='Choose a folder...'
-              value={field.value || undefined}
-              url={typeConfig?.adminEndpoint}
-              tree
-              options={mapGalleryFolderOptions}
-              onChange={field.onChange}
-            />
-            <FieldError message={errors.reference?.message as string} />
-          </div>
-        ) : (
-          <div className='space-y-2'>
-            <CustomSelect
-              label={`Select ${typeConfig?.label || watchType}`}
-              placeholder={`Choose a ${typeConfig?.label || watchType}...`}
-              value={field.value || undefined}
-              url={typeConfig?.adminEndpoint || `/admin/${watchType}s`}
-              showSearch
-              options={mapSlugOptions}
-              onChange={(value) => field.onChange(value === 'null' ? null : value)}
-            />
-            <FieldError message={errors.reference?.message as string} />
-          </div>
-        )
-      }
+      render={({ field }) => (
+        <div className='space-y-2'>
+          <CustomSelect
+            showSearch
+            // tree={isGallery}
+            multiple={watchType === 'category-blog'}
+            label={`Select ${typeConfig?.label || watchType}`}
+            placeholder={`Choose a ${typeConfig?.label || watchType}...`}
+            value={field.value ?? []}
+            url={typeConfig?.adminEndpoint || `/admin/${watchType}s`}
+            options={isGallery ? mapGalleryFolderOptions : mapSlugOptions}
+            onChange={(value) => field.onChange(value === 'null' ? null : value)}
+          />
+          <FieldError message={errors.reference?.message as string} />
+        </div>
+      )}
     />
   )
 }
@@ -269,7 +233,12 @@ function ToggleField({
 }) {
   return (
     <div className='space-y-2'>
-      <CustomInput type='switch' label={label} checked={checked} onCheckedChange={onCheckedChange} />
+      <CustomInput
+        type='switch'
+        label={label}
+        checked={checked}
+        onCheckedChange={onCheckedChange}
+      />
       <p className='text-muted-foreground text-xs'>{description}</p>
     </div>
   )
@@ -326,7 +295,10 @@ function IconField({ control }: { control: Control<MenuItemFormType> }) {
               allowedTypes={['image']}
             />
           ) : (
-            <IconPickerModal value={field.value as string} onChange={(val) => field.onChange(val)} />
+            <IconPickerModal
+              value={field.value as string}
+              onChange={(val) => field.onChange(val)}
+            />
           )
         }
       />
@@ -371,8 +343,11 @@ export default function MenuItemForm({ item, onSave, onCancel }: MenuItemEditorP
   const watchShowTitle = watch('showTitle')
 
   const isCategoryBlog = watchType === 'category-blog'
-  const isEntityType =
-    watchType === 'single-article' || watchType === 'page' || watchType === 'gallery'
+  // const isEntityType =
+  //   watchType === 'category-blog' ||
+  //   'single-article' ||
+  //   watchType === 'page' ||
+  //   watchType === 'gallery'
   const isLinkType = watchType === 'custom-link' || watchType === 'external-link'
 
   const typeConfig = MENU_TYPE_CONFIG[watchType]
@@ -395,7 +370,7 @@ export default function MenuItemForm({ item, onSave, onCancel }: MenuItemEditorP
     if (isCategoryBlog) {
       payload.reference = Array.isArray(data.reference) ? data.reference : []
       payload.url = null
-    } else if (isEntityType) {
+    } else if (!isLinkType) {
       payload.reference = typeof data.reference === 'string' ? data.reference : null
       payload.url = null
     } else if (isLinkType) {
@@ -448,24 +423,24 @@ export default function MenuItemForm({ item, onSave, onCancel }: MenuItemEditorP
                 )}
               />
 
-              {isCategoryBlog && (
+              {/* {isCategoryBlog && (
                 <CategoryReferenceField
                   control={control}
                   errors={errors}
                   watchType={watchType}
                   typeConfig={typeConfig}
                 />
-              )}
-              {isEntityType && (
+              )} */}
+
+              {isLinkType ? (
+                <LinkUrlField control={control} errors={errors} watchType={watchType} />
+              ) : (
                 <EntityReferenceField
                   control={control}
                   errors={errors}
                   watchType={watchType}
                   typeConfig={typeConfig}
                 />
-              )}
-              {isLinkType && (
-                <LinkUrlField control={control} errors={errors} watchType={watchType} />
               )}
             </CardContent>
           </Card>

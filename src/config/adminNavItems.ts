@@ -28,27 +28,27 @@ export const navItems: NavItem[] = [
 
   // Articles & Content
   {
-    title: 'Article & Content',
+    title: 'Content Management',
     href: '',
     icon: FileText,
     permission: { resource: 'post', action: 'index' },
     children: [
       {
-        title: 'Manage Articles',
-        href: '/admin/articles',
-        permission: { resource: 'category', action: 'index' }
-      },
-      {
         title: 'All Categories',
         href: '/admin/articles/categories',
         permission: { resource: 'post', action: 'index' }
+      },
+      {
+        title: 'Manage Articles',
+        href: '/admin/articles',
+        permission: { resource: 'category', action: 'index' }
       }
     ]
   },
 
   // Menu Manger
   {
-    title: 'Menu Manager',
+    title: 'Manage Menus',
     href: '/admin/menu-manager',
     icon: ListTodo,
     permission: { resource: 'menu', action: 'index' }
@@ -137,7 +137,7 @@ export const navItems: NavItem[] = [
         href: '/admin/homepage-settings/about'
       },
       {
-        title: 'Who we are',
+        title: 'Who We Are',
         href: '/admin/homepage-settings/who-we-are'
       },
       {
@@ -161,7 +161,7 @@ export const navItems: NavItem[] = [
         href: '/admin/homepage-settings/testimonials'
       },
       {
-        title: 'Faqs',
+        title: 'FAQs',
         href: '/admin/homepage-settings/faqs'
       }
     ]
@@ -194,7 +194,7 @@ export const navItems: NavItem[] = [
 
   // File Manager
   {
-    title: 'Manage cache',
+    title: 'Manage Cache',
     href: '/admin/system-tools',
     icon: PocketKnife,
     permission: { resource: 'system_tools', action: 'index' }

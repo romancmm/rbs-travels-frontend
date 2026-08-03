@@ -60,13 +60,11 @@ model MenuItem {
 ### Key Changes
 
 1. **New Field: `references[]`**
-
    - Array of strings for storing multiple category IDs/slugs
    - Used by `category-blog` type to link to multiple categories
    - Default: empty array `[]`
 
 2. **Flexible Reference System**
-
    - **`reference`** (singular): For linking to a single entity (page, article, service, project)
    - **`references`** (plural): For linking to multiple entities (category-blog with multiple
      categories)
@@ -432,7 +430,7 @@ function MenuItem({ item }: { item: MenuItem }) {
 }
 ```
 
-### Category Article Page
+### Category Grid Page
 
 ```tsx
 // pages/articles/category/[...slugs].tsx
@@ -453,7 +451,7 @@ function MenuItemForm() {
   return (
     <form>
       <select value={type} onChange={(e) => setType(e.target.value)}>
-        <option value='category-blog'>Category Article</option>
+        <option value='category-blog'>Category Blog</option>
         <option value='single-article'>Single Article</option>
         <option value='page'>Page</option>
         <option value='service'>Service</option>

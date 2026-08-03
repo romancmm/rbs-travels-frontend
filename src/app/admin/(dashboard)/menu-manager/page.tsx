@@ -5,7 +5,6 @@ import { Suspense, useState } from 'react'
 
 import { MenuFormDialog } from '@/components/admin/cms/MenuFormDialog'
 import PageHeader from '@/components/common/PageHeader'
-import Pagination from '@/components/common/Pagination'
 import { AddButton } from '@/components/common/PermissionGate'
 import { CMSEmptyState, CMSListSkeleton, CMSStatusBadge } from '@/components/common/cms'
 import { Badge } from '@/components/ui/badge'
@@ -188,9 +187,6 @@ function MenuList() {
           </div>
         )}
       </div>
-
-      {/* Pagination */}
-      <Pagination data={data?.pagination} limitOptions={[10, 20, 30, 50]} />
 
       {/* Dialogs */}
       <MenuFormDialog

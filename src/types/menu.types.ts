@@ -248,7 +248,7 @@ export function createBreadcrumb(items: MenuItem[], targetId: string): MenuItem[
 // ==================== CONSTANTS ====================
 
 export const MENU_ITEM_TYPE_LABELS: Record<MenuItemType, string> = {
-  'category-blog': 'Category Articles',
+  'category-blog': 'Category Blog',
   'single-article': 'Single Article',
   gallery: 'Gallery',
   page: 'Page',

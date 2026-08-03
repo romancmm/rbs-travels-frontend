@@ -12,8 +12,6 @@ import {
 import { Home } from 'lucide-react'
 import Link from 'next/link'
 
-const DEFAULT_HEADER_BG_IMAGE = '/images/bg/breadcrumb.jpg'
-
 interface MenuPageHeaderProps {
   title: string
   bgImage?: string | null
@@ -29,12 +27,12 @@ export function MenuPageHeader({ title, bgImage, hasParent }: MenuPageHeaderProp
     <Section
       className='relative bg-cover bg-no-repeat bg-center overflow-hidden'
       style={{
-        backgroundImage: `linear-gradient(to right, rgba(1, 29, 38, 0.9), rgba(1, 29, 38, 0.8), rgba(1, 29, 38, 0.3)), url(${bgImage || DEFAULT_HEADER_BG_IMAGE})`
+        backgroundImage: `linear-gradient(to right, rgba(1, 29, 38, 0.9), rgba(1, 29, 38, 0.8), rgba(1, 29, 38, 0.3)), url(${bgImage || '/breadcrumb.jpg'})`
       }}
     >
       <Container className='z-10 relative'>
         <div className='space-y-3 py-4'>
-          <Typography variant='h1' as='h1' weight='bold' className='text-white'>
+          <Typography variant='h3' as='h1' weight='bold' className='text-white'>
             {title}
           </Typography>
 
