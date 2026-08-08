@@ -244,6 +244,7 @@ function MenuItemTree({
 
 interface MenuItemsBuilderProps {
   groupId: string
+  groupSlug?: string
   items: MenuItem[]
   refetch?: () => Promise<void>
   isSheetOpen?: boolean
@@ -253,10 +254,15 @@ interface MenuItemsBuilderProps {
 export function MenuItemsBuilder({
   items,
   groupId,
+  groupSlug,
   refetch,
   isSheetOpen: externalIsSheetOpen,
   setIsSheetOpen: externalSetIsSheetOpen
 }: MenuItemsBuilderProps) {
+  // The public site tags its menu fetches by the menu's own slug (see
+  // src/app/(front)/layout.tsx) - reuse that same value here so revalidation
+  // always targets the right cache regardless of which menu group this is.
+  const cacheTag = groupSlug
   const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set())
 
   // editor drawer state
@@ -317,6 +323,7 @@ export function MenuItemsBuilder({
         ...itemData,
         parentId: parentId || null
       } as CreateMenuItemPayload)
+      if (cacheTag) await revalidateTags(cacheTag)
       toast.success('Menu item added')
       await refetch?.()
       closeEditor()
@@ -330,6 +337,7 @@ export function MenuItemsBuilder({
     try {
       if (groupId) {
         await menuService.updateMenuItem(groupId, id, updates as UpdateMenuItemPayload)
+        if (cacheTag) await revalidateTags(cacheTag)
       }
       await refetch?.()
       toast.success('Menu item updated')
@@ -343,7 +351,6 @@ export function MenuItemsBuilder({
   const handleFormSave = async (updates: Partial<MenuItem>) => {
     if (editingItem) {
       await updateItem(editingItem.id, updates)
-      await revalidateTags('main_menus')
     } else {
       await addItem(parentItemId, updates)
     }
@@ -354,6 +361,7 @@ export function MenuItemsBuilder({
       try {
         if (groupId) {
           await menuService.deleteMenuItem(groupId, id)
+          if (cacheTag) await revalidateTags(cacheTag)
         }
         toast.success('Menu item deleted')
       } catch (err) {
@@ -372,6 +380,7 @@ export function MenuItemsBuilder({
         await menuService.updateMenuItem(groupId, item.id, {
           isPublished: !item.isPublished
         } as UpdateMenuItemPayload)
+        if (cacheTag) await revalidateTags(cacheTag)
       }
       await refetch?.()
       toast.success(`Menu item ${item.isPublished ? 'unpublished' : 'published'}`)

@@ -673,10 +673,7 @@ export function FileManagerComponent({
 
       <CreateFolderModal
         open={showCreateFolderModal}
-        onClose={() => {
-          mutate()
-          setShowCreateFolderModal(false)
-        }}
+        onClose={() => setShowCreateFolderModal(false)}
         currentPath={currentPath}
         existingFolders={existingFolders}
         onFolderCreated={() => {
@@ -687,10 +684,7 @@ export function FileManagerComponent({
 
       <RenameModal
         open={renameFile !== null}
-        onClose={() => {
-          mutate()
-          setRenameFile(null)
-        }}
+        onClose={() => setRenameFile(null)}
         file={renameFile}
         existingNames={existingNames}
         onRename={handleRename}

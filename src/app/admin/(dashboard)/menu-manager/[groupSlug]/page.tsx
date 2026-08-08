@@ -48,6 +48,7 @@ export default function MenuGroupPage() {
           <MenuItemsBuilder
             items={items}
             groupId={menu.id}
+            groupSlug={menu.slug}
             refetch={mutate}
             isSheetOpen={isDialogOpen}
             setIsSheetOpen={setIsDialogOpen}

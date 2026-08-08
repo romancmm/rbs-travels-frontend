@@ -2,9 +2,10 @@
 
 import { Container } from '@/components/common/container'
 import CustomLink from '@/components/common/CustomLink'
+import SocialLinks from '@/components/common/SocialLinks'
 import { useSiteConfig } from '@/components/providers/store-provider'
-import { AnimatePresence, motion } from 'framer-motion'
-import { Clock, Mail, Phone, X } from 'lucide-react'
+import { Clock, Mail, Phone, Sparkles, X } from 'lucide-react'
+import { AnimatePresence, motion } from 'motion/react'
 import { useEffect, useState } from 'react'
 
 export default function TopBar() {
@@ -24,83 +25,83 @@ export default function TopBar() {
     return () => clearInterval(interval)
   }, [promoTexts.length])
 
-  if (!isVisible) return null
-
   return (
-    <div className='relative bg-primary py-2 text-white'>
-      <Container>
-        <div className='flex justify-between items-center gap-4'>
-          {/* Left side - Contact info */}
-          <div className='hidden md:flex items-center gap-6 text-sm'>
-            <div className='flex items-center gap-1.5'>
-              <Phone className='w-3 h-3' />
-              <CustomLink
-                href={`tel:${siteConfig?.phone}`}
-                className='hover:text-primary-foreground/80 transition-colors'
-              >
-                {siteConfig?.phone}
-              </CustomLink>
-            </div>
-            <div className='flex items-center gap-1.5'>
-              <Mail className='w-3 h-3' />
-              <CustomLink
-                href={`mailto:${siteConfig?.email}`}
-                className='hover:text-primary-foreground/80 transition-colors'
-              >
-                {siteConfig?.email}
-              </CustomLink>
-            </div>
-            <div className='flex items-center gap-1.5'>
-              <Clock className='w-3 h-3' />
-              <span>{siteConfig?.workingHours}</span>
-            </div>
-          </div>
-
-          {/* Center - Animated Announcement */}
-          <div className='flex flex-1 justify-center md:justify-end items-center h-6 overflow-hidden'>
-            {promoTexts.length > 0 && (
-              <AnimatePresence mode='wait'>
-                <motion.div
-                  key={currentIndex}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -20 }}
-                  transition={{
-                    duration: 0.5,
-                    ease: 'easeInOut'
-                  }}
-                  className='absolute flex flex-wrap gap-x-1 max-sm:px-3'
+    <AnimatePresence initial={false}>
+      {isVisible && (
+        <motion.div
+          initial={{ height: 'auto', opacity: 1 }}
+          exit={{ height: 0, opacity: 0 }}
+          transition={{ duration: 0.3, ease: 'easeInOut' }}
+          className='relative bg-primary border-white/10 border-b overflow-hidden text-white'
+        >
+          <Container>
+            <div className='flex items-center justify-between gap-4 py-2 text-xs sm:text-sm'>
+              {/* Left - Contact info */}
+              <div className='hidden lg:flex items-center gap-4 shrink-0'>
+                <CustomLink
+                  href={`tel:${siteConfig?.phone}`}
+                  className='flex items-center gap-1.5 opacity-90 hover:opacity-100 font-medium transition-opacity'
                 >
-                  {promoTexts[currentIndex]?.split(' ').map((word, wordIndex) => (
-                    <motion.span
-                      key={`${currentIndex}-${wordIndex}`}
-                      initial={{ opacity: 0, filter: 'blur(10px)' }}
-                      animate={{ opacity: 1, filter: 'blur(0px)' }}
-                      transition={{
-                        duration: 0.6,
-                        delay: wordIndex * 0.1,
-                        ease: 'easeOut'
-                      }}
-                      className='lg:font-medium text-xs md:text-sm whitespace-nowrap'
-                    >
-                      {word}
-                    </motion.span>
-                  ))}
-                </motion.div>
-              </AnimatePresence>
-            )}
-          </div>
+                  <Phone className='w-3.5 h-3.5' />
+                  {siteConfig?.phone}
+                </CustomLink>
+                <span className='bg-white/25 w-px h-3.5' />
+                <CustomLink
+                  href={`mailto:${siteConfig?.email}`}
+                  className='flex items-center gap-1.5 opacity-90 hover:opacity-100 font-medium transition-opacity'
+                >
+                  <Mail className='w-3.5 h-3.5' />
+                  {siteConfig?.email}
+                </CustomLink>
+                {siteConfig?.workingHours && (
+                  <>
+                    <span className='bg-white/25 w-px h-3.5' />
+                    <span className='flex items-center gap-1.5 opacity-90 font-medium'>
+                      <Clock className='w-3.5 h-3.5' />
+                      {siteConfig.workingHours}
+                    </span>
+                  </>
+                )}
+              </div>
 
-          {/* Right side - Close button */}
-          <button
-            onClick={() => setIsVisible(false)}
-            className='top-1.5 right-2 absolute flex justify-center items-center hover:bg-white/20 rounded-full w-6 h-6 transition-colors'
-            aria-label='Close announcement'
-          >
-            <X className='w-3 h-3' />
-          </button>
-        </div>
-      </Container>
-    </div>
+              {/* Center - Announcement */}
+              <div className='relative flex flex-1 justify-center items-center h-5 min-w-0 overflow-hidden'>
+                {promoTexts.length > 0 && (
+                  <AnimatePresence mode='wait'>
+                    <motion.div
+                      key={currentIndex}
+                      initial={{ opacity: 0, y: 8 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -8 }}
+                      transition={{ duration: 0.35, ease: 'easeInOut' }}
+                      className='absolute flex items-center gap-1.5 px-3 max-w-full font-medium whitespace-nowrap'
+                    >
+                      <Sparkles className='w-3.5 h-3.5 shrink-0' />
+                      <span className='truncate'>{promoTexts[currentIndex]}</span>
+                    </motion.div>
+                  </AnimatePresence>
+                )}
+              </div>
+
+              {/* Right - Social links + dismiss */}
+              <div className='flex items-center gap-3 shrink-0'>
+                <div className='hidden sm:block'>
+                  <SocialLinks size='sm' />
+                </div>
+
+                <button
+                  type='button'
+                  onClick={() => setIsVisible(false)}
+                  className='flex justify-center items-center hover:bg-white/15 rounded-full size-6 transition-colors'
+                  aria-label='Dismiss announcement bar'
+                >
+                  <X className='w-3.5 h-3.5' />
+                </button>
+              </div>
+            </div>
+          </Container>
+        </motion.div>
+      )}
+    </AnimatePresence>
   )
 }

@@ -9,10 +9,9 @@ import { Typography } from '@/components/common/typography'
 import { useSiteConfig } from '@/components/providers/store-provider'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
-import { showError } from '@/lib/errMsg'
 import { cn } from '@/lib/utils'
 import { SiteSettings } from '@/lib/validations/schemas/siteSettings'
-import requests from '@/services/network/http'
+import { submitToWeb3Forms } from '@/lib/web3forms'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { ArrowUpRight, Clock, Mail, MapPin, Phone, Send } from 'lucide-react'
 import { useState } from 'react'
@@ -54,14 +53,23 @@ export default function ContactPage() {
   const onSubmit = async (data: ContactFormData) => {
     setIsSubmitting(true)
     try {
-      const response = await requests.post('/contact', data)
+      const result = await submitToWeb3Forms({
+        name: data.name,
+        email: data.email,
+        phone: data.phone,
+        subject: data.subject || `New inquiry from ${data.name}`,
+        message: data.message
+      })
 
-      if (response?.success) {
-        toast.success('Message sent successfully! We will get back to you soon.')
-        reset()
+      if (!result.success) {
+        toast.error(result.message || 'Failed to send message. Please try again later.')
+        return
       }
+
+      toast.success('Message sent successfully! We will get back to you soon.')
+      reset()
     } catch (error) {
-      showError(error)
+      toast.error('Failed to send message. Please try again later.')
     } finally {
       setIsSubmitting(false)
     }

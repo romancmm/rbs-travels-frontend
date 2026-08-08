@@ -127,12 +127,20 @@ export default function ArticleForm({ initialData }: TProps) {
 
   const onSubmit: SubmitHandler<CreateArticleType> = async (data) => {
     try {
+      const payload = {
+        ...data,
+        seo: {
+          ...data.seo,
+          title: (data.seo?.title || data.title).slice(0, 60),
+          description: (data.seo?.description || data.excerpt).slice(0, 160),
+          keywords: data.seo?.keywords?.length ? data.seo.keywords : data.tags
+        },
+        ...(initialData?.id ? { id: initialData.id } : {})
+      }
+
       await requests[initialData?.id ? 'put' : 'post'](
         `/admin/articles/posts` + (initialData?.id ? `/${initialData?.id}` : ``),
-        {
-          ...data,
-          ...(initialData?.id ? { id: initialData.id } : {})
-        }
+        payload
       )
       toast.success('Article created successfully')
       router.push('/admin/articles')

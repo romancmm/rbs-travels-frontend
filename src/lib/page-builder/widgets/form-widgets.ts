@@ -38,7 +38,6 @@ componentRegistry.register({
     messagePlaceholder: 'Tell us more...',
     successMessage: "Thank you! We'll be in touch soon.",
     errorMessage: 'Something went wrong. Please try again.',
-    apiEndpoint: '/api/contact',
     layout: 'stacked', // stacked | two-column
     fieldSpacing: 'medium',
     labelPosition: 'top' // top | left | floating
@@ -66,7 +65,6 @@ componentRegistry.register({
     messagePlaceholder: z.string().optional(),
     successMessage: z.string().optional(),
     errorMessage: z.string().optional(),
-    apiEndpoint: z.string(),
     layout: z.enum(['stacked', 'two-column']).optional(),
     fieldSpacing: z.enum(['compact', 'medium', 'spacious']).optional(),
     labelPosition: z.enum(['top', 'left', 'floating']).optional()
@@ -125,8 +123,7 @@ componentRegistry.register({
             { label: 'Left', value: 'left' },
             { label: 'Floating', value: 'floating' }
           ]
-        },
-        { name: 'apiEndpoint', label: 'API Endpoint', type: 'text', required: true }
+        }
       ]
     }
   ]

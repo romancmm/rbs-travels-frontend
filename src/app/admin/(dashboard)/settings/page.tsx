@@ -66,7 +66,7 @@ export default function SiteConfigPage() {
   const siteConfig = data?.data?.value ?? undefined
   const onClose = () => {
     mutate()
-    setEdit(false)
+    // setEdit(false)
   }
 
   return (

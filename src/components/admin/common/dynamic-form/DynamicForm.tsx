@@ -12,8 +12,21 @@ import { Label } from '@/components/ui/label'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { cn } from '@/lib/utils'
 import { Trash2 } from 'lucide-react'
-import { Controller, useFieldArray, type FieldValues, type UseFormReturn } from 'react-hook-form'
-import type { ArrayFieldConfig, FieldConfig, GroupFieldConfig, LeafFieldConfig } from './types'
+import {
+  Controller,
+  useFieldArray,
+  useWatch,
+  type Control,
+  type FieldValues,
+  type UseFormReturn
+} from 'react-hook-form'
+import type {
+  ArrayFieldConfig,
+  FieldConfig,
+  GroupFieldConfig,
+  LeafFieldConfig,
+  SwitchFieldConfig
+} from './types'
 
 const COL_SPAN_CLASS: Record<'1' | '2' | 'full', string> = {
   '1': '',
@@ -110,6 +123,20 @@ function DynamicField<T extends FieldValues>({
     return <ArrayDynamicField form={form} field={field} />
   }
 
+  if (field.type === 'switch' && field.disabledWhenEmpty) {
+    return (
+      <div className={cn(colSpanClass(field.colSpan), field.className)}>
+        <Controller
+          control={control}
+          name={field.name}
+          render={({ field: rhfField }) => (
+            <SwitchLeafField control={control} field={field} rhfField={rhfField} />
+          )}
+        />
+      </div>
+    )
+  }
+
   return (
     <div className={cn(colSpanClass(field.colSpan), field.className)}>
       <Controller
@@ -120,6 +147,33 @@ function DynamicField<T extends FieldValues>({
         }
       />
     </div>
+  )
+}
+
+// Watches a dependency field so the switch can be disabled/read-only whenever
+// that field (e.g. a sibling URL input) is empty.
+function SwitchLeafField<T extends FieldValues>({
+  control,
+  field,
+  rhfField
+}: {
+  control: Control<T>
+  field: SwitchFieldConfig<T>
+  rhfField: LeafRenderProps
+}) {
+  const dependencyValue = useWatch({ control, name: field.disabledWhenEmpty! })
+  const isDependencyEmpty = !dependencyValue || String(dependencyValue).trim() === ''
+  const disabled = field.disabled || isDependencyEmpty
+
+  return (
+    <CustomInput
+      type='switch'
+      label={field.label}
+      disabled={disabled}
+      name={rhfField.name}
+      checked={!!rhfField.value}
+      onCheckedChange={rhfField.onChange}
+    />
   )
 }
 

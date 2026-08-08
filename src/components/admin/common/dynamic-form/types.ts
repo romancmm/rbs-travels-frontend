@@ -24,6 +24,8 @@ export type TextFieldConfig<T extends FieldValues = FieldValues> = BaseField<T> 
 
 export type SwitchFieldConfig<T extends FieldValues = FieldValues> = BaseField<T> & {
   type: 'switch'
+  // When set, this switch is disabled (and read-only) whenever the named field's value is empty.
+  disabledWhenEmpty?: Path<T>
 }
 
 export type CheckboxFieldConfig<T extends FieldValues = FieldValues> = BaseField<T> & {

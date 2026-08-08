@@ -5,7 +5,11 @@ import { DynamicForm } from '@/components/admin/common/dynamic-form'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { socialLinksFields } from '@/config/forms/socialLinks'
 import { useSettingsForm } from '@/hooks/useSettingsForm'
-import { SocialLinksSchema, SocialLinksType, SocialPlatform } from '@/lib/validations/schemas/socialLinks'
+import {
+  SocialLinksSchema,
+  SocialLinksType,
+  SocialPlatform
+} from '@/lib/validations/schemas/socialLinks'
 import { Globe } from 'lucide-react'
 import { useMemo } from 'react'
 
@@ -60,7 +64,7 @@ const SocialLinksForm = ({ settingsKey, initialValues, refetch }: TProps) => {
               isEditing={form.isEditing}
               savingLabel='Updating...'
             >
-              Update Social Links
+              Update Links
             </FormSubmitButton>
           </div>
         </CardContent>
